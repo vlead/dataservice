@@ -1,0 +1,68 @@
+
+{
+
+    "ENVIRONMENT": {
+        "HTTP_PROXY":"http://proxy.iiit.ac.in:8080",
+        "HTTPS_PROXY":"http://proxy.iiit.ac.in:8080"
+    },
+    
+    "CONTROLLER_CONFIG": {
+        "SERVER_PORT":8080,
+        "LOG_FILENAME":"/root/ovpl/log/ovpl.log"
+    },
+
+    "LABMANAGER_CONFIG": {
+        "GIT_CLONE_LOC":"/root/labs/lab-repo-cache/",
+        "LAB_SPEC_LOC":"/scripts/labspec.json"
+    },
+
+    "VMMANAGER_CONFIG": {
+        "DISK_USAGE_URI":"/api/1.0/disk-usage",
+        "MEMORY_USAGE_URI":"/api/1.0/mem-usage",
+        "RUNNING_TIME_URI":"/api/1.0/running-time",
+        "RUNNING_PROCESSES_URI":"/api/1.0/running-processes",        
+        "CPU_LOAD_URI":"/api/1.0/cpu_load",
+        "EXECUTE_URI":"/api/1.0/execute/([\\w*\\d*\\%\\-]+)",
+        "TEST_LAB_URI":"/api/1.0/test-lab",
+        "SERVER_PORT":8089,
+        "GIT_CLONE_LOC":"/root/VMManager/lab-repo-cache/",
+        "LAB_SPEC_LOC":"/scripts/labspec.json",
+        "LOG_FILENAME":"/root/VMManager/log/vmmanager.log"
+    },
+
+    "API_ENDPOINTS": {
+	"__comment__":"used by vm pool manager",
+	"CREATE_URI_ADAPTER_ENDPOINT":"/api/1.0/vm/create",
+	"DESTROY_URI_ADAPTER_ENDPOINT":"/api/1.0/vm/destroy",
+	"RESTART_URI_ADAPTER_ENDPOINT":"/api/1.0/vm/restart"
+    },
+    
+    "VMPOOL_CONFIGURATION": {
+        "VMPOOLS": [
+            {
+                "POOLID":1,
+                "DESCRIPTION":"LINUX",
+                "ADAPTERIP":"http://localhost",
+                "PORT":"8000"
+            },
+            {
+                "POOLID":2,
+                "DESCRIPTION":"WINDOWS",
+                "ADAPTERIP":"http://localhost",
+                "PORT":"8000"
+            },
+            {
+                "POOLID":3,
+                "DESCRIPTION":"AMAZONS3",
+                "ADAPTERIP":"http://localhost",
+                "PORT":"8000"
+            },
+            {
+                "POOLID":4,
+                "DESCRIPTION":"AMAZONEC2",
+                "ADAPTERIP":"http://localhost",
+                "PORT":"8000"
+            }
+        ]
+    }
+}
