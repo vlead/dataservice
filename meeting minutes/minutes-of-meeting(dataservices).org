@@ -2,7 +2,6 @@
 #+DATE: November 14, 2014
 #+Options: ^:nil
 
-* Meeting at 3:30 p.m. VLEAD conference room
 
 ** Agenda
 - To present a tentative roadmap for Data Services and Dashboard.
