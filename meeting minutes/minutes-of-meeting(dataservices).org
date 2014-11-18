@@ -2,7 +2,6 @@
 #+DATE: November 14, 2014
 #+Options: ^:nil
 
-* Meeting at 3:30 p.m. VLEAD conference room
 
 ** Agenda
 - To present a tentative roadmap for Data Services and Dashboard.
@@ -39,7 +38,7 @@ the lab. Thus =labspec= does not need to have =lab_ids=.
 |--------------------------------------------------------+-------------------------------------------------------------|
 | GET                                                    |                                                             |
 | a) To get all the labs                                 | /labs                                                       |
-| b) To get all the labs by discipline                   | /labs/discipline/disc_name                                  |
+| b) To get all the labs by discipline                   | /labs/discipline/dis_name                                  |
 | c) To get all the labs by institute                    | /labs/inst/inst_name                                        |
 | d) To get a specific lab                               | /labs/lab_id                                                |
 | e) To get all the technologies used by specific lab    | /labs/lab_id/technologies                                   |
