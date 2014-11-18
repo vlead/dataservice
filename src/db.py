@@ -6,6 +6,7 @@ from mongoengine import *
 connection = connect('labs-info')
 
 
+#TODO: refine the member variables
 class Lab(Document):
     lab_id = StringField()
     insitute_name = StringField()
@@ -27,5 +28,24 @@ class Lab(Document):
     status = StringField()
 
     @staticmethod
-    def getAllLabs():
+    def getAllLabs(fields):
+        if fields:
+            labs = []
+            # loop over each lab in the whole collection
+            for lab in Lab.objects:
+                # filtered lab object
+                fmt_lab = {}
+                # loop over the passed fields
+                for field in fields:
+                    try:
+                        # append the values if they exist
+                        fmt_lab[field] = lab[field]
+                    except:
+                        # raise an excep if doesnt
+                        raise Exception('Invalid Field')
+                # append formatted labs
+                labs.append(fmt_lab)
+            return labs
+
+        # if no fields options passed; return all fields
         return map(lambda x: x.to_json(), Lab.objects)

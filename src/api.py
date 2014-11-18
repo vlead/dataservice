@@ -12,12 +12,15 @@ define("port", default=8080, help="run on the given the port", type=int)
 
 
 class LabHandler(tornado.web.RequestHandler):
+    # executes when GET method is recvd
     def get(self):
-        args = self.get_query_arguments('fields')
-        print "recdv args in get handler"
-        print args
-        print Lab.getAllLabs()
-        self.finish({'labs': Lab.getAllLabs()})
+        # get the fields attributes from query string
+        fields = self.get_query_argument('fields').split(',')
+        try:
+            self.finish({'labs': Lab.getAllLabs(fields)})
+        except:
+            self.set_status(400)
+            self.finish("Invalid Field attribute")
 
 
 def make_app():
