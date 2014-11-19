@@ -28,6 +28,8 @@ class Lab(Document):
     status = StringField()
 
     @staticmethod
+    def getAllLabs():
+        return map(lambda x: x.to_json(), Lab.objects)
     def getAllLabs(fields):
         if fields:
             labs = []
