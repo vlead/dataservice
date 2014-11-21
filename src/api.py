@@ -4,7 +4,7 @@ import tornado.options
 import tornado.web
 
 from tornado.options import define
-
+from bson.objectid import ObjectId
 from db import Lab
 
 
@@ -24,7 +24,7 @@ class LabHandler(tornado.web.RequestHandler):
 	
     def get(self, word):
         coll = Lab._get_collection()       
-	word_doc = coll.find_one({"lab_id": word})
+	word_doc = coll.find_one({"_id":ObjectId(word)})
         if word_doc:
             word_doc["_id"] = str(word_doc["_id"])
 	    self.write(word_doc)
@@ -78,7 +78,7 @@ class LabHandler(tornado.web.RequestHandler):
 def make_app():
     return tornado.web.Application([
         tornado.web.url(r'/labs', LabHandler),
-        tornado.web.url(r'/labs/(\w+)', LabHandler),
+        tornado.web.url(r'/labs/([0-9a-z]*)', LabHandler),
     ])
 
 if __name__ == '__main__':
