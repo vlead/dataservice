@@ -9,7 +9,7 @@ connection = connect('labs-info')
 #TODO: refine the member variables
 class Lab(Document):
     lab_id = StringField()
-    insitute_name = StringField()
+    institute_name = StringField()
     lab_name = StringField()
     discipline_name = StringField()
     developers = StringField()
