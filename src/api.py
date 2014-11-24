@@ -73,7 +73,82 @@ class LabHandler(tornado.web.RequestHandler):
 
 	new_lab.save()
 	self.finish(new_lab.to_json())
+
+    def put(self, lab_id):
+
+        lab = Lab.objects(__raw__={"_id": ObjectId(lab_id)}) [0]
         
+        instt_name = self.get_body_argument('institute_name', default="")
+        if instt_name:
+            lab['institute_name'] = instt_name 
+        
+        l_name = self.get_body_argument('lab_name', default = "")
+        if l_name:
+            lab['lab_name'] = l_name
+
+	disc_name = self.get_body_argument('discipline_name', default = "")
+        if disc_name:
+            lab['discipline_name'] = disc_name
+
+        dev = self.get_body_argument('developer', default = "")
+	if dev:
+	    lab['developer'] = dev
+
+        repo = self.get_body_argument('repo_url', default = "")
+	if repo:
+	    lab['repo_url'] = repo
+
+        sources = self.get_body_argument('sources_url', default = "")
+        if sources:   
+            lab['sources_available'] = sources
+
+        hosted = self.get_body_argument('hosted_url', default = "")
+	if hosted:
+	    lab['hosted_url'] = hosted
+ 
+        l_deployed = self.get_body_argument('lab_deployed', default = "")
+        if l_deployed:
+            lab['lab_deployed'] = l_deployed
+
+	num_of_exp = self.get_body_argument('number_of_experiment', default = "")	 
+	if num_of_exp:
+	    lab['number_of_experiments'] = num_of_exp
+
+        cont = self.get_body_argument('content', default = "")
+	if cont:
+	    lab['content'] = cont   
+
+        sim = self.get_body_argument('simulation', default = "")
+	if sim:
+	    lab['simulation'] = sim
+
+        web_2_comp = self.get_body_argument('web_2_compliance', default = "")
+	if web_2_comp:
+            lab['web_2_compliance'] = web_2_comp
+
+        type_of_l = self.get_body_argument('type_of_lab', default = "")
+        if type_of_l:
+            lab['type_of_lab'] = type_of_l
+
+        auto = self.get_body_argument('autohostable', default = "")
+	if auto:
+	    lab['autohostable'] = auto
+
+        rem = self.get_body_argument('remarks', default = "")
+	if rem:
+	    lab['remarks'] = rem
+
+        int_level = self.get_body_argument('integration_level', default = "")
+	if int_level:
+	    lab['integration_level'] = int_level
+
+        stat = self.get_body_argument('status', default = "")
+	if stat:
+            lab['status'] = stat
+
+	lab.save()
+	self.finish("done")
+
 
 def make_app():
     return tornado.web.Application([
