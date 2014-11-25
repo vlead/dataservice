@@ -2,6 +2,8 @@
 # data layer
 
 from mongoengine import *
+from bson.objectid import ObjectId
+import json
 
 connection = connect('labs-info')
 
@@ -11,12 +13,13 @@ class Lab(Document):
     lab_id = StringField()
     institute_name = StringField()
     lab_name = StringField()
+    #name = StringField()
     discipline_name = StringField()
     developers = StringField()
     repo_url = StringField()
     sources_available = StringField()
     hosted_url = StringField()
-    lab_deployed = StringField()
+    is_deployed = StringField()
     num_of_exps = IntField()
     content = StringField()
     simulation = StringField()
@@ -26,6 +29,11 @@ class Lab(Document):
     remarks = StringField()
     integration_level = IntField()
     status = StringField()
+
+    @staticmethod
+    # take id as a string and return the lab corresponding to that id
+    def getLabById(_id):
+        return Lab.objects(id=ObjectId(_id))[0]
 
     @staticmethod
     def getAllLabs(fields):
@@ -48,4 +56,17 @@ class Lab(Document):
             return labs
 
         # if no fields options passed; return all fields
-        return map(lambda x: x.to_json(), Lab.objects)
+        return map(lambda x: x.to_client(), Lab.objects)
+
+    # return a dictionary format of the labs members..
+    def to_dict(self):
+        return json.loads(self.to_json())
+
+    # return a JSON(string) with fields relevant to the client
+    def to_client(self):
+        lab_dict = json.loads(self.to_json())
+        del(lab_dict['_id'])
+        lab_dict['id'] = unicode(self.id)
+        #return json.dumps(lab_dict)
+        return lab_dict
+
