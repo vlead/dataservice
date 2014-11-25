@@ -22,16 +22,6 @@ class LabHandler(tornado.web.RequestHandler):
             self.set_status(400)
             self.finish({'error': 'Invalid field attribute'})
 
-    def get(self, lab_id):
-        coll = Lab._get_collection()
-	lab = coll.find_one({"_id": ObjectId(lab_id)})
-        if lab:
-            lab["_id"] = str(lab["_id"])
-	    self.write(lab)
-        else:
-            self.set_status(404)
-            self.write({"error": "Lab not found"})
-
     def post(self):
         if not self.get_body_argument('lab_name'):
 	    self.set_status(400)
@@ -157,11 +147,32 @@ class LabHandler(tornado.web.RequestHandler):
 	lab.save()
         self.finish({'updated_lab': lab.to_client()})
 
+class LabIdHandler(tornado.web.RequestHandler):
+    def get(self, word):
+        coll = Lab._get_collection()
+        word_doc = coll.find_one({"_id":ObjectId(word)})
+        if word_doc:
+            word_doc["_id"] = str(word_doc["_id"])
+            self.write(word_doc)
+        else:
+            self.set_status(404)
+            self.write({"error": "word not found"})
+
+class DisciplineHandler(tornado.web.RequestHandler):
+    def get(self, word):
+        word_doc = Lab.objects(discipline_name = word).to_json()
+        if word_doc:
+            self.write(word_doc)
+        else:
+            self.set_status(404)
+            self.write({"error": "word not found"})
+
 
 def make_app():
     return tornado.web.Application([
         tornado.web.url(r'/labs', LabHandler),
-        tornado.web.url(r'/labs/([0-9a-z]*)', LabHandler),
+        tornado.web.url(r'/labs/([0-9a-z]*)', LabIdHandler),
+	tornado.web.url(r'/labs/disciplines/([a-z]*)', DisciplineHandler),
     ])
 
 if __name__ == '__main__':
