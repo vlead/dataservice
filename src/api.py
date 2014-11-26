@@ -160,12 +160,12 @@ class LabHandler(tornado.web.RequestHandler):
         self.finish({'updated_lab': lab.to_client()})
 
 class LabIdHandler(tornado.web.RequestHandler):
-    def get(self, word):
+    def get(self, unique_id):
         coll = Lab._get_collection()
-        word_doc = coll.find_one({"_id":ObjectId(word)})
-        if word_doc:
-            word_doc["_id"] = str(word_doc["_id"])
-            self.write(word_doc)
+        sub_coll = coll.find_one({"_id":ObjectId(unique_id)})
+        if sub_coll:
+            sub_coll["_id"] = str(sub_coll["_id"])
+            self.write(sub_coll)
         else:
             self.set_status(404)
             self.write({"error": "word not found"})
