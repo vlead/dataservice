@@ -22,6 +22,18 @@ class LabHandler(tornado.web.RequestHandler):
             self.set_status(400)
             self.finish({'error': 'Invalid field attribute'})
 
+
+    def get(self, lab_id, param):
+        lab = Lab.getLabById(lab_id)        
+        
+        try:
+            self.finish(lab[param])
+        except:
+            self.set_status(400)
+            self.finish("Invalid Field Name")
+
+
+
     def post(self):
         if not self.get_body_argument('lab_name'):
 	    self.set_status(400)
@@ -171,6 +183,7 @@ class DisciplineHandler(tornado.web.RequestHandler):
 def make_app():
     return tornado.web.Application([
         tornado.web.url(r'/labs', LabHandler),
+	tornado.web.url(r'/labs/([0-9a-z]*)/([0-9a-z_]*)', LabHandler),
         tornado.web.url(r'/labs/([0-9a-z]*)', LabIdHandler),
 	tornado.web.url(r'/labs/disciplines/([a-z]*)', DisciplineHandler),
     ])
