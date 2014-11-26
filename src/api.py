@@ -27,10 +27,10 @@ class LabHandler(tornado.web.RequestHandler):
         lab = Lab.getLabById(lab_id)        
         
         try:
-            self.finish(lab[param])
+            self.finish({param: lab[param]})
         except:
             self.set_status(400)
-            self.finish("Invalid Field Name")
+            self.finish({'error': 'Invalid Field Name'})
 
 
 
