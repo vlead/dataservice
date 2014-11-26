@@ -41,9 +41,9 @@ the details of that lab.
 
 #+begin_src python
 class LabIdHandler(tornado.web.RequestHandler):
-def get(self, id):
+def get(self, unique_id):
 coll = Lab._get_collection()
-sub_coll = coll.find_one({"_id":ObjectId(id)})
+sub_coll = coll.find_one({"_id":ObjectId(unique_id)})
 if sub_coll:
 sub_coll["_id"] = str(sub_coll["_id"])
 self.write(sub_coll)
