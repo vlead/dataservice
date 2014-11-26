@@ -169,12 +169,12 @@ class LabIdHandler(tornado.web.RequestHandler):
         else:
             self.set_status(404)
             self.write({"error": "word not found"})
-
+            
 class DisciplineHandler(tornado.web.RequestHandler):
-    def get(self, word):
-        word_doc = Lab.objects(discipline_name = word).to_json()
-        if word_doc:
-            self.write(word_doc)
+    def get(self, disciplinename):
+        sub_coll = Lab.objects(discipline_name = disciplinename).to_json()
+        if sub_coll:
+            self.write(sub_coll)
         else:
             self.set_status(404)
             self.write({"error": "word not found"})
