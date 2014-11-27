@@ -4,7 +4,7 @@ import tornado.options
 import tornado.web
 
 from tornado.options import define
-from bson.objectid import ObjectId
+#from bson.objectid import ObjectId
 from db import Lab
 
 
@@ -13,9 +13,11 @@ define("port", default=8080, help="run on the given the port", type=int)
 
 class LabHandler(tornado.web.RequestHandler):
     # executes when GET method is recvd
+    # fields are expected as ?fields=<field1>&fields=<field2>.. convention
     def get(self):
         # get the fields attributes from query string
-        fields = self.get_query_argument('fields').split(',')
+        fields = self.get_query_arguments('fields')
+        print fields
         try:
             self.finish({'labs': Lab.getAllLabs(fields)})
         except:
@@ -67,33 +69,51 @@ class LabHandler(tornado.web.RequestHandler):
 
 
 class LabIdHandler(tornado.web.RequestHandler):
-    def get(self, word):
-        coll = Lab._get_collection()
-        word_doc = coll.find_one({"_id": ObjectId(word)})
-        if word_doc:
-            word_doc["_id"] = str(word_doc["_id"])
-            self.write(word_doc)
+    def get(self, _id, param=None):
+        lab = Lab.getLabById(_id)
+        if lab:
+            if param:
+                try:
+                    self.finish({param: lab[param]})
+                except KeyError:
+                    self.finish({'error': 'Invalid field attribute'})
+
+            else:
+                self.finish(lab.to_client())
         else:
             self.set_status(404)
-            self.write({"error": "word not found"})
+            self.finish({"error": "Lab not found"})
 
 
 class DisciplineHandler(tornado.web.RequestHandler):
-    def get(self, word):
-        word_doc = Lab.objects(discipline_name=word).to_json()
-        if word_doc:
-            self.write(word_doc)
+    def get(self, disciplinename):
+        sub_coll = Lab.objects(discipline_name=disciplinename).to_json()
+        if sub_coll:
+            self.write(sub_coll)
         else:
             self.set_status(404)
             self.write({"error": "word not found"})
+
+
+class InstituteHandler(tornado.web.RequestHandler):
+    def get(self, instt_name):
+        print 'incoming instt name'
+        print instt_name
+        labs = Lab.objects(institute_name=instt_name)
+        print labs
+        if len(labs):
+            self.finish({'labs': map(lambda x: x.to_client(), labs)})
+        else:
+            self.set_status(404)
+            self.finish({'error': 'Institute not found'})
 
 
 def make_app():
     return tornado.web.Application([
-        tornado.web.url(r'/labs', LabHandler),
-        tornado.web.url(r'/labs/([0-9a-z]*)', LabHandler),
-        tornado.web.url(r'/labs/([0-9a-z]*)', LabIdHandler),
-        tornado.web.url(r'/labs/disciplines/([a-z]*)', DisciplineHandler),
+        tornado.web.url(r'/labs/?', LabHandler),
+        tornado.web.url(r'/labs/discipline/([a-z]*)', DisciplineHandler),
+        tornado.web.url(r'/labs/institute/([a-zA-Z-]*)', InstituteHandler),
+        tornado.web.url(r'/labs/([0-9a-z]*)/?([0-9a-z_]*)?', LabIdHandler)
     ])
 
 if __name__ == '__main__':
