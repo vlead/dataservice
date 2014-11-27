@@ -113,7 +113,7 @@ def make_app():
         tornado.web.url(r'/labs/?', LabHandler),
         tornado.web.url(r'/labs/discipline/([a-z]*)', DisciplineHandler),
         tornado.web.url(r'/labs/institute/([a-zA-Z-]*)', InstituteHandler),
-        tornado.web.url(r'/labs/([0-9a-z]*)/?([0-9a-z_]*)?', LabIdHandler)
+        tornado.web.url(r'/labs/([0-9a-z]*)/?(\w+)?', LabIdHandler)
     ])
 
 if __name__ == '__main__':
