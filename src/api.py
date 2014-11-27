@@ -96,10 +96,13 @@ class DisciplineHandler(tornado.web.RequestHandler):
 
 
 class InstituteHandler(tornado.web.RequestHandler):
-    def get(self, instt_name):
+    def get(self, instt_name, disc_name=None):
         print 'incoming instt name'
         print instt_name
         labs = Lab.objects(institute_name=instt_name)
+        if disc_name:
+            print disc_name
+            labs = labs.filter(discipline_name=disc_name)
         print labs
         if len(labs):
             self.finish({'labs': map(lambda x: x.to_client(), labs)})
@@ -112,7 +115,8 @@ def make_app():
     return tornado.web.Application([
         tornado.web.url(r'/labs/?', LabHandler),
         tornado.web.url(r'/labs/discipline/([a-z]*)', DisciplineHandler),
-        tornado.web.url(r'/labs/institute/([a-zA-Z-]*)', InstituteHandler),
+        tornado.web.url(r'/labs/institute/(\w+)/?discipline/?(\w+)?',
+                        InstituteHandler),
         tornado.web.url(r'/labs/([0-9a-z]*)/?(\w+)?', LabIdHandler)
     ])
 
