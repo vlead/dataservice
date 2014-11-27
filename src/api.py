@@ -92,7 +92,7 @@ class DisciplineHandler(tornado.web.RequestHandler):
             self.write(sub_coll)
         else:
             self.set_status(404)
-            self.write({"error": "word not found"})
+            self.write({"error": "Details not found with specified discipline"})
 
 
 class InstituteHandler(tornado.web.RequestHandler):
