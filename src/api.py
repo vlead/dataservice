@@ -168,7 +168,7 @@ class LabIdHandler(tornado.web.RequestHandler):
             self.write(sub_coll)
         else:
             self.set_status(404)
-            self.write({"error": "word not found"})
+            self.write({"error": "details not found with specified lab-id"})
             
 class DisciplineHandler(tornado.web.RequestHandler):
     def get(self, disciplinename):
@@ -177,7 +177,7 @@ class DisciplineHandler(tornado.web.RequestHandler):
             self.write(sub_coll)
         else:
             self.set_status(404)
-            self.write({"error": "word not found"})
+            self.write({"error": "Details not found with specified discipline"})
 
 
 def make_app():
