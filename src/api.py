@@ -110,6 +110,21 @@ class InstituteHandler(tornado.web.RequestHandler):
             self.set_status(404)
             self.finish({'error': 'Institute not found'})
 
+class SearchHandler(tornado.web.RequestHandler):
+    def get(self):
+        search = {}
+        for field in self.request.arguments:
+            search[field] = self.get_query_argument(field)
+            print search
+
+            labs = Lab.objects(__raw__ = search)
+            if len(labs):
+                self.finish({'labs' : map(lambda x: x.to_client(), labs)})
+
+            else:
+                self.set_status(400)
+                self.finish({'error': 'No labs'})
+
 
 def make_app():
     return tornado.web.Application([
@@ -117,6 +132,7 @@ def make_app():
         tornado.web.url(r'/labs/discipline/([a-z]*)', DisciplineHandler),
         tornado.web.url(r'/labs/institute/(\w+)/?discipline/?(\w+)?',
                         InstituteHandler),
+        tornado.web.url(r'/labs/search', SearchHandler),
         tornado.web.url(r'/labs/([0-9a-z]*)/?(\w+)?', LabIdHandler)
     ])
 
