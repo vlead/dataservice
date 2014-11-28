@@ -1,5 +1,11 @@
+# -*- coding: utf-8 -*-
+# API Layer
+# Data Service
+# Lab and Related Services
+# Virtual Labs Platform
+
+
 import tornado.httpserver
-import tornado.ioloop
 import tornado.options
 import tornado.web
 
@@ -70,12 +76,16 @@ class LabHandler(tornado.web.RequestHandler):
 
 class LabIdHandler(tornado.web.RequestHandler):
     def get(self, _id, param=None):
+        # get the specific lab passed from ID passed in the URL
         lab = Lab.getLabById(_id)
         if lab:
+            # if further param/field is present
             if param:
                 try:
+                    # filter by it
                     self.finish({param: lab[param]})
                 except KeyError:
+                    # else invalid field
                     self.finish({'error': 'Invalid field attribute'})
 
             else:
@@ -109,18 +119,3 @@ class InstituteHandler(tornado.web.RequestHandler):
         else:
             self.set_status(404)
             self.finish({'error': 'Institute not found'})
-
-
-def make_app():
-    return tornado.web.Application([
-        tornado.web.url(r'/labs/?', LabHandler),
-        tornado.web.url(r'/labs/discipline/([a-z]*)', DisciplineHandler),
-        tornado.web.url(r'/labs/institute/(\w+)/?discipline/?(\w+)?',
-                        InstituteHandler),
-        tornado.web.url(r'/labs/([0-9a-z]*)/?(\w+)?', LabIdHandler)
-    ])
-
-if __name__ == '__main__':
-    app = make_app()
-    app.listen(8080)
-    tornado.ioloop.IOLoop.instance().start()

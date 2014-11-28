@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
-# data layer
+# Data Layer
+# Data Service
+# Lab and Related Services
+# Virtual Labs Platform
+
 
 from mongoengine import *
 from bson.objectid import ObjectId
 import json
-
-connection = connect('labs-info')
 
 
 #TODO: refine the member variables
@@ -33,7 +35,10 @@ class Lab(Document):
     @staticmethod
     # take id as a string and return the lab corresponding to that id
     def getLabById(_id):
-        return Lab.objects(id=ObjectId(_id))[0]
+        try:
+            return Lab.objects(id=ObjectId(_id))[0]
+        except IndexError:
+            return False
 
     @staticmethod
     def getAllLabs(fields):
@@ -62,11 +67,10 @@ class Lab(Document):
     def to_dict(self):
         return json.loads(self.to_json())
 
-    # return a JSON(string) with fields relevant to the client
+    # return a dict with fields relevant to the client
     def to_client(self):
         lab_dict = json.loads(self.to_json())
         del(lab_dict['_id'])
-        lab_dict['id'] = unicode(self.id)
+        lab_dict[u'id'] = unicode(self.id)
         #return json.dumps(lab_dict)
         return lab_dict
-
