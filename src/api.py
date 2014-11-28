@@ -123,7 +123,7 @@ class SearchHandler(tornado.web.RequestHandler):
 
             else:
                 self.set_status(400)
-                self.finish({'error': 'No labs'})
+                self.finish({'error': 'No lab found'})
 
 
 def make_app():
