@@ -15,6 +15,7 @@ def make_app():
         tornado.web.url(r'/labs/discipline/([a-z]*)', api.DisciplineHandler),
         tornado.web.url(r'/labs/institute/(\w+)/?discipline/?(\w+)?',
                         api.InstituteHandler),
+        tornado.web.url(r'/labs/search', api.SearchHandler),
         tornado.web.url(r'/labs/([0-9a-z]*)/?(\w+)?', api.LabIdHandler)
     ])
 
