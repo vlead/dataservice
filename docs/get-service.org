@@ -33,12 +33,26 @@ It adds support for data types like Date, binary and objectid that aren't suppor
 from bson.objectid import ObjectId
 #+end_src
 
+The PUT method updates the =/labs= with the new lab's information. It
+updates the existing lab identified by =lab_id= and according to new key
+values.
+
+#+begin_src python 
+    def put(self, lab_id):
+        lab = Lab.getLabById(lab_id)
+        for field in self.request.arguments:
+            lab[field] = self.get_body_argument(field)
+        print 'updated lab ' + lab_id
+        print lab.to_dict()
+        lab.save()
+        self.finish({'updated_lab': lab.to_client()})
+#+end_src
+
 This is a Tornado request handler class. When handling a request, Tornado instantiates
 this class and calls the method corresponding to the HTTP method of the request. In
 this example, we’ve defined only a get method, meaning that this handler will respond
 only to HTTP GET requests. Here, we need to pass object id of a lab to see
 the details of that lab.
-
 #+begin_src python
 class LabIdHandler(tornado.web.RequestHandler):
 def get(self, unique_id):
@@ -96,6 +110,7 @@ app.listen(8080)
 tornado.ioloop.IOLoop.instance().start()
 #+end_src
 
+<<<<<<< Updated upstream
 * POST method for /labs
 This method posts or creates an entry for a new lab in database. All
 the information available regarding that lab is stored.  There are
@@ -162,4 +177,26 @@ class LabIdHandler(tornado.web.RequestHandler):
 
 #+END_SRC
 
+=======
+In SearchHandler, you need to pass the query string after =?= to search according
+to key value, such as =/labs/search?key1=value1&key2=value2&key3=value3= then it will 
+display all information correspondinng to the search query.
+
+#+begin_src python
+class SearchHandler(tornado.web.RequestHandler):
+    def get(self):
+        search = {}
+        for field in self.request.arguments:
+            search[field] = self.get_query_argument(field)
+            print search
+
+            labs = Lab.objects(__raw__=search)
+            if len(labs):
+                self.finish({'labs': map(lambda x: x.to_client(), labs)})
+
+            else:
+                self.set_status(400)
+                self.finish({'error': 'No lab found'})
+#+end_src
+>>>>>>> Stashed changes
 
