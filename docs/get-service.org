@@ -33,6 +33,7 @@ It adds support for data types like Date, binary and objectid that aren't suppor
 from bson.objectid import ObjectId
 #+end_src
 
+*PUT method for /labs
 The PUT method updates the =/labs= with the new lab's information. It
 updates the existing lab identified by =lab_id= and according to new key
 values.
@@ -110,7 +111,6 @@ app.listen(8080)
 tornado.ioloop.IOLoop.instance().start()
 #+end_src
 
-<<<<<<< Updated upstream
 * POST method for /labs
 This method posts or creates an entry for a new lab in database. All
 the information available regarding that lab is stored.  There are
@@ -177,7 +177,7 @@ class LabIdHandler(tornado.web.RequestHandler):
 
 #+END_SRC
 
-=======
+*GET method for /labs/search?key1=value1&key2=value2&key3=value3
 In SearchHandler, you need to pass the query string after =?= to search according
 to key value, such as =/labs/search?key1=value1&key2=value2&key3=value3= then it will 
 display all information correspondinng to the search query.
@@ -198,5 +198,4 @@ class SearchHandler(tornado.web.RequestHandler):
                 self.set_status(400)
                 self.finish({'error': 'No lab found'})
 #+end_src
->>>>>>> Stashed changes
 
