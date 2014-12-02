@@ -1,5 +1,5 @@
 #+TITLE:     get-service.org
-#+AUTHOR:    madhavi
+#+AUTHOR:    dataservices team
 #+EMAIL:     madhavi@vlabs.ac.in
 #+DATE:      2014-11-26 Wed
 
@@ -95,3 +95,71 @@ app = make_app()
 app.listen(8080)
 tornado.ioloop.IOLoop.instance().start()
 #+end_src
+
+* POST method for /labs
+This method posts or creates an entry for a new lab in database. All
+the information available regarding that lab is stored.  There are
+certain important fields that can't be left empty since they help in
+identifying a lab uniquely, thus if that field is not present in the
+body of the http request, an error is displayed.
+
+#+BEGIN_SRC python
+
+ def post(self):
+     err = None
+     if not self.get_body_argument('lab_name'):
+         err = 'Field lab_name cannot be empty'
+
+     if not self.get_body_argument('institute_name'):
+         err = 'Field institute_name cannot be empty'
+
+     if not self.get_body_argument('discipline_name'):
+         err = 'Field discipline_name cannot be empty'
+
+     if not self.get_body_argument('repo_url'):
+         err = 'Field repo_url cannot be empty'
+
+     if err:
+         self.set_status(400)
+         self.finish({"error": err})
+
+     args = {}
+     for field in self.request.arguments:
+         args[field] = self.get_body_argument(field)
+
+     new_lab = Lab(**args)
+     new_lab.save()
+     self.finish(new_lab.to_client())
+#+end_src
+        
+
+* Get information about any field in a specific lab
+There may be times when we want to know the value of a particular
+field in a lab for example the status of that lab or if that lab is
+auto deployed or not.  Such information can be retrieved if we pass
+the lab id of that lab along with the parameter name.
+      
+#+BEGIN_SRC python
+class LabIdHandler(tornado.web.RequestHandler):
+    def get(self, _id, param=None):
+        # get the specific lab passed from ID passed in the URL
+        lab = Lab.getLabById(_id)
+        if lab:
+            # if further param/field is present
+            if param:
+                try:
+                    # filter by it
+                    self.finish({param: lab[param]})
+                except KeyError:
+                    # else invalid field
+                    self.finish({'error': 'Invalid field attribute'})
+
+            else:
+                self.finish(lab.to_client())
+        else:
+            self.set_status(404)
+            self.finish({"error": "Lab not found"})
+
+#+END_SRC
+
+
