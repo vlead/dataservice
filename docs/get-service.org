@@ -33,7 +33,8 @@ It adds support for data types like Date, binary and objectid that aren't suppor
 from bson.objectid import ObjectId
 #+end_src
 
-*PUT method for /labs
+* PUT method for /labs
+
 The PUT method updates the =/labs= with the new lab's information. It
 updates the existing lab identified by =lab_id= and according to new key
 values.
@@ -112,6 +113,7 @@ tornado.ioloop.IOLoop.instance().start()
 #+end_src
 
 * POST method for /labs
+
 This method posts or creates an entry for a new lab in database. All
 the information available regarding that lab is stored.  There are
 certain important fields that can't be left empty since they help in
@@ -149,6 +151,7 @@ body of the http request, an error is displayed.
         
 
 * Get information about any field in a specific lab
+
 There may be times when we want to know the value of a particular
 field in a lab for example the status of that lab or if that lab is
 auto deployed or not.  Such information can be retrieved if we pass
@@ -177,7 +180,8 @@ class LabIdHandler(tornado.web.RequestHandler):
 
 #+END_SRC
 
-*GET method for /labs/search?key1=value1&key2=value2&key3=value3
+* GET method for /labs/search?key1=value1&key2=value2&key3=value3
+
 In SearchHandler, you need to pass the query string after =?= to search according
 to key value, such as =/labs/search?key1=value1&key2=value2&key3=value3= then it will 
 display all information correspondinng to the search query.
