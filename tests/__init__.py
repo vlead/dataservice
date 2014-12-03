@@ -1,0 +1,2 @@
+# something
+print "test package"

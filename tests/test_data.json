@@ -1,0 +1,42 @@
+[
+  {
+    "lab_id": "cse01",
+    "lab_name": "Data Structures",
+    "institute_name": "IIIT-H",
+    "discipline_name": "Computer Sciences",
+    "developers": "kkishore@iiit.ac.in",
+    "repo_url": "https://bitbucket.org/virtual-labs/cse01-ds_new",
+    "sources_available": "true",
+    "hosted_url": "http://virtual-labs.ac.in/labs/cse01/",
+    "is_deployed": "Yes",
+    "num_of_exps": 9,
+    "content": "Yes",
+    "simulation": "Yes",
+    "web_2_compliance": "No",
+    "type_of_lab": "",
+    "auto_hostable": "Yes",
+    "remarks": "Completed ",
+    "integration_level": 5,
+    "status": "Hosted"
+  },
+  {
+    "lab_id": "cse02",
+    "lab_name": "Computer Programming",
+    "institute_name": "IIIT-H",
+    "discipline_name": "Computer Sciences",
+    "developer": "jawahar@iiit.ac.in",
+    "repo_url": "https://bitbucket.org/virtual-labs/cse02-programming",
+    "sources_available": "Yes",
+    "hosted_url": "http://virtual-labs.ac.in/labs/cse02/",
+    "is_deployed": "Yes",
+    "number_of_exps": 10,
+    "content": "Yes",
+    "simulation": "Yes",
+    "web_2_compliance": "No",
+    "type_of_lab": "",
+    "auto_hostable": "Yes",
+    "remarks": "Completed ",
+    "integration_level": 5,
+    "status": "Hosted"
+  }
+]
