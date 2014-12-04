@@ -21,6 +21,7 @@ class MyTest(unittest.TestCase):
         expected_data = '[{"auto_hostable": "Yes", "lab_id": "cse02", "_id": {"$oid": "547d5cae3e56404101173171"}, "hosted_url": "http://virtual-labs.ac.in/labs/cse02/", "number_of_experiments": 10, "type_of_lab": "", "institute_id": 4, "simulation": "Yes", "content": "Yes", "lab_name": "Computer Programming", "lab_deployed": "Yes", "sources_available": "Yes", "status": "Hosted", "repo_url": "https://bitbucket.org/virtual-labs/cse02-programming", "discipline_name": "ece", "remarks": "Completed ", "developer": "jawahar@iiit.ac.in", "integration_level": 5, "id": 2, "web2.0_compliance": "No"}]'
         self.assertEqual(json.dumps(r), expected_data)
 
+
 if __name__ == '__main__':
     unittest.main()
 
