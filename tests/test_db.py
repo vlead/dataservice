@@ -39,6 +39,7 @@ class TestDB(unittest.TestCase):
 
     def test_get_all_fields(self):
         #TODO: write test for get all labs passing fields parameters
+        pass
 
 
 if __name__ == '__main__':
