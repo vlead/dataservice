@@ -135,3 +135,16 @@ class SearchHandler(tornado.web.RequestHandler):
             else:
                 self.set_status(400)
                 self.finish({'error': 'No lab found'})
+
+
+
+def make_app():
+    return tornado.web.Application([
+        tornado.web.url(r'/labs/?', LabHandler),
+        tornado.web.url(r'/labs/discipline/([a-z]*)', DisciplineHandler),
+        tornado.web.url(r'/labs/institute/(\w+)/?discipline/?(\w+)?',
+                        InstituteHandler),
+        tornado.web.url(r'/labs/search', SearchHandler),
+        tornado.web.url(r'/labs/([0-9a-z]*)/?(\w+)?', LabIdHandler)
+    ])
+
