@@ -58,22 +58,7 @@ class LabHandler(tornado.web.RequestHandler):
         new_lab.save()
         self.finish(new_lab.to_client())
 
-    # PUT method for /labs
-    # Update an existing lab identified by lab_id
-    def put(self, lab_id):
-        #lab = Lab.objects(__raw__={"_id": ObjectId(lab_id)})[0]
-        lab = Lab.getLabById(lab_id)
-        #print(self.request.arguments)
-        for field in self.request.arguments:
-            lab[field] = self.get_body_argument(field)
-
-        print 'updated lab ' + lab_id
-        print lab.to_dict()
-
-        lab.save()
-        self.finish({'updated_lab': lab.to_client()})
-
-
+   
 class LabIdHandler(tornado.web.RequestHandler):
     def get(self, _id, param=None):
         # get the specific lab passed from ID passed in the URL
@@ -93,6 +78,24 @@ class LabIdHandler(tornado.web.RequestHandler):
         else:
             self.set_status(404)
             self.finish({"error": "Lab not found"})
+
+    
+    # PUT method for /labs
+    # Update an existing lab identified by lab_id
+    def put(self, lab_id, param=None):
+        #lab = Lab.objects(__raw__={"_id": ObjectId(lab_id)})[0]
+        lab = Lab.getLabById(lab_id)
+        #print(self.request.arguments)
+        for field in self.request.arguments:
+            lab[field] = self.get_body_argument(field)
+
+        print 'updated lab ' + lab_id
+        print lab.to_dict()
+
+        lab.save()
+        self.finish({'updated_lab': lab.to_client()})
+
+
 
 
 class DisciplineHandler(tornado.web.RequestHandler):
