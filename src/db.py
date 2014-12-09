@@ -31,6 +31,7 @@ class Lab(Document):
     remarks = StringField()
     integration_level = IntField()
     status = StringField()
+    slug = StringField()
 
     def __init__(self,**kwargs):
         instt = Institute.objects(name=kwargs['institute_name'])	        
