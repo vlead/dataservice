@@ -13,10 +13,10 @@ import json
 #TODO: refine the member variables
 class Lab(Document):
     lab_id = StringField()
-    institute_name =  StringField(required=True)
+    institute_name =  ReferenceField('Institute', required=True)
     name =  StringField(required=True)
     #name = StringField()
-    discipline_name =  StringField(required=True)
+    discipline_name =  ReferenceField('Discipline', required=True)
     developers = StringField()
     repo_url =  StringField(required=True)
     sources_available = StringField()
@@ -74,3 +74,11 @@ class Lab(Document):
         lab_dict[u'id'] = unicode(self.id)
         #return json.dumps(lab_dict)
         return lab_dict
+
+
+class Institute(Document):
+    name = StringField()
+    
+    
+class Discipline(Document):
+    name = StringField()
