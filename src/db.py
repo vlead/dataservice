@@ -31,6 +31,7 @@ class Lab(Document):
     remarks = StringField()
     integration_level = IntField()
     status = StringField()
+    slug = StringField()
 
     @staticmethod
     # take id as a string and return the lab corresponding to that id
