@@ -11,7 +11,7 @@ import tornado.web
 
 from tornado.options import define
 #from bson.objectid import ObjectId
-from db import Lab
+from db import *
 
 
 define("port", default=8080, help="run on the given the port", type=int)
@@ -53,7 +53,7 @@ class LabHandler(tornado.web.RequestHandler):
         args = {}
         for field in self.request.arguments:
             args[field] = self.get_body_argument(field)
-
+        
         new_lab = Lab(**args)
         new_lab.save()
         self.finish(new_lab.to_client())
@@ -79,7 +79,6 @@ class LabIdHandler(tornado.web.RequestHandler):
             self.set_status(404)
             self.finish({"error": "Lab not found"})
 
-    
     # PUT method for /labs
     # Update an existing lab identified by lab_id
     def put(self, lab_id, param=None):
@@ -96,9 +95,7 @@ class LabIdHandler(tornado.web.RequestHandler):
         self.finish({'updated_lab': lab.to_client()})
 
 
-
-
-class DisciplineHandler(tornado.web.RequestHandler):
+class LabDisciplineHandler(tornado.web.RequestHandler):
     def get(self, disciplinename):
         sub_coll = Lab.objects(discipline_name=disciplinename).to_json()
         if sub_coll:
@@ -108,7 +105,7 @@ class DisciplineHandler(tornado.web.RequestHandler):
             self.write({"error": "Details not found with specified discipline"})
 
 
-class InstituteHandler(tornado.web.RequestHandler):
+class LabInstituteHandler(tornado.web.RequestHandler):
     def get(self, instt_name, disc_name=None):
         print 'incoming instt name'
         print instt_name
@@ -124,7 +121,7 @@ class InstituteHandler(tornado.web.RequestHandler):
             self.finish({'error': 'Institute not found'})
 
 
-class SearchHandler(tornado.web.RequestHandler):
+class LabSearchHandler(tornado.web.RequestHandler):
     def get(self):
         search = {}
         for field in self.request.arguments:
@@ -140,14 +137,21 @@ class SearchHandler(tornado.web.RequestHandler):
                 self.finish({'error': 'No lab found'})
 
 
+#class InstituteHandler(tornado.web.RequestHandler):
+#    def post(self):
+#        err = None
+
+
+
 
 def make_app():
     return tornado.web.Application([
         tornado.web.url(r'/labs/?', LabHandler),
-        tornado.web.url(r'/labs/discipline/([a-z]*)', DisciplineHandler),
+        tornado.web.url(r'/labs/discipline/([a-z]*)', LabDisciplineHandler),
         tornado.web.url(r'/labs/institute/(\w+)/?discipline/?(\w+)?',
-                        InstituteHandler),
-        tornado.web.url(r'/labs/search', SearchHandler),
-        tornado.web.url(r'/labs/([0-9a-z]*)/?(\w+)?', LabIdHandler)
+                        LabInstituteHandler),
+        tornado.web.url(r'/labs/search', LabSearchHandler),
+        tornado.web.url(r'/labs/([0-9a-z]*)/?(\w+)?', LabIdHandler),
+#        tornado.web.url(r'/institutes/?', InstituteHandler)
     ])
 

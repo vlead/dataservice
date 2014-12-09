@@ -13,10 +13,10 @@ import json
 #TODO: refine the member variables
 class Lab(Document):
     lab_id = StringField()
-    institute_name =  ReferenceField('Institute', required=True)
+    institute_name =  ReferenceField('Institute')
     name =  StringField(required=True)
     #name = StringField()
-    discipline_name =  ReferenceField('Discipline', required=True)
+    discipline_name =  ReferenceField('Discipline')
     developers = StringField()
     repo_url =  StringField(required=True)
     sources_available = StringField()
@@ -31,6 +31,14 @@ class Lab(Document):
     remarks = StringField()
     integration_level = IntField()
     status = StringField()
+
+    def __init__(self,**kwargs):
+        instt = Institute.objects(name=kwargs['institute_name'])	        
+	print instt	
+#	self.institute_name = instt.ObjectId(_id)
+	disc = Discipline.objects(name=kwargs['discipline_name'])
+	print disc
+#        self.discipline_name = disc.ObjectId(_id)
 
     @staticmethod
     # take id as a string and return the lab corresponding to that id
@@ -77,8 +85,8 @@ class Lab(Document):
 
 
 class Institute(Document):
-    name = StringField()
+    name = StringField(required=True)
     
     
 class Discipline(Document):
-    name = StringField()
+    name = StringField(required=True)
