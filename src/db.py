@@ -13,18 +13,18 @@ import json
 #TODO: refine the member variables
 class Lab(Document):
     lab_id = StringField()
-    institute_name = StringField()
-    lab_name = StringField()
+    institute_name =  ReferenceField('Institute', required=True)
+    name =  StringField(required=True)
     #name = StringField()
-    discipline_name = StringField()
+    discipline_name =  ReferenceField('Discipline', required=True)
     developers = StringField()
-    repo_url = StringField()
+    repo_url =  StringField(required=True)
     sources_available = StringField()
     hosted_url = StringField()
-    is_deployed = StringField()
+    is_deployed = BooleanField()
     num_of_exps = IntField()
-    content = StringField()
-    simulation = StringField()
+    is_content = BooleanField()
+    is_simulation = BooleanField()
     web_2_compliance = StringField()
     type_of_lab = StringField()
     auto_hostable = StringField()
@@ -74,3 +74,11 @@ class Lab(Document):
         lab_dict[u'id'] = unicode(self.id)
         #return json.dumps(lab_dict)
         return lab_dict
+
+
+class Institute(Document):
+    name = StringField()
+    
+    
+class Discipline(Document):
+    name = StringField()
