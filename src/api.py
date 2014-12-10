@@ -143,7 +143,22 @@ class LabSearchHandler(tornado.web.RequestHandler):
 #        err = None
 
 
-
+class InstituteHandler(tornado.web.RequestHandler):
+    def get(self):
+	coll = Institute.objects().to_json()
+        try:
+            self.finish(coll)
+        except:
+            self.set_status(400)
+            self.finish({'error': 'Institute Collection does not exits in db'})
+class DisciplineHandler(tornado.web.RequestHandler):
+    def get(self):
+        coll = Discipline.objects().to_json()
+        try:
+            self.finish(coll)
+        except:
+            self.set_status(400)
+            self.finish({'error': 'Discipline collection does not exits in db'})
 
 def make_app():
     return tornado.web.Application([
@@ -153,6 +168,7 @@ def make_app():
                         LabInstituteHandler),
         tornado.web.url(r'/labs/search', LabSearchHandler),
         tornado.web.url(r'/labs/([0-9a-z]*)/?(\w+)?', LabIdHandler),
-#        tornado.web.url(r'/institutes/?', InstituteHandler)
+	tornado.web.url(r'/institutes', InstituteHandler),
+        tornado.web.url(r'/disciplines', DisciplineHandler)
     ])
 
