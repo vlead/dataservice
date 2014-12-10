@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 # Data Layer
 # Data Service
@@ -31,15 +32,24 @@ class Lab(Document):
     remarks = StringField()
     integration_level = IntField()
     status = StringField()
-    slug = StringField()
 
-    def __init__(self,**kwargs):
-        instt = Institute.objects(name=kwargs['institute_name'])	        
-	print instt	
-#	self.institute_name = instt.ObjectId(_id)
-	disc = Discipline.objects(name=kwargs['discipline_name'])
-	print disc
-#        self.discipline_name = disc.ObjectId(_id)
+    @staticmethod
+    def createNew(**kwargs):
+        instt = Institute.objects(name=kwargs['institute_name'])[0]
+	# filter returns back a list 
+	print instt.to_json()
+	kwargs['institute_name'] = instt
+        disc = Discipline.objects(name=kwargs['discipline_name'])[0]
+	print disc.to_json()
+	kwargs['discipline_name'] = disc
+	print "saving reference.."
+	new_lab = Lab(**kwargs)
+	print kwargs
+	print new_lab.to_json()
+	new_lab.save()
+  	return new_lab	
+#	disc = Discipline.objects(name=kwargs['discipline_name'])
+ #       self.discipline_name = disc.
 
     @staticmethod
     # take id as a string and return the lab corresponding to that id

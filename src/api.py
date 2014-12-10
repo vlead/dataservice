@@ -34,7 +34,7 @@ class LabHandler(tornado.web.RequestHandler):
     # Create a new lab
     def post(self):
         err = None
-        if not self.get_body_argument('lab_name'):
+        if not self.get_body_argument('name'):
             err = 'Field lab_name cannot be empty'
 
         if not self.get_body_argument('institute_name'):
@@ -54,8 +54,9 @@ class LabHandler(tornado.web.RequestHandler):
         for field in self.request.arguments:
             args[field] = self.get_body_argument(field)
         
-        new_lab = Lab(**args)
-        new_lab.save()
+        #new_lab = Lab(**args)
+        #new_lab.save()
+	new_lab = Lab.createNew(**args)
         self.finish(new_lab.to_client())
 
    
