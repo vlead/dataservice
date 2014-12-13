@@ -149,25 +149,56 @@ class LabSearchHandler(tornado.web.RequestHandler):
                 self.finish({'error': 'No lab found'})
 
 
-#class InstituteHandler(tornado.web.RequestHandler):
-#    def get(self):
-#	coll = Institute.objects().to_json()
-#        try:
-#            self.finish(coll)
-#        except:
-#            self.set_status(400)
-#            self.finish({'error': 'Institute Collection does not exits in db'})
-#
-#
-#class DisciplineHandler(tornado.web.RequestHandler):
-#    def get(self):
-#        coll = Discipline.objects().to_json()
-#        try:
-#            self.finish(coll)
-#        except:
-#            self.set_status(400)
-#            self.finish({'error': 'Discipline collection does not exits in db'})
-#
+class InstituteHandler(tornado.web.RequestHandler):
+    def get(self):
+	coll = Institute.objects().to_json()
+        try:
+            self.finish(coll)
+        except:
+            self.set_status(400)
+            self.finish({'error': 'Institute Collection does not exits in db'})
+
+    def post(self):
+        err = None
+        if not self.get_body_argument('name'):
+            err = 'Field institute name can not be empty'         
+        
+        if err:
+            self.set_status(400)
+            self.finish({"error": err})
+   
+        args = {}
+        for field in self.request.arguments:
+            args[field] = self.get_body_argument(field)
+
+        new_institute = Institute(**args)
+        new_institute.save()
+
+
+class DisciplineHandler(tornado.web.RequestHandler):
+    def get(self):
+        coll = Discipline.objects().to_json()
+        try:
+            self.finish(coll)
+        except:
+            self.set_status(400)
+            self.finish({'error': 'Discipline collection does not exits in db'})
+
+    def post(self):
+        err = None
+        if not self.get_body_argument('name'):
+            err = 'Field discipline name can not be empty'
+
+        if err:
+            self.set_status(400)
+            self.finish({"error": err})
+
+        args = {}
+        for field in self.request.arguments:
+            args[field] = self.get_body_argument(field)
+
+        new_discipline = Discipline(**args)
+        new_discipline.save()
 
 def make_app():
     return tornado.web.Application([
@@ -177,7 +208,7 @@ def make_app():
                         LabInstituteHandler),
         tornado.web.url(r'/labs/search', LabSearchHandler),
         tornado.web.url(r'/labs/([0-9a-z]*)/?(\w+)?', LabIdHandler),
-#	tornado.web.url(r'/institutes', InstituteHandler),
-#        tornado.web.url(r'/disciplines', DisciplineHandler)
+	tornado.web.url(r'/institutes/?', InstituteHandler),
+        tornado.web.url(r'/disciplines/?', DisciplineHandler)
     ])
 
