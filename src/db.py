@@ -51,6 +51,26 @@ class Lab(Document):
 #	disc = Discipline.objects(name=kwargs['discipline_name'])
  #       self.discipline_name = disc.
 
+#    @staticmethod 
+#    def updateNew(field,lab):
+#        print "entering...."
+#	print field
+#        instt = Institute.objects(name='field')[0]
+#	print instt
+#        print instt.to_json()
+#        lab['institute_name'] = instt
+#            print "entering elif..."
+#            disc = Discipline.objects(name=field)[0]
+#            print disc.to_json()
+#            lab['discipline_name'] = disc
+
+#	lab.save()
+#	print updated_lab.to_json()
+ #       return lab
+
+
+	
+
     @staticmethod
     # take id as a string and return the lab corresponding to that id
     def getLabById(_id):
@@ -91,6 +111,7 @@ class Lab(Document):
         lab_dict = json.loads(self.to_json())
         del(lab_dict['_id'])
         lab_dict[u'id'] = unicode(self.id)
+	lab_dict[u'name'] = unicode (self.institute_name)
         #return json.dumps(lab_dict)
         return lab_dict
 

@@ -85,13 +85,24 @@ class LabIdHandler(tornado.web.RequestHandler):
     def put(self, lab_id, param=None):
         #lab = Lab.objects(__raw__={"_id": ObjectId(lab_id)})[0]
         lab = Lab.getLabById(lab_id)
-        #print(self.request.arguments)
+	print lab
+        print(self.request.arguments)
         for field in self.request.arguments:
-            lab[field] = self.get_body_argument(field)
+            if field == 'institute_name':
+		print "entering...."
+                instt = Institute.objects(name=self.get_body_argument('institute_name'))[0]
+		print instt.to_json()
+		lab['institute_name'] = instt
+	    elif field =='discipline_name':
+	        print "entering elif..."
+                disc = Discipline.objects(name=self.get_body_argument('discipline_name'))[0]
+		print disc.to_json()
+		lab['discipline_name'] = disc
+	    else:		
+		print "entered else...."
+	    	lab[field] = self.get_body_argument(field)
 
         print 'updated lab ' + lab_id
-        print lab.to_dict()
-
         lab.save()
         self.finish({'updated_lab': lab.to_client()})
 
@@ -139,26 +150,24 @@ class LabSearchHandler(tornado.web.RequestHandler):
 
 
 #class InstituteHandler(tornado.web.RequestHandler):
-#    def post(self):
-#        err = None
-
-
-class InstituteHandler(tornado.web.RequestHandler):
-    def get(self):
-	coll = Institute.objects().to_json()
-        try:
-            self.finish(coll)
-        except:
-            self.set_status(400)
-            self.finish({'error': 'Institute Collection does not exits in db'})
-class DisciplineHandler(tornado.web.RequestHandler):
-    def get(self):
-        coll = Discipline.objects().to_json()
-        try:
-            self.finish(coll)
-        except:
-            self.set_status(400)
-            self.finish({'error': 'Discipline collection does not exits in db'})
+#    def get(self):
+#	coll = Institute.objects().to_json()
+#        try:
+#            self.finish(coll)
+#        except:
+#            self.set_status(400)
+#            self.finish({'error': 'Institute Collection does not exits in db'})
+#
+#
+#class DisciplineHandler(tornado.web.RequestHandler):
+#    def get(self):
+#        coll = Discipline.objects().to_json()
+#        try:
+#            self.finish(coll)
+#        except:
+#            self.set_status(400)
+#            self.finish({'error': 'Discipline collection does not exits in db'})
+#
 
 def make_app():
     return tornado.web.Application([
@@ -168,7 +177,7 @@ def make_app():
                         LabInstituteHandler),
         tornado.web.url(r'/labs/search', LabSearchHandler),
         tornado.web.url(r'/labs/([0-9a-z]*)/?(\w+)?', LabIdHandler),
-	tornado.web.url(r'/institutes', InstituteHandler),
-        tornado.web.url(r'/disciplines', DisciplineHandler)
+#	tornado.web.url(r'/institutes', InstituteHandler),
+#        tornado.web.url(r'/disciplines', DisciplineHandler)
     ])
 
