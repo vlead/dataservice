@@ -111,7 +111,8 @@ class Lab(Document):
         lab_dict = json.loads(self.to_json())
         del(lab_dict['_id'])
         lab_dict[u'id'] = unicode(self.id)
-	lab_dict[u'name'] = unicode (self.institute_name)
+	lab_dict[u'institute_name']= unicode(self.institute_name.name)
+	lab_dict[u'discipline_name']= unicode(self.discipline_name.name)
         #return json.dumps(lab_dict)
         return lab_dict
 
