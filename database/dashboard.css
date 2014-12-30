@@ -1,0 +1,60 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    height: 100%;
+    font-size: 100%;
+    position: absolute;
+    background-image: url("images/1.jpg");
+    top: 0%;
+    bottom: 0%;
+    right: 0%;
+    left: 0%;
+}
+.a {
+    border: 1px solid #D6BCD6;
+    position: absolute;
+    top: 1px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    height: 9%;
+    font-size: 4vh;
+    background-image: url("images/2.jpg");
+    padding-top: 1.3vmin;
+}
+
+#header {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 6%;
+    font-size: 5vh;
+    color: #C0C0C0;
+    text-align: center;
+    padding-top: 1.3vmin;
+}
+
+#login {
+    position: absolute;
+    top: 4;
+    bottom: 0;
+    right: 1%;
+    padding-top: 1vmin;
+}
+.vlabsIcon {
+    position: absolute;
+    top: 1.2%;
+    left: 8%;
+    width: 15vh;
+    height: 6.7vh;
+    background-image: url('images/iiitLogo1.png');
+    background-repeat: no-repeat;
+    background-color: transparent;
+}
+
