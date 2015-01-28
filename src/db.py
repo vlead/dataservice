@@ -14,11 +14,11 @@ import json
 #TODO: refine the member variables
 class Lab(Document):
     lab_id = StringField()
-    institute_name =  ReferenceField('Institute')
+    institute =  ReferenceField('Institute')
     name =  StringField(required=True)
-    #name = StringField()
     discipline_name =  ReferenceField('Discipline')
-    developers = StringField()
+    developers = ListField(ReferenceField('Developer'))
+    technologies_used=ListField(ReferenceField('Technology'))
     repo_url =  StringField(required=True)
     sources_available = StringField()
     hosted_url = StringField()
@@ -119,7 +119,36 @@ class Lab(Document):
 
 class Institute(Document):
     name = StringField(required=True)
+    coordinators = StringField()
+    integration_coordintators = StringField()	
     
     
 class Discipline(Document):
-    name = StringField(required=True)
+     name = StringField(required=True)
+     dnc = StringField()	
+
+class Developer(Document):	
+    email_id  =StringField(required=True)
+    developer_name = StringField()
+    institute_name =  StringField()
+
+class Experiment(Document):
+    exp_id=IntField(required=True)
+    exp_name=StringField()
+    content_url=StringField()
+    simulation_url=StringField()
+
+class Technology(Document):
+    name=StringField()
+    foss=StringField()
+
+
+
+
+
+
+    
+
+    
+    
+
