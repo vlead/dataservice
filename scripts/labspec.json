@@ -1,0 +1,130 @@
+{
+	"lab": {
+		"description": {
+			"name": "OVPL",
+			"id": "ovpl",
+			"status": "under development",
+			"discipline": [],
+			"type": "Simulation",
+			"server-side": true,
+			"integration_level": 0,
+			"developer": [
+			{
+				"name": "Devi Prasad",
+				"title": "",
+				"role": "Software Architect",
+				"organization": "VLEAD",
+				"institute": "IIIT Hyderabad",
+				"web": "",
+				"department": "Software Engg Research Lab (SERL)",
+				"contact": {
+					"email": "dp@vlabs.ac.in",
+					"alternate_email": "dprasadm@gmail.com",
+					"mobile_number": "",
+					"office_number": ""
+				}
+			},
+			{
+				"name": "Chandan Kumar",
+				"title": "",
+				"role": "Technical Manager",
+				"organization": "VLEAD",
+				"institute": "IIIT Hyderabad",
+				"web": "",
+				"department": "Software Engg Research Lab (SERL)",
+				"contact": {
+					"email": "chandan@vlabs.ac.in",
+					"alternate_email": "chandan.gupta@gmail.com",
+					"mobile_number": "",
+					"office_number": ""
+				}
+			},
+			{
+				"name": "Avinash Sajjanshetty",
+				"title": "",
+				"role": "Software Engineer",
+				"organization": "VLEAD",
+				"institute": "IIIT Hyderabad",
+				"web": "",
+				"department": "Software Engg Research Lab (SERL)",
+				"contact": {
+					"email": "a@vlabs.ac.in",
+					"alternate_email": "avinashsajjanshetty@gmail.com",
+					"mobile_number": "",
+					"office_number": ""
+				}
+			},
+			{
+				"name": "Suraj Ketan Samal",
+				"title": "",
+				"role": "Senior Software Engineer",
+				"organization": "VLEAD",
+				"institute": "IIIT Hyderabad",
+				"web": "",
+				"department": "Software Engg Research Lab (SERL)",
+				"contact": {
+					"email": "suraj@vlabs.ac.in",
+					"alternate_email": "sksamal@gmail.com",
+					"mobile_number": "",
+					"office_number": ""
+				}
+			}
+			]
+		},
+
+		"build_requirements": {
+			"platform": {
+				"os": "ubuntu", 
+				"osVersion": "12",
+				"arch": "i386",
+				"service_pack": "",
+				"installer": [
+					],
+				"build_steps": {
+					"configure": [],
+					"pre_build": [],
+					"build": [],
+					"post_build": [],
+					"status": []
+				}
+			}
+		},
+
+		"runtime_requirements": {
+			"platform": {
+				"os": "ubuntu", 
+				"osVersion": "12",
+				"arch": "i386",
+				"servicepack": "",
+				"hosting": "dedicated",
+				"memory": {
+					"max_required": null,
+					"min_required": null
+				},
+				"storage": {
+					"min_required": "10gb"
+				},
+				"installer": [
+					"sudo chmod 777 ../src/setup.sh",
+					"bash ../src/setup.sh"
+					],
+				"lab_actions": {
+					"init":     [],
+					"shutdown": [],
+					"pause":    [],
+					"resume":   [],
+					"start":    [
+					"python ../src/app.py &"
+						],
+					"stop":     [],
+					"backup":   [],
+					"restore":  [],
+					"clean":    [],
+					"stats":    [],
+					"publish":  []
+				}
+			}
+		}
+	},
+	"template": "1.0"
+}
