@@ -31,22 +31,6 @@ class Lab(db.Model):
     institute = db.relationship('Institute')
 
     @staticmethod
-    def createNew(**kwargs):
-        instt = Institute.objects(name=kwargs['institute_name'])[0]
-        # filter returns back a list 
-        print instt.to_json()
-        kwargs['institute_name'] = instt
-        disc = Discipline.objects(name=kwargs['discipline_name'])[0]
-        print disc.to_json()
-        kwargs['discipline_name'] = disc
-        print "saving reference.."
-        new_lab = Lab(**kwargs)
-        print kwargs
-        print new_lab.to_json()
-        new_lab.save()
-        return new_lab
-
-    @staticmethod
     def getAllLabs(fields):
        # if fields:
 	    
@@ -54,6 +38,7 @@ class Lab(db.Model):
         return Lab.query.all()  
 
 class Institute(db.Model):
+
     __tablename__ = 'institutes'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -68,6 +53,7 @@ class Discipline(db.Model):
     dnc = db.Column(db.String(50))
 
 class Developer(db.Model):
+
     __tablename__ = 'developers'
 
     email_id = db.Column(db.String(100), primary_key=True)
@@ -76,11 +62,29 @@ class Developer(db.Model):
 
 
 class DevelopersEngaged(db.Model):
+
     __tablename__ = 'developers_engaged'
 
     id = db.Column(db.Integer, primary_key=True)
     lab_id = db.Column(db.Integer, db.ForeignKey('labs.id'))
     developer_id = db.Column(db.String(100), db.ForeignKey('developers.email_id'))
 
+class Technology(db.Model):
+ 
+    __tablename__ = 'technologies'
 
+    id = db.Column(db.Integer, primary_key=True)
+    technology_name = db.Column(db.String(100))
+    foss = db.Column(db.String(100))
+
+
+class Technology_Used(db.Model):
+
+    __tablename__ = 'technologies_used'
+
+    id = db.Column(db.Integer, primary_key=True)
+    lab_id = db.Column(db.Integer, db.ForeignKey('labs.id'))
+    lab_id = db.Column(db.Integer, db.ForeignKey('technologies.id'))
+    technology_name = db.Column(db.String(100))
+    foss = db.Column(db.String(100))
 
