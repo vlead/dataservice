@@ -16,9 +16,9 @@ class Lab(Document):
     lab_id = StringField()
     institute =  ReferenceField('Institute')
     name =  StringField(required=True)
-    discipline_name =  ReferenceField('Discipline')
+    discipline =  ReferenceField('Discipline')
     developers = ListField(ReferenceField('Developer'))
-    technologies_used=ListField(ReferenceField('Technology'))
+    technologies_used = ListField(ReferenceField('Technology'))
     repo_url =  StringField(required=True)
     sources_available = StringField()
     hosted_url = StringField()
@@ -120,7 +120,7 @@ class Lab(Document):
 class Institute(Document):
     name = StringField(required=True)
     coordinators = StringField()
-    integration_coordintators = StringField()	
+    integration_coordinators = StringField()	
     
     
 class Discipline(Document):
