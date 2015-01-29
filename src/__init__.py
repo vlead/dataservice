@@ -1,2 +1,3 @@
-import db
-import api
+from db1 import *
+
+import api1
