@@ -3,6 +3,7 @@ import json
 from flask.ext.sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
+
 class Lab(db.Model):
 
     __tablename__ = 'labs'
@@ -36,7 +37,6 @@ class Lab(db.Model):
 	   'lab_id': self.lab_id,
 	   'lab_name':self.lab_name,
            'institute':{
-		'id': self.institute.id,
                 'institute_name': self.institute.institute_name,
                 'institute_coordinator': self.institute.institute_coordinators,
 		'institute_integration_coordinator':self.institute.institute_integration_coordinators
@@ -82,10 +82,19 @@ class Institute(db.Model):
     institute_coordinators = db.Column(db.String(100))
     institute_integration_coordinators = db.Column(db.String(100))
 
+    def to_client(self):
+        return {
+		'institute_name': self.institute_name,
+                'institute_coordinator': self.institute_coordinators,
+                'institute_integration_coordinator':self.institute_integration_coordinators
+	}
+              
+
     @staticmethod
     def getAllInstitutes(fields):
         for i in Institute.query.all():
-            return (i.__dict__)
+            return [i.to_client() for i in Institute.query.all()]
+
 
 
 class Discipline(db.Model):
@@ -95,12 +104,17 @@ class Discipline(db.Model):
     discipline_name = db.Column(db.String(100), primary_key=True)
     dnc = db.Column(db.String(50))
 
+    def to_client(self):
+        return {
+         'discipline_name':self.discipline_name,
+         'dnc':self.dnc
+	}
+
+
     @staticmethod
     def getAllDisciplines(fields):
         for i in Discipline.query.all():
-            return (i.__dict__)
-
-
+	   return [i.to_client() for i in Discipline.query.all()]
 
 class Developer(db.Model):
 

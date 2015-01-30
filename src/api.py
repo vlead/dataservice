@@ -12,7 +12,7 @@ db.app = app
 def labs():
    if request.method == 'GET':
 	fields = request.args.get('fields') or None
-	print Lab.getAllLabs(fields)[0]
+	#print Lab.getAllLabs(fields)[0]
 	#return jsonify(labs=Lab.getAllLabs(fields))
 	return json.dumps(Lab.getAllLabs(fields))
 
@@ -21,16 +21,16 @@ def labs():
 def institutes():
    if request.method == 'GET':
         fields = request.args.get('fields') or None
-        print Institute.getAllInstitutes(fields)
-	return "asdf"
+        #print Institute.getAllInstitutes(fields)
+	return json.dumps(Institute.getAllInstitutes(fields))
 
 #Get all Disciplines
 @app.route('/disciplines', methods=['GET'])
 def disciplines():
    if request.method == 'GET':
         fields = request.args.get('fields') or None
-        print Discipline.getAllDisciplines(fields)
-	return "asdf"
+        return json.dumps(Discipline.getAllDisciplines(fields))
+	
 
 
 
