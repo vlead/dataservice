@@ -1,6 +1,5 @@
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
-
 db = SQLAlchemy()
 
 class Lab(db.Model):
@@ -32,11 +31,9 @@ class Lab(db.Model):
 
     @staticmethod
     def getAllLabs(fields):
-       # if fields:
-	    
-	#else:
-        return Lab.query.all()  
-
+        for i in Lab.query.all():
+            return(i.__dict__)
+        
 class Institute(db.Model):
 
     __tablename__ = 'institutes'

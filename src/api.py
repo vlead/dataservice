@@ -1,7 +1,6 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from db import db, Lab
-
-#api1 = Flask (__name__)
+import json
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] =\
 	'mysql+oursql://root:root@localhost/vlabs_info'
@@ -11,16 +10,12 @@ db.app = app
 #Get all labs
 @app.route('/labs', methods=['GET'])
 def labs():
-    if request.method == 'GET':
+   if request.method == 'GET':
 	fields = request.args.get('fields') or None
         print Lab.getAllLabs(fields)
-        return "sfsdf"        
-        
+        return "asdf"
+	      
 
 if __name__ == "__main__":
     app.run(debug=True)    
-         
         
-
-
-
