@@ -105,8 +105,8 @@
 					"min_required": "10gb"
 				},
 				"installer": [
-					"sudo chmod 777 ../src/setup.sh",
-					"bash ../src/setup.sh"
+					"sudo chmod 777 ../setup.sh",
+					"bash ../setup.sh"
 					],
 				"lab_actions": {
 					"init":     [],
