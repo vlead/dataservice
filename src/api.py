@@ -1,6 +1,6 @@
-from flask import Flask, request, jsonify
-from db import db, Lab, Institute, Discipline
-import json
+from flask import Flask, request, jsonify, json
+from db import db, Lab, Institute, Discipline, Technology
+#import json
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] =\
 	'mysql+oursql://root:root@localhost/vlabs_info'
@@ -8,7 +8,7 @@ db.init_app(app)
 db.app = app
 
 #Get all labs
-@app.route('/labs', methods=['GET'])
+@app.route('/labs', methods=['GET', 'POST'])
 def labs():
    if request.method == 'GET':
 	fields = request.args.get('fields') or None
@@ -31,6 +31,13 @@ def disciplines():
         fields = request.args.get('fields') or None
         return json.dumps(Discipline.getAllDisciplines(fields))
 	
+#Get all Technologies
+@app.route('/technologies', methods=['GET'])
+def technologies():
+   if request.method == 'GET':
+        fields = request.args.get('fields') or None
+        return json.dumps(Technology.getAllTechnologies(fields))
+
 
 
 

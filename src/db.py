@@ -141,6 +141,18 @@ class Technology(db.Model):
     technology_name = db.Column(db.String(100))
     foss = db.Column(db.String(100))
 
+    def to_client(self):
+        return {
+         'technology_name':self.technology_name,
+         'foss':self.foss
+        }
+
+
+    @staticmethod
+    def getAllTechnologies(fields):
+        for i in Technology.query.all():
+           return [i.to_client() for i in Technology.query.all()]
+
 
 class Technology_Used(db.Model):
 
