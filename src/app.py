@@ -1,15 +1,31 @@
 # -*- coding: utf-8 -*-
 
-from mongoengine import connect
-import tornado.web
-import tornado.ioloop
+from flask import Flask
+from db import db
+from api import api
 
-connection = connect('labs-info')
+# import config file
+import config
 
-from api import make_app
 
-app = make_app()
+def create_app():
+    # init our app
+    app = Flask(__name__)
+
+    # load config values from the config file
+    app.config.from_object(config)
+
+    # init sqlalchemy db instance
+    db.init_app(app)
+    db.app = app
+
+    # register blueprints
+    app.register_blueprint(api)
+
+    # all set; return app object
+    return app
+
 
 if __name__ == "__main__":
-    app.listen(8080)
-    tornado.ioloop.IOLoop.instance().start()
+    app = create_app()
+    app.run(debug=True)

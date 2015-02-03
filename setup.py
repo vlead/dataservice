@@ -1,8 +1,10 @@
 from setuptools import setup
 
 requires = [
-    'tornado',
-    'mongoengine'
+    'Flask',
+    'Flask-SQLAlchemy',
+    'oursql',
+    'requests'
 ]
 
 setup(

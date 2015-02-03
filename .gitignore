@@ -3,3 +3,4 @@
 *.sw[p|o]
 #*#
 venv/
+config.py

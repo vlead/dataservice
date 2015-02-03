@@ -1,46 +1,40 @@
-from flask import Flask, request, jsonify, json
+from flask import Blueprint, request, jsonify, json
 from db import db, Lab, Institute, Discipline, Technology
-#import json
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] =\
-	'mysql+oursql://root:root@localhost/vlabs_info'
-db.init_app(app)
-db.app = app
+
+
+api = Blueprint('APIs', __name__)
+
 
 #Get all labs
-@app.route('/labs', methods=['GET', 'POST'])
+@api.route('/labs', methods=['GET', 'POST'])
 def labs():
-   if request.method == 'GET':
-	fields = request.args.get('fields') or None
-	#print Lab.getAllLabs(fields)[0]
-	#return jsonify(labs=Lab.getAllLabs(fields))
-	return json.dumps(Lab.getAllLabs(fields))
+    if request.method == 'GET':
+        fields = request.args.get('fields') or None
+        #print Lab.getAllLabs(fields)[0]
+        #return jsonify(labs=Lab.getAllLabs(fields))
+        return json.dumps(Lab.getAllLabs(fields))
+
 
 #Get all institutes
-@app.route('/institutes', methods=['GET'])
+@api.route('/institutes', methods=['GET'])
 def institutes():
-   if request.method == 'GET':
+    if request.method == 'GET':
         fields = request.args.get('fields') or None
         #print Institute.getAllInstitutes(fields)
-	return json.dumps(Institute.getAllInstitutes(fields))
+        return json.dumps(Institute.getAllInstitutes(fields))
+
 
 #Get all Disciplines
-@app.route('/disciplines', methods=['GET'])
+@api.route('/disciplines', methods=['GET'])
 def disciplines():
-   if request.method == 'GET':
+    if request.method == 'GET':
         fields = request.args.get('fields') or None
         return json.dumps(Discipline.getAllDisciplines(fields))
-	
+
+
 #Get all Technologies
-@app.route('/technologies', methods=['GET'])
+@api.route('/technologies', methods=['GET'])
 def technologies():
-   if request.method == 'GET':
+    if request.method == 'GET':
         fields = request.args.get('fields') or None
         return json.dumps(Technology.getAllTechnologies(fields))
-
-
-
-
-if __name__ == "__main__":
-    app.run(debug=True)    
-        
