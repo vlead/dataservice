@@ -38,6 +38,7 @@ class Lab(db.Model):
     phase_2_lab = db.Column(db.String(45))
 
     def to_client(self):
+        print self.institute
         return {
             'lab_id': self.lab_id,
             'lab_name': self.lab_name,
@@ -92,6 +93,11 @@ class Lab(db.Model):
         return labs
 
 
+    def save(self):
+      db.session.add(self)
+      db.session.commit()
+    
+
 class Institute(db.Model):
 
     __tablename__ = 'institutes'
@@ -110,8 +116,8 @@ class Institute(db.Model):
 
     @staticmethod
     def getAllInstitutes(fields):
-        for i in Institute.query.all():
-            return [i.to_client() for i in Institute.query.all()]
+      for i in Institute.query.all():
+        return [i.to_client() for i in Institute.query.all()]
 
 
 class Discipline(db.Model):
