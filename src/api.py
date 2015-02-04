@@ -45,15 +45,20 @@ def disciplines():
         if request.form:
             new_discipline = Discipline(**request.form.to_dict())
             new_discipline.save()
-            return jsonify((new_discipline.to_client()))
+            return jsonify(new_discipline.to_client())
 
 #Get all Technologies
-@api.route('/technologies', methods=['GET'])
+@api.route('/technologies', methods=['GET','POST'])
 def technologies():
     if request.method == 'GET':
         fields = request.args.get('fields') or None
         return json.dumps(Technology.getAllTechnologies(fields))
 
+    if request.method == 'POST':
+        if request.form:
+            new_technology = Technology(**request.form.to_dict())
+            new_technology.save()
+            return jsonify(new_technology.to_client())
 
 #get a specific lab
 @api.route('/labs/<int:id>', methods=['GET'])
