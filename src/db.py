@@ -119,6 +119,12 @@ class Institute(db.Model):
       for i in Institute.query.all():
         return [i.to_client() for i in Institute.query.all()]
 
+    def save(self):
+      db.session.add(self)
+      db.session.commit()
+
+
+
 
 class Discipline(db.Model):
 
