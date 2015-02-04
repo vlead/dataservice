@@ -3,6 +3,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
+ 
 class Lab(db.Model):
 
     __tablename__ = 'labs'
@@ -92,11 +93,11 @@ class Lab(db.Model):
                 labs.append(fmttd_lab)
         return labs
 
-
     def save(self):
       db.session.add(self)
       db.session.commit()
- 
+
+  
 
 class Institute(db.Model):
 
@@ -123,9 +124,6 @@ class Institute(db.Model):
       db.session.add(self)
       db.session.commit()
 
-
-
-
 class Discipline(db.Model):
 
     __tablename__ = 'disciplines'
@@ -145,6 +143,9 @@ class Discipline(db.Model):
         for i in Discipline.query.all():
             return [i.to_client() for i in Discipline.query.all()]
 
+    def save(self):
+      db.session.add(self)
+      db.session.commit()
 
 class Developer(db.Model):
 
@@ -154,6 +155,9 @@ class Developer(db.Model):
     developer_name = db.Column(db.String(100))
     institute_name = db.Column(db.String(45))
 
+    def save(self):
+      db.session.add(self)
+      db.session.commit()
 
 class DevelopersEngaged(db.Model):
 
@@ -183,6 +187,9 @@ class Technology(db.Model):
         for i in Technology.query.all():
             return [i.to_client() for i in Technology.query.all()]
 
+    def save(self):
+      db.session.add(self)
+      db.session.commit()
 
 class TechnologyUsed(db.Model):
 

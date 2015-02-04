@@ -9,20 +9,14 @@ api = Blueprint('APIs', __name__)
 @api.route('/labs', methods=['GET', 'POST'])
 def labs():
     if request.method == 'GET':
-	    fields = request.args.get('fields') or None
-	    return json.dumps(Lab.getAllLabs(fields))
+	fields = request.args.get('fields') or None
+	return json.dumps(Lab.getAllLabs(fields))
 
     if request.method == 'POST':
         if request.form:
-            data ={}
-            for key in request.form:
-                data[key] = request.form.get(key)
-            
-            print data
-            print type(data)
-        new_lab = Lab(**data) 
-        new_lab.save()
-        return jsonify(new_lab.to_client())
+            new_lab = Lab(**request.form.to_dict()) 
+            new_lab.save()
+            return jsonify(new_lab.to_client())
         
 
 #Get all institutes
@@ -35,24 +29,23 @@ def institutes():
     
     if request.method == 'POST':
         if request.form:
-            data ={}
-            for key in request.form:
-                data[key] = request.form.get(key)
-
-            print data
-            print type(data)
-        new_institute = Institute(**data)
-        new_institute.save()
-        return jsonify(new_institute.to_client())
+            new_institute = Institute(**request.form.to_dict())
+            new_institute.save()
+            return jsonify(new_institute.to_client())
 
 
 #Get all Disciplines
-@api.route('/disciplines', methods=['GET'])
+@api.route('/disciplines', methods=['GET', 'POST'])
 def disciplines():
     if request.method == 'GET':
         fields = request.args.get('fields') or None
         return json.dumps(Discipline.getAllDisciplines(fields))
 
+    if request.method == 'POST':
+        if request.form:
+            new_discipline = Discipline(**request.form.to_dict())
+            new_discipline.save()
+            return jsonify((new_discipline.to_client()))
 
 #Get all Technologies
 @api.route('/technologies', methods=['GET'])
