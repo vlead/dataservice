@@ -58,13 +58,26 @@ def technologies():
             return jsonify(new_technology.to_client())
 
 
-#get a specific lab
+#Get a specific lab
 @api.route('/labs/<int:id>', methods=['GET'])
 def get_lab_by_id(id):
     if request.method == 'GET':
         lab = Lab.query.get(id)
         if lab is None:
             abort(404)
-            #current_app.logger.debug('get_lab_by_id: %s', field)
 
         return jsonify(lab.to_client())
+
+
+#Get a parameter of a specific lab
+@api.route('/labs/<int:id>/<param>', methods=['GET'])
+def get_a_field(id, param):
+    if request.method == 'GET':
+        lab = Lab.query.get(id)
+        if param is None:
+            abort(404)
+        field = lab.to_client()[param]
+        print field
+        resp = {}
+        resp[param] = field
+        return jsonify(resp)
