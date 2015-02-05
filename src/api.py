@@ -1,5 +1,5 @@
-from flask import Blueprint, request, jsonify, json, abort,current_app
-from db import db, Lab, Institute, Discipline, Technology
+from flask import Blueprint, request, jsonify, json, abort
+from db import Lab, Institute, Discipline, Technology
 
 
 api = Blueprint('APIs', __name__)
@@ -9,24 +9,22 @@ api = Blueprint('APIs', __name__)
 @api.route('/labs', methods=['GET', 'POST'])
 def labs():
     if request.method == 'GET':
-	fields = request.args.get('fields') or None
-	return json.dumps(Lab.getAllLabs(fields))
+        fields = request.args.get('fields') or None
+        return json.dumps(Lab.get_all(fields))
 
     if request.method == 'POST':
         if request.form:
-            new_lab = Lab(**request.form.to_dict()) 
+            new_lab = Lab(**request.form.to_dict())
             new_lab.save()
             return jsonify(new_lab.to_client())
-        
+
 
 #Get all institutes
-@api.route('/institutes', methods=['GET','POST'])
+@api.route('/institutes', methods=['GET', 'POST'])
 def institutes():
     if request.method == 'GET':
-      fields = request.args.get('fields') or None
-        #print Institute.getAllInstitutes(fields)
-      return json.dumps(Institute.getAllInstitutes(fields))
-    
+        return json.dumps(Institute.get_all())
+
     if request.method == 'POST':
         if request.form:
             new_institute = Institute(**request.form.to_dict())
@@ -38,8 +36,7 @@ def institutes():
 @api.route('/disciplines', methods=['GET', 'POST'])
 def disciplines():
     if request.method == 'GET':
-        fields = request.args.get('fields') or None
-        return json.dumps(Discipline.getAllDisciplines(fields))
+        return json.dumps(Discipline.get_all())
 
     if request.method == 'POST':
         if request.form:
@@ -47,12 +44,12 @@ def disciplines():
             new_discipline.save()
             return jsonify(new_discipline.to_client())
 
+
 #Get all Technologies
-@api.route('/technologies', methods=['GET','POST'])
+@api.route('/technologies', methods=['GET', 'POST'])
 def technologies():
     if request.method == 'GET':
-        fields = request.args.get('fields') or None
-        return json.dumps(Technology.getAllTechnologies(fields))
+        return json.dumps(Technology.get_all())
 
     if request.method == 'POST':
         if request.form:
@@ -60,12 +57,14 @@ def technologies():
             new_technology.save()
             return jsonify(new_technology.to_client())
 
+
 #get a specific lab
 @api.route('/labs/<int:id>', methods=['GET'])
 def get_lab_by_id(id):
     if request.method == 'GET':
-        field = Lab.query.get(id)
-        if field is None:
+        lab = Lab.query.get(id)
+        if lab is None:
             abort(404)
-        current_app.logger.debug('get_lab_by_id: %s', field)
-        return jsonify(field.to_client())
+            #current_app.logger.debug('get_lab_by_id: %s', field)
+
+        return jsonify(lab.to_client())

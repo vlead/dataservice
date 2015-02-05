@@ -3,83 +3,49 @@ from flask.ext.sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
- 
 class Lab(db.Model):
 
     __tablename__ = 'labs'
 
     id = db.Column(db.Integer, primary_key=True)
 
-    lab_id = db.Column(db.String(45))
-    lab_name = db.Column(db.String(100))
+    lab_id = db.Column(db.String(32))
+    name = db.Column(db.String(128))
+    slug = db.Column(db.String(128))
 
-    discipline_id = db.Column(db.String(100),
-                              db.ForeignKey('disciplines.discipline_name'))
+    discipline_id = db.Column(db.Integer, db.ForeignKey('disciplines.id'))
     discipline = db.relationship('Discipline')
 
     institute_id = db.Column(db.Integer, db.ForeignKey('institutes.id'))
     institute = db.relationship('Institute')
 
-    developer = db.Column(db.String(100), db.ForeignKey('developers.email_id'))
-    developer_obj = db.relationship('Developer')
+    #developer_id = db.Column(db.Integer, db.ForeignKey('developers.id'))
+    ##developer = db.Column(db.String(100), db.ForeignKey('developers.email_id'))
+    #developer = db.relationship('Developer')
 
-    repo_url = db.Column(db.String(200))
-    sources_available = db.Column(db.String(45))
-    hosted_url = db.Column(db.String(200))
-    lab_deployed = db.Column(db.String(45))
+    repo_url = db.Column(db.String(256))
+    hosted_url = db.Column(db.String(256))
     number_of_experiments = db.Column(db.Integer)
-    content = db.Column(db.String(45))
-    simulation = db.Column(db.String(45))
-    web_2_compliance = db.Column('web2.0_compliance', db.String(45))
-    type_of_lab = db.Column(db.String(45))
-    auto_hostable = db.Column(db.String(45))
-    remarks = db.Column(db.String(200))
+
     integration_level = db.Column(db.Integer)
-    status = db.Column(db.String(45))
-    phase_2_lab = db.Column(db.String(45))
+    type_of_lab = db.Column(db.String(64))
+    remarks = db.Column(db.Text)
+    status = db.Column(db.String(32))
 
-    def to_client(self):
-        print self.institute
-        return {
-            'lab_id': self.lab_id,
-            'lab_name': self.lab_name,
-            'institute': {
-                'institute_name': self.institute.institute_name,
-                'institute_coordinator': self.institute.institute_coordinators,
-                'institute_integration_coordinator': self.institute.institute_integration_coordinators
-            },
-            'discipline': {
-                'discipline_name': self.discipline.discipline_name,
-                'dnc': self.discipline.dnc
-            },
-            'developer': {
-                'name': self.developer_obj.developer_name,
-                'email': self.developer_obj.email_id
-            },
-            'repo_url': self.repo_url,
-
-            'sources_available': self.sources_available,
-            'hosted_url': self.hosted_url,
-            'lab_deployed': self.lab_deployed,
-            'number_of_experiments': self.number_of_experiments,
-            'content': self.content,
-            'simulation': self.simulation,
-            'web_2_compliance': self.web_2_compliance,
-            'type_of_lab': self.type_of_lab,
-            'auto_hostable': self.auto_hostable,
-            'remarks': self.remarks,
-            'integration_level': self.integration_level,
-            'status': self.status,
-            'phase_2_lab': self.phase_2_lab
-        }
+    is_src_avail = db.Column(db.Boolean)
+    is_deployed = db.Column(db.Boolean)
+    is_content_avail = db.Column(db.Boolean)
+    is_simulation = db.Column(db.Boolean)
+    is_web_2_compliant = db.Column(db.Boolean)
+    is_auto_hostable = db.Column(db.Boolean)
+    is_phase_2_lab = db.Column(db.Boolean)
 
     @staticmethod
-    def getAllLabs(fields):
+    def get_all(fields=None):
 
         print fields
         if not fields:
             return [i.to_client() for i in Lab.query.all()]
-            #return map(lambda x: x.to_client(), Lab.query.all())
 
         labs = []  # all labs
         for lab in Lab.query.all():
@@ -93,79 +59,132 @@ class Lab(db.Model):
                 labs.append(fmttd_lab)
         return labs
 
-    def save(self):
-      db.session.add(self)
-      db.session.commit()
+    def __init__(self, **kwargs):
+        super(Lab, self).__init__(**kwargs)
+        #TODO: see if we can find a better way to type convert these fields to
+        #boolean
+        self.is_src_avail = True if self.is_src_avail == "True" else False
+        self.is_phase_2_lab = True if self.is_phase_2_lab == "True" else False
+        self.is_deployed = True if self.is_deployed == "True" else False
+        self.is_auto_hostable = True if self.is_auto_hostable == "True" else False
+        self.is_content_avail = True if self.is_content_avail == "True" else False
+        self.is_simulation = True if self.is_simulation == "True" else False
+        self.is_web_2_compliant = True if self.is_web_2_compliant == "True" else False
 
-  
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def to_client(self):
+        return {
+            'id': self.id,
+            'lab_id': self.lab_id,
+            'name': self.name,
+            'slug': self.slug,
+            'institute': {
+                'id': self.institute.id,
+                'name': self.institute.name,
+                'coordinator': self.institute.coordinators,
+                'integration_coordinator': self.institute.integration_coordinators
+            },
+            'discipline': {
+                'id': self.discipline.id,
+                'name': self.discipline.name,
+                'dnc': self.discipline.dnc
+            },
+            'repo_url': self.repo_url,
+            'hosted_url': self.hosted_url,
+            'number_of_experiments': self.number_of_experiments,
+            'integration_level': self.integration_level,
+            'type_of_lab': self.type_of_lab,
+            'remarks': self.remarks,
+            'status': self.status,
+            'is_src_avail': self.is_src_avail,
+            'is_content_avail': self.is_content_avail,
+            'is_deployed': self.is_deployed,
+            'is_simulation': self.is_simulation,
+            'is_web_2_compliant': self.is_web_2_compliant,
+            'is_auto_hostable': self.is_auto_hostable,
+            'is_phase_2_lab': self.is_phase_2_lab
+        }
+
 
 class Institute(db.Model):
 
     __tablename__ = 'institutes'
 
     id = db.Column(db.Integer, primary_key=True)
-    institute_name = db.Column(db.String(45))
-    institute_coordinators = db.Column(db.String(100))
-    institute_integration_coordinators = db.Column(db.String(100))
+    name = db.Column(db.String(128))
+    coordinators = db.Column(db.String(128))
+    integration_coordinators = db.Column(db.String(128))
 
     def to_client(self):
         return {
-            'institute_name': self.institute_name,
-            'institute_coordinator': self.institute_coordinators,
-            'institute_integration_coordinator': self.institute_integration_coordinators
+            'name': self.name,
+            'coordinator': self.coordinators,
+            'integration_coordinator': self.integration_coordinators
         }
 
     @staticmethod
-    def getAllInstitutes(fields):
-      for i in Institute.query.all():
+    def get_all():
         return [i.to_client() for i in Institute.query.all()]
 
     def save(self):
-      db.session.add(self)
-      db.session.commit()
+        db.session.add(self)
+        db.session.commit()
+
 
 class Discipline(db.Model):
 
     __tablename__ = 'disciplines'
 
-    id = db.Column(db.Integer)
-    discipline_name = db.Column(db.String(100), primary_key=True)
-    dnc = db.Column(db.String(50))
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128))
+    dnc = db.Column(db.String(64))
 
     def to_client(self):
         return {
-            'discipline_name': self.discipline_name,
+            'name': self.name,
             'dnc': self.dnc
         }
 
     @staticmethod
-    def getAllDisciplines(fields):
-        for i in Discipline.query.all():
-            return [i.to_client() for i in Discipline.query.all()]
+    def get_all():
+        return [i.to_client() for i in Discipline.query.all()]
 
     def save(self):
-      db.session.add(self)
-      db.session.commit()
+        db.session.add(self)
+        db.session.commit()
+
 
 class Developer(db.Model):
 
     __tablename__ = 'developers'
 
-    email_id = db.Column(db.String(100), primary_key=True)
-    developer_name = db.Column(db.String(100))
-    institute_name = db.Column(db.String(45))
+    id = db.Column(db.Integer, primary_key=True)
+
+    email_id = db.Column(db.String(128))
+    name = db.Column(db.String(64))
+
+    institute_id = db.Column(db.Integer, db.ForeignKey('institutes.id'))
+    institute = db.relationship('Institute')
 
     def save(self):
-      db.session.add(self)
-      db.session.commit()
+        db.session.add(self)
+        db.session.commit()
 
-class DevelopersEngaged(db.Model):
+
+class DeveloperEngaged(db.Model):
 
     __tablename__ = 'developers_engaged'
 
     id = db.Column(db.Integer, primary_key=True)
+
     lab_id = db.Column(db.Integer, db.ForeignKey('labs.id'))
-    developer_id = db.Column(db.String(100), db.ForeignKey('developers.email_id'))
+    lab = db.relationship('Lab')
+
+    developer_id = db.Column(db.Integer, db.ForeignKey('developers.id'))
+    lab = db.relationship('Developer')
 
 
 class Technology(db.Model):
@@ -173,30 +192,44 @@ class Technology(db.Model):
     __tablename__ = 'technologies'
 
     id = db.Column(db.Integer, primary_key=True)
-    technology_name = db.Column(db.String(100))
-    foss = db.Column(db.String(100))
+    name = db.Column(db.String(64))
+    foss = db.Column(db.Boolean)
+
+    def __init__(self, **kwargs):
+        super(Technology, self).__init__(**kwargs)
+        self.foss = True if self.foss == "True" else False
+
+    @staticmethod
+    def get_all():
+        return [i.to_client() for i in Technology.query.all()]
 
     def to_client(self):
         return {
-            'technology_name': self.technology_name,
+            'name': self.name,
             'foss': self.foss
         }
 
-    @staticmethod
-    def getAllTechnologies(fields):
-        for i in Technology.query.all():
-            return [i.to_client() for i in Technology.query.all()]
-
     def save(self):
-      db.session.add(self)
-      db.session.commit()
+        db.session.add(self)
+        db.session.commit()
+
 
 class TechnologyUsed(db.Model):
 
     __tablename__ = 'technologies_used'
 
     id = db.Column(db.Integer, primary_key=True)
+
     lab_id = db.Column(db.Integer, db.ForeignKey('labs.id'))
+    lab = db.relationship('Lab')
+
     tech_id = db.Column(db.Integer, db.ForeignKey('technologies.id'))
-    technology_name = db.Column(db.String(100))
-    foss = db.Column(db.String(100))
+    technology = db.relationship('Technology')
+
+    server_side = db.Column(db.Boolean)
+    client_side = db.Column(db.Boolean)
+
+    def __init__(self, **kwargs):
+        super(TechnologyUsed, self).__init__(**kwargs)
+        self.server_side = True if self.server_side == "True" else False
+        self.client_side = True if self.client_side == "True" else False
