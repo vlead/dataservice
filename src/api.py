@@ -9,7 +9,7 @@ api = Blueprint('APIs', __name__)
 @api.route('/labs', methods=['GET', 'POST'])
 def labs():
     if request.method == 'GET':
-        fields = request.args.get('fields') or None
+        fields = request.args.getlist('fields') or None
         return json.dumps(Lab.get_all(fields))
 
     if request.method == 'POST':

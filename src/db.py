@@ -43,12 +43,14 @@ class Lab(db.Model):
     @staticmethod
     def get_all(fields=None):
 
-        print fields
+        labs = [i.to_client() for i in Lab.query.all()]
+        #print fields
         if not fields:
-            return [i.to_client() for i in Lab.query.all()]
+            #return [i.to_client() for i in Lab.query.all()]
+            return labs
 
-        labs = []  # all labs
-        for lab in Lab.query.all():
+        fmttd_labs = []  # all labs
+        for lab in labs:
             fmttd_lab = {}  # formatted lab
             for field in fields:
                 try:
@@ -56,8 +58,10 @@ class Lab(db.Model):
                 except KeyError:
                     raise Exception('Invalid field %s', field)
 
-                labs.append(fmttd_lab)
-        return labs
+                #print fmttd_lab
+                fmttd_labs.append(fmttd_lab)
+
+        return fmttd_labs
 
     def __init__(self, **kwargs):
         super(Lab, self).__init__(**kwargs)
