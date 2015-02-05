@@ -19,6 +19,34 @@ def labs():
             return jsonify(new_lab.to_client())
 
 
+#Get all the labs of a specific discipline
+@api.route('/labs/disciplines/<param>', methods =['GET'])
+def labs_by_discipline(param):
+    if request.method == 'GET':
+        try:
+            if param is None:
+                abort(404)
+            some = Discipline.query.filter_by(name=param).first()
+            labs = Lab.query.filter_by(discipline_id=some.id).all()
+            return json.dumps([i.to_client() for i in labs])
+        except AttributeError:
+            return "Enter valid discipline name."
+
+
+#Get all the labs of a specific institute
+@api.route('/labs/institutes/<param>', methods = ['GET'])
+def labs_by_institute(param):
+    if request.method == 'GET':
+        try:
+            if param is None:
+                abort(404)
+            some = Institute.query.filter_by(name=param).first()
+            labs = Lab.query.filter_by(institute_id=some.id).all()
+            return json.dumps([i.to_client() for i in labs])
+        except AttributeError:
+            return "Enter valid institute name."
+
+
 #Get all institutes
 @api.route('/institutes', methods=['GET', 'POST'])
 def institutes():
@@ -43,7 +71,6 @@ def disciplines():
             new_discipline = Discipline(**request.form.to_dict())
             new_discipline.save()
             return jsonify(new_discipline.to_client())
-
 
 #Get all Technologies
 @api.route('/technologies', methods=['GET', 'POST'])
@@ -81,3 +108,5 @@ def get_a_field(id, param):
         resp = {}
         resp[param] = field
         return jsonify(resp)
+
+
