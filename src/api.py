@@ -78,7 +78,7 @@ def update_instt_by_id(id):
           return jsonify(instt.to_client())
 
 #Get all Disciplines
-@api.route('/disciplines', methods=['GET', 'POST', 'PUT'])
+@api.route('/disciplines', methods=['GET', 'POST'])
 def disciplines():
     if request.method == 'GET':
         return json.dumps(Discipline.get_all())
