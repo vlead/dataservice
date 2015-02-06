@@ -66,9 +66,19 @@ def institutes():
             new_institute = Institute(**request.form.to_dict())
             new_institute.save()
             return jsonify(new_institute.to_client())
+#update institutes by ID
+@api.route('/institutes/<int:id>', methods=['PUT'])
+def update_instt_by_id(id):
+      if request.method == 'PUT':
+          instt = Institute.query.get(id)
+          for key in request.form.to_dict(): 
+              instt.__setattr__(key,request.form.to_dict()[key])
+          print instt.to_client()
+          instt.save()
+          return jsonify(instt.to_client())
 
 #Get all Disciplines
-@api.route('/disciplines', methods=['GET', 'POST'])
+@api.route('/disciplines', methods=['GET', 'POST', 'PUT'])
 def disciplines():
     if request.method == 'GET':
         return json.dumps(Discipline.get_all())
@@ -78,6 +88,17 @@ def disciplines():
             new_discipline = Discipline(**request.form.to_dict())
             new_discipline.save()
             return jsonify(new_discipline.to_client())
+#update Disciplines by ID
+@api.route('/disciplines/<int:id>', methods=['PUT'])
+def update_disc_by_id(id):
+    if request.method == 'PUT':
+        disc = Discipline.query.get(id)
+        for key in request.form.to_dict():
+            disc.__setattr__(key,request.form.to_dict()[key])
+        print disc.to_client()
+        disc.save()
+        return jsonify(disc.to_client())
+
 
 #Get all Technologies
 @api.route('/technologies', methods=['GET', 'POST'])
@@ -91,8 +112,21 @@ def technologies():
             new_technology.save()
             return jsonify(new_technology.to_client())
 
+#updating technologies by ID
+@api.route('/technologies/<int:id>', methods=['PUT'])
+def update_tech_by_id(id):
+    if request.method == 'PUT':
+      tech = Technology.query.get(id)
+      jsonify(request.form.to_dict())
+      for key in request.form.to_dict():
+          tech.__setattr__(key,request.form.to_dict()[key])
+      print tech.to_client()
+      tech.save()
+      return jsonify(tech.to_client())
+                                                                                                  
+
 #Get a specific lab
-@api.route('/labs/<int:id>', methods=['GET'])
+@api.route('/labs/<int:id>', methods=['GET','PUT'])
 def get_lab_by_id(id):
     if request.method == 'GET':
         lab = Lab.query.get(id)
@@ -101,8 +135,17 @@ def get_lab_by_id(id):
 
         return jsonify(lab.to_client())
 
+    if request.method == 'PUT':
+      lab = Lab.query.get(id)
+      jsonify(request.form.to_dict())
+      for key in request.form.to_dict():
+          lab.__setattr__(key, request.form.to_dict()[key])
+      print lab.to_client()
+      lab.save()
+      return jsonify(lab.to_client())
+
 #Get a parameter of a specific lab
-@api.route('/labs/<int:id>/<param>', methods=['GET'])
+@api.route('/labs/<int:id>/<param>', methods=['GET','POST'])
 def get_a_field(id, param):
     if request.method == 'GET':
         lab = Lab.query.get(id)
