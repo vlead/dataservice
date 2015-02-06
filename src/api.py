@@ -17,6 +17,44 @@ def labs():
             new_lab.save()
             return jsonify(new_lab.to_client())
 
+#Get all the labs of a specific discipline
+@api.route('/labs/disciplines/<disc_name>', methods =['GET'])
+def labs_by_discipline(disc_name):
+    if request.method == 'GET':
+        try:
+            if disc_name is None:
+                abort(404)
+            field = Discipline.query.filter_by(name=disc_name).first()
+            labs = Lab.query.filter_by(discipline_id=field.id).all()
+            return json.dumps([i.to_client() for i in labs])
+        except AttributeError:
+            return "Enter valid discipline name."
+
+#Get all the labs of a specific institute
+@api.route('/labs/institutes/<inst_name>', methods = ['GET'])
+def labs_by_institute(inst_name):
+    if request.method == 'GET':
+        try:
+            if inst_name is None:
+                abort(404)
+            field = Institute.query.filter_by(name=inst_name).first()
+            labs = Lab.query.filter_by(institute_id=field.id).all()
+            return json.dumps([i.to_client() for i in labs])
+        except AttributeError:
+            return "Enter valid institute name."
+
+#Get all the labs of all disciplines of a specific institute
+@api.route('/labs/institutes/<inst_name>/disciplines/<disc_name>', methods = ['GET'])
+def lab_by_disc(inst_name, disc_name):
+    if request.method == 'GET':
+        if inst_name is None:
+            abort(404)
+        disc = Discipline.query.filter_by(name=disc_name).first()
+        instt = Institute.query.filter_by(name=inst_name).first()
+        labs = Lab.query.filter_by(institute_id=instt.id,
+                                   discipline_id=disc.id).all()
+        return json.dumps([i.to_client() for i in labs])
+
 #Get all institutes
 @api.route('/institutes', methods=['GET', 'POST'])
 def institutes():
@@ -29,7 +67,6 @@ def institutes():
             new_institute.save()
             return jsonify(new_institute.to_client())
 
-
 #Get all Disciplines
 @api.route('/disciplines', methods=['GET', 'POST'])
 def disciplines():
@@ -41,7 +78,6 @@ def disciplines():
             new_discipline = Discipline(**request.form.to_dict())
             new_discipline.save()
             return jsonify(new_discipline.to_client())
-
 
 #Get all Technologies
 @api.route('/technologies', methods=['GET', 'POST'])
@@ -67,7 +103,6 @@ def developers():
             new_technology.save()
             return jsonify(new_technology.to_client())
 
-
 #Get a specific lab
 @api.route('/labs/<int:id>', methods=['GET'])
 def get_lab_by_id(id):
@@ -77,7 +112,6 @@ def get_lab_by_id(id):
             abort(404)
 
         return jsonify(lab.to_client())
-
 
 #Get a parameter of a specific lab
 @api.route('/labs/<int:id>/<param>', methods=['GET'])
@@ -104,3 +138,4 @@ def search():
              abort(404)
          #lab.save()
          return json.dumps([lab.to_client() for lab in labs])
+
