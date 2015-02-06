@@ -45,7 +45,7 @@ def labs_by_institute(inst_name):
 
 #Get all the labs of all disciplines of a specific institute
 @api.route('/labs/institutes/<inst_name>/disciplines/<disc_name>', methods = ['GET'])
-def lab_by_disc(inst_name, disc_name):
+def labs_by_disc(inst_name, disc_name):
     if request.method == 'GET':
         if inst_name is None:
             abort(404)
@@ -54,6 +54,19 @@ def lab_by_disc(inst_name, disc_name):
         labs = Lab.query.filter_by(institute_id=instt.id,
                                    discipline_id=disc.id).all()
         return json.dumps([i.to_client() for i in labs])
+
+#Get all the developer of a specific institute
+@api.route('/institutes/<inst_name>/developers', methods = ['GET'])
+def dev_by_inst(inst_name):
+    try:
+        if request.method == 'GET':
+            if inst_name is None:
+                abort(404)
+            instt = Institute.query.filter_by(name=inst_name).first()
+            devlopers = Developer.query.filter_by(institute_id=instt.id).all()
+            return json.dumps([i.to_client() for i in devlopers])
+    except AttributeError:
+        return "Please enter valid institute name"
 
 #Get all institutes
 @api.route('/institutes', methods=['GET', 'POST'])

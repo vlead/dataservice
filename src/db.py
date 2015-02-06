@@ -189,6 +189,12 @@ class Developer(db.Model):
         db.session.add(self)
         db.session.commit()
 
+    def to_client(self):
+      return {
+        'id': self.id,
+        'email_id': self.email_id,
+        'name':self.name
+      }
 
 class DeveloperEngaged(db.Model):
 
