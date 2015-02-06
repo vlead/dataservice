@@ -125,6 +125,19 @@ def developers():
             new_technology.save()
             return jsonify(new_technology.to_client())
 
+
+#updating Developers by ID
+@api.route('/developers/<int:id>', methods=['PUT'])
+def update_develop_by_id(id):
+   if request.method == 'PUT':
+        develop = Developer.query.get(id)
+        jsonify(request.form.to_dict())
+        for key in request.form.to_dict():
+            develop.__setattr__(key,request.form.to_dict()[key])
+        print develop.to_client()
+        develop.save()
+        return jsonify(develop.to_client())
+
 #updating technologies by ID
 @api.route('/technologies/<int:id>', methods=['PUT'])
 def update_tech_by_id(id):
