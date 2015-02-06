@@ -97,7 +97,7 @@ class Lab(db.Model):
                 'dnc': self.discipline.dnc
             },
             'repo_url': self.repo_url,
-            'hosted_url': self.hosted_url,
+            'hosted_url': self.hostedn_url,
             'number_of_experiments': self.number_of_experiments,
             'integration_level': self.integration_level,
             'type_of_lab': self.type_of_lab,
@@ -173,7 +173,7 @@ class Developer(db.Model):
     institute_id = db.Column(db.Integer, db.ForeignKey('institutes.id'))
     institute = db.relationship('Institute')
 
-    def to_client(self):
+  def to_client(self):
      return {
             'email_id': self.email_id,
             'name': self.name,

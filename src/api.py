@@ -1,9 +1,8 @@
 from flask import Blueprint, request, jsonify, json, abort
-from db import Lab, Institute, Discipline, Technology
+from db import Lab, Institute, Discipline, Technology, Developer
 
 
 api = Blueprint('APIs', __name__)
-
 
 #Get all labs
 @api.route('/labs', methods=['GET', 'POST'])
@@ -17,7 +16,6 @@ def labs():
             new_lab = Lab(**request.form.to_dict())
             new_lab.save()
             return jsonify(new_lab.to_client())
-
 
 #Get all institutes
 @api.route('/institutes', methods=['GET', 'POST'])
@@ -57,6 +55,18 @@ def technologies():
             new_technology.save()
             return jsonify(new_technology.to_client())
 
+#Get all Developers
+@api.route('/developers', methods=['GET', 'POST'])
+def developers():
+    if request.method == 'GET':        
+        return json.dumps(Developer.get_all())
+
+    if request.method == 'POST':
+        if request.form:
+            new_technology = Developer(**request.form.to_dict())
+            new_technology.save()
+            return jsonify(new_technology.to_client())
+
 
 #Get a specific lab
 @api.route('/labs/<int:id>', methods=['GET'])
@@ -81,3 +91,16 @@ def get_a_field(id, param):
         resp = {}
         resp[param] = field
         return jsonify(resp)
+
+@api.route('/search', methods=['GET'])
+def search():
+    if request.method == 'GET':
+         args = {}
+         args = request.args.to_dict()
+         print args
+         #lab = Lab.query.filter_by(lab_id=args['lab_id'],institute_id="10").first()
+         labs = Lab.query.filter_by(**args).all()
+         if labs is None:
+             abort(404)
+         #lab.save()
+         return json.dumps([lab.to_client() for lab in labs])

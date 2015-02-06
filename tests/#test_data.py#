@@ -1,7 +1,7 @@
 data = {
-    "lab_id": "ece04",
-    "name": "electronics",
-    "slug": "ec",
+    "lab_id": "civil",
+    "name": "mechanics",
+    "slug": "civ",
     "institute_id": 10,
     "discipline_id": 1,
     "repo_url": "https://bitbucket.org/virtual-labs/cse01-ds_new",
