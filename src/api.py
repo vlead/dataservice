@@ -195,6 +195,7 @@ def get_a_field(id, param):
         resp[param] = field
         return jsonify(resp)
 
+#Get labs info by searching with any of its parameters
 @api.route('/search', methods=['GET'])
 def search():
     if request.method == 'GET':
@@ -207,6 +208,8 @@ def search():
              abort(404)
          #lab.save()
          return json.dumps([lab.to_client() for lab in labs])
+
+
 @api.route('/labs/<int:lab_id>/experiments/<int:id>', methods=['PUT'])
 def update_exp_by_id(lab_id,id):
     if request.method == 'PUT':
@@ -220,3 +223,17 @@ def update_exp_by_id(lab_id,id):
         exp.save()
         return jsonify(exp.to_client())
 
+
+
+#Get all the experiments of a specific lab
+@api.route('/labs/<int:id>/experiments', methods=['GET'])
+def get_all_experiments(id):
+    if request.method == 'GET':
+        try:
+            if id is None:
+                abort(404)
+            lab = Lab.query.get(id)
+            experiments = Experiment.query.filter_by(lab_id=lab.id).all()
+            return json.dumps([i.to_client() for i in experiments])
+        except AttributeError:
+           return "Enter valid lab id"
