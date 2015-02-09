@@ -210,8 +210,8 @@ def search():
          return json.dumps([lab.to_client() for lab in labs])
 
 
-@api.route('/labs/<int:lab_id>/experiments/<int:id>', methods=['PUT'])
-def update_exp_by_id(lab_id,id):
+@api.route('/experiments/<int:id>', methods=['PUT'])
+def update_exp_by_id(id):
     if request.method == 'PUT':
         exp = Experiment.query.get(id)
         #print json.dumps(request.form.to_dict())
