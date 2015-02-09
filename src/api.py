@@ -226,7 +226,8 @@ def update_exp_by_id(lab_id,id):
 
 
 #Get all the experiments of a specific lab
-@api.route('/labs/<int:id>/experiments', methods=['GET'])
+#Post all the experiments of a specific lab
+@api.route('/labs/<int:id>/experiments', methods=['GET', 'POST'])
 def get_all_experiments(id):
     if request.method == 'GET':
         try:
@@ -237,3 +238,21 @@ def get_all_experiments(id):
             return json.dumps([i.to_client() for i in experiments])
         except AttributeError:
            return "Enter valid lab id"
+   
+    if request.method == 'POST':
+        
+            if id is None:
+                abort(404)         
+            try :    
+                lab = Lab.query.get(id)            
+                if int(lab.id) is int(id):
+                    new_experiment = Experiment(**request.form.to_dict())
+                    new_experiment.save()
+                    return jsonify(new_experiment.to_client())
+            
+            except AttributeError:
+                
+                return "Enter valid lab_id"
+   
+ 
+    
