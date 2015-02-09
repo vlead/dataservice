@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, json, abort
-from db import Lab, Institute, Discipline, Technology, Developer
+from db import Lab, Institute, Discipline, Technology, Developer, Experiment
 
 
 api = Blueprint('APIs', __name__)
@@ -207,6 +207,16 @@ def search():
              abort(404)
          #lab.save()
          return json.dumps([lab.to_client() for lab in labs])
+@api.route('/labs/<int:lab_id>/experiments/<int:id>', methods=['PUT'])
+def update_exp_by_id(lab_id,id):
+    if request.method == 'PUT':
+        exp = Experiment.query.get(id)
+        #print json.dumps(request.form.to_dict())
+        #return 'asdf'
 
-
+        for key in request.form.to_dict(): 
+            exp.__setattr__(key, request.form.to_dict()[key])
+        print exp.to_client()
+        exp.save()
+        return jsonify(exp.to_client())
 

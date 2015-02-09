@@ -268,3 +268,18 @@ class Experiment(db.Model):
   name = db.Column(db.String(64))
   content_url = db.Column(db.String(150))
   simulation_url = db.Column(db.String(150))
+
+  def to_client(self):
+          return {
+                        'id': self.id,
+                        'name':self.name,
+                        'content_url':self.content_url,
+                        'simulation_url':self.simulation_url,
+                        'lab': {
+                                          'id': self.lab.id,
+                               }
+                }
+  def save(self):
+            db.session.add(self)
+            db.session.commit()
+
