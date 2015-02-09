@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, json, abort
-from db import Lab, Institute, Discipline, Technology, Developer
+from db import Lab, Institute, Discipline, Technology, Developer, Experiment
 
 
 api = Blueprint('APIs', __name__)
@@ -195,6 +195,7 @@ def get_a_field(id, param):
         resp[param] = field
         return jsonify(resp)
 
+#Get labs info by searching with any of its parameters
 @api.route('/search', methods=['GET'])
 def search():
     if request.method == 'GET':
@@ -209,4 +210,15 @@ def search():
          return json.dumps([lab.to_client() for lab in labs])
 
 
-
+#Get all the experiments of a specific lab
+@api.route('/labs/<int:id>/experiments', methods=['GET'])
+def get_all_experiments(id):
+    if request.method == 'GET':
+        try:
+            if id is None:
+                abort(404)
+            lab = Lab.query.get(id)
+            experiments = Experiment.query.filter_by(lab_id=lab.id).all()
+            return json.dumps([i.to_client() for i in experiments])
+        except AttributeError:
+           return "Enter valid lab id"
