@@ -255,3 +255,16 @@ class TechnologyUsed(db.Model):
         super(TechnologyUsed, self).__init__(**kwargs)
         self.server_side = True if self.server_side == "True" else False
         self.client_side = True if self.client_side == "True" else False
+
+class Experiment(db.Model):
+
+  __tablename__ = 'experiments'
+
+  id = db.Column(db.Integer, primary_key=True)
+
+  lab_id = db.Column(db.Integer, db.ForeignKey('labs.id'))
+  lab = db.relationship('Lab')
+
+  name = db.Column(db.String(64))
+  content_url = db.Column(db.String(150))
+  simulation_url = db.Column(db.String(150))
