@@ -238,7 +238,7 @@ def get_all_experiments(id):
 
 
 #Post all the experiments of a specific lab
-@api.route('/labs/experiments', methods=['POST'])
+@api.route('/experiments', methods=['POST'])
 
 def post_exp():
    
