@@ -46,14 +46,17 @@ def labs_by_institute(inst_name):
 #Get all the labs of all disciplines of a specific institute
 @api.route('/labs/institutes/<inst_name>/disciplines/<disc_name>', methods = ['GET'])
 def labs_by_disc(inst_name, disc_name):
-    if request.method == 'GET':
-        if inst_name is None:
-            abort(404)
-        disc = Discipline.query.filter_by(name=disc_name).first()
-        instt = Institute.query.filter_by(name=inst_name).first()
-        labs = Lab.query.filter_by(institute_id=instt.id,
+    try:
+        if request.method == 'GET':
+            if inst_name is None:
+                abort(404)
+            disc = Discipline.query.filter_by(name=disc_name).first()
+            instt = Institute.query.filter_by(name=inst_name).first()
+            labs = Lab.query.filter_by(institute_id=instt.id,
                                    discipline_id=disc.id).all()
-        return json.dumps([i.to_client() for i in labs])
+            return json.dumps([i.to_client() for i in labs])
+    except AttributeError:
+        return "Please enter valid search"
 
 #Get all the developer of a specific institute
 @api.route('/institutes/<inst_name>/developers', methods = ['GET'])
@@ -79,6 +82,8 @@ def institutes():
             new_institute = Institute(**request.form.to_dict())
             new_institute.save()
             return jsonify(new_institute.to_client())
+
+
 #update institutes by ID
 @api.route('/institutes/<int:id>', methods=['PUT'])
 def update_instt_by_id(id):
@@ -170,9 +175,8 @@ def get_lab_by_id(id):
         lab = Lab.query.get(id)
         if lab is None:
             abort(404)
-
         return jsonify(lab.to_client())
-
+    
     if request.method == 'PUT':
       lab = Lab.query.get(id)
       jsonify(request.form.to_dict())
@@ -185,15 +189,19 @@ def get_lab_by_id(id):
 #Get a parameter of a specific lab
 @api.route('/labs/<int:id>/<param>', methods=['GET','POST'])
 def get_a_field(id, param):
-    if request.method == 'GET':
-        lab = Lab.query.get(id)
-        if param is None:
-            abort(404)
-        field = lab.to_client()[param]
-        print field
-        resp = {}
-        resp[param] = field
-        return jsonify(resp)
+    try:
+        if request.method == 'GET':
+            lab = Lab.query.get(id)
+            if param is None:
+                abort(404)
+            field = lab.to_client()[param]
+            print field
+            resp = {}
+            resp[param] = field
+            return jsonify(resp)
+    except KeyError, AttributeError:
+        return "Please enter valid attribute"
+
 
 #Get labs info by searching with any of its parameters
 @api.route('/search', methods=['GET'])
