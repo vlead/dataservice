@@ -78,7 +78,7 @@ class Lab(db.Model):
                 'name': self.institute.name,
                 'coordinator': self.institute.coordinator,
                 'integration_coordinator':
-                    self.institute.integration_coordinator
+                self.institute.integration_coordinator
             },
             'discipline': {
                 'id': self.discipline.id,
@@ -162,9 +162,27 @@ class Developer(db.Model):
     institute_id = db.Column(db.Integer, db.ForeignKey('institutes.id'))
     institute = db.relationship('Institute')
 
+    def to_client(self):
+        return {
+            'email_id': self.email_id,
+            'name': self.name,
+            'institute_id': self.institute_id
+        }
+
+    @staticmethod
+    def get_all():
+        return [i.to_client() for i in Developer.query.all()]
+
     def save(self):
         db.session.add(self)
         db.session.commit()
+
+    def to_client(self):
+        return {
+            'id': self.id,
+            'email_id': self.email_id,
+            'name': self.name
+        }
 
 
 class DeveloperEngaged(db.Model):
@@ -221,6 +239,35 @@ class TechnologyUsed(db.Model):
 
     server_side = db.Column(db.Boolean)
     client_side = db.Column(db.Boolean)
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+
+class Experiment(db.Model):
+
+    __tablename__ = 'experiments'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    lab_id = db.Column(db.Integer, db.ForeignKey('labs.id'))
+    lab = db.relationship('Lab')
+
+    name = db.Column(db.String(64))
+    content_url = db.Column(db.String(150))
+    simulation_url = db.Column(db.String(150))
+
+    def to_client(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'content_url': self.content_url,
+            'simulation_url': self.simulation_url,
+            'lab': {
+                'id': self.lab.id,
+            }
+        }
 
     def save(self):
         db.session.add(self)
