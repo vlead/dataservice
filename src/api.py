@@ -1,6 +1,9 @@
+# -*- coding: utf-8 -*-
+
 from flask import Blueprint, request, jsonify, json, abort
 from db import Lab, Institute, Discipline, Technology
 
+from utils import parse_request
 
 api = Blueprint('APIs', __name__)
 
@@ -13,13 +16,18 @@ def labs():
         return json.dumps(Lab.get_all(fields))
 
     if request.method == 'POST':
-        if request.form:
-            new_lab = Lab(**request.form.to_dict())
-            new_lab.save()
-            return jsonify(new_lab.to_client())
+        data = parse_request(request)
+        print data
+        if not data:
+          abort(400, 'Your data should be in JSON format')
+
+        new_lab = Lab(**data)
+        print new_lab
+        new_lab.save()
+        return jsonify(new_lab.to_client())
 
 
-#Get all institutes
+# Get all institutes
 @api.route('/institutes', methods=['GET', 'POST'])
 def institutes():
     if request.method == 'GET':
@@ -32,7 +40,7 @@ def institutes():
             return jsonify(new_institute.to_client())
 
 
-#Get all Disciplines
+# Get all Disciplines
 @api.route('/disciplines', methods=['GET', 'POST'])
 def disciplines():
     if request.method == 'GET':
@@ -45,7 +53,7 @@ def disciplines():
             return jsonify(new_discipline.to_client())
 
 
-#Get all Technologies
+# Get all Technologies
 @api.route('/technologies', methods=['GET', 'POST'])
 def technologies():
     if request.method == 'GET':
@@ -58,7 +66,7 @@ def technologies():
             return jsonify(new_technology.to_client())
 
 
-#Get a specific lab
+# Get a specific lab
 @api.route('/labs/<int:id>', methods=['GET'])
 def get_lab_by_id(id):
     if request.method == 'GET':

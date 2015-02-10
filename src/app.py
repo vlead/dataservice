@@ -8,7 +8,7 @@ from api import api
 import config
 
 
-def create_app():
+def create_app(config):
     # init our app
     app = Flask(__name__)
 
@@ -27,5 +27,5 @@ def create_app():
 
 
 if __name__ == "__main__":
-    app = create_app()
+    app = create_app(config)
     app.run(debug=True)

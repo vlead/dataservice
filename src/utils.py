@@ -1,0 +1,65 @@
+# module to hold all utilities/helper functions
+
+import json
+
+
+# take in a flask request object and try to parse out a dictionary from the
+# request
+# try to find if request is as JSON first, then look into forms, finally force
+# find it.
+# If not found return a dict; else return the parsed data
+def parse_request(request):
+    if request.json:
+        print 'found in request.json'
+        data = request.get_json()
+
+    elif request.data:
+        print 'found in request.data'
+        data = json.loads(request.data)
+
+    elif request.form:
+        print 'found in request.form'
+        data = request.form.to_dict()
+        # try to detect if form contains integers and boolean data and attempt
+        # to convert them
+        # FIXME: is this a good idea? Fix this to do it in a better way?
+        for k in data:
+            if is_number(data[k]):
+                data[k] = int(data[k])
+            if is_bool_in_str(data[k]):
+                data[k] = str_to_bool(data[k])
+
+            print k, data[k]
+
+    else:
+        data = request.get_json(force=True)
+
+    if not data:
+        return False
+
+    return data
+
+
+# check if a given string is a number
+def is_number(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+
+
+# check if in a given string python bool types are represented
+def is_bool_in_str(s):
+    if s == "True" or s == "False":
+        return True
+    return False
+
+
+# convert python bool types in string to native bool types
+def str_to_bool(s):
+    if s == "True":
+        return True
+    if s == "False":
+        return False
+    return None
