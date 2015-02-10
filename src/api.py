@@ -187,7 +187,7 @@ def get_lab_by_id(id):
       return jsonify(lab.to_client())
 
 #Get a parameter of a specific lab
-@api.route('/labs/<int:id>/<param>', methods=['GET','POST'])
+@api.route('/labs/<int:id>/<param>', methods=['GET'])
 def get_a_field(id, param):
     try:
         if request.method == 'GET':
