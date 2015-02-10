@@ -218,7 +218,7 @@ def search():
          return json.dumps([lab.to_client() for lab in labs])
 
 
-@api.route('/experiments/<int:id>', methods=['PUT','POST'])
+@api.route('/experiments/<int:id>', methods=['PUT'])
 def update_exp_by_id(id):
     if request.method == 'PUT':
         exp = Experiment.query.get(id)
@@ -232,7 +232,7 @@ def update_exp_by_id(id):
         return jsonify(exp.to_client())
 
 #Get all the experiments of a specific lab
-@api.route('/labs/<int:id>/experiments', methods=['GET', 'POST'])
+@api.route('/labs/<int:id>/experiments', methods=['GET'])
 def get_all_experiments(id):
     if request.method == 'GET':
         try:
