@@ -34,8 +34,9 @@ def labs_by_discipline(disc_name):
         try:
             if disc_name is None:
                 abort(404)
-            field = Discipline.query.filter_by(name=disc_name).first()
-            labs = Lab.query.filter_by(discipline_id=field.id).all()
+
+            disc = Discipline.query.filter_by(name=disc_name).first()
+            labs = Lab.query.filter_by(discipline_id=disc.id).all()
             return json.dumps([i.to_client() for i in labs])
 
         except AttributeError:
@@ -232,7 +233,7 @@ def get_a_field(id, param):
 
 
 # Get labs info by searching with any of its parameters
-@api.route('/search', methods=['GET'])
+@api.route('/search/labs', methods=['GET'])
 def search():
     if request.method == 'GET':
         args = {}
