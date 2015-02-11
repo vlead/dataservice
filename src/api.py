@@ -37,6 +37,7 @@ def labs_by_discipline(disc_name):
             field = Discipline.query.filter_by(name=disc_name).first()
             labs = Lab.query.filter_by(discipline_id=field.id).all()
             return json.dumps([i.to_client() for i in labs])
+
         except AttributeError:
             return "Enter valid discipline name."
 
@@ -51,6 +52,7 @@ def labs_by_institute(inst_name):
             field = Institute.query.filter_by(name=inst_name).first()
             labs = Lab.query.filter_by(institute_id=field.id).all()
             return json.dumps([i.to_client() for i in labs])
+
         except AttributeError:
             return "Enter valid institute name."
 
@@ -68,6 +70,7 @@ def labs_by_disc(inst_name, disc_name):
             labs = Lab.query.filter_by(institute_id=instt.id,
                                        discipline_id=disc.id).all()
             return json.dumps([i.to_client() for i in labs])
+
     except AttributeError:
         return "Please enter valid search"
 
@@ -82,6 +85,7 @@ def dev_by_inst(inst_name):
             instt = Institute.query.filter_by(name=inst_name).first()
             devlopers = Developer.query.filter_by(institute_id=instt.id).all()
             return json.dumps([i.to_client() for i in devlopers])
+
     except AttributeError:
         return "Please enter valid institute name"
 
@@ -195,7 +199,8 @@ def get_lab_by_id(id):
         lab = Lab.query.get(id)
         if lab is None:
             abort(404)
-            return jsonify(lab.to_client())
+
+        return jsonify(lab.to_client())
 
     if request.method == 'PUT':
         lab = Lab.query.get(id)
@@ -215,12 +220,14 @@ def get_a_field(id, param):
             lab = Lab.query.get(id)
             if param is None:
                 abort(404)
-                field = lab.to_client()[param]
-                print field
-                resp = {}
-                resp[param] = field
-                return jsonify(resp)
-    except KeyError, AttributeError:
+
+            field = lab.to_client()[param]
+            print field
+            resp = {}
+            resp[param] = field
+            return jsonify(resp)
+
+    except (KeyError, AttributeError):
         return "Please enter valid attribute"
 
 
@@ -231,10 +238,25 @@ def search():
         args = {}
         args = request.args.to_dict()
         print args
+        if 'institute' in args:
+            args['institute_id'] = \
+                Institute.query.filter_by(name=args['institute']).first().id
+
+            del(args['institute'])
+
+        if 'discipline' in args:
+            args['discipline_id'] = \
+                Discipline.query.filter_by(name=args['discipline']).first().id
+
+            del(args['discipline'])
+        print args
+
         labs = Lab.query.filter_by(**args).all()
-        if labs is None:
-            abort(404)
-            return json.dumps([lab.to_client() for lab in labs])
+
+        if not len(labs):
+            abort(404, 'No labs found with your search query.')
+
+        return json.dumps([lab.to_client() for lab in labs])
 
 
 @api.route('/experiments/<int:id>', methods=['PUT'])
@@ -256,9 +278,11 @@ def get_all_experiments(id):
         try:
             if id is None:
                 abort(404)
-                lab = Lab.query.get(id)
-                experiments = Experiment.query.filter_by(lab_id=lab.id).all()
-                return json.dumps([i.to_client() for i in experiments])
+
+            lab = Lab.query.get(id)
+            experiments = Experiment.query.filter_by(lab_id=lab.id).all()
+            return json.dumps([i.to_client() for i in experiments])
+
         except AttributeError:
             return "Enter valid lab id"
 

@@ -164,6 +164,7 @@ class Developer(db.Model):
 
     def to_client(self):
         return {
+            'id': self.id,
             'email_id': self.email_id,
             'name': self.name,
             'institute_id': self.institute_id
@@ -176,13 +177,6 @@ class Developer(db.Model):
     def save(self):
         db.session.add(self)
         db.session.commit()
-
-    def to_client(self):
-        return {
-            'id': self.id,
-            'email_id': self.email_id,
-            'name': self.name
-        }
 
 
 class DeveloperEngaged(db.Model):
