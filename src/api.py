@@ -27,6 +27,7 @@ def labs_by_discipline(disc_name):
             field = Discipline.query.filter_by(name=disc_name).first()
             labs = Lab.query.filter_by(discipline_id=field.id).all()
             return json.dumps([i.to_client() for i in labs])
+
         except AttributeError:
             return "Enter valid discipline name."
 
@@ -40,6 +41,7 @@ def labs_by_institute(inst_name):
             field = Institute.query.filter_by(name=inst_name).first()
             labs = Lab.query.filter_by(institute_id=field.id).all()
             return json.dumps([i.to_client() for i in labs])
+
         except AttributeError:
             return "Enter valid institute name."
 
@@ -55,6 +57,7 @@ def labs_by_disc(inst_name, disc_name):
             labs = Lab.query.filter_by(institute_id=instt.id,
                                    discipline_id=disc.id).all()
             return json.dumps([i.to_client() for i in labs])
+
     except AttributeError:
         return "Please enter valid search"
 
@@ -68,6 +71,7 @@ def dev_by_inst(inst_name):
             instt = Institute.query.filter_by(name=inst_name).first()
             devlopers = Developer.query.filter_by(institute_id=instt.id).all()
             return json.dumps([i.to_client() for i in devlopers])
+
     except AttributeError:
         return "Please enter valid institute name"
 
@@ -106,6 +110,7 @@ def disciplines():
             new_discipline = Discipline(**request.form.to_dict())
             new_discipline.save()
             return jsonify(new_discipline.to_client())
+
 #update Disciplines by ID
 @api.route('/disciplines/<int:id>', methods=['PUT'])
 def update_disc_by_id(id):
@@ -199,6 +204,7 @@ def get_a_field(id, param):
             resp = {}
             resp[param] = field
             return jsonify(resp)
+
     except KeyError, AttributeError:
         return "Please enter valid attribute"
 
@@ -214,7 +220,6 @@ def search():
          labs = Lab.query.filter_by(**args).all()
          if labs is None:
              abort(404)
-         #lab.save()
          return json.dumps([lab.to_client() for lab in labs])
 
 
@@ -222,8 +227,6 @@ def search():
 def update_exp_by_id(id):
     if request.method == 'PUT':
         exp = Experiment.query.get(id)
-        #print json.dumps(request.form.to_dict())
-        #return 'asdf'
 
         for key in request.form.to_dict(): 
             exp.__setattr__(key, request.form.to_dict()[key])
@@ -241,6 +244,7 @@ def get_all_experiments(id):
             lab = Lab.query.get(id)
             experiments = Experiment.query.filter_by(lab_id=lab.id).all()
             return json.dumps([i.to_client() for i in experiments])
+
         except AttributeError:
            return "Enter valid lab id"
 
