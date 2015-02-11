@@ -28,6 +28,7 @@ def labs():
 
 
 # Get all the labs of a specific discipline
+@api.route('/disciplines/<disc_name>/labs', methods=['GET'])
 @api.route('/labs/disciplines/<disc_name>', methods=['GET'])
 def labs_by_discipline(disc_name):
     if request.method == 'GET':
@@ -44,6 +45,7 @@ def labs_by_discipline(disc_name):
 
 
 # Get all the labs of a specific institute
+@api.route('/institutes/<inst_name>/labs', methods=['GET'])
 @api.route('/labs/institutes/<inst_name>', methods=['GET'])
 def labs_by_institute(inst_name):
     if request.method == 'GET':
