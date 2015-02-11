@@ -62,8 +62,13 @@ def populate_disc():
     for row in result:
         print 'id', 'name', 'dnc'
         print row[0], row[1], row[2]
-        disc = Discipline(name=row[1].strip(),
-                          dnc=row[2].strip())
+        name = row[1].strip()
+        dnc = row[2].strip()
+
+        if dnc == "Unknown":
+            dnc = None
+        disc = Discipline(name=name,
+                          dnc=dnc)
         print disc
         disc.save()
 
