@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 
 from src.app import create_app
 from src.db import Technology, TechnologyUsed, Institute, Discipline,\
-    Developer, Lab, DeveloperEngaged
+    Developer, Lab, DeveloperEngaged, Experiment
 
 from src import config
 
@@ -17,6 +17,7 @@ app = create_app(config)
 
 
 def populate_tech():
+    print "Populating technologies table.."
 
     result = conn.execute('select * from technologies')
     for row in result:
@@ -32,9 +33,12 @@ def populate_tech():
         new_tech = Technology(name=name, foss=foss)
         print new_tech.name, new_tech.foss
         new_tech.save()
+    print "Done saving technologies.."
 
 
 def populate_instt():
+    print "Populating institutes table.."
+
     result = conn.execute('select * from institutes')
     for row in result:
         print 'id', 'name', 'coordinator', 'integration_coordinator'
@@ -48,9 +52,12 @@ def populate_instt():
                           integration_coordinator=iic)
         print instt
         instt.save()
+    print "Done saving institutes.."
 
 
 def populate_disc():
+    print "Populating disciplines table.."
+
     result = conn.execute('select * from disciplines')
     for row in result:
         print 'id', 'name', 'dnc'
@@ -60,8 +67,12 @@ def populate_disc():
         print disc
         disc.save()
 
+    print "Done saving disciplines.."
+
 
 def populate_devs():
+    print "Populating developers table.."
+
     result = conn.execute('select * from developers')
     for row in result:
         if row[0] == "not known":
@@ -82,8 +93,12 @@ def populate_devs():
         print dev
         dev.save()
 
+    print "Done saving developers.."
+
 
 def populate_labs():
+    print "Populating labs table.."
+
     result = conn.execute('select * from labs')
     for row in result:
         id = row[0]
@@ -308,8 +323,12 @@ def populate_labs():
             print e
             raw_input('encountered exception. halted. press key to resume..')
 
+    print "Done saving labs.."
+
 
 def populate_tech_used():
+    print "Populating technologies_used table.."
+
     result = conn.execute('select * from technologies_used')
     for row in result:
         print 'id', 'lab_id', 'tech_id', 'server_side', 'client_side'
@@ -342,8 +361,11 @@ def populate_tech_used():
         # not working fails on some cur_lab.id
         tech_used.save()
 
+    print "Done saving technologies_used.."
+
 
 def populate_dev_engaged():
+    print "Populating developers_engaged table.."
     result = conn.execute('select * from developers_engaged')
     for row in result:
         print 'id', 'lab id', 'dev email'
@@ -366,8 +388,12 @@ def populate_dev_engaged():
         print dev_engaged
         dev_engaged.save()
 
+    print "Done saving developers_engaged.."
+
 
 def populate_exps():
+    print "Populating experiments table.."
+
     result = conn.execute('select * from experiments')
     for row in result:
         print 'lab_id', 'id', 'name', 'content_url', 'simulation_url'
@@ -388,15 +414,19 @@ def populate_exps():
                          name=row[2].strip(),
                          content_url=row[3].strip(),
                          simulation_url=simu_url)
+        print exp
+        exp.save()
+
+    print "Done saving experiments.."
 
 
-#populate_tech()
-#populate_instt()
-#populate_disc()
-#populate_devs()
-#populate_labs()
-#populate_tech_used()
-#populate_dev_engaged()
+populate_tech()
+populate_instt()
+populate_disc()
+populate_devs()
+populate_labs()
+populate_tech_used()
+populate_dev_engaged()
 populate_exps()
 
 conn.close()

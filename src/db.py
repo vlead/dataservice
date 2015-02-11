@@ -254,9 +254,10 @@ class Experiment(db.Model):
     lab_id = db.Column(db.Integer, db.ForeignKey('labs.id'))
     lab = db.relationship('Lab')
 
-    name = db.Column(db.String(64))
-    content_url = db.Column(db.String(150))
-    simulation_url = db.Column(db.String(150))
+    # Our data set has really, really long experiment names and URLs!!
+    name = db.Column(db.String(256))
+    content_url = db.Column(db.String(256))
+    simulation_url = db.Column(db.String(256))
 
     def to_client(self):
         return {
