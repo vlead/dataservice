@@ -1,0 +1,47 @@
+#+TITLE:     2015-02-12-Lab-spec-structure-discussion
+#+AUTHOR:    khushpreet and data service team
+#+EMAIL:     khushpreet@vlabs.ac.in
+#+DATE:      <2015-02-12 Thur>
+
+* Changes to do in current database
+1) =is_simulation= should be =is_simulation_avail= in the =labs= table.
+2) Status in database should be =is_hosted= and values
+   should be boolean.
+3) Status would be there and it will be used by ADS during
+   deployment. 
+4) In the new db, remove =is_src_avail=, =is_cont= and =is_simulation=.
+5) Need not to migrate the older remarks data from older database.
+6) In =institute table=, column name: =coordinator= should be named as =PIC= and =integration_coord=
+  should be =IIC=.
+7) Process should be defined for the new entries in db for
+   discipline, institute.
+
+* In form: 
+1) For Technology, add drop down as well as "Add new technology" button
+   to add new entry in drop down.
+2) For Developer, no drop down for =name= and =email_id= but
+   =institute_name= should have a drop down.
+
+* Changes to do in Old Lab spec
+
+1) Developer: Keep =name=, =email_id=, =institute=,  remove rest of the
+   information.
+2) Institute : Keep Id and name
+3) Developer: Keep =name=, =email_id=, =institute=, remove rest of the
+   information.
+4) Discipline: keep =id= and =name= and remove rest of the information.
+3) Remove ID, status and server side from lab spec.
+
+* New Lab Spec structure:
+
+name
+slug
+Discipline: {id, name}
+Developer: {name, email_id, institute_name}
+repo_url 
+Integration_level (Drop Down)
+Is_phase2 labs (Drop Down)
+is web_compliant (Drop Down)
+number of experiments
+type of lab (Drop down)
+Technologies (Drop Down + Add new button)
