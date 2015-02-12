@@ -7,8 +7,8 @@ import json
 # from src import api
 from src.db import db
 from src.app import create_app
-from src.db import Lab, Institute, Discipline
-from test_data import lab_data, instt_data, disc_data
+from src.db import Lab, Institute, Discipline, Technology
+from test_data import lab_data, instt_data, disc_data, tech_data
 
 
 class MyTest(TestCase):
@@ -68,6 +68,35 @@ class MyTest(TestCase):
         r = self.client.get('/labs/999')
         self.assert_404(r)
 
+    def test_get_all_institutes(self):
+        print "test_get_all_institutes()"
+        # insert the institute test data
+        new_instt = Institute(**instt_data)
+        new_instt.save()
+        # make request
+        r = self.client.get('/institutes')
+         # response is in string, load as a python dict
+        resp = json.loads(r.data)
+        # assert if length of retrieved institutes is equal to inserted data
+        self.assertEqual(len(resp), 1)
+        # assert if name attr of test data is same as retrieved data
+        self.assertEqual(instt_data['name'], resp[0]['name'])
+
+    def test_get_all_technologoes(self):
+        print "test_get_all_technologies()"
+        # insert the technologies test data
+        new_technology = Technology(**tech_data)
+        new_technology.save()
+        # make request
+        r = self.client.get('/technologies')
+        # response is in string, load as a python dict
+        resp = json.loads(r.data)
+        print resp
+        # assert if length of retrieved technologies is equal to inserted data
+        self.assertEqual(len(resp), 1)
+        # assert if name attr of test data is same as retrieved data
+        self.assertEqual(tech_data['name'], resp[0]['name'])
+ 
 
 if __name__ == '__main__':
     unittest.main()

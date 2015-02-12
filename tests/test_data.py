@@ -30,3 +30,9 @@ disc_data = {
     "name": "CSE",
     "dnc": "Some big guy"
 }
+
+tech_data = {
+    "name": "java",
+    "foss": 1
+
+}
