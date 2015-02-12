@@ -34,5 +34,10 @@ disc_data = {
 tech_data = {
     "name": "java",
     "foss": 1
+}
 
+dev_data = {
+    "email_id" : "foo@gmail.com",
+    "name" : "foo",
+    "institute_id" : 1
 }
