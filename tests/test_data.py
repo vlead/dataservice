@@ -47,11 +47,6 @@ exp_data = {
     "name" : "String Matching",
     "content_url" : "some url", 
     "simulation_url" : "some other url"
-
-develop_data = {
-    "name":"sripathi",
-    "email_id":"ram@gmail.com",
-    "institute_id":1
 }
 tech_data = {
   "name":"php5"
