@@ -30,3 +30,9 @@ disc_data = {
     "name": "CSE",
     "dnc": "Some big guy"
 }
+
+dev_data = {
+    "email_id" : "foo@gmail.com",
+    "name" : "foo",
+    "institute_id" : 1
+}
