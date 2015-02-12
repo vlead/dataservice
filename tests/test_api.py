@@ -9,7 +9,8 @@ import json
 from src.db import db
 from src.app import create_app
 from src.db import Lab, Institute, Discipline, Technology, Developer, Experiment
-from test_data import lab_data, instt_data, disc_data,tech_data, dev_data, exp_data, update_instt, update_disc, update_develop, update_tech, update_lab
+from test_data import lab_data, instt_data, disc_data, tech_data, dev_data, exp_data
+from test_data import lab_data, instt_data, disc_data,tech_data, develop_data, exp_data, update_instt, update_disc, update_develop, update_tech, update_lab
 
 
 class MyTest(TestCase):
@@ -100,13 +101,13 @@ class MyTest(TestCase):
         resp = json.loads(r.data)
         self.assertNotEqual(disc_data['name'],resp['name'])
 
-    def test_put_specific_dev(self):
-        print "test_put_specific_dev()"
-        dev = Developer(**dev_data)
-        dev.save()
+    def test_put_specific_develop(self):
+        print "test_put_specific_disc()"
+        develop = Developer(**develop_data)
+        develop.save()
         r = self.client.put('/developers/1',data=update_develop)
         resp = json.loads(r.data)
-        self.assertNotEqual(dev_data['name'],resp['name'])
+        self.assertNotEqual(develop_data['name'],resp['name'])
 
     def test_put_specific_tech(self):
         print "test_put_specific_tech()"
@@ -118,12 +119,12 @@ class MyTest(TestCase):
 
 
     def test_post_specific_develop(self):
-        print "test_post_specific_dev()"
-        dev = Developer(**dev_data)
-        dev.save()
-        r = self.client.post('/developers',data=dev_data)
+        print "test_post_specific_develop()"
+        develop = Developer(**develop_data)
+        develop.save()
+        r = self.client.post('/developers',data=develop_data)
         resp = json.loads(r.data)
-        self.assertEqual(dev_data['name'],resp['name'])
+        self.assertEqual(develop_data['name'],resp['name'])
 
     def test_post_specific_instt(self):
         print "test_post_specific_instt()"
