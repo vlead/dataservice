@@ -17,12 +17,12 @@ def labs():
 
     if request.method == 'POST':
         data = parse_request(request)
-        print data
+      #  print data
         if not data:
             abort(400, 'Your data should be in JSON format')
 
         new_lab = Lab(**data)
-        print new_lab
+       # print new_lab
         new_lab.save()
         return jsonify(new_lab.to_client())
 
@@ -113,7 +113,7 @@ def update_instt_by_id(id):
         instt = Institute.query.get(id)
         for key in request.form.to_dict():
             instt.__setattr__(key, request.form.to_dict()[key])
-            print instt.to_client()
+        #    print instt.to_client()
             instt.save()
             return jsonify(instt.to_client())
 
@@ -138,7 +138,7 @@ def update_disc_by_id(id):
         disc = Discipline.query.get(id)
         for key in request.form.to_dict():
             disc.__setattr__(key, request.form.to_dict()[key])
-            print disc.to_client()
+         #   print disc.to_client()
             disc.save()
             return jsonify(disc.to_client())
 
@@ -177,7 +177,7 @@ def update_develop_by_id(id):
         jsonify(request.form.to_dict())
         for key in request.form.to_dict():
             develop.__setattr__(key, request.form.to_dict()[key])
-        print develop.to_client()
+      #  print develop.to_client()
         develop.save()
         return jsonify(develop.to_client())
 
@@ -190,7 +190,7 @@ def update_tech_by_id(id):
         jsonify(request.form.to_dict())
         for key in request.form.to_dict():
             tech.__setattr__(key, request.form.to_dict()[key])
-            print tech.to_client()
+       #     print tech.to_client()
             tech.save()
             return jsonify(tech.to_client())
 
@@ -210,7 +210,7 @@ def get_lab_by_id(id):
         jsonify(request.form.to_dict())
         for key in request.form.to_dict():
             lab.__setattr__(key, request.form.to_dict()[key])
-            print lab.to_client()
+        #    print lab.to_client()
             lab.save()
             return jsonify(lab.to_client())
 
@@ -225,7 +225,7 @@ def get_a_field(id, param):
                 abort(404)
 
             field = lab.to_client()[param]
-            print field
+         #   print field
             resp = {}
             resp[param] = field
             return jsonify(resp)
@@ -240,7 +240,7 @@ def search():
     if request.method == 'GET':
         args = {}
         args = request.args.to_dict()
-        print args
+      #  print args
         if 'institute' in args:
             args['institute_id'] = \
                 Institute.query.filter_by(name=args['institute']).first().id
@@ -252,7 +252,7 @@ def search():
                 Discipline.query.filter_by(name=args['discipline']).first().id
 
             del(args['discipline'])
-        print args
+       # print args
 
         labs = Lab.query.filter_by(**args).all()
 
@@ -269,7 +269,7 @@ def update_exp_by_id(id):
 
         for key in request.form.to_dict():
             exp.__setattr__(key, request.form.to_dict()[key])
-            print exp.to_client()
+        #    print exp.to_client()
             exp.save()
             return jsonify(exp.to_client())
 

@@ -47,4 +47,35 @@ exp_data = {
     "name" : "String Matching",
     "content_url" : "some url", 
     "simulation_url" : "some other url"
+
+develop_data = {
+    "name":"sripathi",
+    "email_id":"ram@gmail.com",
+    "institute_id":1
+}
+tech_data = {
+  "name":"php5"
+}
+exp_data = {
+  "name":"experimentname",
+  "lab_id":1,
+  "content_url":"sdfasdf",
+  "simulation_url":"dfasdfsadf"
+}
+
+update_instt = {
+  "name":"IIT-D"
+
+}
+update_disc = {
+  "name":"ECE"
+}
+update_develop = {
+  "name":"krishna"
+}
+update_tech = {
+  "name":"java"
+}
+update_lab = {
+  "name":"computers"
 }
