@@ -36,11 +36,6 @@ tech_data = {
     "foss": 1
 }
 
-dev_data = {
-    "email_id" : "foo@gmail.com",
-    "name" : "foo",
-    "institute_id" : 1
-}
 
 exp_data = {
     "lab_id" : 1, 
@@ -55,12 +50,6 @@ develop_data = {
 }
 tech_data = {
   "name":"php5"
-}
-exp_data = {
-  "name":"experimentname",
-  "lab_id":1,
-  "content_url":"sdfasdf",
-  "simulation_url":"dfasdfsadf"
 }
 
 update_instt = {

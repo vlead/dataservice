@@ -9,7 +9,6 @@ import json
 from src.db import db
 from src.app import create_app
 from src.db import Lab, Institute, Discipline, Technology, Developer, Experiment
-from test_data import lab_data, instt_data, disc_data, tech_data, dev_data, exp_data
 from test_data import lab_data, instt_data, disc_data,tech_data, develop_data, exp_data, update_instt, update_disc, update_develop, update_tech, update_lab
 
 
