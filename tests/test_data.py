@@ -41,3 +41,10 @@ dev_data = {
     "name" : "foo",
     "institute_id" : 1
 }
+
+exp_data = {
+    "lab_id" : 1, 
+    "name" : "String Matching",
+    "content_url" : "some url", 
+    "simulation_url" : "some other url"
+}

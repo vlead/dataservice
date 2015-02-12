@@ -7,8 +7,8 @@ import json
 # from src import api
 from src.db import db
 from src.app import create_app
-from src.db import Lab, Institute, Discipline, Technology, Developer
-from test_data import lab_data, instt_data, disc_data, tech_data, dev_data
+from src.db import Lab, Institute, Discipline, Technology, Developer, Experiment
+from test_data import lab_data, instt_data, disc_data, tech_data, dev_data, exp_data
 
 
 class MyTest(TestCase):
@@ -70,30 +70,20 @@ class MyTest(TestCase):
 
     def test_get_all_institutes(self):
         print "test_get_all_institutes()"
-        # insert the institute test data
         new_instt = Institute(**instt_data)
         new_instt.save()
-        # make request
         r = self.client.get('/institutes')
-         # response is in string, load as a python dict
         resp = json.loads(r.data)
-        # assert if length of retrieved institutes is equal to inserted data
         self.assertEqual(len(resp), 1)
-        # assert if name attr of test data is same as retrieved data
         self.assertEqual(instt_data['name'], resp[0]['name'])
 
     def test_get_all_technologoes(self):
         print "test_get_all_technologies()"
-        # insert the technologies test data
         new_technology = Technology(**tech_data)
         new_technology.save()
-        # make request
         r = self.client.get('/technologies')
-        # response is in string, load as a python dict
         resp = json.loads(r.data)
-        # assert if length of retrieved technologies is equal to inserted data
         self.assertEqual(len(resp), 1)
-        # assert if name attr of test data is same as retrieved data
         self.assertEqual(tech_data['name'], resp[0]['name'])
  
     def test_get_all_disciplines(self):
@@ -113,6 +103,40 @@ class MyTest(TestCase):
         resp = json.loads(r.data)
         self.assertEqual(len(resp), 1)
         self.assertEqual(dev_data['name'], resp[0]['name'])
+
+    def test_get_lab_by_discipline(self):
+        print "test_get_lab_by_discipline()"
+        disc = Discipline(**disc_data)
+        disc.save()
+	inst = Institute(**instt_data)
+	inst.save()
+        new_lab = Lab(**lab_data)
+        new_lab.save()
+        r = self.client.get('/labs/disciplines/CSE')
+        resp = json.loads(r.data)
+	self.assertEqual(len(resp), 1)
+	self.assertEqual(disc_data['name'], resp[0]['discipline']['name'])
+        r = self.client.get('/labs/disciplines/random')
+        self.assert_200(r)
+
+
+    def test_get_experiments_of_a_lab(self):
+	print "test_get_experiments_of_a_lab()"
+	disc = Discipline(**disc_data)
+        disc.save()
+        inst = Institute(**instt_data)
+        inst.save()
+        new_lab = Lab(**lab_data)
+        new_lab.save()
+	exps = Experiment(**exp_data)
+	exps.save()	
+        r = self.client.get('/labs/1/experiments')
+	resp = json.loads(r.data)
+	self.assertEqual(len(resp), 1)
+	self.assertEqual(exp_data['name'], resp[0]['name'])
+	r = self.client.get('/labs/999/experiments')
+        self.assert_200(r)
+
 
 if __name__ == '__main__':
     unittest.main()
