@@ -208,14 +208,13 @@ class MyTest(TestCase):
 
     def test_get_all_developers(self):
         print "test_get_all_developers()"
-        dev = Developer(**dev_data)
+        dev = Developer(**develop_data)
         dev.save()
         r = self.client.get('/developers')
         resp = json.loads(r.data)
         self.assertEqual(len(resp), 1)
-        self.assertEqual(dev_data['name'], resp[0]['name'])
+        self.assertEqual(develop_data['name'], resp[0]['name'])
 
-<<<<<<< HEAD
     def test_get_lab_by_institute(self):
         print "test_get_lab_by_institute()"
         # insert dependent table data
@@ -247,7 +246,6 @@ class MyTest(TestCase):
         self.assertEqual(len(resp), 1)
         self.assertEqual(lab_data['name'], resp[0]['name'])
             
-=======
     def test_get_lab_by_discipline(self):
         print "test_get_lab_by_discipline()"
         disc = Discipline(**disc_data)
@@ -280,7 +278,20 @@ class MyTest(TestCase):
 	self.assertEqual(exp_data['name'], resp[0]['name'])
 	r = self.client.get('/labs/999/experiments')
         self.assert_200(r)
->>>>>>> 8df18b94861cda22766e893da39f190c72805c07
+
+    def test_get_search(self):
+	print "test_get_search()"
+	disc = Discipline(**disc_data)
+        disc.save()
+        inst = Institute(**instt_data)
+        inst.save()
+        new_lab = Lab(**lab_data)
+        new_lab.save()
+	r = self.client.get('/search/labs?status=Hosted')
+	resp = json.loads(r.data)
+	self.assertEqual(len(resp), 1)
+	self.assertEqual(lab_data['status'], resp[0]['status'])
+	
 
 
 if __name__ == '__main__':
