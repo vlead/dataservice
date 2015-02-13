@@ -10,15 +10,15 @@ import json
 # If not found return a dict; else return the parsed data
 def parse_request(request):
     if request.json:
-        print 'found in request.json'
+        #print 'found in request.json'
         data = request.get_json()
 
     elif request.data:
-        print 'found in request.data'
+        #print 'found in request.data'
         data = json.loads(request.data)
 
     elif request.form:
-        print 'found in request.form'
+        #print 'found in request.form'
         data = request.form.to_dict()
         # try to detect if form contains integers and boolean data and attempt
         # to convert them
@@ -29,7 +29,7 @@ def parse_request(request):
             if is_bool_in_str(data[k]):
                 data[k] = str_to_bool(data[k])
 
-            print k, data[k]
+            #print k, data[k]
 
     else:
         data = request.get_json(force=True)
