@@ -37,8 +37,35 @@ tech_data = {
     "foss": 1
 }
 
-dev_data = {
-    "email_id" : "foo@gmail.com",
-    "name" : "foo",
-    "institute_id" : 1
+
+exp_data = {
+    "lab_id" : 1, 
+    "name" : "String Matching",
+    "content_url" : "some url", 
+    "simulation_url" : "some other url"
+
+develop_data = {
+    "name":"sripathi",
+    "email_id":"ram@gmail.com",
+    "institute_id":1
+}
+tech_data = {
+  "name":"php5"
+}
+
+update_instt = {
+  "name":"IIT-D"
+
+}
+update_disc = {
+  "name":"ECE"
+}
+update_develop = {
+  "name":"krishna"
+}
+update_tech = {
+  "name":"java"
+}
+update_lab = {
+  "name":"computers"
 }
