@@ -114,5 +114,38 @@ class MyTest(TestCase):
         self.assertEqual(len(resp), 1)
         self.assertEqual(dev_data['name'], resp[0]['name'])
 
+    def test_get_lab_by_institute(self):
+        print "test_get_lab_by_institute()"
+        # insert dependent table data
+        instt = Institute(**instt_data)
+        instt.save()
+        disc = Discipline(**disc_data)
+        disc.save()
+        # insert lab test data
+        new_lab = Lab(**lab_data)
+        new_lab.save()
+        # make request
+        r = self.client.get('/labs/institutes/IIIT-H')
+        resp = json.loads(r.data)
+       # print resp
+        self.assertEqual(len(resp), 1)
+        self.assertEqual(instt_data['name'], resp[0]['institute']['name'])
+
+    def test_all_labs_specific_discipline_specific_institute(self):
+        print "test_all_labs_specific_discipline_specific_institute()"
+        instt = Institute(**instt_data)
+        instt.save()
+        disc = Discipline(**disc_data)
+        disc.save()
+        new_lab = Lab(**lab_data)
+        new_lab.save()      
+        r = self.client.get('/labs/institutes/IIIT-H/disciplines/CSE')
+        resp = json.loads(r.data)
+        print resp
+        self.assertEqual(len(resp), 1)
+        self.assertEqual(lab_data['name'], resp[0]['name'])
+            
+
+
 if __name__ == '__main__':
     unittest.main()

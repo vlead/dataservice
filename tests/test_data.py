@@ -20,6 +20,7 @@ lab_data = {
     "is_phase_2_lab": True
 }
 
+
 instt_data = {
     "name": "IIIT-H",
     "coordinator": "Some guy",
@@ -28,7 +29,7 @@ instt_data = {
 
 disc_data = {
     "name": "CSE",
-    "dnc": "Some big guy"
+    "dnc": "Some big guy" 
 }
 
 tech_data = {
