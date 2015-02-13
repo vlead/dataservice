@@ -60,7 +60,7 @@ def labs_by_institute(inst_name):
             return "Enter valid institute name."
 
 
-# Get all the labs of all disciplines of a specific institute
+# Get all the labs of a discipline of a specific institute
 @api.route('/labs/institutes/<inst_name>/disciplines/<disc_name>',
            methods=['GET'])
 def labs_by_disc(inst_name, disc_name):
