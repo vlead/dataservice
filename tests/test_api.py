@@ -242,7 +242,6 @@ class MyTest(TestCase):
         new_lab.save()      
         r = self.client.get('/labs/institutes/IIIT-H/disciplines/CSE')
         resp = json.loads(r.data)
-        print resp
         self.assertEqual(len(resp), 1)
         self.assertEqual(lab_data['name'], resp[0]['name'])
             
