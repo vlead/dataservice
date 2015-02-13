@@ -8,8 +8,11 @@ import json
 # from src import api
 from src.db import db
 from src.app import create_app
-from src.db import Lab, Institute, Discipline, Technology, Developer, Experiment
-from test_data import lab_data, instt_data, disc_data,tech_data, develop_data, exp_data, update_instt, update_disc, update_develop, update_tech, update_lab
+from src.db import Lab, Institute, Discipline, Technology, Developer,\
+    Experiment
+from test_data import lab_data, instt_data, disc_data, tech_data,\
+    develop_data, exp_data, update_instt, update_disc, update_develop,\
+    update_tech, update_lab
 
 
 class MyTest(TestCase):
@@ -68,7 +71,7 @@ class MyTest(TestCase):
         # assert if lab not found is working
         r = self.client.get('/labs/999')
         self.assert_404(r)
-    
+
     def test_put_specific_lab(self):
         print "test_put_specific_lab()"
         instt = Institute(**instt_data)
@@ -77,11 +80,9 @@ class MyTest(TestCase):
         disc.save()
         lab = Lab(**lab_data)
         lab.save()
-        r = self.client.put('/labs/1',data=update_lab)
-        #print r.data
+        r = self.client.put('/labs/1', data=update_lab)
         resp = json.loads(r.data)
-        #print resp
-        self.assertNotEqual(lab_data['name'],resp['name'])
+        self.assertNotEqual(lab_data['name'], resp['name'])
 
 
     def test_put_specific_inst(self):
@@ -196,7 +197,7 @@ class MyTest(TestCase):
         resp = json.loads(r.data)
         self.assertEqual(len(resp), 1)
         self.assertEqual(tech_data['name'], resp[0]['name'])
- 
+
     def test_get_all_disciplines(self):
         print "test_get_all_disciplines()"
         disc = Discipline(**disc_data)
@@ -226,7 +227,7 @@ class MyTest(TestCase):
         new_lab = Lab(**lab_data)
         new_lab.save()
         # make request
-        r = self.client.get('/labs/institutes/IIIT-H')
+        r = self.client.get('/labs/institutes/1')
         resp = json.loads(r.data)
        # print resp
         self.assertEqual(len(resp), 1)
@@ -239,25 +240,25 @@ class MyTest(TestCase):
         disc = Discipline(**disc_data)
         disc.save()
         new_lab = Lab(**lab_data)
-        new_lab.save()      
-        r = self.client.get('/labs/institutes/IIIT-H/disciplines/CSE')
+        new_lab.save()
+        r = self.client.get('/labs/institutes/1/disciplines/1')
         resp = json.loads(r.data)
         self.assertEqual(len(resp), 1)
         self.assertEqual(lab_data['name'], resp[0]['name'])
-            
+
     def test_get_lab_by_discipline(self):
         print "test_get_lab_by_discipline()"
         disc = Discipline(**disc_data)
         disc.save()
-	inst = Institute(**instt_data)
-	inst.save()
+        inst = Institute(**instt_data)
+        inst.save()
         new_lab = Lab(**lab_data)
         new_lab.save()
-        r = self.client.get('/labs/disciplines/CSE')
+        r = self.client.get('/labs/disciplines/1')
         resp = json.loads(r.data)
-	self.assertEqual(len(resp), 1)
-	self.assertEqual(disc_data['name'], resp[0]['discipline']['name'])
-        r = self.client.get('/labs/disciplines/random')
+        self.assertEqual(len(resp), 1)
+        self.assertEqual(disc_data['name'], resp[0]['discipline']['name'])
+        r = self.client.get('/labs/disciplines/999')
         self.assert_200(r)
 
 
@@ -269,28 +270,28 @@ class MyTest(TestCase):
         inst.save()
         new_lab = Lab(**lab_data)
         new_lab.save()
-	exps = Experiment(**exp_data)
-	exps.save()	
+        exps = Experiment(**exp_data)
+        exps.save()
         r = self.client.get('/labs/1/experiments')
-	resp = json.loads(r.data)
-	self.assertEqual(len(resp), 1)
-	self.assertEqual(exp_data['name'], resp[0]['name'])
-	r = self.client.get('/labs/999/experiments')
+        resp = json.loads(r.data)
+        self.assertEqual(len(resp), 1)
+        self.assertEqual(exp_data['name'], resp[0]['name'])
+        r = self.client.get('/labs/999/experiments')
         self.assert_200(r)
 
     def test_get_search(self):
-	print "test_get_search()"
-	disc = Discipline(**disc_data)
+        print "test_get_search()"
+        disc = Discipline(**disc_data)
         disc.save()
         inst = Institute(**instt_data)
         inst.save()
         new_lab = Lab(**lab_data)
         new_lab.save()
-	r = self.client.get('/search/labs?status=Hosted')
-	resp = json.loads(r.data)
-	self.assertEqual(len(resp), 1)
-	self.assertEqual(lab_data['status'], resp[0]['status'])
-	
+        r = self.client.get('/search/labs?status=Hosted')
+        resp = json.loads(r.data)
+        self.assertEqual(len(resp), 1)
+        self.assertEqual(lab_data['status'], resp[0]['status'])
+
 
 
 if __name__ == '__main__':
