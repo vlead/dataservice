@@ -40,16 +40,16 @@ def labs():
             return "Wrong attribute found"
             
 # Get all the labs of a specific discipline
-@api.route('/disciplines/<disc_name>/labs', methods=['GET'])
-@api.route('/labs/disciplines/<disc_name>', methods=['GET'])
-def labs_by_discipline(disc_name):
+@api.route('/disciplines/<int:id>/labs', methods=['GET'])
+@api.route('/labs/disciplines/<int:id>', methods=['GET'])
+def labs_by_discipline(id):
     if request.method == 'GET':
         try:
-            if disc_name is None:
+            if id is None:
                 abort(404)
 
-            disc = Discipline.query.filter_by(name=disc_name).first()
-            labs = Lab.query.filter_by(discipline_id=disc.id).all()
+#            disc = Discipline.query.filter_by(name=id).first()
+            labs = Lab.query.filter_by(discipline_id=id).all()
             return json.dumps([i.to_client() for i in labs])
 
         except AttributeError:
@@ -57,15 +57,15 @@ def labs_by_discipline(disc_name):
 
 
 # Get all the labs of a specific institute
-@api.route('/institutes/<inst_name>/labs', methods=['GET'])
-@api.route('/labs/institutes/<inst_name>', methods=['GET'])
-def labs_by_institute(inst_name):
+@api.route('/institutes/<int:id>/labs', methods=['GET'])
+@api.route('/labs/institutes/<int:id>', methods=['GET'])
+def labs_by_institute(id):
     if request.method == 'GET':
         try:
-            if inst_name is None:
+            if id is None:
                 abort(404)
-            field = Institute.query.filter_by(name=inst_name).first()
-            labs = Lab.query.filter_by(institute_id=field.id).all()
+#            field = Institute.query.filter_by(name=inst_name).first()
+            labs = Lab.query.filter_by(institute_id=id).all()
             return json.dumps([i.to_client() for i in labs])
 
         except AttributeError:
@@ -73,31 +73,31 @@ def labs_by_institute(inst_name):
 
 
 # Get all the labs of a discipline of a specific institute
-@api.route('/labs/institutes/<inst_name>/disciplines/<disc_name>',
+@api.route('/labs/institutes/<int:int_id>/disciplines/<int:disc_id>',
            methods=['GET'])
-def labs_by_disc(inst_name, disc_name):
+def labs_by_disc(int_id, disc_id):
     try:
         if request.method == 'GET':
-            if inst_name is None:
+            if int_id is None:
                 abort(404)
-            disc = Discipline.query.filter_by(name=disc_name).first()
-            instt = Institute.query.filter_by(name=inst_name).first()
-            labs = Lab.query.filter_by(institute_id=instt.id,
-                                       discipline_id=disc.id).all()
+#            disc = Discipline.query.filter_by(name=id).first()
+#            instt = Institute.query.filter_by(name=inst_name).first()
+            labs = Lab.query.filter_by(institute_id=int_id,
+                                       discipline_id=disc_id).all()
             return json.dumps([i.to_client() for i in labs])
 
     except AttributeError:
         return "Please enter valid search"
 
 # Get all the developer of a specific institute
-@api.route('/institutes/<inst_name>/developers', methods=['GET'])
-def dev_by_inst(inst_name):
+@api.route('/institutes/<int:id>/developers', methods=['GET'])
+def dev_by_inst(id):
     try:
         if request.method == 'GET':
-            if inst_name is None:
+            if id is None:
                 abort(404)
-            instt = Institute.query.filter_by(name=inst_name).first()
-            devlopers = Developer.query.filter_by(institute_id=instt.id).all()
+#            instt = Institute.query.filter_by(name=inst_name).first()
+            devlopers = Developer.query.filter_by(institute_id=id).all()
             return json.dumps([i.to_client() for i in devlopers])
 
     except AttributeError:
