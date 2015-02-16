@@ -292,6 +292,19 @@ class MyTest(TestCase):
         self.assertEqual(len(resp), 1)
         self.assertEqual(lab_data['status'], resp[0]['status'])
 
+    def test_get_search_by_attr(self):
+ 	print "test_get_search_by_attr()"
+        disc = Discipline(**disc_data)
+        disc.save()
+        inst = Institute(**instt_data)
+        inst.save()
+        new_lab = Lab(**lab_data)
+        new_lab.save()
+	r = self.client.get('/labs/1?fields=status')
+	resp = json.loads(r.data)
+	self.assertEqual(len(resp), 1)
+	self.assertEqual(lab_data['status'], resp['status'])
+
 
 
 if __name__ == '__main__':
