@@ -124,15 +124,15 @@ def institutes():
             return "Error: Provide correct attribute name"
             
 # update institutes by ID
-@api.route('/institutes/<int:id>', methods=['PUT'])
-def update_instt_by_id(id):
-    if request.method == 'PUT':
-        instt = Institute.query.get(id)
-        for key in request.form.to_dict():
-            instt.__setattr__(key, request.form.to_dict()
-            instt.save()
-        return jsonify(instt.to_client())
-                              
+#@api.route('/institutes/<int:id>', methods=['PUT'])
+#def update_instt_by_id(id):
+#    if request.method == 'PUT':
+#        instt = Institute.query.get(id)
+#        for key in request.form.to_dict():
+#            instt.__setattr__(key, request.form.to_dict()
+#            instt.save()
+#        return jsonify(instt.to_client())
+#                              
 
 # Get all Disciplines
 @api.route('/disciplines', methods=['GET', 'POST'])
@@ -268,7 +268,6 @@ def get_a_field(id, param):
     except (KeyError, AttributeError):
         return "Please enter valid attribute"
 
-
 # Get labs info by searching with any of its parameters
 @api.route('/search/labs', methods=['GET'])
 def search():
@@ -296,7 +295,15 @@ def search():
 
         return json.dumps([lab.to_client() for lab in labs])
 
-
+# Get fields of a specific lab
+#@api.route('/labs/<int:id>/?', methods=['GET'])
+#def search_param_of_lab():
+#	if requests.method == 'GET':
+#	    return "some thing"
+#	    args = {}
+#	    args = requests.args.to_dict()
+#	    print args
+#
 @api.route('/experiments/<int:id>', methods=['PUT'])
 def update_exp_by_id(id):
     if request.method == 'PUT':
