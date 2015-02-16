@@ -67,6 +67,15 @@ class Lab(db.Model):
         db.session.add(self)
         db.session.commit()
 
+    def get_developers(self):
+        devs = DeveloperEngaged.query.filter_by(lab_id=self.id).all()
+        print devs
+        return [d.developer.to_client() for d in devs]
+
+    def get_technologies(self):
+        techs = TechnologyUsed.query.filter_by(lab_id=self.id).all()
+        return [t.technology.to_client() for t in techs]
+
     def to_client(self):
         return {
             'id': self.id,
@@ -85,6 +94,8 @@ class Lab(db.Model):
                 'name': self.discipline.name,
                 'dnc': self.discipline.dnc
             },
+            'developers': self.get_developers(),
+            'technologies': self.get_technologies(),
             'repo_url': self.repo_url,
             'hosted_url': self.hosted_url,
             'number_of_experiments': self.number_of_experiments,
@@ -189,7 +200,7 @@ class DeveloperEngaged(db.Model):
     lab = db.relationship('Lab')
 
     developer_id = db.Column(db.Integer, db.ForeignKey('developers.id'))
-    lab = db.relationship('Developer')
+    developer = db.relationship('Developer')
 
     def save(self):
         db.session.add(self)
