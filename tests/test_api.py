@@ -259,7 +259,7 @@ class MyTest(TestCase):
         self.assertEqual(len(resp), 1)
         self.assertEqual(disc_data['name'], resp[0]['discipline']['name'])
         r = self.client.get('/labs/disciplines/999')
-        self.assert_200(r)
+        self.assert_404(r)
 
 
     def test_get_experiments_of_a_lab(self):
