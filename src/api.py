@@ -129,7 +129,7 @@ def update_instt_by_id(id):
     if request.method == 'PUT':
         instt = Institute.query.get(id)
         for key in request.form.to_dict():
-            instt.__setattr__(key, request.form.to_dict()
+            instt.__setattr__(key, request.form.to_dict())
             instt.save()
         return jsonify(instt.to_client())
                               
