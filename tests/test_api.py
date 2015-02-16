@@ -277,7 +277,7 @@ class MyTest(TestCase):
         self.assertEqual(len(resp), 1)
         self.assertEqual(exp_data['name'], resp[0]['name'])
         r = self.client.get('/labs/999/experiments')
-        self.assert_200(r)
+        self.assert_404(r)
 
     def test_get_search(self):
         print "test_get_search()"
