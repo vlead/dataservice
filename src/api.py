@@ -124,15 +124,15 @@ def institutes():
             return "Error: Provide correct attribute name"
             
 # update institutes by ID
-#@api.route('/institutes/<int:id>', methods=['PUT'])
-#def update_instt_by_id(id):
-#    if request.method == 'PUT':
-#        instt = Institute.query.get(id)
-#        for key in request.form.to_dict():
-#            instt.__setattr__(key, request.form.to_dict()
-#            instt.save()
-#        return jsonify(instt.to_client())
-#                              
+@api.route('/institutes/<int:id>', methods=['PUT'])
+def update_instt_by_id(id):
+    if request.method == 'PUT':
+        instt = Institute.query.get(id)
+        for key in request.form.to_dict():
+            instt.__setattr__(key, request.form.to_dict()
+            instt.save()
+        return jsonify(instt.to_client())
+                              
 
 # Get all Disciplines
 @api.route('/disciplines', methods=['GET', 'POST'])
