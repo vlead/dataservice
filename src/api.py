@@ -36,8 +36,8 @@ def labs():
             new_lab.save()
             return jsonify(new_lab.to_client())
 
-        except TypeError:
-            return "Wrong attribute found"
+        except (TypeError,AttributeError):
+            return jsonify(error="Wrong attribute found")
             
 # Get all the labs of a specific discipline
 @api.route('/disciplines/<int:id>/labs', methods=['GET'])
@@ -120,19 +120,26 @@ def institutes():
             new_institute.save()
             return jsonify(new_institute.to_client())
 
-        except TypeError:
-            return "Error: Provide correct attribute name"
-            
+        except (TypeError,AttributeError):
+            return jsonify(error="Error: Provide correct attribute name")
+ 
 # update institutes by ID
 @api.route('/institutes/<int:id>', methods=['PUT'])
 def update_instt_by_id(id):
     if request.method == 'PUT':
+        data = parse_request(request)
+        if not data:
+            abort(400, 'Your data should be in JSON format')
         instt = Institute.query.get(id)
-        for key in request.form.to_dict():
-            instt.__setattr__(key, request.form.to_dict())
-            instt.save()
-        return jsonify(instt.to_client())
-                              
+        if instt is None:
+            abort(404)
+        try:
+            for key in data:
+                instt.__setattr__(key, data[key])
+                instt.save()
+            return jsonify(instt.to_client())
+        except (AttributeError,KeyError):
+            return "Error: Provide correct attribute name"
 
 # Get all Disciplines
 @api.route('/disciplines', methods=['GET', 'POST'])
@@ -149,16 +156,21 @@ def disciplines():
             new_discipline.save()
             return jsonify(new_discipline.to_client())
 
-        except TypeError:
+        except (TypeError,AttributeError):
             return "Error: Provide correct attribute name"
         
 # update Disciplines by ID
 @api.route('/disciplines/<int:id>', methods=['PUT'])
 def update_disc_by_id(id):
     if request.method == 'PUT':
+        data = parse_request(request)
+        if not data:
+            abort(400, 'Your data should be in JSON format')
         disc = Discipline.query.get(id)
-        for key in request.form.to_dict():
-            disc.__setattr__(key, request.form.to_dict()[key])
+        if disc is None:
+            abort(404)
+        for key in data:
+            disc.__setattr__(key, data[key])
             disc.save()
         return jsonify(disc.to_client())
 
@@ -177,7 +189,7 @@ def technologies():
             new_technology.save()
             return jsonify(new_technology.to_client())
 
-        except TypeError:
+        except (TypeError,AttributeError):
             return "Error: Provide correct attribute name"
             
 # Get all Developers
@@ -194,27 +206,29 @@ def developers():
         if 'institute_id' not in data:
             abort(400,"Provide institute_id")
 
-        instt = Institute.query.get(data['institute_id'])
-        if instt is None:
-            return "Foreign_key constraint fails : Provide institute_id"
-
+        instt = Insttute.query.get(data['institute_id'])
+        
         try:
             new_develop = Developer(**data)
             new_develop.save()
             return jsonify(new_develop.to_client())
 
         except TypeError:
-            return "Error: Provide correct attribute name"
-        
+            return "Error: Provide correct attribute name"        
             
 # updating Developers by ID
 @api.route('/developers/<int:id>', methods=['PUT'])
 def update_develop_by_id(id):
     if request.method == 'PUT':
+        if id is None:
+            abort(400,"id should not be null")
         develop = Developer.query.get(id)
-        jsonify(request.form.to_dict())
-        for key in request.form.to_dict():
-            develop.__setattr__(key, request.form.to_dict()[key])
+        
+        data = parse_request(request)
+        if not data:
+            abort(400, 'Your data should be in JSON format')
+        for key in data:
+            develop.__setattr__(key, data[key])
             develop.save()
         return jsonify(develop.to_client())
 
@@ -223,10 +237,13 @@ def update_develop_by_id(id):
 @api.route('/technologies/<int:id>', methods=['PUT'])
 def update_tech_by_id(id):
     if request.method == 'PUT':
+        data = parse_request(request)
+        if not data:
+            abort(400, 'Your data should be in JSON format')
         tech = Technology.query.get(id)
-        jsonify(request.form.to_dict())
-        for key in request.form.to_dict():
-            tech.__setattr__(key, request.form.to_dict()[key])
+#        jsonify(request.form.to_dict())
+        for key in data:
+            tech.__setattr__(key, data[key])
             tech.save()
         return jsonify(tech.to_client())
 
@@ -242,10 +259,13 @@ def get_lab_by_id(id):
         return jsonify(lab.to_client())
 
     if request.method == 'PUT':
+        data = parse_request(request)
+        if not data:
+            abort(400, 'Your data should be in JSON format')
         lab = Lab.query.get(id)
-        jsonify(request.form.to_dict())
-        for key in request.form.to_dict():
-            lab.__setattr__(key, request.form.to_dict()[key])
+        #jsonify(request.form.to_dict())
+        for key in data:
+            lab.__setattr__(key, data[key])
             lab.save()
         return jsonify(lab.to_client())
 
@@ -307,6 +327,9 @@ def search():
 @api.route('/experiments/<int:id>', methods=['PUT'])
 def update_exp_by_id(id):
     if request.method == 'PUT':
+        data = parse_request(request)
+        if not data:
+            abort(400, 'Your data should be in JSON format')
         exp = Experiment.query.get(id)
         for key in request.form.to_dict():
             exp.__setattr__(key, request.form.to_dict()[key])
@@ -351,6 +374,6 @@ def post_exp():
             new_experiment.save()
             return jsonify(new_experiment.to_client())
 
-        except TypeError:
+        except (TypeError,AttributeError):
             return "Error: Provide correct attribute name"
         
