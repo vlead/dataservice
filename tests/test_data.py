@@ -1,7 +1,7 @@
 lab_data = {
     "lab_id": "ece04",
     "name": "electronics",
-    "slug": "ec",
+    "slu": "ec",
     "institute_id": 1,
     "discipline_id": 1,
     "repo_url": "https://bitbucket.org/virtual-labs/cse01-ds_new",
@@ -45,7 +45,7 @@ exp_data = {
     "simulation_url" : "some other url"
 }
 develop_data = {
-    "name":"sripathi",
+    "nae":"sripathi",
     "email_id":"ram@gmail.com",
     "institute_id":1
 }
