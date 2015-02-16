@@ -123,6 +123,8 @@ class MyTest(TestCase):
         develop = Developer(**develop_data)
         develop.save()
         r = self.client.post('/developers',data=develop_data)
+        #if r.status_code is 500:
+        #    print ""
         resp = json.loads(r.data)
         self.assertEqual(develop_data['name'],resp['name'])
 
