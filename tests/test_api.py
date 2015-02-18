@@ -123,6 +123,8 @@ class MyTest(TestCase):
         develop = Developer(**develop_data)
         develop.save()
         r = self.client.post('/developers',data=develop_data)
+        #if r.status_code is 500:
+        #    print ""
         resp = json.loads(r.data)
         self.assertEqual(develop_data['name'],resp['name'])
 
@@ -259,7 +261,7 @@ class MyTest(TestCase):
         self.assertEqual(len(resp), 1)
         self.assertEqual(disc_data['name'], resp[0]['discipline']['name'])
         r = self.client.get('/labs/disciplines/999')
-        self.assert_200(r)
+        self.assert_404(r)
 
 
     def test_get_experiments_of_a_lab(self):
@@ -277,7 +279,7 @@ class MyTest(TestCase):
         self.assertEqual(len(resp), 1)
         self.assertEqual(exp_data['name'], resp[0]['name'])
         r = self.client.get('/labs/999/experiments')
-        self.assert_200(r)
+        self.assert_404(r)
 
     def test_get_search(self):
         print "test_get_search()"
@@ -291,6 +293,19 @@ class MyTest(TestCase):
         resp = json.loads(r.data)
         self.assertEqual(len(resp), 1)
         self.assertEqual(lab_data['status'], resp[0]['status'])
+
+    def test_get_search_by_attr(self):
+ 	print "test_get_search_by_attr()"
+        disc = Discipline(**disc_data)
+        disc.save()
+        inst = Institute(**instt_data)
+        inst.save()
+        new_lab = Lab(**lab_data)
+        new_lab.save()
+	r = self.client.get('/labs/1?fields=status')
+	resp = json.loads(r.data)
+	self.assertEqual(len(resp), 1)
+	self.assertEqual(lab_data['status'], resp['status'])
 
 
 

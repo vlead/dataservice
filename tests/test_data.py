@@ -45,8 +45,8 @@ exp_data = {
     "simulation_url" : "some other url"
 }
 develop_data = {
-    "name":"sripathi",
-    "email_id":"ram@gmail.com",
+    "name":"ramuu",
+    "email_id":"ra@gmail.com",
     "institute_id":1
 }
 tech_data = {
