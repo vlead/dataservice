@@ -35,13 +35,23 @@
 * New Lab Spec structure:
 
 name
+
 slug
+
 Discipline: {id, name}
+
 Developer: {name, email_id, institute_name}
+
 repo_url 
+
 Integration_level (Drop Down)
+
 Is_phase2 labs (Drop Down)
+
 is web_compliant (Drop Down)
+
 number of experiments
+
 type of lab (Drop down)
+
 Technologies (Drop Down + Add new button)
