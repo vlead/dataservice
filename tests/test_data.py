@@ -23,8 +23,8 @@ lab_data = {
 
 instt_data = {
     "name": "IIIT-H",
-    "coordinator": "Some guy",
-    "integration_coordinator": "Some other guy"
+    "PIC": "Some guy",
+    "IIC": "Some other guy"
 }
 
 disc_data = {

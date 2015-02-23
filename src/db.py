@@ -119,15 +119,15 @@ class Institute(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128))
-    coordinator = db.Column(db.String(128))
-    integration_coordinator = db.Column(db.String(128))
+    PIC = db.Column(db.String(128))
+    IIC = db.Column(db.String(128))
 
     def to_client(self):
         return {
             'id':self.id,
             'name': self.name,
-            'coordinator': self.coordinator,
-            'integration_coordinator': self.integration_coordinator
+            'PIC': self.PIC,
+            'IIC': self.IIC
         }
 
     @staticmethod
