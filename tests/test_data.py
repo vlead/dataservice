@@ -14,7 +14,7 @@ lab_data = {
     "is_src_avail": True,
     "is_deployed": True,
     "is_content_avail": True,
-    "is_simulation": True,
+    "is_simulation_avail": True,
     "is_web_2_compliant": False,
     "is_auto_hostable": True,
     "is_phase_2_lab": True

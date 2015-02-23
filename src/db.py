@@ -36,7 +36,7 @@ class Lab(db.Model):
     is_src_avail = db.Column(db.Boolean)
     is_deployed = db.Column(db.Boolean)
     is_content_avail = db.Column(db.Boolean)
-    is_simulation = db.Column(db.Boolean)
+    is_simulation_avail = db.Column(db.Boolean)
     is_web_2_compliant = db.Column(db.Boolean)
     is_auto_hostable = db.Column(db.Boolean)
     is_phase_2_lab = db.Column(db.Boolean)
@@ -106,7 +106,7 @@ class Lab(db.Model):
             'is_src_avail': self.is_src_avail,
             'is_content_avail': self.is_content_avail,
             'is_deployed': self.is_deployed,
-            'is_simulation': self.is_simulation,
+            'is_simulation_avail': self.is_simulation_avail,
             'is_web_2_compliant': self.is_web_2_compliant,
             'is_auto_hostable': self.is_auto_hostable,
             'is_phase_2_lab': self.is_phase_2_lab
