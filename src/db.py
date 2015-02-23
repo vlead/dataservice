@@ -85,9 +85,9 @@ class Lab(db.Model):
             'institute': {
                 'id': self.institute.id,
                 'name': self.institute.name,
-                'coordinator': self.institute.coordinator,
-                'integration_coordinator':
-                self.institute.integration_coordinator
+                'PIC': self.institute.PIC,
+                'IIC':
+                self.institute.IIC
             },
             'discipline': {
                 'id': self.discipline.id,
