@@ -29,7 +29,7 @@ instt_data = {
 
 disc_data = {
     "name": "CSE",
-    "dnc": "Some big guy" 
+    "dnc": "Some big guy"
 }
 
 tech_data = {
@@ -39,9 +39,9 @@ tech_data = {
 
 
 exp_data = {
-    "lab_id" : 1, 
+    "lab_id" : 1,
     "name" : "String Matching",
-    "content_url" : "some url", 
+    "content_url" : "some url",
     "simulation_url" : "some other url"
 }
 develop_data = {
@@ -51,6 +51,20 @@ develop_data = {
 }
 tech_data = {
   "name":"php5"
+}
+sys_data = {
+"lab_id" : 1,
+"storage" : "10gb",
+"memory" : "2gb",
+"os" : "ubuntu",
+"os_version" : "12",
+"architecture" : "i386",
+"hosting" : "dedicated",
+"vm_id" : "14225",
+"ipaddress": "0.0.0.0"
+}
+update_sys_data = {
+    "os": "windows"
 }
 
 update_instt = {

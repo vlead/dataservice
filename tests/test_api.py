@@ -8,11 +8,8 @@ import json
 # from src import api
 from src.db import db
 from src.app import create_app
-from src.db import Lab, Institute, Discipline, Technology, Developer,\
-    Experiment
-from test_data import lab_data, instt_data, disc_data, tech_data,\
-    develop_data, exp_data, update_instt, update_disc, update_develop,\
-    update_tech, update_lab
+from src.db import Lab, Institute, Discipline, Technology, Developer, Experiment, LabSystemInfo
+from test_data import lab_data, instt_data, disc_data, tech_data, develop_data, exp_data, update_instt, update_disc, update_develop, update_tech, update_lab, sys_data, update_sys_data
 
 
 class MyTest(TestCase):
@@ -306,6 +303,55 @@ class MyTest(TestCase):
 	resp = json.loads(r.data)
 	self.assertEqual(len(resp), 1)
 	self.assertEqual(lab_data['status'], resp['status'])
+
+    def test_get_labsysteminfo(self):
+	print "test_get_labsysteminfo()"
+	disc = Discipline(**disc_data)
+        disc.save()
+        inst = Institute(**instt_data)
+        inst.save()
+        new_lab = Lab(**lab_data)
+        new_lab.save()
+        new_system_info = LabSystemInfo(**sys_data)
+        new_system_info.save()
+        r = self.client.get('/labsysteminfo')
+        resp = json.loads(r.data)
+        self.assertEqual(len(resp), 1)
+        self.assertEqual(sys_data['os'], resp[0]['os'])
+      
+
+    def test_post_labsysteminfo(self):
+        print "test_post_labsysteminfo()"
+
+        instt = Institute(**instt_data)
+        instt.save()
+        disc = Discipline(**disc_data)
+        disc.save()
+        new_lab = Lab(**lab_data)
+        new_lab.save()
+
+        new_system_info = LabSystemInfo(**sys_data)
+        new_system_info.save()
+        r = self.client.post('/labsysteminfo',data=sys_data)
+        resp = json.loads(r.data)
+        self.assertEqual(sys_data['os'],resp['os'])
+
+    def test_put_labsysteminfo(self):
+        print "test_put_specific_lab()"
+        instt = Institute(**instt_data)
+        instt.save()
+        disc = Discipline(**disc_data)
+        disc.save()
+        lab = Lab(**lab_data)
+        lab.save()
+        new_system_info = LabSystemInfo(**sys_data)
+        new_system_info.save()
+        
+        r = self.client.put('/labsysteminfo/1', data=update_sys_data)
+        resp = json.loads(r.data)
+        self.assertNotEqual(sys_data['os'], resp['os'])
+
+
 
 
 
