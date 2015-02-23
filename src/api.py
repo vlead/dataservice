@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from flask import Blueprint, request, jsonify, json, abort
-from db import Lab, Institute, Discipline, Technology, Developer, Experiment
+from db import Lab, Institute, Discipline, Technology, Developer, Experiment, LabSystemInfo
 
 from utils import parse_request
 
@@ -23,11 +23,11 @@ def labs():
             abort(400, 'Provide institute_id')
         if "discipline_id" not in data:
             abort(400, 'Provide discipline_id')
-            
+
         lab=Lab.query.get(data['institute_id'])
         if lab is None:
             abort(404,"Foreign_key constraint fails: Provide institute_id")
-            
+
         dis = Discipline.query.get(data['discipline_id'])
         if dis is None:
             abort(404,"Foreign_key constraint fails: Provide discipline_id")
@@ -38,7 +38,7 @@ def labs():
 
         except (TypeError,AttributeError):
             return jsonify(error="Wrong attribute found")
-            
+
 # Get all the labs of a specific discipline
 @api.route('/disciplines/<int:id>/labs', methods=['GET'])
 @api.route('/labs/disciplines/<int:id>', methods=['GET'])
@@ -117,7 +117,7 @@ def institutes():
 
         except (TypeError,AttributeError):
             return "Error: Provide correct attribute name"
- 
+
 # update institutes by ID
 @api.route('/institutes/<int:id>', methods=['PUT'])
 def update_instt_by_id(id):
@@ -135,7 +135,7 @@ def update_instt_by_id(id):
             return jsonify(instt.to_client())
         except (AttributeError,KeyError):
             return "Error: Provide correct attribute name"
-                              
+
 # Get all Disciplines
 @api.route('/disciplines', methods=['GET', 'POST'])
 def disciplines():
@@ -153,7 +153,7 @@ def disciplines():
 
         except (TypeError,AttributeError):
             return "Error: Provide correct attribute name"
-        
+
 # update Disciplines by ID
 @api.route('/disciplines/<int:id>', methods=['PUT'])
 def update_disc_by_id(id):
@@ -164,7 +164,7 @@ def update_disc_by_id(id):
         disc = Discipline.query.get(id)
         if disc is None:
             abort(404)
-        try:            
+        try:
             for key in data:
                 disc.__setattr__(key, data[key])
                 disc.save()
@@ -188,7 +188,7 @@ def technologies():
 
         except (TypeError,AttributeError):
             return "Error: Provide correct attribute name"
-            
+
 # Get all Developers
 @api.route('/developers', methods=['GET', 'POST'])
 def developers():
@@ -204,19 +204,19 @@ def developers():
             abort(400,"Provide institute_id")
 
         instt = Institute.query.get(data['institute_id'])
-        
+
         try:
             new_develop = Developer(**data)
             new_develop.save()
             return jsonify(new_develop.to_client())
 
         except TypeError:
-            return jsonify(error="Error: Provide correct attribute name")       
-            
+            return jsonify(error="Error: Provide correct attribute name")
+
 # updating Developers by ID
 @api.route('/developers/<int:id>', methods=['PUT'])
 def update_develop_by_id(id):
-    if request.method == 'PUT':        
+    if request.method == 'PUT':
         develop = Developer.query.get(id)
         data = parse_request(request)
         if develop is None:
@@ -224,7 +224,7 @@ def update_develop_by_id(id):
         if not data:
             abort(400, 'Your data should be in JSON format')
         try:
-            
+
             for key in data:
                 develop.__setattr__(key, data[key])
                 develop.save()
@@ -249,7 +249,7 @@ def update_tech_by_id(id):
         except (AttributeError,KeyError):
             return "Provide correct attribute name"
 
-# Get a specific lab and its parameters 
+# Get a specific lab and its parameters
 # Example: /labs/1?fields=status&fields=discipline
 @api.route('/labs/<int:id>', methods=['GET', 'PUT'])
 def get_lab_by_id(id):
@@ -257,7 +257,7 @@ def get_lab_by_id(id):
         lab = Lab.query.get(id)
         if lab is None:
             abort(404, 'Invalid Id')
-	
+
 	fields = request.args.getlist('fields') or None
 	if fields is None:
             return jsonify(lab.to_client())
@@ -269,7 +269,7 @@ def get_lab_by_id(id):
 	    except KeyError:
 	        raise Exception('Invalid field %s', field)
         return jsonify(fmttd_lab)
-	
+
     if request.method == 'PUT':
         data = parse_request(request)
         if not data:
@@ -358,7 +358,7 @@ def post_exp():
 
         if lab is None:
             abort(404, 'No lab exist with given lab_id')
-        
+
         try:
             new_experiment = Experiment(**data)
             new_experiment.save()
@@ -366,3 +366,49 @@ def post_exp():
 
         except (TypeError,AttributeError):
             return "Error: Provide correct attribute name"
+
+# Get all system details of a lab
+@api.route('/labsysteminfo', methods=['GET', 'POST'])
+def get_labsysteminfo():
+    if request.method == 'GET':
+        return json.dumps(LabSystemInfo.get_all())
+
+    if request.method == 'POST':
+        data = parse_request(request)
+        if not data:
+            abort(400, 'Your data should be in JSON format')
+
+        if 'lab_id' not in data:
+            abort(400,'You need to provide lab_id')
+
+        lab = Lab.query.get(data['lab_id'])
+
+        if lab is None:
+            abort(404, 'No lab exist with given lab_id')
+
+        try:
+            new_system_info = LabSystemInfo(**data)
+            new_system_info.save()
+            return jsonify(new_system_info.to_client())
+
+        except (TypeError,AttributeError):
+            return "Error: Provide correct attribute name"
+
+# updating LabSystemInfo by ID
+@api.route('/labsysteminfo/<int:id>', methods=['PUT'])
+def update_labsysteminfo_by_id(id):
+    if request.method == 'PUT':
+        labsysteminfo = LabSystemInfo.query.get(id)
+        data = parse_request(request)
+        if labsysteminfo is None:
+            abort(404,"No id found")
+        if not data:
+            abort(400, 'Your data should be in JSON format')
+        try:
+
+            for key in data:
+                labsysteminfo.__setattr__(key, data[key])
+                labsysteminfo.save()
+            return jsonify(labsysteminfo.to_client())
+        except (AttributeError, TypeError):
+            return "Provide correct attribute name"

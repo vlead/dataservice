@@ -278,3 +278,45 @@ class Experiment(db.Model):
     def save(self):
         db.session.add(self)
         db.session.commit()
+
+class LabSystemInfo(db.Model):
+
+    __tablename__ = 'lab_system_info'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    lab_id = db.Column(db.Integer, db.ForeignKey('labs.id'))
+    lab = db.relationship('Lab')
+    storage = db.Column(db.String(256))
+    memory = db.Column(db.String(256))
+    os = db.Column(db.String(256))
+    os_version = db.Column(db.String(256))
+    architecture = db.Column(db.String(256))
+    hosting = db.Column(db.String(256))
+    vm_id = db.Column(db.String(256))
+    ipaddress = db.Column(db.String(256))
+
+
+    def to_client(self):
+        return {
+            'id': self.id,
+            'storage': self.storage,
+            'memory': self.memory,
+            'os':self.os,
+            'os_version':self.os_version,
+            'architecture':self.architecture,
+            'hosting':self.hosting,
+            'vm_id':self.vm_id,
+            'ipaddress':self.ipaddress,
+            'lab': {
+                'id': self.lab.id,
+            }
+        }
+    @staticmethod
+    def get_all():
+        return [i.to_client() for i in LabSystemInfo.query.all()]
+
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
