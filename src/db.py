@@ -223,6 +223,7 @@ class Technology(db.Model):
 
     def to_client(self):
         return {
+            'id':self.id,
             'name': self.name,
             'foss': self.foss
         }
