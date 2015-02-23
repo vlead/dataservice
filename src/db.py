@@ -124,6 +124,7 @@ class Institute(db.Model):
 
     def to_client(self):
         return {
+            'id':self.id,
             'name': self.name,
             'coordinator': self.coordinator,
             'integration_coordinator': self.integration_coordinator
@@ -148,6 +149,7 @@ class Discipline(db.Model):
 
     def to_client(self):
         return {
+            'id':self.id,
             'name': self.name,
             'dnc': self.dnc
         }
