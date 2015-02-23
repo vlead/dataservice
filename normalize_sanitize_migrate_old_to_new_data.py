@@ -8,7 +8,7 @@ from src.db import Technology, TechnologyUsed, Institute, Discipline,\
 
 from src import config
 
-old_db_uri = 'mysql+oursql://ecthiender:polarbear@localhost/labs_info'
+old_db_uri = 'mysql+oursql://root:root@localhost/new_database'
 old_db = create_engine(old_db_uri)
 conn = old_db.connect()
 
