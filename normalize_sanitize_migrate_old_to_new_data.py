@@ -8,7 +8,7 @@ from src.db import Technology, TechnologyUsed, Institute, Discipline,\
 
 from src import config
 
-old_db_uri = 'mysql+oursql://root:root@localhost/new_database'
+old_db_uri = 'mysql+oursql://root:root@localhost/new_dump'
 old_db = create_engine(old_db_uri)
 conn = old_db.connect()
 
@@ -41,15 +41,15 @@ def populate_instt():
 
     result = conn.execute('select * from institutes')
     for row in result:
-        print 'id', 'name', 'coordinator', 'integration_coordinator'
+        print 'id', 'name', 'PIC', 'IIC'
         print row[0], row[1], row[2], row[3]
         if not row[3]:
             iic = None
         else:
             iic = row[3].strip()
         instt = Institute(name=row[1].strip(),
-                          coordinator=row[2].strip(),
-                          integration_coordinator=iic)
+                          PIC=row[2].strip(),
+                          IIC=iic)
         print instt
         instt.save()
     print "Done saving institutes.."
@@ -216,10 +216,10 @@ def populate_labs():
         elif simu == "Yes":
             simu = True
         elif simu.find('Unable') >= 0:
-            remarks += ' ;is_simulation: %s; ' % simu
+            remarks += ' ;is_simulation_avail: %s; ' % simu
             simu = None
         else:
-            remarks += ' ;is_simulation: %s; ' % simu
+            remarks += ' ;is_simulation_avail: %s; ' % simu
             simu = True
 
         # sanitize, normalize
@@ -311,7 +311,7 @@ def populate_labs():
                   is_deployed=lab_deployed,
                   number_of_experiments=num_exps,
                   is_content_avail=content,
-                  is_simulation=simu,
+                  is_simulation_avail=simu,
                   is_web_2_compliant=web_2_comp,
                   type_of_lab=lab_type,
                   is_auto_hostable=auto_hostable,
