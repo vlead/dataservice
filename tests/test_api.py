@@ -8,11 +8,11 @@ import json
 # from src import api
 from src.db import db
 from src.app import create_app
-from src.db import Lab, Institute, Discipline, Technology, Developer, Experiment, LabSystemInfo
-from test_data import lab_data, instt_data, disc_data, tech_data, develop_data, exp_data, update_instt, update_disc, update_develop, update_tech, update_lab, sys_data, update_sys_data
+from src.db import *
+from test_data import *
 
 
-class MyTest(TestCase):
+class APITest(TestCase):
 
     TESTING = True
     config = {
@@ -42,12 +42,12 @@ class MyTest(TestCase):
         new_lab.save()
         # make request
         r = self.client.get('/labs')
-        # response is in string, load as a python dict
+        # response is in string,  load as a python dict
         resp = json.loads(r.data)
         # assert if length of retrieved labs is equal to inserted data
-        self.assertEqual(len(resp), 1)
+        self.assertEqual(len(resp),  1)
         # assert if name attr of test data is same as retrieved data
-        self.assertEqual(lab_data['name'], resp[0]['name'])
+        self.assertEqual(lab_data['name'],  resp[0]['name'])
 
     def test_get_specific_lab(self):
         print "test_get_specific_lab()"
@@ -61,10 +61,10 @@ class MyTest(TestCase):
         new_lab.save()
         # make request
         r = self.client.get('/labs/1')
-        # response is in string, load as a python dict
+        # response is in string,  load as a python dict
         resp = json.loads(r.data)
         # assert if specific lab is loaded
-        self.assertEqual(lab_data['name'], resp['name'])
+        self.assertEqual(lab_data['name'],  resp['name'])
         # assert if lab not found is working
         r = self.client.get('/labs/999')
         self.assert_404(r)
@@ -77,77 +77,73 @@ class MyTest(TestCase):
         disc.save()
         lab = Lab(**lab_data)
         lab.save()
-        r = self.client.put('/labs/1', data=update_lab)
+        r = self.client.put('/labs/1',  data=update_lab)
         resp = json.loads(r.data)
-        self.assertNotEqual(lab_data['name'], resp['name'])
-
+        self.assertNotEqual(lab_data['name'],  resp['name'])
 
     def test_put_specific_inst(self):
         print "test_put_specific_inst()"
         instt = Institute(**instt_data)
         instt.save()
-        r = self.client.put('/institutes/1',data=update_instt)
+        r = self.client.put('/institutes/1',  data=update_instt)
         resp = json.loads(r.data)
-        self.assertNotEqual(instt_data['name'],resp['name'])
+        self.assertNotEqual(instt_data['name'], resp['name'])
 
     def test_put_specific_disc(self):
         print "test_put_specific_disc()"
         disc = Discipline(**disc_data)
         disc.save()
-        r = self.client.put('/disciplines/1',data=update_disc)
+        r = self.client.put('/disciplines/1', data=update_disc)
         resp = json.loads(r.data)
-        self.assertNotEqual(disc_data['name'],resp['name'])
+        self.assertNotEqual(disc_data['name'], resp['name'])
 
     def test_put_specific_develop(self):
         print "test_put_specific_disc()"
         develop = Developer(**develop_data)
         develop.save()
-        r = self.client.put('/developers/1',data=update_develop)
+        r = self.client.put('/developers/1', data=update_develop)
         resp = json.loads(r.data)
-        self.assertNotEqual(develop_data['name'],resp['name'])
+        self.assertNotEqual(develop_data['name'], resp['name'])
 
     def test_put_specific_tech(self):
         print "test_put_specific_tech()"
         tech = Technology(**tech_data)
         tech.save()
-        r = self.client.put('/technologies/1',data=update_tech)
+        r = self.client.put('/technologies/1', data=update_tech)
         resp = json.loads(r.data)
-        self.assertNotEqual(tech_data['name'],resp['name'])
-
+        self.assertNotEqual(tech_data['name'], resp['name'])
 
     def test_post_specific_develop(self):
         print "test_post_specific_develop()"
         develop = Developer(**develop_data)
         develop.save()
-        r = self.client.post('/developers',data=develop_data)
-        #if r.status_code is 500:
-        #    print ""
+        r = self.client.post('/developers', data=develop_data)
         resp = json.loads(r.data)
-        self.assertEqual(develop_data['name'],resp['name'])
+        self.assertEqual(develop_data['name'], resp['name'])
 
     def test_post_specific_instt(self):
         print "test_post_specific_instt()"
         instt = Institute(**instt_data)
         instt.save()
-        r = self.client.post('/institutes',data=instt_data)
+        r = self.client.post('/institutes', data=instt_data)
         resp = json.loads(r.data)
-        self.assertEqual(instt_data['name'],resp['name'])
+        self.assertEqual(instt_data['name'], resp['name'])
 
     def test_post_specific_disc(self):
         print "test_post_specific_disc()"
         disc = Discipline(**disc_data)
         disc.save()
-        r = self.client.post('/disciplines',data=disc_data)
+        r = self.client.post('/disciplines', data=disc_data)
         resp = json.loads(r.data)
-        self.assertEqual(disc_data['name'],resp['name'])
+        self.assertEqual(disc_data['name'], resp['name'])
 
     def test_post_specific_tech(self):
         print "test_post_specific_develop()"
         tech = Technology(**tech_data)
         tech.save()
-        r = self.client.post('/technologies',data=tech_data)
+        r = self.client.post('/technologies', data=tech_data)
         resp = json.loads(r.data)
-        self.assertEqual(tech_data['name'],resp['name'])
+        self.assertEqual(tech_data['name'], resp['name'])
 
     def test_post_specific_lab(self):
         print "test_post_specific_lab()"
@@ -157,9 +153,9 @@ class MyTest(TestCase):
         disc.save()
         lab = Lab(**lab_data)
         lab.save()
-        r = self.client.post('/labs',data=lab_data)
+        r = self.client.post('/labs', data=lab_data)
         resp = json.loads(r.data)
-        self.assertEqual(lab_data['name'],resp['name'])
+        self.assertEqual(lab_data['name'], resp['name'])
 
     def test_post_specific_exp(self):
         print "test_post_specific_exp()"
@@ -173,11 +169,9 @@ class MyTest(TestCase):
 
         exp = Experiment(**exp_data)
         exp.save()
-        r = self.client.post('/experiments',data=exp_data)
+        r = self.client.post('/experiments', data=exp_data)
         resp = json.loads(r.data)
-        self.assertEqual(exp_data['name'],resp['name'])
-
-
+        self.assertEqual(exp_data['name'], resp['name'])
 
     def test_get_all_institutes(self):
         print "test_get_all_institutes()"
@@ -185,8 +179,8 @@ class MyTest(TestCase):
         new_instt.save()
         r = self.client.get('/institutes')
         resp = json.loads(r.data)
-        self.assertEqual(len(resp), 1)
-        self.assertEqual(instt_data['name'], resp[0]['name'])
+        self.assertEqual(len(resp),  1)
+        self.assertEqual(instt_data['name'],  resp[0]['name'])
 
     def test_get_all_technologoes(self):
         print "test_get_all_technologies()"
@@ -194,8 +188,8 @@ class MyTest(TestCase):
         new_technology.save()
         r = self.client.get('/technologies')
         resp = json.loads(r.data)
-        self.assertEqual(len(resp), 1)
-        self.assertEqual(tech_data['name'], resp[0]['name'])
+        self.assertEqual(len(resp),  1)
+        self.assertEqual(tech_data['name'],  resp[0]['name'])
 
     def test_get_all_disciplines(self):
         print "test_get_all_disciplines()"
@@ -203,8 +197,8 @@ class MyTest(TestCase):
         disc.save()
         r = self.client.get('/disciplines')
         resp = json.loads(r.data)
-        self.assertEqual(len(resp), 1)
-        self.assertEqual(disc_data['name'], resp[0]['name'])
+        self.assertEqual(len(resp),  1)
+        self.assertEqual(disc_data['name'],  resp[0]['name'])
 
     def test_get_all_developers(self):
         print "test_get_all_developers()"
@@ -212,8 +206,8 @@ class MyTest(TestCase):
         dev.save()
         r = self.client.get('/developers')
         resp = json.loads(r.data)
-        self.assertEqual(len(resp), 1)
-        self.assertEqual(develop_data['name'], resp[0]['name'])
+        self.assertEqual(len(resp),  1)
+        self.assertEqual(develop_data['name'],  resp[0]['name'])
 
     def test_get_lab_by_institute(self):
         print "test_get_lab_by_institute()"
@@ -228,7 +222,6 @@ class MyTest(TestCase):
         # make request
         r = self.client.get('/labs/institutes/1')
         resp = json.loads(r.data)
-       # print resp
         self.assertEqual(len(resp), 1)
         self.assertEqual(instt_data['name'], resp[0]['institute']['name'])
 
@@ -242,8 +235,8 @@ class MyTest(TestCase):
         new_lab.save()
         r = self.client.get('/labs/institutes/1/disciplines/1')
         resp = json.loads(r.data)
-        self.assertEqual(len(resp), 1)
-        self.assertEqual(lab_data['name'], resp[0]['name'])
+        self.assertEqual(len(resp),  1)
+        self.assertEqual(lab_data['name'],  resp[0]['name'])
 
     def test_get_lab_by_discipline(self):
         print "test_get_lab_by_discipline()"
@@ -255,15 +248,14 @@ class MyTest(TestCase):
         new_lab.save()
         r = self.client.get('/labs/disciplines/1')
         resp = json.loads(r.data)
-        self.assertEqual(len(resp), 1)
-        self.assertEqual(disc_data['name'], resp[0]['discipline']['name'])
+        self.assertEqual(len(resp),  1)
+        self.assertEqual(disc_data['name'],  resp[0]['discipline']['name'])
         r = self.client.get('/labs/disciplines/999')
         self.assert_404(r)
 
-
     def test_get_experiments_of_a_lab(self):
-	print "test_get_experiments_of_a_lab()"
-	disc = Discipline(**disc_data)
+        print "test_get_experiments_of_a_lab()"
+        disc = Discipline(**disc_data)
         disc.save()
         inst = Institute(**instt_data)
         inst.save()
@@ -273,8 +265,8 @@ class MyTest(TestCase):
         exps.save()
         r = self.client.get('/labs/1/experiments')
         resp = json.loads(r.data)
-        self.assertEqual(len(resp), 1)
-        self.assertEqual(exp_data['name'], resp[0]['name'])
+        self.assertEqual(len(resp),  1)
+        self.assertEqual(exp_data['name'],  resp[0]['name'])
         r = self.client.get('/labs/999/experiments')
         self.assert_404(r)
 
@@ -288,25 +280,25 @@ class MyTest(TestCase):
         new_lab.save()
         r = self.client.get('/search/labs?status=Hosted')
         resp = json.loads(r.data)
-        self.assertEqual(len(resp), 1)
-        self.assertEqual(lab_data['status'], resp[0]['status'])
+        self.assertEqual(len(resp),  1)
+        self.assertEqual(lab_data['status'],  resp[0]['status'])
 
     def test_get_search_by_attr(self):
- 	print "test_get_search_by_attr()"
+        print "test_get_search_by_attr()"
         disc = Discipline(**disc_data)
         disc.save()
         inst = Institute(**instt_data)
         inst.save()
         new_lab = Lab(**lab_data)
         new_lab.save()
-	r = self.client.get('/labs/1?fields=status')
-	resp = json.loads(r.data)
-	self.assertEqual(len(resp), 1)
-	self.assertEqual(lab_data['status'], resp['status'])
+        r = self.client.get('/labs/1?fields=status')
+        resp = json.loads(r.data)
+        self.assertEqual(len(resp),  1)
+        self.assertEqual(lab_data['status'],  resp['status'])
 
     def test_get_labsysteminfo(self):
-	print "test_get_labsysteminfo()"
-	disc = Discipline(**disc_data)
+        print "test_get_labsysteminfo()"
+        disc = Discipline(**disc_data)
         disc.save()
         inst = Institute(**instt_data)
         inst.save()
@@ -316,9 +308,8 @@ class MyTest(TestCase):
         new_system_info.save()
         r = self.client.get('/labsysteminfo')
         resp = json.loads(r.data)
-        self.assertEqual(len(resp), 1)
-        self.assertEqual(sys_data['os'], resp[0]['os'])
-      
+        self.assertEqual(len(resp),  1)
+        self.assertEqual(sys_data['os'],  resp[0]['os'])
 
     def test_post_labsysteminfo(self):
         print "test_post_labsysteminfo()"
@@ -332,9 +323,9 @@ class MyTest(TestCase):
 
         new_system_info = LabSystemInfo(**sys_data)
         new_system_info.save()
-        r = self.client.post('/labsysteminfo',data=sys_data)
+        r = self.client.post('/labsysteminfo', data=sys_data)
         resp = json.loads(r.data)
-        self.assertEqual(sys_data['os'],resp['os'])
+        self.assertEqual(sys_data['os'], resp['os'])
 
     def test_put_labsysteminfo(self):
         print "test_put_specific_lab()"
@@ -346,13 +337,10 @@ class MyTest(TestCase):
         lab.save()
         new_system_info = LabSystemInfo(**sys_data)
         new_system_info.save()
-        
+
         r = self.client.put('/labsysteminfo/1', data=update_sys_data)
         resp = json.loads(r.data)
         self.assertNotEqual(sys_data['os'], resp['os'])
-
-
-
 
 
 if __name__ == '__main__':

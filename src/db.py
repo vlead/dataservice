@@ -63,13 +63,32 @@ class Lab(db.Model):
 
         return fmttd_labs
 
+    @staticmethod
+    def get_specific_lab(id, fields=None):
+        lab = Lab.query.get(id)
+
+        if not lab:
+            return None
+
+        if not fields:
+            return lab.to_client()
+
+        fmttd_lab = {}  # formatted lab
+        for field in fields:
+            try:
+                fmttd_lab[field] = lab.to_client()[field]
+            except KeyError:
+                raise Exception('Invalid field %s', field)
+
+        return fmttd_lab
+
     def save(self):
         db.session.add(self)
         db.session.commit()
 
     def get_developers(self):
         devs = DeveloperEngaged.query.filter_by(lab_id=self.id).all()
-        print devs
+        #print devs
         return [d.developer.to_client() for d in devs]
 
     def get_technologies(self):
@@ -124,7 +143,7 @@ class Institute(db.Model):
 
     def to_client(self):
         return {
-            'id':self.id,
+            'id': self.id,
             'name': self.name,
             'PIC': self.PIC,
             'IIC': self.IIC
@@ -149,7 +168,7 @@ class Discipline(db.Model):
 
     def to_client(self):
         return {
-            'id':self.id,
+            'id': self.id,
             'name': self.name,
             'dnc': self.dnc
         }
@@ -223,7 +242,7 @@ class Technology(db.Model):
 
     def to_client(self):
         return {
-            'id':self.id,
+            'id': self.id,
             'name': self.name,
             'foss': self.foss
         }
@@ -282,6 +301,7 @@ class Experiment(db.Model):
         db.session.add(self)
         db.session.commit()
 
+
 class LabSystemInfo(db.Model):
 
     __tablename__ = 'lab_system_info'
@@ -299,26 +319,25 @@ class LabSystemInfo(db.Model):
     vm_id = db.Column(db.String(256))
     ipaddress = db.Column(db.String(256))
 
-
     def to_client(self):
         return {
             'id': self.id,
             'storage': self.storage,
             'memory': self.memory,
-            'os':self.os,
-            'os_version':self.os_version,
-            'architecture':self.architecture,
-            'hosting':self.hosting,
-            'vm_id':self.vm_id,
-            'ipaddress':self.ipaddress,
+            'os': self.os,
+            'os_version': self.os_version,
+            'architecture': self.architecture,
+            'hosting': self.hosting,
+            'vm_id': self.vm_id,
+            'ipaddress': self.ipaddress,
             'lab': {
                 'id': self.lab.id,
             }
         }
+
     @staticmethod
     def get_all():
         return [i.to_client() for i in LabSystemInfo.query.all()]
-
 
     def save(self):
         db.session.add(self)

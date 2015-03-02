@@ -1,9 +1,11 @@
 from setuptools import setup
 
 requires = [
-    'Flask',
+    'flask',
     'Flask-SQLAlchemy',
     'oursql',
+    'flask-cors',
+    'flask-testing',
     'requests'
 ]
 
