@@ -33,9 +33,9 @@ def labs():
         if 'discipline_id' not in data:
             abort(400, 'Provide discipline_id')
 
-        lab = Lab.query.get(data['institute_id'])
+        instt = Institute.query.get(data['institute_id'])
 
-        if lab is None:
+        if instt is None:
             abort(404, 'Foreign_key constraint fails: Provide institute_id')
 
         dis = Discipline.query.get(data['discipline_id'])
