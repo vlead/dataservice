@@ -1,0 +1,35 @@
+#+TITLE: Dataservice
+#+Author: VLEAD
+#+Date: [2015-07-24 Fri]
+
+* Introduction
+
+* Requirements
+
+  1. Ability to view every attribute of all the entities without any restriction
+  2. Ability to update every attribute of all the entities without any restriction
+  3. Ability to view technologies used for every experiment.
+
+  [[entity]] diagram contains all the entities, their attributes and relationships.
+
+* Design
+  #+CAPTION: Entity Diagram
+  #+NAME:   entity
+
+* Implementation
+* Test Cases
+* Design discussions
+* Releases
+** v0.1.0
+    This release will satisfy requirements 1, 2 and 3
+*** Tasks
+    + Requirements 1 & 2 are already implemented. 
+      1. Review the implementation of reqs 1 & 2 and merge all the changes to
+         develop branch.
+    + Requirement 3 needs realization
+      1. Schema of technologies_used entity will now contain experiment id.
+      2. Schema of technologies entity will hold version information 
+    
+*** Deadline
+
+
