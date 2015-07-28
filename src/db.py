@@ -5,7 +5,25 @@ from flask.ext.sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
-class Lab(db.Model):
+# Abstract class for common routines
+class Entity(db.Model):
+
+    __abstract__ = True
+
+    # save a db.Model to the database. commit it.
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    # update the object, and commit to the database
+    def update(self, **kwargs):
+        for attr, val in kwargs.iteritems():
+            self.__setattr__(attr, val)
+
+        self.save()
+
+
+class Lab(Entity):
 
     __tablename__ = 'labs'
 
@@ -82,13 +100,9 @@ class Lab(db.Model):
 
         return fmttd_lab
 
-    def save(self):
-        db.session.add(self)
-        db.session.commit()
-
     def get_developers(self):
         devs = DeveloperEngaged.query.filter_by(lab_id=self.id).all()
-        #print devs
+        # print devs
         return [d.developer.to_client() for d in devs]
 
     def get_technologies(self):
@@ -132,7 +146,7 @@ class Lab(db.Model):
         }
 
 
-class Institute(db.Model):
+class Institute(Entity):
 
     __tablename__ = 'institutes'
 
@@ -153,12 +167,8 @@ class Institute(db.Model):
     def get_all():
         return [i.to_client() for i in Institute.query.all()]
 
-    def save(self):
-        db.session.add(self)
-        db.session.commit()
 
-
-class Discipline(db.Model):
+class Discipline(Entity):
 
     __tablename__ = 'disciplines'
 
@@ -177,12 +187,8 @@ class Discipline(db.Model):
     def get_all():
         return [i.to_client() for i in Discipline.query.all()]
 
-    def save(self):
-        db.session.add(self)
-        db.session.commit()
 
-
-class Developer(db.Model):
+class Developer(Entity):
 
     __tablename__ = 'developers'
 
@@ -206,12 +212,8 @@ class Developer(db.Model):
     def get_all():
         return [i.to_client() for i in Developer.query.all()]
 
-    def save(self):
-        db.session.add(self)
-        db.session.commit()
 
-
-class DeveloperEngaged(db.Model):
+class DeveloperEngaged(Entity):
 
     __tablename__ = 'developers_engaged'
 
@@ -223,12 +225,8 @@ class DeveloperEngaged(db.Model):
     developer_id = db.Column(db.Integer, db.ForeignKey('developers.id'))
     developer = db.relationship('Developer')
 
-    def save(self):
-        db.session.add(self)
-        db.session.commit()
 
-
-class Technology(db.Model):
+class Technology(Entity):
 
     __tablename__ = 'technologies'
 
@@ -247,12 +245,8 @@ class Technology(db.Model):
             'foss': self.foss
         }
 
-    def save(self):
-        db.session.add(self)
-        db.session.commit()
 
-
-class TechnologyUsed(db.Model):
+class TechnologyUsed(Entity):
 
     __tablename__ = 'technologies_used'
 
@@ -267,12 +261,8 @@ class TechnologyUsed(db.Model):
     server_side = db.Column(db.Boolean)
     client_side = db.Column(db.Boolean)
 
-    def save(self):
-        db.session.add(self)
-        db.session.commit()
 
-
-class Experiment(db.Model):
+class Experiment(Entity):
 
     __tablename__ = 'experiments'
 
@@ -297,12 +287,8 @@ class Experiment(db.Model):
             }
         }
 
-    def save(self):
-        db.session.add(self)
-        db.session.commit()
 
-
-class LabSystemInfo(db.Model):
+class LabSystemInfo(Entity):
 
     __tablename__ = 'lab_system_info'
 
@@ -310,35 +296,36 @@ class LabSystemInfo(db.Model):
 
     lab_id = db.Column(db.Integer, db.ForeignKey('labs.id'))
     lab = db.relationship('Lab')
-    storage = db.Column(db.String(256))
-    memory = db.Column(db.String(256))
-    os = db.Column(db.String(256))
-    os_version = db.Column(db.String(256))
-    architecture = db.Column(db.String(256))
-    hosting = db.Column(db.String(256))
-    vm_id = db.Column(db.String(256))
-    ipaddress = db.Column(db.String(256))
+
+    storage = db.Column(db.String(64))
+    memory = db.Column(db.String(64))
+
+    arch = db.Column(db.String(64))
+    os = db.Column(db.String(64))
+    os_version = db.Column(db.String(64))
+
+    hosting = db.Column(db.String(64))
+    vm_id = db.Column(db.String(64))
+    ip_addr = db.Column(db.String(64))
 
     def to_client(self):
         return {
+            # 'lab': self.lab.to_client(),
+            'lab': {
+                'id': self.lab.id,
+                'name': self.lab.name
+            },
             'id': self.id,
             'storage': self.storage,
             'memory': self.memory,
             'os': self.os,
             'os_version': self.os_version,
-            'architecture': self.architecture,
+            'arch': self.arch,
             'hosting': self.hosting,
             'vm_id': self.vm_id,
-            'ipaddress': self.ipaddress,
-            'lab': {
-                'id': self.lab.id,
-            }
+            'ip_addr': self.ip_addr,
         }
 
     @staticmethod
     def get_all():
         return [i.to_client() for i in LabSystemInfo.query.all()]
-
-    def save(self):
-        db.session.add(self)
-        db.session.commit()

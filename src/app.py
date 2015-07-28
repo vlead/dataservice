@@ -32,9 +32,9 @@ def create_app(config):
 
 # configure cross origin resource sharing
 def configure_cors(app):
-    CORS(app)
-    #CORS(app, origins=config.ALLOWED_ORIGINS,
-    #     methods=['GET', 'OPTIONS', 'PUT', 'POST'], always_send=True)
+    # CORS(app)
+    CORS(app, origins=config.ALLOWED_ORIGINS,
+         methods=['GET', 'OPTIONS', 'PUT', 'POST'])
 
 
 # custom error handlers to return JSON errors with appropiate status codes
@@ -42,6 +42,9 @@ def configure_errorhandlers(app):
 
     @app.errorhandler(404)
     def not_found(err):
+        if 'description' not in err:
+            return make_response(jsonify(error='No such URL found'), 404)
+
         return make_response(jsonify(error=err.description), 404)
 
     @app.errorhandler(400)
