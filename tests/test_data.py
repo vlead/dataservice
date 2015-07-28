@@ -39,47 +39,47 @@ tech_data = {
 
 
 exp_data = {
-    "lab_id" : 1,
-    "name" : "String Matching",
-    "content_url" : "some url",
-    "simulation_url" : "some other url"
+    "lab_id": 1,
+    "name": "String Matching",
+    "content_url": "some url",
+    "simulation_url": "some other url"
 }
 develop_data = {
-    "name":"ramuu",
-    "email_id":"ra@gmail.com",
-    "institute_id":1
+    "name": "ramuu",
+    "email_id": "ra@gmail.com",
+    "institute_id": 1
 }
 tech_data = {
-  "name":"php5"
+    "name": "php5"
 }
 sys_data = {
-"lab_id" : 1,
-"storage" : "10gb",
-"memory" : "2gb",
-"os" : "ubuntu",
-"os_version" : "12",
-"architecture" : "i386",
-"hosting" : "dedicated",
-"vm_id" : "14225",
-"ipaddress": "0.0.0.0"
+    "lab_id": 1,
+    "storage": "10gb",
+    "memory": "2gb",
+    "os": "ubuntu",
+    "os_version": "12",
+    "arch": "i386",
+    "hosting": "dedicated",
+    "vm_id": "14225",
+    "ip_addr": "0.0.0.0"
 }
 update_sys_data = {
     "os": "windows"
 }
 
 update_instt = {
-  "name":"IIT-D"
+    "name": "IIT-D"
 
 }
 update_disc = {
-  "name":"ECE"
+    "name": "ECE"
 }
 update_develop = {
-  "name":"krishna"
+    "name": "krishna"
 }
 update_tech = {
-  "name":"java"
+    "name": "java"
 }
 update_lab = {
-  "name":"computers"
+    "name": "computers"
 }

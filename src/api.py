@@ -2,8 +2,8 @@
 
 
 from flask import Blueprint, request, jsonify, abort
-from db import Lab, Institute, Discipline, Technology, Developer, Experiment,\
-    LabSystemInfo
+
+from db import *
 
 from utils import parse_request, jsonify_list
 
@@ -17,6 +17,7 @@ def labs():
     if request.method == 'GET':
         fields = request.args.getlist('fields') or None
         try:
+            print jsonify_list(Lab.get_all(fields)).data
             return jsonify_list(Lab.get_all(fields))
         except Exception:
             abort(404, 'Invalid field attribute')
@@ -140,21 +141,23 @@ def institutes():
 @api.route('/institutes/<int:id>', methods=['PUT'])
 def update_instt_by_id(id):
     if request.method == 'PUT':
+
         data = parse_request(request)
         if not data:
             abort(400, 'Your data should be in JSON format')
+
         instt = Institute.query.get(id)
         if instt is None:
-            abort(404)
+            abort(404, 'No institute with id: %s found' % str(id))
+
         try:
-            for key in data:
-                instt.__setattr__(key, data[key])
-                instt.save()
-            return jsonify(instt.to_client())
+            instt.update(**data)
         except (AttributeError, KeyError), e:
             print e
             # return 'Error: Provide correct attribute name'
             abort(400, 'Invalid attributes in request data')
+
+        return jsonify(instt.to_client())
 
 
 # Get all Disciplines
@@ -182,22 +185,23 @@ def disciplines():
 @api.route('/disciplines/<int:id>', methods=['PUT'])
 def update_disc_by_id(id):
     if request.method == 'PUT':
+
         data = parse_request(request)
         if not data:
             abort(400, 'Your data should be in JSON format')
+
         disc = Discipline.query.get(id)
         if disc is None:
-            abort(404)
-        try:
-            for key in data:
-                disc.__setattr__(key, data[key])
-                disc.save()
-            return jsonify(disc.to_client())
+            abort(404, 'No discipline with id: %s found' % str(id))
 
+        try:
+            disc.update(**data)
         except (KeyError, AttributeError), e:
             print e
             # return 'Invalid attribute found'
             abort(400, 'Invalid attributes in request data')
+
+        return jsonify(disc.to_client())
 
 
 # Get all Technologies
@@ -235,7 +239,7 @@ def developers():
         if 'institute_id' not in data:
             abort(400, 'Provide institute_id')
 
-        instt = Institute.query.get(data['institute_id'])
+        # instt = Institute.query.get(data['institute_id'])
 
         try:
             new_develop = Developer(**data)
@@ -252,22 +256,23 @@ def developers():
 @api.route('/developers/<int:id>', methods=['PUT'])
 def update_develop_by_id(id):
     if request.method == 'PUT':
-        develop = Developer.query.get(id)
+
         data = parse_request(request)
-        if develop is None:
-            abort(404, 'No id found')
         if not data:
             abort(400, 'Your data should be in JSON format')
-        try:
 
-            for key in data:
-                develop.__setattr__(key, data[key])
-                develop.save()
-            return jsonify(develop.to_client())
+        develop = Developer.query.get(id)
+        if develop is None:
+            abort(404, 'No developer with id: %s found' % str(id))
+
+        try:
+            develop.update(**data)
         except (AttributeError, TypeError), e:
             print e
             # return 'Provide correct attribute name'
             abort(400, 'Invalid attributes in request data')
+
+        return jsonify(develop.to_client())
 
 
 # updating technologies by ID
@@ -277,17 +282,19 @@ def update_tech_by_id(id):
         data = parse_request(request)
         if not data:
             abort(400, 'Your data should be in JSON format')
+
         tech = Technology.query.get(id)
-        # jsonify(request.form.to_dict())
+        if not tech:
+            abort(404, 'No such technology exist')
+
         try:
-            for key in data:
-                tech.__setattr__(key, data[key])
-                tech.save()
-            return jsonify(tech.to_client())
+            tech.update(**data)
         except (AttributeError, KeyError), e:
             print e
             # return 'Provide correct attribute name'
             abort(400, 'Invalid attributes in request data')
+
+        return jsonify(tech.to_client())
 
 
 # Get a specific lab and its parameters
@@ -311,17 +318,19 @@ def get_lab_by_id(id):
         data = parse_request(request)
         if not data:
             abort(400, 'Your data should be in JSON format')
+
         lab = Lab.query.get(id)
-        # jsonify(request.form.to_dict())
+        if not lab:
+            abort(404, 'No lab with id: %s exist' % str(id))
+
         try:
-            for key in data:
-                lab.__setattr__(key, data[key])
-                lab.save()
-            return jsonify(lab.to_client())
+            lab.update(**data)
         except (AttributeError, KeyError), e:
             print e
             # return 'Provide correct attribute name'
             abort(400, 'Invalid attributes in request data')
+
+        return jsonify(lab.to_client())
 
 
 # Get labs info by searching with any of its parameters
@@ -358,17 +367,18 @@ def update_exp_by_id(id):
         data = parse_request(request)
         if not data:
             abort(400, 'Your data should be in JSON format')
+
         exp = Experiment.query.get(id)
         if exp is None:
-            abort(404)
+            abort(404, 'No such experiment')
+
         try:
-            for key in request.form.to_dict():
-                exp.__setattr__(key, request.form.to_dict()[key])
-                exp.save()
-            return jsonify(exp.to_client())
+            exp.update(**data)
         except (AttributeError, KeyError):
             # return 'Provide correct attribute name'
             abort(400, 'Invalid attributes in request data')
+
+        return jsonify(exp.to_client())
 
 
 # Get all the experiments of a specific lab
@@ -448,18 +458,20 @@ def get_labsysteminfo():
 @api.route('/labsysteminfo/<int:id>', methods=['PUT'])
 def update_labsysteminfo_by_id(id):
     if request.method == 'PUT':
-        labsysteminfo = LabSystemInfo.query.get(id)
+
         data = parse_request(request)
-        if labsysteminfo is None:
-            abort(404, 'No id found')
         if not data:
             abort(400, 'Your data should be in JSON format')
+
+        labsysteminfo = LabSystemInfo.query.get(id)
+        if labsysteminfo is None:
+            abort(404, 'No id found')
+
         try:
-            for key in data:
-                labsysteminfo.__setattr__(key, data[key])
-                labsysteminfo.save()
-            return jsonify(labsysteminfo.to_client())
+            labsysteminfo.update(**data)
         except (AttributeError, TypeError), e:
             print e
             # return 'Provide correct attribute name'
             abort(400, 'Invalid attributes in request data')
+
+        return jsonify(labsysteminfo.to_client())
