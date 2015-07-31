@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
 
-from flask import Blueprint, request, jsonify, abort
+from flask import Blueprint, request, jsonify, abort, current_app
 
 from db import *
-
 from utils import parse_request, jsonify_list
 
 
@@ -17,7 +16,7 @@ def labs():
     if request.method == 'GET':
         fields = request.args.getlist('fields') or None
         try:
-            print jsonify_list(Lab.get_all(fields)).data
+            current_app.logger.debug(jsonify_list(Lab.get_all(fields)).data)
             return jsonify_list(Lab.get_all(fields))
         except Exception:
             abort(404, 'Invalid field attribute')
@@ -49,8 +48,7 @@ def labs():
             return jsonify(new_lab.to_client())
 
         except (TypeError, AttributeError), e:
-            print e
-            # return jsonify(error='Wrong attribute found')
+            current_app.logger.error("Error while saving lab data: %s" % e)
             abort(400, 'Invalid attributes in request data')
 
 
@@ -132,7 +130,8 @@ def institutes():
             return jsonify(new_institute.to_client())
 
         except (TypeError, AttributeError), e:
-            print e
+            current_app.logger.error("Error while saving institute data: %s" %
+                                     e)
             # return 'Error: Provide correct attribute name'
             abort(400, 'Invalid attributes in request data')
 
@@ -153,7 +152,8 @@ def update_instt_by_id(id):
         try:
             instt.update(**data)
         except (AttributeError, KeyError), e:
-            print e
+            current_app.logger.error("Error while saving institute data: %s" %
+                                     e)
             # return 'Error: Provide correct attribute name'
             abort(400, 'Invalid attributes in request data')
 
@@ -176,7 +176,8 @@ def disciplines():
             return jsonify(new_discipline.to_client())
 
         except (TypeError, AttributeError), e:
-            print e
+            current_app.logger.error("Error while saving discipline data: %s" %
+                                     e)
             # return 'Error: Provide correct attribute name'
             abort(400, 'Invalid attributes in request data')
 
@@ -197,7 +198,8 @@ def update_disc_by_id(id):
         try:
             disc.update(**data)
         except (KeyError, AttributeError), e:
-            print e
+            current_app.logger.error("Error while saving discipline data: %s" %
+                                     e)
             # return 'Invalid attribute found'
             abort(400, 'Invalid attributes in request data')
 
@@ -220,7 +222,8 @@ def technologies():
             return jsonify(new_technology.to_client())
 
         except (TypeError, AttributeError), e:
-            print e
+            current_app.logger.error("Error while saving technology data: %s" %
+                                     e)
             # return 'Error: Provide correct attribute name'
             abort(400, 'Invalid attributes in request data')
 
@@ -247,7 +250,8 @@ def developers():
             return jsonify(new_develop.to_client())
 
         except TypeError, e:
-            print e
+            current_app.logger.error("Error while saving developer data: %s" %
+                                     e)
             # return jsonify(error='Error: Provide correct attribute name')
             abort(400, 'Invalid attributes in request data')
 
@@ -268,7 +272,8 @@ def update_develop_by_id(id):
         try:
             develop.update(**data)
         except (AttributeError, TypeError), e:
-            print e
+            current_app.logger.error("Error while saving developer data: %s" %
+                                     e)
             # return 'Provide correct attribute name'
             abort(400, 'Invalid attributes in request data')
 
@@ -290,7 +295,8 @@ def update_tech_by_id(id):
         try:
             tech.update(**data)
         except (AttributeError, KeyError), e:
-            print e
+            current_app.logger.error("Error while saving technology data: %s" %
+                                     e)
             # return 'Provide correct attribute name'
             abort(400, 'Invalid attributes in request data')
 
@@ -326,7 +332,7 @@ def get_lab_by_id(id):
         try:
             lab.update(**data)
         except (AttributeError, KeyError), e:
-            print e
+            current_app.logger.error("Error while saving lab data: %s" % e)
             # return 'Provide correct attribute name'
             abort(400, 'Invalid attributes in request data')
 
@@ -339,7 +345,7 @@ def search():
     if request.method == 'GET':
         args = {}
         args = request.args.to_dict()
-        #  print args
+        current_app.logger.debug("args received for /search request: %s" % args)
         if 'institute' in args:
             args['institute_id'] = \
                 Institute.query.filter_by(name=args['institute']).first().id
@@ -419,7 +425,7 @@ def post_exp():
             return jsonify(new_experiment.to_client())
 
         except (TypeError, AttributeError), e:
-            print e
+            current_app.logger.error("Error saving experiment data: %s" % e)
             # return 'Error: Provide correct attribute name'
             abort(400, 'Invalid attributes in request data')
 
@@ -449,7 +455,8 @@ def get_labsysteminfo():
             return jsonify(new_system_info.to_client())
 
         except (TypeError, AttributeError), e:
-            print e
+            current_app.logger.error("Error saving labs system info data: %s" %
+                                     e)
             # return 'Error: Provide correct attribute name'
             abort(400, 'Invalid attributes in request data')
 
@@ -470,7 +477,8 @@ def update_labsysteminfo_by_id(id):
         try:
             labsysteminfo.update(**data)
         except (AttributeError, TypeError), e:
-            print e
+            current_app.logger.error("Error saving labs system info data: %s" %
+                                     e)
             # return 'Provide correct attribute name'
             abort(400, 'Invalid attributes in request data')
 

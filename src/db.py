@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from flask.ext.sqlalchemy import SQLAlchemy
+from flask import current_app
 
 db = SQLAlchemy()
 
 
-# Abstract class for common routines
+# Abstract class to hold common methods
 class Entity(db.Model):
 
     __abstract__ = True
@@ -62,43 +63,52 @@ class Lab(Entity):
     @staticmethod
     def get_all(fields=None):
 
+        # get all labs from db
         labs = [i.to_client() for i in Lab.query.all()]
         # print fields
+        # if request do not contain fields, return the data
         if not fields:
             return labs
 
-        fmttd_labs = []  # all labs
-        for lab in labs:
-            fmttd_lab = {}  # formatted lab
-            for field in fields:
-                try:
-                    fmttd_lab[field] = lab[field]
-                except KeyError:
-                    raise Exception('Invalid field %s', field)
-
-                # print fmttd_lab
-                fmttd_labs.append(fmttd_lab)
-
-        return fmttd_labs
+        # if fields exist in the request, format all the labs to have only the
+        # fields requested by the user
+        formatted_labs = Lab.format_labs_by_fields(labs, fields)
+        return formatted_labs
 
     @staticmethod
     def get_specific_lab(id, fields=None):
+        # get the lab from the db
         lab = Lab.query.get(id)
 
+        # if lab does not exist
         if not lab:
             return None
 
+        lab = lab.to_client()
+        # if request do not contain fields, return the data
         if not fields:
-            return lab.to_client()
+            return lab
 
-        fmttd_lab = {}  # formatted lab
-        for field in fields:
-            try:
-                fmttd_lab[field] = lab.to_client()[field]
-            except KeyError:
-                raise Exception('Invalid field %s', field)
+        # if fields exist in the request, format the lab to have only the
+        # fields requested by the user
+        formatted_lab = Lab.format_labs_by_fields([lab], fields)[0]
+        return formatted_lab
 
-        return fmttd_lab
+    @staticmethod
+    def format_labs_by_fields(labs, fields):
+        current_app.logger.debug("labs recvd: %s" % labs)
+        formatted_labs = []  # all labs
+        for lab in labs:
+            formatted_lab = {}  # formatted lab
+            for field in fields:
+                try:
+                    formatted_lab[field] = lab[field]
+                except KeyError:
+                    raise Exception('Invalid field %s', field)
+
+            # print fmttd_lab
+            formatted_labs.append(formatted_lab)
+        return formatted_labs
 
     def get_developers(self):
         devs = DeveloperEngaged.query.filter_by(lab_id=self.id).all()
@@ -290,7 +300,7 @@ class Experiment(Entity):
 
 class LabSystemInfo(Entity):
 
-    __tablename__ = 'lab_system_info'
+    __tablename__ = 'labs_system_info'
 
     id = db.Column(db.Integer, primary_key=True)
 

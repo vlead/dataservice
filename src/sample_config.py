@@ -11,3 +11,9 @@ SQLALCHEMY_ECHO = False
 
 # List of allowed origins for CORS
 ALLOWED_ORIGINS = ['*.virtual-labs.ac.in']
+
+# Configure your log paths
+LOG_FILE = 'logs/dataservice.log'
+
+# Log level for the application
+LOG_LEVEL = 'ERROR'

@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+import os
+import logging
+from logging.handlers import RotatingFileHandler
+
 from flask import Flask, jsonify, make_response
 from flask.ext.cors import CORS
 
@@ -25,6 +29,7 @@ def create_app(config):
 
     configure_errorhandlers(app)
     configure_cors(app)
+    configure_logging(app)
 
     # all set; return app object
     return app
@@ -50,6 +55,29 @@ def configure_errorhandlers(app):
     @app.errorhandler(400)
     def bad_request(err):
         return make_response(jsonify(error=err.description), 400)
+
+
+def configure_logging(app):
+    formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s '
+                                  '[in %(pathname)s:%(lineno)d]')
+
+    # Also error can be sent out via email. So we can also have a SMTPHandler?
+    log_file = os.path.join(os.path.dirname(__file__), '..',
+                            app.config['LOG_FILE'])
+
+    max_size = 1024 * 1024 * 20  # Max Size for a log file: 20MB
+    log_handler = RotatingFileHandler(log_file, maxBytes=max_size,
+                                      backupCount=10)
+
+    if 'LOG_LEVEL' in app.config:
+        log_level = app.config['LOG_LEVEL'] or 'ERROR'
+    else:
+        log_level = 'ERROR'
+
+    log_handler.setLevel(log_level)
+    log_handler.setFormatter(formatter)
+
+    app.logger.addHandler(log_handler)
 
 
 if __name__ == "__main__":
