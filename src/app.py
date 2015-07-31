@@ -58,8 +58,8 @@ def configure_errorhandlers(app):
 
 
 def configure_logging(app):
-    formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s '
-                                  '[in %(pathname)s:%(lineno)d]')
+    formatter = logging.Formatter('%(asctime)s: %(levelname)s: %(filename)s:'
+                                  ' %(funcName)s():%(lineno)d: %(message)s')
 
     # Also error can be sent out via email. So we can also have a SMTPHandler?
     log_file = os.path.join(os.path.dirname(__file__), '..',
