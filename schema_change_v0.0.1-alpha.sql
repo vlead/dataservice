@@ -1,0 +1,11 @@
+ALTER TABLE `labs` CHANGE `lab_id` `old_lab_id` VARCHAR(32);
+ALTER TABLE `labs` CHANGE `is_deployed` `is_hosted` BOOLEAN;
+ALTER TABLE `labs` ADD `hosted_on` ENUM('IIIT', 'AWS', 'BADAL', 'ELSE');
+ALTER TABLE `labs` DROP `is_content_avail`;
+ALTER TABLE `labs` DROP `is_simulation_avail`;
+ALTER TABLE `labs` DROP `is_auto_hostable`;
+ALTER TABLE `technologies` ADD `version` VARCHAR(32);
+ALTER TABLE `technologies_used` ADD `experiment_id` INT(11);
+ALTER TABLE `technologies_used` ADD CONSTRAINT `technologies_used_ibfk_3` FOREIGN KEY (`experiment_id`) REFERENCES `labs`(`id`);
+ALTER TABLE `experiments` ADD `content_on` ENUM('CPE', 'ELSE', 'NA');
+ALTER TABLE `experiments` ADD `simulation_on` ENUM('CPE', 'ELSE', 'NA');

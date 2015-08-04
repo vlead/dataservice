@@ -30,8 +30,8 @@ class Lab(Entity):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    lab_id = db.Column(db.String(32))
-    name = db.Column(db.String(128))
+    old_lab_id = db.Column(db.String(32))
+    name = db.Column(db.String(128), nullable=False)
     slug = db.Column(db.String(128))
 
     discipline_id = db.Column(db.Integer, db.ForeignKey('disciplines.id'))
@@ -40,11 +40,17 @@ class Lab(Entity):
     institute_id = db.Column(db.Integer, db.ForeignKey('institutes.id'))
     institute = db.relationship('Institute')
 
-    repo_url = db.Column(db.String(256))
-    hosted_url = db.Column(db.String(256))
+    integration_level = db.Column(db.Integer, nullable=False)
+
     number_of_experiments = db.Column(db.Integer)
 
-    integration_level = db.Column(db.Integer)
+    is_src_avail = db.Column(db.Boolean)
+    repo_url = db.Column(db.String(256))
+
+    is_hosted = db.Column(db.Boolean)
+    hosted_url = db.Column(db.String(256))
+    hosted_on = db.Column(db.Enum('IIIT', 'AWS', 'BADAL', 'ELSE'))
+
     # TODO : add a available_types attribute which is a set of available
     # type of labs; the application selects and validates the type_of_lab from
     # this set and stores it in the db
@@ -52,12 +58,7 @@ class Lab(Entity):
     remarks = db.Column(db.Text)
     status = db.Column(db.String(32))
 
-    is_src_avail = db.Column(db.Boolean)
-    is_deployed = db.Column(db.Boolean)
-    is_content_avail = db.Column(db.Boolean)
-    is_simulation_avail = db.Column(db.Boolean)
     is_web_2_compliant = db.Column(db.Boolean)
-    is_auto_hostable = db.Column(db.Boolean)
     is_phase_2_lab = db.Column(db.Boolean)
 
     @staticmethod
@@ -122,36 +123,33 @@ class Lab(Entity):
     def to_client(self):
         return {
             'id': self.id,
-            'lab_id': self.lab_id,
             'name': self.name,
             'slug': self.slug,
             'institute': {
                 'id': self.institute.id,
                 'name': self.institute.name,
                 'PIC': self.institute.PIC,
-                'IIC':
-                self.institute.IIC
+                'IIC': self.institute.IIC
             },
             'discipline': {
                 'id': self.discipline.id,
                 'name': self.discipline.name,
                 'dnc': self.discipline.dnc
             },
-            'developers': self.get_developers(),
-            'technologies': self.get_technologies(),
-            'repo_url': self.repo_url,
-            'hosted_url': self.hosted_url,
-            'number_of_experiments': self.number_of_experiments,
             'integration_level': self.integration_level,
+            'number_of_experiments': self.number_of_experiments,
+            'is_src_avail': self.is_src_avail,
+            'repo_url': self.repo_url,
+            'is_hosted': self.is_hosted,
+            'hosted_url': self.hosted_url,
+            'hosted_on': self.hosted_on,
+            'technologies': self.get_technologies(),
+            'developers': self.get_developers(),
             'type_of_lab': self.type_of_lab,
             'remarks': self.remarks,
             'status': self.status,
-            'is_src_avail': self.is_src_avail,
-            'is_content_avail': self.is_content_avail,
-            'is_deployed': self.is_deployed,
-            'is_simulation_avail': self.is_simulation_avail,
+            'old_lab_id': self.old_lab_id,
             'is_web_2_compliant': self.is_web_2_compliant,
-            'is_auto_hostable': self.is_auto_hostable,
             'is_phase_2_lab': self.is_phase_2_lab
         }
 
@@ -242,6 +240,7 @@ class Technology(Entity):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
+    version = db.Column(db.String(32))
     foss = db.Column(db.Boolean)
 
     @staticmethod
@@ -252,6 +251,7 @@ class Technology(Entity):
         return {
             'id': self.id,
             'name': self.name,
+            'version': self.version,
             'foss': self.foss
         }
 
@@ -264,6 +264,9 @@ class TechnologyUsed(Entity):
 
     lab_id = db.Column(db.Integer, db.ForeignKey('labs.id'))
     lab = db.relationship('Lab')
+
+    experiment_id = db.Column(db.Integer, db.ForeignKey('experiments.id'))
+    experiment = db.relationship('Experiment')
 
     tech_id = db.Column(db.Integer, db.ForeignKey('technologies.id'))
     technology = db.relationship('Technology')
@@ -278,22 +281,29 @@ class Experiment(Entity):
 
     id = db.Column(db.Integer, primary_key=True)
 
+    # Our data set has really, really long experiment names and URLs!!
+    name = db.Column(db.String(256))
+
     lab_id = db.Column(db.Integer, db.ForeignKey('labs.id'))
     lab = db.relationship('Lab')
 
-    # Our data set has really, really long experiment names and URLs!!
-    name = db.Column(db.String(256))
     content_url = db.Column(db.String(256))
+    content_on = db.Column(db.Enum('CPE', 'ELSE', 'NA'))
+
     simulation_url = db.Column(db.String(256))
+    simulation_on = db.Column(db.Enum('CPE', 'ELSE', 'NA'))
 
     def to_client(self):
         return {
             'id': self.id,
             'name': self.name,
             'content_url': self.content_url,
+            'content_on': self.content_on,
             'simulation_url': self.simulation_url,
+            'simulation_on': self.simulation_on,
             'lab': {
                 'id': self.lab.id,
+                'name': self.lab.name
             }
         }
 
