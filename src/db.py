@@ -213,7 +213,7 @@ class Developer(Entity):
             'id': self.id,
             'email_id': self.email_id,
             'name': self.name,
-            'institute_id': self.institute_id
+            'institute': self.institute.to_client()
         }
 
     @staticmethod
