@@ -41,6 +41,8 @@ class Lab(Entity):
     institute = db.relationship('Institute')
 
     integration_level = db.Column(db.Integer, nullable=False)
+    # integration_level_id = db.Column(db.ForeignKey('integration_levels.id'))
+    # integration_level = db.relationship('IntegrationLevel')
 
     number_of_experiments = db.Column(db.Integer)
 
@@ -51,10 +53,13 @@ class Lab(Entity):
     hosted_url = db.Column(db.String(256))
     hosted_on = db.Column(db.Enum('IIIT', 'AWS', 'BADAL', 'ELSE'))
 
-    # TODO : add a available_types attribute which is a set of available
-    # type of labs; the application selects and validates the type_of_lab from
-    # this set and stores it in the db
+    # hosted_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
+    # hosted_on = db.relationship('HostingPlatform')
+
     type_of_lab = db.Column(db.String(64))
+    # type_of_lab_id = db.Column(db.ForeignKey('type_of_labs.id'))
+    # type_of_lab = db.relationship('TypeOfLab')
+
     remarks = db.Column(db.Text)
     status = db.Column(db.String(32))
 
@@ -63,14 +68,14 @@ class Lab(Entity):
 
     @staticmethod
     def get_all(fields=None):
-
         # get all labs from db
         labs = [i.to_client() for i in Lab.query.all()]
+        print 'total count of labs'
+        print len(labs)
         # print fields
         # if request do not contain fields, return the data
         if not fields:
             return labs
-
         # if fields exist in the request, format all the labs to have only the
         # fields requested by the user
         formatted_labs = Lab.format_labs_by_fields(labs, fields)
@@ -80,16 +85,13 @@ class Lab(Entity):
     def get_specific_lab(id, fields=None):
         # get the lab from the db
         lab = Lab.query.get(id)
-
         # if lab does not exist
         if not lab:
             return None
-
         lab = lab.to_client()
         # if request do not contain fields, return the data
         if not fields:
             return lab
-
         # if fields exist in the request, format the lab to have only the
         # fields requested by the user
         formatted_lab = Lab.format_labs_by_fields([lab], fields)[0]
@@ -289,9 +291,13 @@ class Experiment(Entity):
 
     content_url = db.Column(db.String(256))
     content_on = db.Column(db.Enum('CPE', 'ELSE', 'NA'))
+    # content_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
+    # content_on = db.relationship('HostingPlatform')
 
     simulation_url = db.Column(db.String(256))
     simulation_on = db.Column(db.Enum('CPE', 'ELSE', 'NA'))
+    # simulation_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
+    # simulation_on = db.relationship('HostingPlatform')
 
     def to_client(self):
         return {
@@ -306,6 +312,24 @@ class Experiment(Entity):
                 'name': self.lab.name
             }
         }
+
+
+class IntegrationLevel(Entity):
+    __tablename__ = 'integration_levels'
+    id = db.Column(db.Integer, primary_key=True)
+    level = db.Column(db.Integer, nullable=False)
+
+
+class TypeOfLab(Entity):
+    __tablename__ = 'type_of_labs'
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(64), nullable=False)
+
+
+class HostingPlatform(Entity):
+    __tablename__ = 'hosting_platforms'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(32), nullable=False)
 
 
 class LabSystemInfo(Entity):

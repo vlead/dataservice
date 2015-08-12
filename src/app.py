@@ -61,9 +61,12 @@ def configure_logging(app):
     formatter = logging.Formatter('%(asctime)s: %(levelname)s: %(filename)s:'
                                   ' %(funcName)s():%(lineno)d: %(message)s')
 
+    if 'LOG_FILE' in app.config:
+        log_filename = app.config['LOG_FILE']
+    else:
+        log_filename = 'dataservice.log'
     # Also error can be sent out via email. So we can also have a SMTPHandler?
-    log_file = os.path.join(os.path.dirname(__file__), '..',
-                            app.config['LOG_FILE'])
+    log_file = os.path.join(os.path.dirname(__file__), '..', log_filename)
 
     max_size = 1024 * 1024 * 20  # Max Size for a log file: 20MB
     log_handler = RotatingFileHandler(log_file, maxBytes=max_size,

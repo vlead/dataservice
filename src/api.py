@@ -52,6 +52,61 @@ def labs():
             abort(400, 'Invalid attributes in request data')
 
 
+# Get a specific lab and its parameters
+# Example: /labs/1?fields=status&fields=discipline
+@api.route('/labs/<int:id>', methods=['GET', 'PUT'])
+def get_lab_by_id(id):
+    if request.method == 'GET':
+        fields = request.args.getlist('fields') or None
+
+        try:
+            lab_dict = Lab.get_specific_lab(id, fields)
+        except Exception:
+            abort(400, 'Invalid field attribute')
+
+        if lab_dict is None:
+            abort(404, 'Invalid id')
+
+        return jsonify(lab_dict)
+
+    if request.method == 'PUT':
+        data = parse_request(request)
+        if not data:
+            abort(400, 'Your data should be in JSON format')
+
+        lab = Lab.query.get(id)
+        if not lab:
+            abort(404, 'No lab with id: %s exist' % str(id))
+
+        # From the nested object in the request data, get the id, and associate
+        # the entities separately..
+        if 'discipline' in data:
+            disc = Discipline.query.get(data['discipline']['id'])
+            if not disc:
+                abort(400, 'No such discipline exist')
+            lab.discipline = disc
+            del(data['discipline'])
+        if 'institute' in data:
+            instt = Institute.query.get(data['institute']['id'])
+            if not instt:
+                abort(400, 'No such institute exist')
+            lab.institute = instt
+            del(data['institute'])
+        if 'developers' in data:
+            del(data['developers'])
+        if 'technologies' in data:
+            del(data['technologies'])
+
+        try:
+            lab.update(**data)
+        except (AttributeError, KeyError), e:
+            current_app.logger.error("Error while saving lab data: %s" % e)
+            # return 'Provide correct attribute name'
+            abort(400, 'Invalid attributes in request data')
+
+        return jsonify(lab.to_client())
+
+
 # Get all the labs of a specific discipline
 @api.route('/disciplines/<int:id>/labs', methods=['GET'])
 @api.route('/labs/disciplines/<int:id>', methods=['GET'])
@@ -301,42 +356,6 @@ def update_tech_by_id(id):
             abort(400, 'Invalid attributes in request data')
 
         return jsonify(tech.to_client())
-
-
-# Get a specific lab and its parameters
-# Example: /labs/1?fields=status&fields=discipline
-@api.route('/labs/<int:id>', methods=['GET', 'PUT'])
-def get_lab_by_id(id):
-    if request.method == 'GET':
-        fields = request.args.getlist('fields') or None
-
-        try:
-            lab_dict = Lab.get_specific_lab(id, fields)
-        except Exception:
-            abort(400, 'Invalid field attribute')
-
-        if lab_dict is None:
-            abort(404, 'Invalid id')
-
-        return jsonify(lab_dict)
-
-    if request.method == 'PUT':
-        data = parse_request(request)
-        if not data:
-            abort(400, 'Your data should be in JSON format')
-
-        lab = Lab.query.get(id)
-        if not lab:
-            abort(404, 'No lab with id: %s exist' % str(id))
-
-        try:
-            lab.update(**data)
-        except (AttributeError, KeyError), e:
-            current_app.logger.error("Error while saving lab data: %s" % e)
-            # return 'Provide correct attribute name'
-            abort(400, 'Invalid attributes in request data')
-
-        return jsonify(lab.to_client())
 
 
 # Get labs info by searching with any of its parameters
