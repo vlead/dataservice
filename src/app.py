@@ -39,7 +39,8 @@ def create_app(config):
 def configure_cors(app):
     # CORS(app)
     CORS(app, origins=config.ALLOWED_ORIGINS,
-         methods=['GET', 'OPTIONS', 'PUT', 'POST'])
+         methods=['GET', 'OPTIONS', 'PUT', 'POST'],
+         allow_headers='Content-Type')
 
 
 # custom error handlers to return JSON errors with appropiate status codes
