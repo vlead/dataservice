@@ -1,0 +1,109 @@
+#+TITLE: Dataservice
+#+Author: VLEAD
+#+Date: [2015-08-13 Thu]
+#+PROPERTY: results output
+#+PROPERTY: exports code
+#+SETUPFILE: org-templates/level-0.org
+
+* Introduction
+  Dataservice is a micro service that allows persistence of data by other micro
+  services over HTTP using REST API.  dataservie hides the implementation
+  details of the data store that is required for data persistence. s
+
+
+* Requirements
+  1. The model of the data on whose foundation dataservice is built is
+     explicitly laid out. <<req1>>
+  2. Python API is provided as a wrapper to make CRUD operations on the data.
+  3. REST API is provided for various applications to perform CRUD operations
+     on the data. 
+* Design
+
+** Data Model
+
+*** Lab Entity
+*** Institute Entity
+*** Relationship between different entities
+  #+CAPTION: Entity Diagram
+  #+NAME:   entity
+  [[https://drive.google.com/open?id%3D0B6LLRcwXMzt8N3RzZGVkb0NpUDA][ER-Diagram]]
+
+
+
+
+* Implementation
+* Test Cases
+* Design discussions
+* Releases
+** v0.1.0
+    This release will satisfy requirements 1, 2 and 3
+*** Work Split
+**** Overview
+     #+CAPTION: Total Hours
+     #+NAME:    total-hours
+
+     |------------------+------------------+--------+--------+--------|
+     |                  |                  |        |        | Total  |
+     |                  |                  | No. of | No. of | number |
+     | Start Date       | End Date         | days   | people | of     |
+     |                  |                  |        |        | person |
+     |                  |                  |        |        | days   |
+     |------------------+------------------+--------+--------+--------|
+     | [2015-08-13 Thu] | [2015-08-26 Wed] | 10     | 5      | 50     |
+     |------------------+------------------+--------+--------+--------|
+
+**** Detailed
+     #+CAPTION: Detailed Hours
+     #+NAME:    detailed-hours
+     
+     |----------------------+------------------+--------------------+-------------------------+------+------------------|
+     | Task Name            |                  | Date of Completion |                         |      |           Effort |
+     |                      | Start Date       |                    | no.                     |  no. | (in person days) |
+     |                      |                  |                    | of                      |   of |                  |
+     |                      |                  |                    | persons                 | days |                  |
+     |----------------------+------------------+--------------------+-------------------------+------+------------------|
+     | Data Model           | [2015-08-13 Thu] | [2015-08-18 Tue]   | 1                       |    4 |                4 |
+     | (Initial Cut)        |                  |                    |                         |      |                  |
+     |                      |                  |                    |                         |      |                  |
+     |----------------------+------------------+--------------------+-------------------------+------+------------------|
+     | Python API           |                  |                    |                         |      |                  |
+     | & REST API           | [2015-08-19 Wed] | [2015-08-26 Wed]   | 2                       |    6 |               12 |
+     |----------------------+------------------+--------------------+-------------------------+------+------------------|
+     | VIEW -               |                  |                    | 4 till [2015-08-18 Tue] |    4 |               16 |
+     | list, detail         | [2015-08-13 Thu] | [2015-08-26 Wed]   |                         |      |                  |
+     | and update           |                  |                    |                         |      |                  |
+     |                      |                  |                    | 2 till [2015-08-26 Wed] |    6 |               12 |
+     |----------------------+------------------+--------------------+-------------------------+------+------------------|
+     | Provisioning &       |                  |                    |                         |      |                  |
+     | Data Model Evolution | [2015-08-19 Wed] | [2015-08-26 Wed]   | 1                       |    6 |                6 |
+     |----------------------+------------------+--------------------+-------------------------+------+------------------|
+     | Filters              |                  |                    |                         |      |                  |
+     |----------------------+------------------+--------------------+-------------------------+------+------------------|
+
+*** Tasks & Deadlines
+    1. Data Model
+       + Completion Date :: [2015-08-18 Tue]
+       + Effort :: 3 person days
+       + Tasks
+         - Describe each entity and capture the model of data for each entity.
+         - Describe the relationship between all the entities.
+    2. Python API , REST API and Migration scripts from old data to new model
+       + Completion Data :: [2015-08-26 Wed]
+       + Effort :: 12 person days
+       + Tasks
+         - Provide Python API to perform CRUD operations on different entities.
+         - Provide REST API for different application to perform CRUD
+           operations on different entities.
+         - Provide a migration script that converts the legacy data into the
+           new data model.
+    3. VIEW - list, detail and update views of each entity
+       + Completion Data :: [2015-08-26 Wed]
+       + Effort :: 12 person days
+       + Tasks
+         - Provide a mechanism to list all the rows in an entity for all entities.
+         - Provide a mechanism to a detailed view of a row in a selected entity.
+         - Provide a mechanism to update a row in an entity.
+           
+    4. Filters
+
+    5. Provisioning

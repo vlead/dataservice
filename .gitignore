@@ -8,3 +8,5 @@ config.py
 DataService.egg-info/
 dist/
 logs/
+build/
+sitemap*
