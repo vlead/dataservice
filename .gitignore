@@ -5,3 +5,6 @@
 .\#*\#
 venv/
 config.py
+DataService.egg-info/
+dist/
+logs/

@@ -6,15 +6,19 @@
 
 * Requirements
 
-  1. Ability to view every attribute of all the entities without any restriction
-  2. Ability to update every attribute of all the entities without any restriction
-  3. Ability to view technologies used for every experiment.
-
-  [[entity]] diagram contains all the entities, their attributes and relationships.
-
 * Design
+
+** Data Model
+
+*** Lab Entity
+*** Institute Entity
+*** Relationship between different entities
   #+CAPTION: Entity Diagram
   #+NAME:   entity
+  [[https://drive.google.com/open?id%3D0B6LLRcwXMzt8N3RzZGVkb0NpUDA][ER-Diagram]]
+
+
+
 
 * Implementation
 * Test Cases
