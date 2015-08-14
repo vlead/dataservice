@@ -18,83 +18,132 @@
   3. REST API is provided for various applications to perform CRUD operations
      on the data. 
 * Design
-
 ** Data Model
+
 *** Types
-  + Labs 
-  + Institutes 
-  + Disciplines
-  + Experiments
-  +
-  +
- 1. getDevelopersEngaged:Lab --> set{Developers}
- 2. getTechnologiesUsed:Lab --> set{Technologies}
- 3. getInstitute:Lab --> Institute
- 4. getExperiments:Lab --> set{Experiments}
- 5. getDiscipline:Lab --> Discipline
- 
+  
+   + Lab 
+   + Institute 
+   + Discipline
+   + Experiment
+   + Developer
+   + Technology
+   + Platform
+      Platform is {IIIT, Badal, AWS, Else}.
+   + Version
+      Version is an alphanumeric string including '-' and '.'.
+   + URL
+      URL is a type as defined in RFC 1738.
+   + Name
+      Name is an alphabetical string.
+   + LabId
+      Lab Id is a natural number. 
+   + InstituteId
+      Institute Id is a natural number.
+   + DisciplineId
+      Discipline Id is a natural number.
+   + DeveloperId
+      Developer Id is a natural number. 
+   + ExperimentId
+      Experiment Id is a natural number.
+   + TechnologyId
+      Technology Id is a natural number.
+   + Email
+      Email is a type as defined in RFC 5321, 5322 and 6531.
 
- 
- 4. getNoOfExperiments:Lab --> Number
- 6. getLevel:Lab --> Level
- 7. getHostedURL:{(l ∈ Lab).(Hosted = Yes) } --> URL
- 8. 
+*** Functions
+    
+**** getLabs: X --> set[Lab]
 
+      X = Union Of {Institute, Discipline, Developer, Technology}
 
+**** getInstitute: X --> Institute
 
- 1. getLabs:Institute --> set{Labs}.
- 2. getDisciplines:Institute --> set{Disciplines}
- 3. getExperiments:Institute --> set{Experiments}
- 4. getDevelopersEngaged:Institute --> set{Developers} 
- 5. getTechnologiesUsed:Institute --> set{Technologies} 
+      X = Union Of {Lab, Developer}
 
+**** getDevelopers: X --> set[Developer]
+     
+      X = Union Of {Lab, Institute}
 
-****
- 1. getLabs:Discipline --> set{Labs}
- 2. getInstitutes:Discipline --> set{Institutes}
- 3. getExperiments:Discipline --> set{Experiments}
- 4. getTechnologiesUsed:Discipline --> set{Technologies}
- 5. getDevelopersEngaged:Discipline --> set{Developers}
+**** getTechnologies: X --> set[Technology]
 
-** 
- 1. getLab:Experiment --> Lab
- 2. getDevelopersEngaged:Experiment --> set{Developers} *?*
- 3. getTechnologiesUsed:Experiment --> set{Technologies} 
- 4. getDiscipline:Experiment --> Discipline *?*
- 5. getInstitute:Experiment --> Institute *?*
+      X = Union Of {Lab, Experiment} 
 
-**** Developers
- 3. getInstitute:Developer --> Institute
- 4. getDiscipline:Developer --> Discipline
- 5. getTechnologiesUsed:Developer --> set{Technologies}
+**** Lab Domain 
+***** getId: Lab --> Lab Id
+    
+***** getName: Lab --> Name
 
+       This is similar as the =getId= function and applies to all
+       types.
 
- 6. getEmailId:Developer --> Email Id
- 7. getName:Developer --> Name
+***** getIntegrationLevel: Lab --> Level
 
-**** Technologies
- 1. getLabs:Technology --> set{Labs}
- 2. getExperiments:Technology --> set{Experiments}
- 3. getInstitutes:Technology --> set{Institutes}
- 4. getDevelopers:Technology --> set{Developers}
+***** getHostedURL: Lab --> Nil + URL 
+  
+       URL: when hosted
+       
+       Nil: when not hosted
+   
+***** getRepoURL: Lab --> Nil + URL
+      
+       URL: when sources are available
+       
+       Nil: otherwise
 
- 
-**** Developers Engaged
- 1. getLabs:DeveloperEngaged --> set{Labs}  *?*
- 2. getExperimets:DeveloperEngaged --> set{Experiments} *?*
+***** getNoOfExperiments: Lab --> Nat 
+  
+***** getHostedOn: Lab --> Platform + Nil
 
- 
-**** Technologies Used
+***** isWeb2Compliant: Lab --> Boolean
 
+***** isPhase2Lab: Lab --> Boolean
 
+***** getDiscipline: Lab --> Discipline
 
+***** getExperiments: Lab --> set[Experiment]     
+
+**** Institute Domain
+***** getId: Institute --> Institute Id
+
+***** getPIC: Institute --> Name  
+
+***** getIIC: Institue --> Name
+
+**** Discipline Domain
+***** getId: Discipline --> Discipline Id
+
+***** getDNC: Discipline --> Name
+
+**** Experiment Domain
+***** getId: Experiment --> Experiment Id
+
+***** getContentURL: Experiment --> URL + Nil
+
+***** getSimulationURL: Experiment --> URL + Nil
+
+***** contentHostedOn: Experiment --> Platform + Nil
+
+***** simulationHostedOn: Experiment --> Platform + Nil
+
+***** getLab: Experiment --> Lab
+
+**** Developer Domain
+***** getId: Developer --> Developer Id
+
+***** getEmail: Developer --> Email      
+
+**** Technology Domain
+***** getId: Technology --> Technology Id
+
+***** getVersion: Technology --> Version
+
+***** isFOSS: Technology --> Boolean
+      
 *** Relationship between different entities
   #+CAPTION: Entity Diagram
   #+NAME:   entity
   [[https://drive.google.com/open?id%3D0B6LLRcwXMzt8N3RzZGVkb0NpUDA][ER-Diagram]]
-
-
-
 
 * Implementation
 * Test Cases
