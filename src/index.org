@@ -25,6 +25,7 @@ Description of the data model.
 *** Types: List of all the types in the model
 
    + Lab
+
      *Immutable Data*
        These are the data associated with Lab type, which are immutable.
 
@@ -49,6 +50,7 @@ Description of the data model.
         + Experiment
 
    + Institute
+
      *Immutable Data*
        This is the data associated with Institute type, which is immutable.
 
@@ -61,6 +63,7 @@ Description of the data model.
        + IIC
 
    + Discipline
+
      *Immutable Data*
        This is the data associated with Discipline type, which is immutable.
 
@@ -72,6 +75,7 @@ Description of the data model.
        + DNC
 
    + Experiment
+
      *Immutable Data*
        This is the data associated with Experiment type, which is immutable.
 
@@ -86,6 +90,7 @@ Description of the data model.
        + SimulationHostedOn
 
    + Developer
+
      *Immutable Data*
        This is the data associated with Developer type, which is immutable.
 
@@ -97,6 +102,7 @@ Description of the data model.
        + Email
 
    + Technology
+
      *Immutable Data*
        This is the data associated with Technology type, which is immutable.
 
