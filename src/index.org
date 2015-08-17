@@ -205,6 +205,8 @@ Description of the data model.
 
 ***** getId: Lab --> LabId
 
+***** getLab: LabId --> Lab
+
 ***** getName: Lab --> Name
 
        This is similar to the =getId= function and all types will have this
@@ -276,9 +278,11 @@ Description of the data model.
 
 ***** getId: Institute --> InstituteId
 
+***** getInstitute: InstituteId --> Institute
+
 ***** getPIC: Institute --> Name
 
-***** getIIC: Institue --> Name
+***** getIIC: Institute --> Name
 
 ***** setPIC: Institute, Name --> Void
 
@@ -288,13 +292,17 @@ Description of the data model.
 
 ***** getId: Discipline --> DisciplineId
 
+***** getDiscipline: DisciplineId --> Discipline
+
 ***** getDNC: Discipline --> Name
 
 ***** setDNC: Discipline, Name --> Void
 
 **** Functions that operate on the Experiment domain
 
-***** getId: Experiment --> Experiment Id
+***** getId: Experiment --> ExperimentId
+
+***** getExperiment: ExperimentId --> Experiment
 
 ***** getContentURL: Experiment --> URL + Nil
 
@@ -318,6 +326,8 @@ Description of the data model.
 
 ***** getId: Developer --> DeveloperId
 
+***** getDeveloper: DeveloperId --> Developer
+
 ***** getEmail: Developer --> Email
 
 ***** setEmail: Developer, Email --> Void
@@ -325,6 +335,8 @@ Description of the data model.
 **** Functions that operate on the Technology domain
 
 ***** getId: Technology --> TechnologyId
+
+***** getTechnology: TechnologyId --> Technology
 
 ***** getVersion: Technology --> Version
 
