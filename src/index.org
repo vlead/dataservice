@@ -16,97 +16,206 @@
      explicitly laid out. <<req1>>
   2. Python API is provided as a wrapper to make CRUD operations on the data.
   3. REST API is provided for various applications to perform CRUD operations
-     on the data. 
+     on the data.
 * Design
-** Data Model
 
-*** Types
-  
-   + Lab 
-   + Institute 
+** Data Model
+Description of the data model.
+
+*** Types: List of all the types in the model
+
+   + Lab
+     *Immutable Data*
+       These are the data associated with Lab type, which are immutable.
+
+       + LabId
+       + NoOfExperiments
+
+     *Mutable Data*
+       These are the data associated with Lab type, which are mutable.
+
+        + Name
+        + Institute
+        + Discipline
+        + IntegrationLevel
+        + HostedURL
+        + RepoURL
+        + TypeOfLab
+        + HostedOn
+        + Web2Compliant
+        + Phase2Lab
+        + Developer
+        + Technology
+        + Experiment
+
+   + Institute
+     *Immutable Data*
+       This is the data associated with Institute type, which is immutable.
+
+       + InstituteId
+
+     *Mutable Data*
+       These are the data associated with Institute type, which are mutable.
+
+       + PIC
+       + IIC
+
    + Discipline
+     *Immutable Data*
+       This is the data associated with Discipline type, which is immutable.
+
+       + DisciplineId
+
+     *Mutable Data*
+       This is the data associated with Discipline type, which is mutable.
+
+       + DNC
+
    + Experiment
+     *Immutable Data*
+       This is the data associated with Experiment type, which is immutable.
+
+       + ExperimentId
+
+     *Mutable Data*
+       These are the data associated with Discipline type, which are mutable.
+
+       + ContentURL
+       + SimulationURL
+       + ContentHostedOn
+       + SimulationHostedOn
+
    + Developer
+     *Immutable Data*
+       This is the data associated with Developer type, which is immutable.
+
+       + DeveloperId
+
+     *Mutable Data*
+       This is the data associated with Developer type, which is mutable.
+
+       + Email
+
    + Technology
+     *Immutable Data*
+       This is the data associated with Technology type, which is immutable.
+
+       + TechnologyId
+
+     *Mutable Data*
+       These are the data associated with Technoloy type, which are mutable.
+
+       + Version
+       + FOSS
+
    + Platform
-      Platform is {IIIT, Badal, AWS, Else}.
+
+     Platform is {IIIT, Badal, AWS, Else}.
+
    + Version
+
       Version is an alphanumeric string including '-' and '.'.
+
    + URL
+
       URL is a type as defined in RFC 1738.
+
    + Name
+
       Name is an alphabetical string.
+
    + LabId
-      Lab Id is a natural number. 
+
+      Lab Id is a natural number.
+
    + InstituteId
+
       Institute Id is a natural number.
+
    + DisciplineId
+
       Discipline Id is a natural number.
+
    + DeveloperId
-      Developer Id is a natural number. 
+
+      Developer Id is a natural number.
+
    + ExperimentId
+
       Experiment Id is a natural number.
+
    + TechnologyId
+
       Technology Id is a natural number.
+
    + Email
+
       Email is a type as defined in RFC 5321, 5322 and 6531.
+
    + TypeOfLab
+
       TypeOfLab is {Simulation, Remote Triggered, Simulation and Remote Triggered, Pilot Phase}
 
-*** Functions
-    
-**** ? getAllLabs: Nil --> set[Lab] 
 
-**** getLabs: X --> set[Lab]
+*** Functions: List of all possible functions in the model
+
+**** Functions operating on multiple domains
+
+***** getLabs: X --> set[Lab]
 
       X = Union Of {Institute, Discipline, Developer, Technology}
 
-**** getAllInstitutes: Nil --> set[Institute] 
+***** getAllInstitutes: Nil --> set[Institute]
 
-**** getInstitute: X --> Institute
+***** getInstitute: X --> Institute
 
       X = Union Of {Lab, Developer}
 
+***** getDevelopers: X --> set[Developer]
 
-**** getDevelopers: X --> set[Developer]
-     
       X = Union Of {Lab, Institute}
 
+***** getAllTechnologies: Nil --> set[Technology]
 
-**** getAllTechnologies: Nil --> set[Technology]
+***** getTechnologies: X --> set[Technology]
 
-**** getTechnologies: X --> set[Technology]
+      X = Union Of {Lab, Experiment}
 
-      X = Union Of {Lab, Experiment} 
+***** getAllDisciplines: Nil --> set[Discipline]
 
-**** getAllDisciplines: Nil --> set[Discipline]
+***** NOTE: is it necessary? getAllLabs: Nil --> set[Lab]
 
-**** Lab Domain 
+***** NOTE: is it necessary? getAllDevelopers: Nil --> set[Developer]
+
+***** NOTE: is it necessary? getAllExperiments: Nil --> set[Experiment]
+
+**** Functions that operate on the Lab domain
+
 ***** getId: Lab --> LabId
-    
+
 ***** getName: Lab --> Name
 
-       This is similar as the =getId= function and applies to all
-       types.
+       This is similar to the =getId= function and all types will have this
+       function.
 
 ***** getIntegrationLevel: Lab --> Level
 
-***** getHostedURL: Lab --> Nil + URL 
-  
+***** getHostedURL: Lab --> Nil + URL
+
        URL: when hosted
-       
+
        Nil: when not hosted
-   
+
 ***** getRepoURL: Lab --> Nil + URL
-      
+
        URL: when sources are available
-       
+
        Nil: otherwise
 
 ***** getType: Lab --> TypeOfLab
 
-***** getNoOfExperiments: Lab --> Nat 
-  
+***** getNoOfExperiments: Lab --> Nat
+
 ***** getHostedOn: Lab --> Platform + Nil
 
 ***** isWeb2Compliant: Lab --> Boolean
@@ -115,36 +224,13 @@
 
 ***** getDiscipline: Lab --> Discipline
 
-***** getExperiments: Lab --> set[Experiment]     
-
-    *Immutable Data*
-     These are the data associated with Lab type, which are immutable.
-
-    + LabId
-    + NoOfExperiments
- 
-    *Mutable Data*
-     These are the data associated with Lab type, which are mutable.
-
-    + Name
-    + Institute
-    + Discipline
-    + IntegrationLevel
-    + HostedURL
-    + RepoURL
-    + TypeOfLab
-    + HostedOn
-    + Web2Compliant
-    + Phase2Lab
-    + Developer
-    + Technology
-    + Experiment
+***** getExperiments: Lab --> set[Experiment]
 
 ***** setName: Lab, Name --> Void
 
-       This is similar for all types.
+       NOTE: All types will have a =setName= function.
 
-***** setInstitute: Lab, Institute --> Void 
+***** setInstitute: Lab, Institute --> Void
 
 ***** setDiscipline: Lab, Discipline --> Void
 
@@ -160,6 +246,8 @@
 
 ***** setisWeb2Compliant: Lab, Boolean --> Void
 
+***** setisPhase2: Lab, Boolean --> Void
+
 ***** addDeveloper: Lab, Developer --> Void
 
 ***** removeDeveloper: Lab, Developer --> Void
@@ -172,46 +260,28 @@
 
 ***** removeExperiment: Lab, Experiment --> Void
 
-**** Institute Domain
+**** Functions that operate on Institute domain
+
 ***** getId: Institute --> InstituteId
 
-***** getPIC: Institute --> Name  
+***** getPIC: Institute --> Name
 
 ***** getIIC: Institue --> Name
-      
-    *Immutable Data*
-     This is the data associated with Institute type, which is immutable.
-
-     + InstituteId
-
-   *Mutable Data*
-     These are the data associated with Institute type, which are mutable.
-
-     + PIC
-     + IIC
 
 ***** setPIC: Institute, Name --> Void
 
 ***** setIIC: Institute, Name --> Void
 
-**** Discipline Domain
+**** Functions that operate on Discipline domain
+
 ***** getId: Discipline --> DisciplineId
 
 ***** getDNC: Discipline --> Name
 
-    *Immutable Data*
-     This is the data associated with Discipline type, which is immutable.
-
-     + DisciplineId
-
-    *Mutable Data*
-     This is the data associated with Discipline type, which is mutable.
-
-     + DNC
-
 ***** setDNC: Discipline, Name --> Void
 
-**** Experiment Domain
+**** Functions that operate on the Experiment domain
+
 ***** getId: Experiment --> Experiment Id
 
 ***** getContentURL: Experiment --> URL + Nil
@@ -223,66 +293,34 @@
 ***** simulationHostedOn: Experiment --> Platform + Nil
 
 ***** getLab: Experiment --> Lab
-  
-    *Immutable Data*
-     This is the data associated with Experiment type, which is immutable.
 
-     + ExperimentId
-
-    *Mutable Data*
-     These are the data associated with Discipline type, which are mutable.
-
-     + ContentURL
-     + SimulationURL
-     + ContentHostedOn
-     + SimulationHostedOn
-  
 ***** setContentURL: Experiment, URL --> Void
 
 ***** setSimulationURL: Experiment, URL --> Void
-
 
 ***** setContentHostedOn: Experiment, Platform --> Void
 
 ***** setSimulationHostedOn: Experiment, Platform --> Void
 
-**** Developer Domain
-***** getId: Developer --> Developer Id
+**** Functions that operate on the Developer domain
 
-***** getEmail: Developer --> Email      
+***** getId: Developer --> DeveloperId
 
-    *Immutable Data*
-     This is the data associated with Developer type, which is immutable.
-
-     + DeveloperId
-
-    *Mutable Data*
-     This is the data associated with Developer type, which is mutable.
-
-     + Email
+***** getEmail: Developer --> Email
 
 ***** setEmail: Developer, Email --> Void
 
-**** Technology Domain
-***** getId: Technology --> Technology Id
+**** Functions that operate on the Technology domain
+
+***** getId: Technology --> TechnologyId
 
 ***** getVersion: Technology --> Version
 
 ***** isFOSS: Technology --> Boolean
 
-    *Immutable Data*
-     This is the data associated with Technology type, which is immutable.
-
-     + TechnologyId
-
-    *Mutable Data*
-     These are the data associated with Technoloy type, which are mutable.
-
-     + Version
-     + FOSS
-
 ***** setVersion: Technology, Version --> Void
-***** setFOSS: Technology, Boolean --> Void      
+
+***** setFOSS: Technology, Boolean --> Void
 
 *** Relationship between different entities
   #+CAPTION: Entity Diagram
@@ -313,7 +351,7 @@
 **** Detailed
      #+CAPTION: Detailed Hours
      #+NAME:    detailed-hours
-     
+
      |----------------------+------------------+--------------------+-------------------------+------+------------------|
      | Task Name            |                  | Date of Completion |                         |      |           Effort |
      |                      | Start Date       |                    | no.                     |  no. | (in person days) |
@@ -361,7 +399,7 @@
          - Provide a mechanism to list all the rows in an entity for all entities.
          - Provide a mechanism to a detailed view of a row in a selected entity.
          - Provide a mechanism to update a row in an entity.
-           
+
     4. Filters
 
     5. Provisioning
