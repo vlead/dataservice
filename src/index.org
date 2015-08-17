@@ -49,6 +49,7 @@ Description of the data model.
         + Technology
         + Experiment
 
+
    + Institute
 
      *Immutable Data*
@@ -62,6 +63,7 @@ Description of the data model.
        + PIC
        + IIC
 
+
    + Discipline
 
      *Immutable Data*
@@ -73,6 +75,7 @@ Description of the data model.
        This is the data associated with Discipline type, which is mutable.
 
        + DNC
+
 
    + Experiment
 
@@ -89,6 +92,7 @@ Description of the data model.
        + ContentHostedOn
        + SimulationHostedOn
 
+
    + Developer
 
      *Immutable Data*
@@ -100,6 +104,7 @@ Description of the data model.
        This is the data associated with Developer type, which is mutable.
 
        + Email
+
 
    + Technology
 
@@ -113,6 +118,7 @@ Description of the data model.
 
        + Version
        + FOSS
+
 
    + Platform
 
