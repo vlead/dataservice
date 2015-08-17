@@ -50,27 +50,39 @@
       Technology Id is a natural number.
    + Email
       Email is a type as defined in RFC 5321, 5322 and 6531.
+   + TypeOfLab
+      TypeOfLab is {Simulation, Remote Triggered, Simulation and Remote Triggered, Pilot Phase}
 
 *** Functions
     
+**** ? getAllLabs: Nil --> set[Lab] 
+
 **** getLabs: X --> set[Lab]
 
       X = Union Of {Institute, Discipline, Developer, Technology}
+
+**** getAllInstitutes: Nil --> set[Institute] 
 
 **** getInstitute: X --> Institute
 
       X = Union Of {Lab, Developer}
 
+
 **** getDevelopers: X --> set[Developer]
      
       X = Union Of {Lab, Institute}
+
+
+**** getAllTechnologies: Nil --> set[Technology]
 
 **** getTechnologies: X --> set[Technology]
 
       X = Union Of {Lab, Experiment} 
 
+**** getAllDisciplines: Nil --> set[Discipline]
+
 **** Lab Domain 
-***** getId: Lab --> Lab Id
+***** getId: Lab --> LabId
     
 ***** getName: Lab --> Name
 
@@ -91,6 +103,8 @@
        
        Nil: otherwise
 
+***** getType: Lab --> TypeOfLab
+
 ***** getNoOfExperiments: Lab --> Nat 
   
 ***** getHostedOn: Lab --> Platform + Nil
@@ -103,17 +117,99 @@
 
 ***** getExperiments: Lab --> set[Experiment]     
 
+    *Immutable Data*
+     These are the data associated with Lab type, which are immutable.
+
+    + LabId
+    + NoOfExperiments
+ 
+    *Mutable Data*
+     These are the data associated with Lab type, which are mutable.
+
+    + Name
+    + Institute
+    + Discipline
+    + IntegrationLevel
+    + HostedURL
+    + RepoURL
+    + TypeOfLab
+    + HostedOn
+    + Web2Compliant
+    + Phase2Lab
+    + Developer
+    + Technology
+    + Experiment
+
+***** setName: Lab, Name --> Void
+
+       This is similar for all types.
+
+***** setInstitute: Lab, Institute --> Void 
+
+***** setDiscipline: Lab, Discipline --> Void
+
+***** setIntegrationLevel: Lab, Level --> Void
+
+***** setHostedURL: Lab, URL --> Void
+
+***** setRepoURL: Lab, URL --> Void
+
+***** setTypeOfLab: Lab, TypeOfLab --> Void
+
+***** setHostedOn: Lab, Platform --> Void
+
+***** setisWeb2Compliant: Lab, Boolean --> Void
+
+***** addDeveloper: Lab, Developer --> Void
+
+***** removeDeveloper: Lab, Developer --> Void
+
+***** addTechnology: Lab, Technology --> Void
+
+***** removeTechnology: Lab, Technology --> Void
+
+***** addExperiment: Lab, Experiment --> Void
+
+***** removeExperiment: Lab, Experiment --> Void
+
 **** Institute Domain
-***** getId: Institute --> Institute Id
+***** getId: Institute --> InstituteId
 
 ***** getPIC: Institute --> Name  
 
 ***** getIIC: Institue --> Name
+      
+    *Immutable Data*
+     This is the data associated with Institute type, which is immutable.
+
+     + InstituteId
+
+   *Mutable Data*
+     These are the data associated with Institute type, which are mutable.
+
+     + PIC
+     + IIC
+
+***** setPIC: Institute, Name --> Void
+
+***** setIIC: Institute, Name --> Void
 
 **** Discipline Domain
-***** getId: Discipline --> Discipline Id
+***** getId: Discipline --> DisciplineId
 
 ***** getDNC: Discipline --> Name
+
+    *Immutable Data*
+     This is the data associated with Discipline type, which is immutable.
+
+     + DisciplineId
+
+    *Mutable Data*
+     This is the data associated with Discipline type, which is mutable.
+
+     + DNC
+
+***** setDNC: Discipline, Name --> Void
 
 **** Experiment Domain
 ***** getId: Experiment --> Experiment Id
@@ -127,11 +223,45 @@
 ***** simulationHostedOn: Experiment --> Platform + Nil
 
 ***** getLab: Experiment --> Lab
+  
+    *Immutable Data*
+     This is the data associated with Experiment type, which is immutable.
+
+     + ExperimentId
+
+    *Mutable Data*
+     These are the data associated with Discipline type, which are mutable.
+
+     + ContentURL
+     + SimulationURL
+     + ContentHostedOn
+     + SimulationHostedOn
+  
+***** setContentURL: Experiment, URL --> Void
+
+***** setSimulationURL: Experiment, URL --> Void
+
+
+***** setContentHostedOn: Experiment, Platform --> Void
+
+***** setSimulationHostedOn: Experiment, Platform --> Void
 
 **** Developer Domain
 ***** getId: Developer --> Developer Id
 
 ***** getEmail: Developer --> Email      
+
+    *Immutable Data*
+     This is the data associated with Developer type, which is immutable.
+
+     + DeveloperId
+
+    *Mutable Data*
+     This is the data associated with Developer type, which is mutable.
+
+     + Email
+
+***** setEmail: Developer, Email --> Void
 
 **** Technology Domain
 ***** getId: Technology --> Technology Id
@@ -139,7 +269,21 @@
 ***** getVersion: Technology --> Version
 
 ***** isFOSS: Technology --> Boolean
-      
+
+    *Immutable Data*
+     This is the data associated with Technology type, which is immutable.
+
+     + TechnologyId
+
+    *Mutable Data*
+     These are the data associated with Technoloy type, which are mutable.
+
+     + Version
+     + FOSS
+
+***** setVersion: Technology, Version --> Void
+***** setFOSS: Technology, Boolean --> Void      
+
 *** Relationship between different entities
   #+CAPTION: Entity Diagram
   #+NAME:   entity
