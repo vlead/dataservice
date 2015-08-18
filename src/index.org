@@ -138,27 +138,27 @@ Description of the data model.
 
    + LabId
 
-      Lab Id is a natural number.
+      LabId is a natural number.
 
    + InstituteId
 
-      Institute Id is a natural number.
+      InstituteId is a natural number.
 
    + DisciplineId
 
-      Discipline Id is a natural number.
+      DisciplineId is a natural number.
 
    + DeveloperId
 
-      Developer Id is a natural number.
+      DeveloperId is a natural number.
 
    + ExperimentId
 
-      Experiment Id is a natural number.
+      ExperimentId is a natural number.
 
    + TechnologyId
 
-      Technology Id is a natural number.
+      TechnologyId is a natural number.
 
    + Email
 
@@ -166,8 +166,11 @@ Description of the data model.
 
    + TypeOfLab
 
-      TypeOfLab is {Simulation, Remote Triggered, Simulation and Remote Triggered, Pilot Phase}
+      TypeOfLab is {Simulation, Remote Triggered, Simulation and Remote Triggered, Pilot Phase}.
 
+   + IntegrationLevel
+      
+      IntegrationLevel is {L0, L1, L2, L3, L4, L5, L6}.
 
 *** Functions: List of all possible functions in the model
 
