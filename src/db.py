@@ -3,7 +3,38 @@
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask import current_app
 
+import re
+
 db = SQLAlchemy()
+
+
+class Version(object):
+    pass
+
+
+class URL(object):
+    pass
+
+
+class Name(object):
+    def __init__(self, value):
+        # if the string contains any non-alphabet and non-space character, raise
+        # a type error
+        if re.search('[^a-zA-Z ]+', value):
+            raise TypeError('%s is not a Name!' % value)
+
+        self.value = value
+
+    def __str__(self):
+        return self.value
+
+    def __repr__(self):
+        return self.value
+
+
+class Email(object):
+    def __init__(self):
+        pass
 
 
 # Abstract class to hold common methods
