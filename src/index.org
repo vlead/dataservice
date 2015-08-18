@@ -17,6 +17,7 @@
   2. Python API is provided as a wrapper to make CRUD operations on the data.
   3. REST API is provided for various applications to perform CRUD operations
      on the data.
+
 * Design
 
 ** Data Model
@@ -24,155 +25,208 @@ Description of the data model.
 
 *** Types: List of all the types in the model
 
-   + Lab
+**** Lab
 
-     *Immutable Data*
-       These are the data associated with Lab type, which are immutable.
+***** Immutable Data
 
-       + LabId
-       + NoOfExperiments
+These are the data associated with Lab type, which are immutable.
 
-     *Mutable Data*
-       These are the data associated with Lab type, which are mutable.
++ LabId
++ Mnemonic
++ NoOfExperiments
 
-        + Name
-        + Institute
-        + Discipline
-        + IntegrationLevel
-        + HostedURL
-        + RepoURL
-        + TypeOfLab
-        + HostedOn
-        + Web2Compliant
-        + Phase2Lab
-        + Developer
-        + Technology
-        + Experiment
+  As the number of experiments should be derived by the system from the
+  experiments already associated with each lab.
 
+***** Mutable Data
+These are the data associated with Lab type, which are mutable.
 
-   + Institute
++ Name
++ Institute
++ Discipline
++ IntegrationLevel
++ HostedURL
++ RepoURL
++ TypeOfLab
++ HostedOn
++ Web2Compliant
++ Phase2Lab
++ Developer
++ Technology
++ Experiment
 
-     *Immutable Data*
-       This is the data associated with Institute type, which is immutable.
-
-       + InstituteId
-
-     *Mutable Data*
-       These are the data associated with Institute type, which are mutable.
-
-       + PIC
-       + IIC
+***** TODO: Mnemonic assigned for each lab
 
 
-   + Discipline
+**** Institute
 
-     *Immutable Data*
-       This is the data associated with Discipline type, which is immutable.
+***** Immutable Data
+This is the data associated with Institute type, which is immutable.
 
-       + DisciplineId
++ InstituteId
++ Mnemonic
 
-     *Mutable Data*
-       This is the data associated with Discipline type, which is mutable.
+***** Mutable Data
 
-       + DNC
+These are the data associated with Institute type, which are mutable
 
++ PIC
++ IIC
 
-   + Experiment
-
-     *Immutable Data*
-       This is the data associated with Experiment type, which is immutable.
-
-       + ExperimentId
-
-     *Mutable Data*
-       These are the data associated with Discipline type, which are mutable.
-
-       + ContentURL
-       + SimulationURL
-       + ContentHostedOn
-       + SimulationHostedOn
-
-
-   + Developer
-
-     *Immutable Data*
-       This is the data associated with Developer type, which is immutable.
-
-       + DeveloperId
-
-     *Mutable Data*
-       This is the data associated with Developer type, which is mutable.
-
-       + Email
+***** Mnemonic assigned to each institute
+|---------------------------------+----------|
+| Name                            | Mnemonic |
+|---------------------------------+----------|
+| IIIT Hyderabad                  | iiith    |
+| IIT Bombay                      | iitb     |
+| IIT Delhi                       | iitd     |
+| IIT Roorkee                     | iitrrk   |
+| IIT Guwahati                    | iitg     |
+| IIT Kanpur                      | iitk     |
+| IIT Kharagpur                   | iitkgp   |
+| IIT Madras                      | iitm     |
+| NIT Surathkal                   | nitk     |
+| Amrita University               | amrita   |
+| College of Engineering, Pune    | coep     |
+| Dayalbagh Educational Institute | dei      |
+|---------------------------------+----------|
 
 
-   + Technology
+**** Discipline
 
-     *Immutable Data*
-       This is the data associated with Technology type, which is immutable.
+***** Immutable Data
+This is the data associated with Discipline type, which is immutable.
 
-       + TechnologyId
++ DisciplineId
++ Mnemonic
 
-     *Mutable Data*
-       These are the data associated with Technoloy type, which are mutable.
+***** Mutable Data
+This is the data associated with Discipline type, which is mutable.
 
-       + Version
-       + FOSS
++ DNC
+
+***** Mnemonic assigned to each discipline
+|------------------------------------------+-----------|
+| Name                                     | Mnemonic  |
+|------------------------------------------+-----------|
+| Aerospace Engineering                    | aero      |
+| Biotechnology and Biomedical Engineering | biotech   |
+| Chemical Engineering                     | chem-engg |
+| Chemical Sciences                        | chem      |
+| Civil Engineering                        | civil     |
+| Computer Science and Engineering         | cse       |
+| Electrical Engineering                   | ee        |
+| Electronics and Communication            | ece       |
+| Humanities                               | human     |
+| Mechanical Engineering                   | mech      |
+| Physical Sciences                        | phy-sc    |
+| Textile Engineering                      | tex-engg  |
+| Design Engineering                       | dsgn-engg |
+| Material Sciences                        | mat-sc    |
+|------------------------------------------+-----------|
+
+**** Experiment
+
+***** Immutable Data
+This is the data associated with Experiment type, which is immutable.
+
++ ExperimentId
+
+***** Mutable Data
+These are the data associated with Discipline type, which are mutable.
+
++ ContentURL
++ SimulationURL
++ ContentHostedOn
++ SimulationHostedOn
 
 
-   + Platform
+**** Developer
 
-     Platform is {IIIT, Badal, AWS, Else}.
+***** Immutable Data
+This is the data associated with Developer type, which is immutable.
 
-   + Version
++ DeveloperId
 
-      Version is an alphanumeric string including '-' and '.'.
+***** Mutable Data
+This is the data associated with Developer type, which is mutable.
 
-   + URL
++ Email
 
-      URL is a type as defined in RFC 1738.
 
-   + Name
+**** Technology
 
-      Name is an alphabetical string.
+***** Immutable Data
+This is the data associated with Technology type, which is immutable.
 
-   + LabId
++ TechnologyId
 
-      Lab Id is a natural number.
+***** Mutable Data
+These are the data associated with Technoloy type, which are mutable.
 
-   + InstituteId
++ Version
++ FOSS
 
-      Institute Id is a natural number.
 
-   + DisciplineId
+**** Platform
 
-      Discipline Id is a natural number.
+   Platform is {IIIT, Badal, AWS, Else}.
 
-   + DeveloperId
+**** Version
 
-      Developer Id is a natural number.
+   Version is an alphanumeric string including '-' and '.'.
 
-   + ExperimentId
+**** URL
 
-      Experiment Id is a natural number.
+   URL is a type as defined in RFC 1738.
 
-   + TechnologyId
+**** Name
 
-      Technology Id is a natural number.
+   Name is an alphabetical string.
 
-   + Email
+**** LabId
 
-      Email is a type as defined in RFC 5321, 5322 and 6531.
+   LabId is a natural number.
 
-   + TypeOfLab
+**** InstituteId
 
-      TypeOfLab is {Simulation, Remote Triggered, Simulation and Remote Triggered, Pilot Phase}
+   InstituteId is a natural number.
 
+**** DisciplineId
+
+   DisciplineId is a natural number.
+
+**** DeveloperId
+
+   DeveloperId is a natural number.
+
+**** ExperimentId
+
+   ExperimentId is a natural number.
+
+**** TechnologyId
+
+   TechnologyId is a natural number.
+
+**** Email
+
+   Email is a type as defined in RFC 5321, 5322 and 6531.
+
+**** TypeOfLab
+
+   TypeOfLab is { Simulation,
+                 Remote Triggered,
+                 Simulation and Remote Triggered,
+                 Pilot Phase }
+
+**** IntegrationLevel
+      
+   IntegrationLevel is {L0, L1, L2, L3, L4, L5, L6}.
 
 *** Functions: List of all possible functions in the model
-
+    
 **** Functions operating on multiple domains
-
+     
 ***** getLabs: X --> set[Lab]
 
       X = Union Of {Institute, Discipline, Developer, Technology}
@@ -206,6 +260,10 @@ Description of the data model.
 ***** getId: Lab --> LabId
 
 ***** getLab: LabId --> Lab
+
+***** getMnemonic: Lab --> Mnemonic
+
+***** getLab: Mnemonic --> Lab
 
 ***** getName: Lab --> Name
 
@@ -280,6 +338,10 @@ Description of the data model.
 
 ***** getInstitute: InstituteId --> Institute
 
+***** getMnemonic: Institute --> Mnemonic
+
+***** getInstitute: Mnemonic --> Institute
+
 ***** getPIC: Institute --> Name
 
 ***** getIIC: Institute --> Name
@@ -293,6 +355,10 @@ Description of the data model.
 ***** getId: Discipline --> DisciplineId
 
 ***** getDiscipline: DisciplineId --> Discipline
+
+***** getMnemonic: Discipline --> Mnemonic
+
+***** getDiscipline: Mnemonic --> Discipline
 
 ***** getDNC: Discipline --> Name
 
