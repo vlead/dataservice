@@ -321,14 +321,52 @@ class Experiment(Entity):
     lab = db.relationship('Lab')
 
     content_url = db.Column(db.String(256))
-    content_on = db.Column(db.Enum('CPE', 'ELSE', 'NA'))
-    # content_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
-    # content_on = db.relationship('HostingPlatform')
+    # content_on = db.Column(db.Enum('CPE', 'ELSE', 'NA'))
+    content_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
+    content_on = db.relationship('HostingPlatform')
 
     simulation_url = db.Column(db.String(256))
-    simulation_on = db.Column(db.Enum('CPE', 'ELSE', 'NA'))
-    # simulation_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
-    # simulation_on = db.relationship('HostingPlatform')
+    # simulation_on = db.Column(db.Enum('CPE', 'ELSE', 'NA'))
+    simulation_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
+    simulation_on = db.relationship('HostingPlatform')
+
+    def __init__(self, **kwargs):
+        # TODO: implement the constructor and check the validity!
+        pass
+
+    def get_id(self):
+        return self.id
+
+    @staticmethod
+    def get_experiment(id):
+        return Experiment.query.get(id)
+
+    def get_content_url(self):
+        return self.content_url
+
+    def get_simulation_url(self):
+        return self.simulation_url
+
+    def content_hosted_on(self):
+        return self.content_hosted_on
+
+    def simulation_hosted_on(self):
+        return self.simulation_hosted_on
+
+    def get_lab(self):
+        return self.lab
+
+    def set_content_url(self, url):
+        self.content_url = url
+
+    def set_simulation_url(self, url):
+        self.simulation_url = url
+
+    def set_content_hosted_on(self, platform):
+        self.content_hosted_on = platform
+
+    def set_simulation_hosted_on(self, platform):
+        self.simulation_hosted_on = platform
 
     def to_client(self):
         return {
@@ -338,10 +376,7 @@ class Experiment(Entity):
             'content_on': self.content_on,
             'simulation_url': self.simulation_url,
             'simulation_on': self.simulation_on,
-            'lab': {
-                'id': self.lab.id,
-                'name': self.lab.name
-            }
+            'lab': self.lab.to_client()
         }
 
 
