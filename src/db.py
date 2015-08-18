@@ -5,6 +5,8 @@ from flask import current_app
 
 import re
 
+from src.utils import typecheck
+
 db = SQLAlchemy()
 
 
@@ -308,6 +310,12 @@ class TechnologyUsed(Entity):
     client_side = db.Column(db.Boolean)
 
 
+class HostingPlatform(Entity):
+    __tablename__ = 'hosting_platforms'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(32), nullable=False)
+
+
 class Experiment(Entity):
 
     __tablename__ = 'experiments'
@@ -330,6 +338,8 @@ class Experiment(Entity):
     simulation_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
     simulation_on = db.relationship('HostingPlatform')
 
+    @typecheck(lab=Lab, content_url=URL, content_hosted_on=HostingPlatform,
+               simulation_url=URL, simulation_hosted_on=HostingPlatform)
     def __init__(self, **kwargs):
         # TODO: implement the constructor and check the validity!
         pass
@@ -356,15 +366,18 @@ class Experiment(Entity):
     def get_lab(self):
         return self.lab
 
+    @typecheck(url=URL)
     def set_content_url(self, url):
         self.content_url = url
 
     def set_simulation_url(self, url):
         self.simulation_url = url
 
+    @typecheck(platform=HostingPlatform)
     def set_content_hosted_on(self, platform):
         self.content_hosted_on = platform
 
+    @typecheck(platform=HostingPlatform)
     def set_simulation_hosted_on(self, platform):
         self.simulation_hosted_on = platform
 
@@ -390,12 +403,6 @@ class TypeOfLab(Entity):
     __tablename__ = 'type_of_labs'
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(64), nullable=False)
-
-
-class HostingPlatform(Entity):
-    __tablename__ = 'hosting_platforms'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(32), nullable=False)
 
 
 class LabSystemInfo(Entity):

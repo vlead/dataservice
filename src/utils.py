@@ -75,3 +75,34 @@ def str_to_bool(s):
     if s == "False":
         return False
     return None
+
+
+# decorator to do typechecking of arguments passed to functions
+# usage: @typecheck(var1=<type>, var2=<type>, ..)
+#        def yourfunc(var1, var2, ..):
+#           ....
+def typecheck(**typemap):
+    # print "all valid types: %s" % typemap
+
+    def make_wrapper(decorated_func):
+
+        def wrapper(*arg_vals, **kw_vals):
+            arg_names = decorated_func.func_code.co_varnames
+            # print arg_names
+            # print args
+            for arg_name in arg_names:
+                idx = arg_names.index(arg_name)
+                arg = arg_vals[idx]
+                # print "arg_name: %s, arg: %s, typemap[arg_name]: %s" %\
+                #    (arg_name, arg, typemap[arg_name])
+                if not isinstance(arg, typemap[arg_name]):
+                    print "types are not fine"
+                    raise TypeError("For %s type should have been %s. But "
+                                    "provided: %s" % (arg_name,
+                                                      typemap[arg_name],
+                                                      type(arg)))
+
+            return decorated_func(*arg_vals, **kw_vals)
+        return wrapper
+
+    return make_wrapper
