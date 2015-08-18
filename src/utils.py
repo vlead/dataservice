@@ -89,8 +89,10 @@ def typecheck(**typemap):
         def wrapper(*arg_vals, **kw_vals):
             arg_names = decorated_func.func_code.co_varnames
             # print arg_names
-            # print args
-            for arg_name in arg_names:
+            # print arg_vals
+            for key, val in typemap.iteritems():
+            # for arg_name in arg_names:
+                arg_name = key
                 idx = arg_names.index(arg_name)
                 arg = arg_vals[idx]
                 # print "arg_name: %s, arg: %s, typemap[arg_name]: %s" %\

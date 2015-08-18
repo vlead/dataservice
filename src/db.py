@@ -27,11 +27,11 @@ class Name(object):
 
         self.value = value
 
-    def __str__(self):
-        return self.value
+    #def __str__(self):
+    #    return self.value
 
-    def __repr__(self):
-        return self.value
+    #def __repr__(self):
+    #    return self.value
 
 
 class Email(object):
@@ -255,6 +255,23 @@ class Developer(Entity):
     def get_all():
         return [i.to_client() for i in Developer.query.all()]
 
+    def get_id(self):
+        return self.id
+
+    @staticmethod
+    def get_developer(id):
+        return Developer.query.get(id)
+
+    def get_email(self):
+        return self.email_id
+
+    @typecheck(name=Name)
+    def set_name(self, name):
+        self.name = name.value
+
+    def set_email(self, email_id):
+        self.email_id = email_id
+
 
 class DeveloperEngaged(Entity):
 
@@ -329,14 +346,14 @@ class Experiment(Entity):
     lab = db.relationship('Lab')
 
     content_url = db.Column(db.String(256))
-    # content_on = db.Column(db.Enum('CPE', 'ELSE', 'NA'))
-    content_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
-    content_on = db.relationship('HostingPlatform')
+    content_on = db.Column(db.Enum('CPE', 'ELSE', 'NA'))
+    # content_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
+    # content_on = db.relationship('HostingPlatform')
 
     simulation_url = db.Column(db.String(256))
-    # simulation_on = db.Column(db.Enum('CPE', 'ELSE', 'NA'))
-    simulation_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
-    simulation_on = db.relationship('HostingPlatform')
+    simulation_on = db.Column(db.Enum('CPE', 'ELSE', 'NA'))
+    # simulation_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
+    # simulation_on = db.relationship('HostingPlatform')
 
     @typecheck(lab=Lab, content_url=URL, content_hosted_on=HostingPlatform,
                simulation_url=URL, simulation_hosted_on=HostingPlatform)

@@ -5,6 +5,7 @@ from flask.ext.testing import TestCase
 # import json
 
 from src.db import *
+from src.app import create_app
 
 
 class DBTest(TestCase):
@@ -13,6 +14,10 @@ class DBTest(TestCase):
     config = {
         'SQLALCHEMY_DATABASE_URI': ''
     }
+
+    def create_app(self):
+        app = create_app(self.config)
+        return app
 
     def setUp(self):
         db.create_all()
@@ -23,6 +28,22 @@ class DBTest(TestCase):
 
     def test_create_experiment(self):
         pass
+
+    def test_set_developer_name(self):
+        print "test_set_developer_name()"
+        instt = Institute(name="MIT")
+        dev = Developer(name="Joe", institute=instt, email_id="joe@example.com")
+        new_name = Name("John")
+        print new_name, type(new_name)
+        dev.set_name(new_name)
+        self.assertEqual(dev.name, "John")
+        self.assertRaises(TypeError, dev.set_name, "John")
+
+    def test_name_type(self):
+        new_name = Name("John")
+        self.assertEqual(new_name.value, "John")
+        self.assertRaises(TypeError, Name, "123dasd")
+
 
 
 if __name__ == '__main__':
