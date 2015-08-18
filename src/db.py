@@ -218,7 +218,7 @@ class Discipline(Entity):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128))
     dnc = db.Column(db.String(64))
-
+    
     def to_client(self):
         return {
             'id': self.id,
@@ -230,6 +230,21 @@ class Discipline(Entity):
     def get_all():
         return [i.to_client() for i in Discipline.query.all()]
 
+    @staticmethod
+    def get_disc(id):
+        return Discipline.query.get(id)
+    
+    def get_id(self):
+        return self.id
+            
+    def get_dnc(self):
+        return self.dnc
+    
+    def set_dnc(self, name):
+        self.name = name
+    
+  #  def get_mnemonic(self):
+   #     return self.mnemonic
 
 class Developer(Entity):
 
@@ -463,3 +478,9 @@ class LabSystemInfo(Entity):
     @staticmethod
     def get_all():
         return [i.to_client() for i in LabSystemInfo.query.all()]
+
+    if __name__ == '__main__':
+       print Discipline.get_id("1")
+       print Discipline.get_disc()
+       print Discipline.get_dnc()
+       
