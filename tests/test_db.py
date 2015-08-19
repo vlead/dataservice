@@ -102,15 +102,33 @@ class DBTest(TestCase):
 
 
   # Test for set_dnc attribute of Discipline entity
-    def test_set_dnc(self):
+    def test_set_discipline_dnc(self):
         print "test_set_dnc()"
         disc = Discipline()
-        new_dnc = Name("James")
-        print new_dnc, type(new_dnc)
-        disc.set_dnc(new_dnc)
-        self.assertEqual(disc.dnc, "James")
-        self.assertRaises(TypeError, disc.set_dnc, "James")
+        new_dnc = Name("James roy")
+        disc.set_discipline_dnc(new_dnc)
+        self.assertEqual(disc.dnc, "James roy")
+        self.assertRaises(TypeError, disc.set_discipline_dnc, "James roy")
 
-       
+    # Test for get_id attribute of Discipline entity
+    def test_get_discipline_id(self):
+        print "test_get_id()"
+        disc = Discipline(id="2")
+        self.assertEqual(disc.id, disc.get_discipline_id())
+
+    # Test for get_dnc attribute of Discipline entity
+    def test_get_discipline_dnc(self):
+        print "test_get_dnc()"
+        disc = Discipline(dnc="james")
+        self.assertEqual(disc.dnc, disc.get_discipline_dnc())
+
+    # Test for get_disc attribute of Discipline entity
+    def test_get_discipline_name(self):
+        print "test_get_disc()"
+        disc = Discipline(name="CSE")
+        disc.save()
+        self.assertEqual(disc.get_discipline_name(1).name, disc.name)
+
+
 if __name__ == '__main__':
     unittest.main()

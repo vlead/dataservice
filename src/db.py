@@ -274,17 +274,17 @@ class Discipline(Entity):
         return [i.to_client() for i in Discipline.query.all()]
 
     @staticmethod
-    def get_disc(id):
+    def get_discipline_name(id):
         return Discipline.query.get(id)
 
-    def get_id(self):
+    def get_discipline_id(self):
         return self.id
 
-    def get_dnc(self):
+    def get_discipline_dnc(self):
         return self.dnc
 
     @typecheck(dnc=Name)
-    def set_dnc(self, dnc):
+    def set_discipline_dnc(self, dnc):
         self.dnc = dnc.value
 
     """
