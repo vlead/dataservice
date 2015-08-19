@@ -45,8 +45,8 @@ class DBTest(TestCase):
         self.assertEqual(new_name.value, "John")
         self.assertRaises(TypeError, Name, "123dasd")
 
-    def test_set_email(self):
-        print "test_set_email()"
+    def test_set_developer_email(self):
+        print "test_set_developer_email()"
         instt = Institute(name="MIT")
         dev = Developer(name="Joe", institute=instt, email_id="joe@example.com")
         # print dev
@@ -68,15 +68,15 @@ class DBTest(TestCase):
         dev.save()
         self.assertEqual(dev.get_developer(1).name, "Joe")
 
-    def test_get_email(self):
-        print "test_get_email()"
+    def test_get_developer_email(self):
+        print "test_get_developer_email()"
         instt = Institute(name="MIT")
         dev = Developer(name="Joe", institute=instt, email_id="joe@example.com")
         email_id = dev.get_email()
         self.assertEqual(email_id, "joe@example.com")
 
-    def test_get_name(self):
-        print "test_get_name()"
+    def test_get_developer_name(self):
+        print "test_get_developer_name()"
         instt = Institute(name="MIT")
         dev = Developer(name="Joe", institute=instt, email_id="joe@example.com")
         name = dev.get_name()
