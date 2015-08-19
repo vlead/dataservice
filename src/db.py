@@ -5,7 +5,7 @@ from flask import current_app
 
 import re
 
-from src.utils import typecheck
+from utils import typecheck
 
 db = SQLAlchemy()
 
@@ -69,41 +69,130 @@ class Entity(db.Model):
         self.save()
 
 
+class Institute(Entity):
+
+    __tablename__ = 'institutes'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), nullable=False)
+    pic = db.Column(db.String(128))
+    iic = db.Column(db.String(128))
+
+    labs = db.relationship('Lab', backref='institute')
+
+    @staticmethod
+    def get_all():
+        return [i.to_client() for i in Institute.query.all()]
+
+    def get_id(self):
+        return self.id
+
+    # def get_institute_mnemonic(self):
+        # return self.mnemonic
+
+    def get_name(self):
+        return self.name
+
+    def get_pic(self):
+        return self.pic
+
+    def get_iic(self):
+        return self.iic
+
+    @staticmethod
+    # TODO: Add same get for a mnemonic too
+    def get_institute_by_id(id):
+        return Institute.query.get(id)
+
+    @typecheck(name=InstituteName)
+    def set_name(self, name):
+        self.name = name
+
+    @typecheck(pic=Name)
+    def set_pic(self, pic):
+        self.pic = pic
+
+    @typecheck(iic=Name)
+    def set_iic(self, iic):
+        self.iic = iic
+
+    def to_client(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'pic': self.pic,
+            'iic': self.iic
+        }
+
+
+class Discipline(Entity):
+
+    __tablename__ = 'disciplines'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), nullable=False)
+    dnc = db.Column(db.String(64))
+
+    labs = db.relationship('Lab', backref='discipline')
+
+    def to_client(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'dnc': self.dnc
+        }
+
+    @staticmethod
+    def get_all():
+        return [i.to_client() for i in Discipline.query.all()]
+
+    @staticmethod
+    def get_discipline_name(id):
+        return Discipline.query.get(id)
+
+    def get_discipline_id(self):
+        return self.id
+
+    def get_discipline_dnc(self):
+        return self.dnc
+
+    @typecheck(dnc=Name)
+    def set_discipline_dnc(self, dnc):
+        self.dnc = dnc.value
+
+    """
+    def get_mnemonic(self):
+        return self.mnemonic
+    """
+
+
 class Lab(Entity):
 
     __tablename__ = 'labs'
 
     id = db.Column(db.Integer, primary_key=True)
 
-    old_lab_id = db.Column(db.String(32))
     name = db.Column(db.String(128), nullable=False)
+    mnemonic = db.Column(db.String(32), nullable=False)
     slug = db.Column(db.String(128))
 
-    discipline_id = db.Column(db.Integer, db.ForeignKey('disciplines.id'))
-    discipline = db.relationship('Discipline')
-
     institute_id = db.Column(db.Integer, db.ForeignKey('institutes.id'))
-    institute = db.relationship('Institute')
+    discipline_id = db.Column(db.Integer, db.ForeignKey('disciplines.id'))
 
-    integration_level = db.Column(db.Integer, nullable=False)
-    # integration_level_id = db.Column(db.ForeignKey('integration_levels.id'))
-    # integration_level = db.relationship('IntegrationLevel')
+    integration_level_id = db.Column(db.ForeignKey('integration_levels.id'))
+    integration_level = db.relationship('IntegrationLevel')
 
     number_of_experiments = db.Column(db.Integer)
 
-    is_src_avail = db.Column(db.Boolean)
     repo_url = db.Column(db.String(256))
 
-    is_hosted = db.Column(db.Boolean)
     hosted_url = db.Column(db.String(256))
-    hosted_on = db.Column(db.Enum('IIIT', 'AWS', 'BADAL', 'ELSE'))
 
-    # hosted_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
-    # hosted_on = db.relationship('HostingPlatform')
+    hosted_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
+    hosted_on = db.relationship('HostingPlatform')
 
-    type_of_lab = db.Column(db.String(64))
-    # type_of_lab_id = db.Column(db.ForeignKey('type_of_labs.id'))
-    # type_of_lab = db.relationship('TypeOfLab')
+    type_of_lab_id = db.Column(db.ForeignKey('type_of_labs.id'))
+    type_of_lab = db.relationship('TypeOfLab')
 
     remarks = db.Column(db.Text)
     status = db.Column(db.String(32))
@@ -158,146 +247,27 @@ class Lab(Entity):
             formatted_labs.append(formatted_lab)
         return formatted_labs
 
-    def get_developers(self):
-        devs = DeveloperEngaged.query.filter_by(lab_id=self.id).all()
-        # print devs
-        return [d.developer.to_client() for d in devs]
-
-    def get_technologies(self):
-        techs = TechnologyUsed.query.filter_by(lab_id=self.id).all()
-        return [t.technology.to_client() for t in techs]
-
     def to_client(self):
         return {
             'id': self.id,
+            'mnemonic': self.mnemonic,
             'name': self.name,
             'slug': self.slug,
-            'institute': {
-                'id': self.institute.id,
-                'name': self.institute.name,
-                'PIC': self.institute.PIC,
-                'IIC': self.institute.IIC
-            },
-            'discipline': {
-                'id': self.discipline.id,
-                'name': self.discipline.name,
-                'dnc': self.discipline.dnc
-            },
+            'institute': self.institute.to_client(),
+            'discipline': self.discipline.to_client(),
             'integration_level': self.integration_level,
             'number_of_experiments': self.number_of_experiments,
-            'is_src_avail': self.is_src_avail,
             'repo_url': self.repo_url,
-            'is_hosted': self.is_hosted,
             'hosted_url': self.hosted_url,
             'hosted_on': self.hosted_on,
             'technologies': self.get_technologies(),
             'developers': self.get_developers(),
             'type_of_lab': self.type_of_lab,
-            'remarks': self.remarks,
             'status': self.status,
-            'old_lab_id': self.old_lab_id,
             'is_web_2_compliant': self.is_web_2_compliant,
-            'is_phase_2_lab': self.is_phase_2_lab
+            'is_phase_2_lab': self.is_phase_2_lab,
+            'remarks': self.remarks
         }
-
-
-class Institute(Entity):
-
-    __tablename__ = 'institutes'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(128))
-    PIC = db.Column(db.String(128))
-    IIC = db.Column(db.String(128))
-
-    @staticmethod
-    def get_all():
-        return [i.to_client() for i in Institute.query.all()]
-
-    def get_id(self):
-        return self.id
-
-    # def get_institute_mnemonic(self):
-        # return self.mnemonic
-
-    def get_name(self):
-        return self.name
-    
-    def get_pic(self):
-        return self.PIC
-
-    def get_iic(self):
-        return self.IIC
-
-    @staticmethod
-    # TODO: Add same get for a mnemonic too
-    def get_institute_by_id(id):
-        return Institute.query.get(id)
-
-   # def get_labs_by_institute():
-        
-
-  # def get_developers_by_institute():
-   
-
-    @typecheck(name=InstituteName)
-    def set_name(self, name):
-        self.name = name
-
-    @typecheck(PIC=Name)
-    def set_pic(self, PIC):
-        self.PIC = PIC
-
-    @typecheck(IIC=Name)
-    def set_iic(self, IIC):
-        self.IIC = IIC
-
-    def to_client(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'PIC': self.PIC,
-            'IIC': self.IIC
-        }
-
-
-class Discipline(Entity):
-
-    __tablename__ = 'disciplines'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(128))
-    dnc = db.Column(db.String(64))
-
-    def to_client(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'dnc': self.dnc
-        }
-
-    @staticmethod
-    def get_all():
-        return [i.to_client() for i in Discipline.query.all()]
-
-    @staticmethod
-    def get_discipline_name(id):
-        return Discipline.query.get(id)
-
-    def get_discipline_id(self):
-        return self.id
-
-    def get_discipline_dnc(self):
-        return self.dnc
-
-    @typecheck(dnc=Name)
-    def set_discipline_dnc(self, dnc):
-        self.dnc = dnc.value
-
-    """
-    def get_mnemonic(self):
-        return self.mnemonic
-    """
 
 
 class Developer(Entity):
@@ -307,18 +277,10 @@ class Developer(Entity):
     id = db.Column(db.Integer, primary_key=True)
 
     email_id = db.Column(db.String(128))
-    name = db.Column(db.String(64))
+    name = db.Column(db.String(64), nullable=False)
 
     institute_id = db.Column(db.Integer, db.ForeignKey('institutes.id'))
     institute = db.relationship('Institute')
-
-    def to_client(self):
-        return {
-            'id': self.id,
-            'email_id': self.email_id,
-            'name': self.name,
-            'institute': self.institute.to_client()
-        }
 
     @staticmethod
     def get_all():
@@ -345,18 +307,13 @@ class Developer(Entity):
     def set_email(self, email_id):
         self.email_id = email_id.value
 
-
-class DeveloperEngaged(Entity):
-
-    __tablename__ = 'developers_engaged'
-
-    id = db.Column(db.Integer, primary_key=True)
-
-    lab_id = db.Column(db.Integer, db.ForeignKey('labs.id'))
-    lab = db.relationship('Lab')
-
-    developer_id = db.Column(db.Integer, db.ForeignKey('developers.id'))
-    developer = db.relationship('Developer')
+    def to_client(self):
+        return {
+            'id': self.id,
+            'email_id': self.email_id,
+            'name': self.name,
+            'institute': self.institute.to_client()
+        }
 
 
 class Technology(Entity):
@@ -364,7 +321,7 @@ class Technology(Entity):
     __tablename__ = 'technologies'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64))
+    name = db.Column(db.String(64), nullable=False)
     version = db.Column(db.String(32))
     foss = db.Column(db.Boolean)
 
@@ -379,25 +336,6 @@ class Technology(Entity):
             'version': self.version,
             'foss': self.foss
         }
-
-
-class TechnologyUsed(Entity):
-
-    __tablename__ = 'technologies_used'
-
-    id = db.Column(db.Integer, primary_key=True)
-
-    lab_id = db.Column(db.Integer, db.ForeignKey('labs.id'))
-    lab = db.relationship('Lab')
-
-    experiment_id = db.Column(db.Integer, db.ForeignKey('experiments.id'))
-    experiment = db.relationship('Experiment')
-
-    tech_id = db.Column(db.Integer, db.ForeignKey('technologies.id'))
-    technology = db.relationship('Technology')
-
-    server_side = db.Column(db.Boolean)
-    client_side = db.Column(db.Boolean)
 
 
 class HostingPlatform(Entity):
@@ -419,14 +357,14 @@ class Experiment(Entity):
     lab = db.relationship('Lab')
 
     content_url = db.Column(db.String(256))
-    content_on = db.Column(db.Enum('CPE', 'ELSE', 'NA'))
-    # content_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
-    # content_on = db.relationship('HostingPlatform')
+    # content_on = db.Column(db.Enum('CPE', 'ELSE', 'NA'))
+    content_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
+    content_on = db.relationship('HostingPlatform')
 
     simulation_url = db.Column(db.String(256))
-    simulation_on = db.Column(db.Enum('CPE', 'ELSE', 'NA'))
-    # simulation_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
-    # simulation_on = db.relationship('HostingPlatform')
+    # simulation_on = db.Column(db.Enum('CPE', 'ELSE', 'NA'))
+    simulation_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
+    simulation_on = db.relationship('HostingPlatform')
 
     @typecheck(lab=Lab, content_url=URL, content_hosted_on=HostingPlatform,
                simulation_url=URL, simulation_hosted_on=HostingPlatform)

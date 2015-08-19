@@ -85,42 +85,42 @@ class DBTest(TestCase):
     # Tests for Institute entity.
     def test_set_institute_pic(self):
         print "test_set_institute_pic()"
-        instt = Institute(name="IndianInstitute", PIC="Avinash", IIC="Amit")
+        instt = Institute(name="IndianInstitute", pic="Avinash", iic="Amit")
         new_pic = Name("John Doe")
         # print new_pic
         instt.set_pic(new_pic)
-        self.assertEqual(instt.PIC.value, "John Doe")
+        self.assertEqual(instt.pic.value, "John Doe")
 
     def test_set_institute_iic(self):
         print "test_set_institute_iic()"
-        instt = Institute(name="IndianInstitute", PIC="John", IIC="Amit")
+        instt = Institute(name="IndianInstitute", pic="John", iic="Amit")
         new_iic = Name("Jane Doe")
         # print new_iic
         instt.set_iic(new_iic)
-        self.assertEqual(instt.IIC.value, "Jane Doe")
+        self.assertEqual(instt.iic.value, "Jane Doe")
 
     def test_set_institute_name(self):
         print "test_set_institute_name()"
-        instt = Institute(name="IndianInstitute", PIC="John", IIC="Amit")
+        instt = Institute(name="IndianInstitute", pic="John", iic="Amit")
         new_name = InstituteName("IIT-Hyd Telangana")
         instt.set_name(new_name)
         self.assertEqual(instt.name.value, "IIT-Hyd Telangana")
 
     def test_get_institute_name(self):
         print "test_get_institute_name()"
-        instt = Institute(name="IndianInstitute", PIC="John", IIC="Jane")
+        instt = Institute(name="IndianInstitute", pic="John", iic="Jane")
         inst_name = instt.get_name()
         self.assertEqual(inst_name, "IndianInstitute")
-        
+
     def test_get_institute_pic(self):
         print "test_get_institute_pic()"
-        instt = Institute(name="IndianInstitute", PIC="John", IIC="Jane")
+        instt = Institute(name="IndianInstitute", pic="John", iic="Jane")
         inst_pic = instt.get_pic()
         self.assertEqual(inst_pic, "John")
 
     def test_get_institute_iic(self):
         print "test_get_institute_iic()"
-        instt = Institute(name="IndianInstitute", PIC="John", IIC="Jane")
+        instt = Institute(name="IndianInstitute", pic="John", iic="Jane")
         inst_iic = instt.get_iic()
         self.assertEqual(inst_iic, "Jane")
 
@@ -132,7 +132,7 @@ class DBTest(TestCase):
 
     def test_get_institute_by_id(self):
         print "test_get_institute_by_id()"
-        instt = Institute(name="IndianInstitute", PIC="John", IIC="Jane")
+        instt = Institute(name="IndianInstitute", pic="John", iic="Jane")
         instt.save()
         self.assertEqual(instt.get_institute_by_id(1).name, "IndianInstitute")
 
