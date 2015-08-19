@@ -27,10 +27,10 @@ class Name(object):
 
         self.value = value
 
-    #def __str__(self):
+    # def __str__(self):
     #    return self.value
 
-    #def __repr__(self):
+    # def __repr__(self):
     #    return self.value
 
 
@@ -218,7 +218,7 @@ class Discipline(Entity):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128))
     dnc = db.Column(db.String(64))
-    
+
     def to_client(self):
         return {
             'id': self.id,
@@ -248,6 +248,7 @@ class Discipline(Entity):
     def get_mnemonic(self):
         return self.mnemonic
     """
+
 
 class Developer(Entity):
 

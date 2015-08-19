@@ -91,7 +91,7 @@ def typecheck(**typemap):
             # print arg_names
             # print arg_vals
             for key, val in typemap.iteritems():
-            # for arg_name in arg_names:
+                # for arg_name in arg_names:
                 arg_name = key
                 idx = arg_names.index(arg_name)
                 arg = arg_vals[idx]
