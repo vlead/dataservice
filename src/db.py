@@ -233,22 +233,22 @@ class Discipline(Entity):
     @staticmethod
     def get_disc(id):
         return Discipline.query.get(id)
-    
+
     def get_id(self):
         return self.id
-            
+
     def get_dnc(self):
         return self.dnc
-    
+
     @typecheck(dnc=Name)
     def set_dnc(self, dnc):
-        self.dnc = dnc
-        
+        self.dnc = dnc.value
+
     """
     def get_mnemonic(self):
         return self.mnemonic
     """
-    
+
 class Developer(Entity):
 
     __tablename__ = 'developers'
