@@ -29,6 +29,7 @@ class DBTest(TestCase):
     def test_create_experiment(self):
         pass
 
+    # Test for set_developer_name attribute of Discipline entity
     def test_set_developer_name(self):
         print "test_set_developer_name()"
         instt = Institute(name="MIT")
@@ -44,6 +45,22 @@ class DBTest(TestCase):
         new_name = Name("John")
         self.assertEqual(new_name.value, "John")
         self.assertRaises(TypeError, Name, "123dasd")
+
+    def test_set_email(self):
+        print "test_set_email()"
+        instt = Institute(name="MIT")
+        dev = Developer(name="Joe", institute=instt, email_id="joe@example.com")
+        print dev
+        new_email = Email("bob@gmail.com")
+        print new_email, type(new_email)
+        dev.set_email(new_email)
+        self.assertEqual(dev.email_id, "bob@gmail.com")
+        self.assertRaises(TypeError, dev.set_email, "some@gmail.com")
+
+    def test_email_type(self):
+        new_email = Email("smith@gmail.com")
+        self.assertEqual(new_email.value, "smith@gmail.com")
+        self.assertRaises(TypeError, new_email.value, "@@@@@smith@gmail.com")
 
     # Test for set_dnc attribute of Discipline entity
     def test_set_dnc(self):

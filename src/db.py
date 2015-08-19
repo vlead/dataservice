@@ -35,8 +35,10 @@ class Name(object):
 
 
 class Email(object):
-    def __init__(self):
-        pass
+    def __init__(self, value):
+        if not re.search('[^@]+@[^@]+\.[^@]+', value):
+            raise TypeError('%s is not an email_id!' % value)
+        self.value = value
 
 
 # Abstract class to hold common methods
@@ -288,8 +290,9 @@ class Developer(Entity):
     def set_name(self, name):
         self.name = name.value
 
+    @typecheck(email_id=Email)
     def set_email(self, email_id):
-        self.email_id = email_id
+        self.email_id = email_id.value
 
 
 class DeveloperEngaged(Entity):
@@ -485,3 +488,4 @@ class LabSystemInfo(Entity):
 
 if __name__ == "__main__":
     print Discipline.get_disc("1")
+    print Discipline.get_dnc()
