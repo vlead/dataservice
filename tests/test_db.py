@@ -3,7 +3,6 @@
 import unittest
 from flask.ext.testing import TestCase
 # import json
-
 from src.db import *
 from src.app import create_app
 
@@ -29,14 +28,14 @@ class DBTest(TestCase):
     def test_create_experiment(self):
         pass
 
-    # Test for set_developer_name attribute of Discipline entity
+    # Tests for developer entity
     def test_set_developer_name(self):
         print "test_set_developer_name()"
         instt = Institute(name="MIT")
         dev = Developer(name="Joe", institute=instt, email_id="joe@example.com")
         new_name = Name("John")
-        print "dev", new_name
-        print new_name, type(new_name)
+        # print "dev", new_name
+        # print new_name, type(new_name)
         dev.set_name(new_name)
         self.assertEqual(dev.name, "John")
         self.assertRaises(TypeError, dev.set_name, "John")
@@ -50,9 +49,9 @@ class DBTest(TestCase):
         print "test_set_email()"
         instt = Institute(name="MIT")
         dev = Developer(name="Joe", institute=instt, email_id="joe@example.com")
-        print dev
+        # print dev
         new_email = Email("bob@gmail.com")
-        print new_email, type(new_email)
+        # print new_email, type(new_email)
         dev.set_email(new_email)
         self.assertEqual(dev.email_id, "bob@gmail.com")
         self.assertRaises(TypeError, dev.set_email, "some@gmail.com")
@@ -62,12 +61,33 @@ class DBTest(TestCase):
         self.assertEqual(new_email.value, "smith@gmail.com")
         self.assertRaises(TypeError, new_email.value, "@@@@@smith@gmail.com")
 
+    def test_get_developer_by_id(self):
+        print "test_get_developer_by_id()"
+        instt = Institute(name="MIT")
+        dev = Developer(name="Joe", institute=instt, email_id="joe@example.com")
+        dev.save()
+        self.assertEqual(dev.get_developer(1).name, "Joe")
+
+    def test_get_email(self):
+        print "test_get_email()"
+        instt = Institute(name="MIT")
+        dev = Developer(name="Joe", institute=instt, email_id="joe@example.com")
+        email_id = dev.get_email()
+        self.assertEqual(email_id, "joe@example.com")
+
+    def test_get_name(self):
+        print "test_get_name()"
+        instt = Institute(name="MIT")
+        dev = Developer(name="Joe", institute=instt, email_id="joe@example.com")
+        name = dev.get_name()
+        self.assertEqual(name, "Joe")
+
     # Tests for Institute entity.
     def test_set_institute_pic(self):
         print "test_set_institute_pic()"
         instt = Institute(name="IndianInstitute", PIC="Avinash", IIC="Amit")
         new_pic = Name("John Doe")
-        print new_pic
+        # print new_pic
         instt.set_pic(new_pic)
         self.assertEqual(instt.PIC.value, "John Doe")
 
@@ -75,7 +95,7 @@ class DBTest(TestCase):
         print "test_set_institute_iic()"
         instt = Institute(name="IndianInstitute", PIC="John", IIC="Amit")
         new_iic = Name("Jane Doe")
-        print new_iic
+        # print new_iic
         instt.set_iic(new_iic)
         self.assertEqual(instt.IIC.value, "Jane Doe")
 
@@ -110,20 +130,20 @@ class DBTest(TestCase):
         instt.save()
         self.assertEqual(instt.get_institute_by_id(1).name, "IndianInstitute")
 
-  #  def test_get_institute_by_developer(self):
-  #     print "test_get_institute_by_developer()"
-  #     instt = Institute(name="IITHyd")
-  #     instt.save()
-  #     dev = Developer(name="John Doe", institute_id=instt.id)
-  #     self.assertEqual(instt.get_institute_by_developer(dev).name, "IITHyd#")
+    # def test_get_institute_by_developer(self):
+    #     print "test_get_institute_by_developer()"
+    #     instt = Institute(name="IITHyd")
+    #     instt.save()
+    #     dev = Developer(name="John Doe", institute_id=instt.id)
+    #     self.assertEqual(instt.get_institute_by_developer(dev).name,
+    #     "IITHyd#")
 
-
-  # Test for set_dnc attribute of Discipline entity
+    # Test for Discipline entity
     def test_set_dnc(self):
         print "test_set_dnc()"
         disc = Discipline()
         new_dnc = Name("James")
-        print new_dnc, type(new_dnc)
+        # print new_dnc, type(new_dnc)
         disc.set_dnc(new_dnc)
         self.assertEqual(disc.dnc, "James")
         self.assertRaises(TypeError, disc.set_dnc, "James")
