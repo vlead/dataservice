@@ -220,6 +220,9 @@ class Institute(Entity):
     # def get_institute_mnemonic(self):
         # return self.mnemonic
 
+    def get_name(self):
+        return self.name
+    
     def get_pic(self):
         return self.PIC
 
@@ -231,11 +234,11 @@ class Institute(Entity):
     def get_institute_by_id(id):
         return Institute.query.get(id)
 
-    def get_institute_by_lab(lab):
-        return Institute.query.filter_by(id=lab.institute_id)
+   # def get_labs_by_institute():
+        
 
-    def get_institute_by_developer(developer):
-        return Institute.query.filter_by(id=developer.institute_id)
+  # def get_developers_by_institute():
+   
 
     @typecheck(name=InstituteName)
     def set_name(self, name):
