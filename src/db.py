@@ -33,6 +33,15 @@ class Name(object):
     # def __repr__(self):
     #    return self.value
 
+    
+class InstituteName(object):
+    def __init__(self, value):
+        # if the string contains any non-alphabet, non-hyphen and non-space character, raise a type error
+        if re.search('[^a-zA-Z\- ]+', value):
+            raise TypeError('%s is not a Name!' % value)
+
+        self.value = value
+
 
 class Email(object):
     def __init__(self, value):
@@ -200,6 +209,45 @@ class Institute(Entity):
     PIC = db.Column(db.String(128))
     IIC = db.Column(db.String(128))
 
+    @staticmethod
+    def get_all():
+        return [i.to_client() for i in Institute.query.all()]
+
+    def get_id(self):
+        return self.id
+
+    # def get_institute_mnemonic(self):
+        # return self.mnemonic
+
+    def get_pic(self):
+        return self.PIC
+
+    def get_iic(self):
+        return self.IIC
+
+    @staticmethod
+    # TODO: Add same get for a mnemonic too
+    def get_institute_by_id(id):
+        return Institute.query.get(id)
+
+    def get_institute_by_lab(lab):
+        return Institute.query.filter_by(id=lab.institute_id)
+
+    def get_institute_by_developer(developer):
+        return Institute.query.filter_by(id=developer.institute_id)
+
+    @typecheck(name=InstituteName)
+    def set_name(self, name):
+        self.name = name
+
+    @typecheck(PIC=Name)    
+    def set_pic(self, PIC):
+        self.PIC = PIC
+
+    @typecheck(IIC=Name)     
+    def set_iic(self, IIC):
+        self.IIC = IIC
+
     def to_client(self):
         return {
             'id': self.id,
@@ -207,11 +255,6 @@ class Institute(Entity):
             'PIC': self.PIC,
             'IIC': self.IIC
         }
-
-    @staticmethod
-    def get_all():
-        return [i.to_client() for i in Institute.query.all()]
-
 
 class Discipline(Entity):
 

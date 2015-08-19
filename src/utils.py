@@ -78,26 +78,55 @@ def str_to_bool(s):
 
 
 # decorator to do typechecking of arguments passed to functions
-# usage: @typecheck(var1=<type>, var2=<type>, ..)
+# usage: @typecheck(var1=<type>, var2=(<type1>, <type2>), ..)
 #        def yourfunc(var1, var2, ..):
 #           ....
 def typecheck(**typemap):
+    """
+    Decorator to do typechecking of arguments passed to functions. Similar to
+    function annotations in Python 3, but this also does strict type checking
+    when a function is called.
+    The type to an argument can be single or multiple types. Mutiple types are
+    to be specified in a tuple.
+    Usage:
+        @typecheck(var1=<type>, var2=(<type1>, <type2>), ..)
+        def yourfunc(var1, var2, ..):
+            ....
+    """
     # print "all valid types: %s" % typemap
 
     def make_wrapper(decorated_func):
 
         def wrapper(*arg_vals, **kw_vals):
+            # TODO: have more comments to better describe each line
             arg_names = decorated_func.func_code.co_varnames
             # print arg_names
             # print arg_vals
+
+            # iterate over the typemap passed to the typecheck decorator and
+            # compare with the actual arguments passed to the function
             for key, val in typemap.iteritems():
-                # for arg_name in arg_names:
                 arg_name = key
                 idx = arg_names.index(arg_name)
                 arg = arg_vals[idx]
                 # print "arg_name: %s, arg: %s, typemap[arg_name]: %s" %\
                 #    (arg_name, arg, typemap[arg_name])
-                if not isinstance(arg, typemap[arg_name]):
+
+                # if the passed type is a list throw an error
+                if typemap[arg_name] is list:
+                    raise SyntaxError("The types of %s has to be a tuple, "
+                                      "not list. \n See usage of `typecheck`" %
+                                      arg_name)
+
+                # check if the passed type is a tuple, if not make it
+                if typemap[arg_name] is not tuple:
+                    types = (typemap[arg_name],)
+                else:
+                    types = typemap[arg_name]
+
+                # iterate over the `types` tuple to see the arg matches any of
+                # the type provided in the tuple
+                if True not in map(lambda type: isinstance(arg, type), types):
                     print "types are not fine"
                     raise TypeError("For %s type should have been %s. But "
                                     "provided: %s" % (arg_name,
