@@ -240,12 +240,15 @@ class Discipline(Entity):
     def get_dnc(self):
         return self.dnc
     
-    def set_dnc(self, name):
-        self.name = name
+    @typecheck(dnc=Name)
+    def set_dnc(self, dnc):
+        self.dnc = dnc
+        
+    """
+    def get_mnemonic(self):
+        return self.mnemonic
+    """
     
-  #  def get_mnemonic(self):
-   #     return self.mnemonic
-
 class Developer(Entity):
 
     __tablename__ = 'developers'
@@ -479,8 +482,5 @@ class LabSystemInfo(Entity):
     def get_all():
         return [i.to_client() for i in LabSystemInfo.query.all()]
 
-    if __name__ == '__main__':
-       print Discipline.get_id("1")
-       print Discipline.get_disc()
-       print Discipline.get_dnc()
-       
+if __name__ == "__main__":
+    print Discipline.get_disc("1")
