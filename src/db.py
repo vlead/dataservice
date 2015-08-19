@@ -33,10 +33,11 @@ class Name(object):
     # def __repr__(self):
     #    return self.value
 
-    
+
 class InstituteName(object):
     def __init__(self, value):
-        # if the string contains any non-alphabet, non-hyphen and non-space character, raise a type error
+        # if the string contains any non-alphabet, non-hyphen and non-space
+        # character, raise a type error
         if re.search('[^a-zA-Z\- ]+', value):
             raise TypeError('%s is not a Name!' % value)
 
@@ -44,8 +45,10 @@ class InstituteName(object):
 
 
 class Email(object):
-    def __init__(self):
-        pass
+    def __init__(self, value):
+        if not re.search('[^@]+@[^@]+\.[^@]+', value):
+            raise TypeError('%s is not an email_id!' % value)
+        self.value = value
 
 
 # Abstract class to hold common methods
@@ -238,11 +241,11 @@ class Institute(Entity):
     def set_name(self, name):
         self.name = name
 
-    @typecheck(PIC=Name)    
+    @typecheck(PIC=Name)
     def set_pic(self, PIC):
         self.PIC = PIC
 
-    @typecheck(IIC=Name)     
+    @typecheck(IIC=Name)
     def set_iic(self, IIC):
         self.IIC = IIC
 
@@ -253,6 +256,7 @@ class Institute(Entity):
             'PIC': self.PIC,
             'IIC': self.IIC
         }
+
 
 class Discipline(Entity):
 
@@ -327,12 +331,16 @@ class Developer(Entity):
     def get_email(self):
         return self.email_id
 
+    def get_name(self):
+        return self.name
+
     @typecheck(name=Name)
     def set_name(self, name):
         self.name = name.value
 
+    @typecheck(email_id=Email)
     def set_email(self, email_id):
-        self.email_id = email_id
+        self.email_id = email_id.value
 
 
 class DeveloperEngaged(Entity):
@@ -528,3 +536,4 @@ class LabSystemInfo(Entity):
 
 if __name__ == "__main__":
     print Discipline.get_disc("1")
+    print Discipline.get_dnc()
