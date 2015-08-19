@@ -12,7 +12,7 @@ class DBTest(TestCase):
 
     TESTING = True
     config = {
-        'SQLALCHEMY_DATABASE_URI': 'mysql+oursql://root:root@localhost:8080/vlabs_database'
+        'SQLALCHEMY_DATABASE_URI': ''
     }
 
     def create_app(self):
@@ -34,6 +34,7 @@ class DBTest(TestCase):
         instt = Institute(name="MIT")
         dev = Developer(name="Joe", institute=instt, email_id="joe@example.com")
         new_name = Name("John")
+        print "dev", new_name
         print new_name, type(new_name)
         dev.set_name(new_name)
         self.assertEqual(dev.name, "John")
@@ -98,6 +99,17 @@ class DBTest(TestCase):
   #     instt.save()
   #     dev = Developer(name="John Doe", institute_id=instt.id)
   #     self.assertEqual(instt.get_institute_by_developer(dev).name, "IITHyd#")
+
+
+  # Test for set_dnc attribute of Discipline entity
+    def test_set_dnc(self):
+        print "test_set_dnc()"
+        disc = Discipline()
+        new_dnc = Name("James")
+        print new_dnc, type(new_dnc)
+        disc.set_dnc(new_dnc)
+        self.assertEqual(disc.dnc, "James")
+        self.assertRaises(TypeError, disc.set_dnc, "James")
 
        
 if __name__ == '__main__':

@@ -27,10 +27,10 @@ class Name(object):
 
         self.value = value
 
-    #def __str__(self):
+    # def __str__(self):
     #    return self.value
 
-    #def __repr__(self):
+    # def __repr__(self):
     #    return self.value
 
     
@@ -261,7 +261,7 @@ class Discipline(Entity):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128))
     dnc = db.Column(db.String(64))
-    
+
     def to_client(self):
         return {
             'id': self.id,
@@ -276,18 +276,22 @@ class Discipline(Entity):
     @staticmethod
     def get_disc(id):
         return Discipline.query.get(id)
-    
+
     def get_id(self):
         return self.id
-            
+
     def get_dnc(self):
         return self.dnc
-    
-    def set_dnc(self, name):
-        self.name = name
-    
-  #  def get_mnemonic(self):
-   #     return self.mnemonic
+
+    @typecheck(dnc=Name)
+    def set_dnc(self, dnc):
+        self.dnc = dnc.value
+
+    """
+    def get_mnemonic(self):
+        return self.mnemonic
+    """
+
 
 class Developer(Entity):
 
@@ -522,8 +526,5 @@ class LabSystemInfo(Entity):
     def get_all():
         return [i.to_client() for i in LabSystemInfo.query.all()]
 
-    if __name__ == '__main__':
-       print Discipline.get_id("1")
-       print Discipline.get_disc()
-       print Discipline.get_dnc()
-       
+if __name__ == "__main__":
+    print Discipline.get_disc("1")
