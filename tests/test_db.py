@@ -106,6 +106,12 @@ class DBTest(TestCase):
         instt.set_name(new_name)
         self.assertEqual(instt.name.value, "IIT-Hyd Telangana")
 
+    def test_get_institute_name(self):
+        print "test_get_institute_name()"
+        instt = Institute(name="IndianInstitute", PIC="John", IIC="Jane")
+        inst_name = instt.get_name()
+        self.assertEqual(inst_name, "IndianInstitute")
+        
     def test_get_institute_pic(self):
         print "test_get_institute_pic()"
         instt = Institute(name="IndianInstitute", PIC="John", IIC="Jane")
@@ -130,15 +136,7 @@ class DBTest(TestCase):
         instt.save()
         self.assertEqual(instt.get_institute_by_id(1).name, "IndianInstitute")
 
-    # def test_get_institute_by_developer(self):
-    #     print "test_get_institute_by_developer()"
-    #     instt = Institute(name="IITHyd")
-    #     instt.save()
-    #     dev = Developer(name="John Doe", institute_id=instt.id)
-    #     self.assertEqual(instt.get_institute_by_developer(dev).name,
-    #     "IITHyd#")
-
-  # Test for set_dnc attribute of Discipline entity
+    # Test for set_dnc attribute of Discipline entity
     def test_set_discipline_dnc(self):
         print "test_set_discipline_dnc()"
         disc = Discipline()
