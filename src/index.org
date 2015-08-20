@@ -8,8 +8,7 @@
 * Introduction
   Dataservice is a micro service that allows persistence of data by other micro
   services over HTTP using REST API.  dataservie hides the implementation
-  details of the data store that is required for data persistence. s
-
+  details of the data store that is required for data persistence.
 
 * Requirements
   1. The model of the data on whose foundation dataservice is built is
@@ -23,7 +22,7 @@
 ** Data Model
 Description of the data model.
 
-*** Types: List of all the types in the model
+*** Types & Functions: List of all the types and functions in the model
 
 **** Lab
 
@@ -57,7 +56,202 @@ These are the data associated with Lab type, which are mutable.
 
 ***** TODO: Mnemonic assigned for each lab
 
+#+BEGIN_SRC 
+class Lab(Entity):
 
+    __tablename__ = 'labs'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    name = db.Column(db.String(128), nullable=False)
+    mnemonic = db.Column(db.String(16), nullable=False)
+    slug = db.Column(db.String(128))
+
+    institute_id = db.Column(db.Integer, db.ForeignKey('institutes.id'))
+    discipline_id = db.Column(db.Integer, db.ForeignKey('disciplines.id'))
+
+    integration_level_id = db.Column(db.ForeignKey('integration_levels.id'))
+
+    developers = db.relationship('Developer', secondary=developers_engaged,
+                                 backref='labs')
+
+    number_of_experiments = db.Column(db.Integer)
+
+    experiments = db.relationship('Experiment', backref='lab')
+
+    technologies = db.relationship('Technology',
+                                   secondary=technologies_used_labs,
+                                   backref='labs')
+
+    repo_url = db.Column(db.String(256))
+
+    hosted_url = db.Column(db.String(256))
+
+    hosted_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
+
+    type_of_lab_id = db.Column(db.ForeignKey('type_of_labs.id'))
+
+    remarks = db.Column(db.Text)
+    status = db.Column(db.String(32))
+
+    is_web_2_compliant = db.Column(db.Boolean)
+    is_phase_2_lab = db.Column(db.Boolean)
+#+END_SRC
+      
+
+**** Functions that operate on the Lab domain
+***** getId: Lab --> LabId
+#+BEGIN_SRC 
+
+#+END_SRC
+***** getLab: LabId --> Lab
+#+BEGIN_SRC 
+
+#+END_SRC
+***** getMnemonic: Lab --> Mnemonic
+#+BEGIN_SRC 
+
+#+END_SRC
+***** getLab: Mnemonic --> Lab
+#+BEGIN_SRC 
+
+#+END_SRC
+***** getName: Lab --> Name
+
+       This is similar to the =getId= function and all types will have this
+       function.
+#+BEGIN_SRC 
+
+#+END_SRC
+***** getIntegrationLevel: Lab --> Level
+#+BEGIN_SRC 
+
+#+END_SRC
+***** getHostedURL: Lab --> Nil + URL
+
+       URL: when hosted
+
+       Nil: when not hosted
+#+BEGIN_SRC 
+
+#+END_SRC
+***** getRepoURL: Lab --> Nil + URL
+
+       URL: when sources are available
+
+       Nil: otherwise
+#+BEGIN_SRC 
+
+#+END_SRC
+***** getType: Lab --> TypeOfLab
+#+BEGIN_SRC 
+
+#+END_SRC
+***** getNoOfExperiments: Lab --> Nat
+#+BEGIN_SRC 
+
+#+END_SRC
+***** getHostedOn: Lab --> HostingPlatform + Nil
+#+BEGIN_SRC 
+
+#+END_SRC
+***** isWeb2Compliant: Lab --> Boolean
+#+BEGIN_SRC 
+
+#+END_SRC
+***** isPhase2Lab: Lab --> Boolean
+#+BEGIN_SRC 
+
+#+END_SRC
+***** getDiscipline: Lab --> Discipline
+#+BEGIN_SRC 
+
+#+END_SRC
+***** getExperiments: Lab --> set[Experiment]
+#+BEGIN_SRC 
+
+#+END_SRC
+***** getInstitute: Lab --> Institute
+#+BEGIN_SRC 
+
+#+END_SRC
+
+***** getDevelopers: Lab --> set[Developer]
+#+BEGIN_SRC 
+
+#+END_SRC
+
+***** getTechnologies: Lab --> set[Technology]
+#+BEGIN_SRC 
+
+#+END_SRC
+
+***** setName: Lab, Name --> Void
+
+       NOTE: All types will have a =setName= function.
+#+BEGIN_SRC 
+
+#+END_SRC
+***** setInstitute: Lab, Institute --> Void
+#+BEGIN_SRC 
+
+#+END_SRC
+***** setDiscipline: Lab, Discipline --> Void
+#+BEGIN_SRC 
+
+#+END_SRC
+***** setIntegrationLevel: Lab, Level --> Void
+#+BEGIN_SRC 
+
+#+END_SRC
+***** setHostedURL: Lab, URL --> Void
+#+BEGIN_SRC 
+
+#+END_SRC
+***** setRepoURL: Lab, URL --> Void
+#+BEGIN_SRC 
+
+#+END_SRC
+***** setTypeOfLab: Lab, TypeOfLab --> Void
+#+BEGIN_SRC 
+
+#+END_SRC
+***** setHostedOn: Lab, HostingPlatform --> Void
+#+BEGIN_SRC 
+
+#+END_SRC
+***** setisWeb2Compliant: Lab, Boolean --> Void
+#+BEGIN_SRC 
+
+#+END_SRC
+***** setisPhase2: Lab, Boolean --> Void
+#+BEGIN_SRC 
+
+#+END_SRC
+***** addDeveloper: Lab, Developer --> Void
+#+BEGIN_SRC 
+
+#+END_SRC
+***** removeDeveloper: Lab, Developer --> Void
+#+BEGIN_SRC 
+
+#+END_SRC
+***** addTechnology: Lab, Technology --> Void
+#+BEGIN_SRC 
+
+#+END_SRC
+***** removeTechnology: Lab, Technology --> Void
+#+BEGIN_SRC 
+
+#+END_SRC
+***** addExperiment: Lab, Experiment --> Void
+#+BEGIN_SRC 
+
+#+END_SRC
+***** removeExperiment: Lab, Experiment --> Void
+#+BEGIN_SRC 
+
+#+END_SRC
 **** Institute
 
 ***** Immutable Data
@@ -91,6 +285,115 @@ These are the data associated with Institute type, which are mutable
 | Dayalbagh Educational Institute | dei      |
 |---------------------------------+----------|
 
+#+BEGIN_SRC 
+class Institute(Entity):
+
+    __tablename__ = 'institutes'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), nullable=False)
+    mnemonic = db.Column(db.String(16), nullable=False)
+    pic = db.Column(db.String(128))
+    iic = db.Column(db.String(128))
+
+    labs = db.relationship('Lab', backref='institute')
+    developers = db.relationship('Developer', backref='institute')
+#+END_SRC
+
+**** Functions that operate on Institute domain
+
+***** getId: Institute --> InstituteId
+#+BEGIN_SRC 
+    def get_id(self):
+        return self.id
+#+END_SRC
+
+***** getName: Institute --> Name
+#+BEGIN_SRC 
+    def get_name(self):
+        return self.name
+#+END_SRC
+
+***** getInstitute: InstituteId --> Institute
+#+BEGIN_SRC 
+    @staticmethod
+    def get_institute_by_id(id):
+        return Institute.query.get(id)
+#+END_SRC
+
+***** getMnemonic: Institute --> Mnemonic
+#+BEGIN_SRC 
+    def get_mnemonic(self):
+        return self.mnemonic
+#+END_SRC
+
+***** getInstitute: Mnemonic --> Institute
+#+BEGIN_SRC 
+
+#+END_SRC
+
+***** getPIC: Institute --> Name
+#+BEGIN_SRC 
+    def get_pic(self):
+        return self.pic
+#+END_SRC
+      
+***** getIIC: Institute --> Name
+#+BEGIN_SRC 
+    def get_iic(self):
+        return self.iic
+#+END_SRC
+
+***** getLabs: Institute --> set[Lab]
+#+BEGIN_SRC 
+
+#+END_SRC
+
+***** getDevelopers: Institute --> set[Developer]
+#+BEGIN_SRC 
+
+#+END_SRC
+
+***** getAllInstitutes: Nil --> set[Institute]
+#+BEGIN_SRC 
+    @staticmethod
+    def get_all():
+        return [i.to_client() for i in Institute.query.all()]
+#+END_SRC
+
+***** setPIC: Institute, Name --> Void
+#+BEGIN_SRC 
+    @typecheck(pic=Name)
+    def set_pic(self, pic):
+        self.pic = pic.value
+#+END_SRC
+
+***** setIIC: Institute, Name --> Void
+#+BEGIN_SRC 
+    @typecheck(iic=Name)
+    def set_iic(self, iic):
+        self.iic = iic.value
+#+END_SRC
+      
+***** setName: Institute, Name --> Void
+#+BEGIN_SRC 
+    @typecheck(name=InstituteName)
+    def set_name(self, name):
+        self.name = name.value
+#+END_SRC
+
+
+***** to_client
+#+BEGIN_SRC 
+    def to_client(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'mnemonic': self.mnemonic,
+            'pic': self.pic,
+            'iic': self.iic
+        }
+#+END_SRC
 
 **** Discipline
 
@@ -125,6 +428,92 @@ This is the data associated with Discipline type, which is mutable.
 | Material Sciences                        | mat-sc    |
 |------------------------------------------+-----------|
 
+#+BEGIN_SRC 
+class Discipline(Entity):
+
+    __tablename__ = 'disciplines'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), nullable=False)
+    mnemonic = db.Column(db.String(16), nullable=False)
+    dnc = db.Column(db.String(64))
+
+    labs = db.relationship('Lab', backref='discipline')
+#+END_SRC
+
+
+**** Functions that operate on Discipline domain
+***** getAllDisciplines: Nil --> set[Discipline]
+#+BEGIN_SRC 
+    @staticmethod
+    def get_all():
+        return [i.to_client() for i in Discipline.query.all()]
+#+END_SRC
+
+***** getId: Discipline --> DisciplineId
+#+BEGIN_SRC 
+    def get_id(self):
+        return self.id
+#+END_SRC
+
+***** getName: Discipline --> Name
+#+BEGIN_SRC 
+    def get_name(self):
+        return self.name
+#+END_SRC
+***** getDiscipline: DisciplineId --> Discipline
+#+BEGIN_SRC 
+    def get_discipline_by_id(id):
+        return Discipline.query.get(id)
+#+END_SRC
+
+***** getMnemonic: Discipline --> Mnemonic
+#+BEGIN_SRC 
+    def get_mnemonic(self):
+        return self.mnemonic
+#+END_SRC
+
+***** getDiscipline: Mnemonic --> Discipline
+#+BEGIN_SRC 
+
+#+END_SRC
+
+***** getLabs: Discipline --> set[Lab]
+#+BEGIN_SRC 
+
+#+END_SRC
+
+***** getDNC: Discipline --> Name
+#+BEGIN_SRC 
+    def get_dnc(self):
+        return self.dnc
+#+END_SRC
+
+***** setName: Discipline --> Void
+#+BEGIN_SRC 
+    @typecheck(name=Name)
+    def set_name(self, name):
+        self.name = name.value
+#+END_SRC
+
+***** setDNC: Discipline, Name --> Void
+#+BEGIN_SRC 
+    @typecheck(name=Name)
+    def set_name(self, name):
+        self.name = name.value
+#+END_SRC      
+
+***** to_client
+#+BEGIN_SRC 
+    def to_client(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'mnemonic': self.mnemonic,
+            'dnc': self.dnc
+        }
+#+END_SRC
+
 **** Experiment
 
 ***** Immutable Data
@@ -140,6 +529,105 @@ These are the data associated with Discipline type, which are mutable.
 + ContentHostedOn
 + SimulationHostedOn
 
+#+BEGIN_SRC 
+class Experiment(Entity):
+
+    __tablename__ = 'experiments'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    # Our data set has really, really long experiment names and URLs!!
+    name = db.Column(db.String(256))
+
+    lab_id = db.Column(db.Integer, db.ForeignKey('labs.id'))
+
+    content_url = db.Column(db.String(256))
+    # content_on = db.Column(db.Enum('CPE', 'ELSE', 'NA'))
+    content_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
+    content_on = db.relationship('HostingPlatform',
+                                 foreign_keys=[content_on_id])
+
+    simulation_url = db.Column(db.String(256))
+    # simulation_on = db.Column(db.Enum('CPE', 'ELSE', 'NA'))
+    simulation_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
+    simulation_on = db.relationship('HostingPlatform',
+                                    foreign_keys=[simulation_on_id])
+
+    technologies = db.relationship('Technology',
+                                   secondary=technologies_used_expt,
+                                   backref='experiments')
+#+END_SRC
+
+Following is the constructor for this class.
+
+#+BEGIN_SRC 
+    @typecheck(lab=Lab, content_url=URL, content_hosted_on=HostingPlatform,
+               simulation_url=URL, simulation_hosted_on=HostingPlatform)
+    def __init__(self, **kwargs):
+        # TODO: implement the constructor and check the validity!
+        pass
+#+END_SRC
+
+**** Functions that operate on the Experiment domain
+
+***** getId: Experiment --> ExperimentId
+#+BEGIN_SRC 
+
+#+END_SRC
+
+***** getExperiment: ExperimentId --> Experiment
+#+BEGIN_SRC 
+#+END_SRC
+
+***** getContentURL: Experiment --> URL + Nil
+#+BEGIN_SRC 
+
+#+END_SRC
+
+***** getSimulationURL: Experiment --> URL + Nil
+#+BEGIN_SRC 
+
+#+END_SRC
+
+***** getTechnologies: Experiment --> set[Technology]
+#+BEGIN_SRC 
+
+#+END_SRC
+
+***** contentHostedOn: Experiment --> HostingPlatform + Nil
+#+BEGIN_SRC 
+
+#+END_SRC
+
+***** simulationHostedOn: Experiment --> HostingPlatform + Nil
+#+BEGIN_SRC 
+
+#+END_SRC
+
+***** getLab: Experiment --> Lab
+#+BEGIN_SRC 
+
+#+END_SRC
+
+***** setContentURL: Experiment, URL --> Void
+#+BEGIN_SRC 
+
+#+END_SRC
+
+***** setSimulationURL: Experiment, URL --> Void
+#+BEGIN_SRC 
+
+#+END_SRC
+
+***** setContentHostedOn: Experiment, HostingPlatform --> Void
+#+BEGIN_SRC 
+
+#+END_SRC
+
+***** setSimulationHostedOn: Experiment, HostingPlatform --> Void
+#+BEGIN_SRC 
+
+#+END_SRC
 
 **** Developer
 
@@ -153,6 +641,86 @@ This is the data associated with Developer type, which is mutable.
 
 + Email
 
+#+BEGIN_SRC 
+class Developer(Entity):
+
+    __tablename__ = 'developers'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    email_id = db.Column(db.String(128))
+    name = db.Column(db.String(64), nullable=False)
+
+    institute_id = db.Column(db.Integer, db.ForeignKey('institutes.id'))
+#+END_SRC
+
+
+**** Functions that operate on the Developer domain
+***** getId: Developer --> DeveloperId
+#+BEGIN_SRC 
+    def get_id(self):
+        return self.id
+#+END_SRC
+
+***** getName: Developer --> Name
+#+BEGIN_SRC 
+    def get_name(self):
+        return self.name
+#+END_SRC
+
+***** getAllDevelopers: Nil --> set[Developer]
+#+BEGIN_SRC 
+    @staticmethod
+    def get_developer(id):
+        return Developer.query.get(id)
+#+END_SRC
+
+***** getLabs: Developer --> set[Lab]
+#+BEGIN_SRC 
+
+#+END_SRC
+
+***** getInstitute: Developer --> Institute
+#+BEGIN_SRC 
+
+#+END_SRC
+
+***** getDeveloper: DeveloperId --> Developer
+#+BEGIN_SRC 
+    def get_developer(id):
+        return Developer.query.get(id)
+#+END_SRC
+
+***** getEmail: Developer --> Email
+#+BEGIN_SRC 
+    def get_email(self):
+        return self.email_id
+#+END_SRC
+
+***** setName: Developer, Name --> Void
+#+BEGIN_SRC 
+    @typecheck(name=Name)
+    def set_name(self, name):
+        self.name = name.value
+#+END_SRC
+
+***** setEmail: Developer, Email --> Void
+#+BEGIN_SRC 
+    @typecheck(email_id=Email)
+    def set_email(self, email_id):
+        self.email_id = email_id.value
+#+END_SRC
+
+***** to_client
+#+BEGIN_SRC 
+    def to_client(self):
+        return {
+            'id': self.id,
+            'email_id': self.email_id,
+            'name': self.name,
+            'institute': self.institute.to_client()
+        }
+#+END_SRC
 
 **** Technology
 
@@ -167,23 +735,113 @@ These are the data associated with Technoloy type, which are mutable.
 + Version
 + FOSS
 
+#+BEGIN_SRC 
+class Technology(Entity):
 
-**** Platform
+    __tablename__ = 'technologies'
 
-   Platform is {IIIT, Badal, AWS, Else}.
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), nullable=False)
+    version = db.Column(db.String(32))
+    foss = db.Column(db.Boolean)
+#+END_SRC
 
+**** Functions that operate on the Technology domain
+***** getId: Technology --> TechnologyId
+
+***** getAllTechnologies: Nil --> set[Technology]
+#+BEGIN_SRC 
+    @staticmethod
+    def get_all():
+        return [i.to_client() for i in Technology.query.all()]
+#+END_SRC
+
+***** getLabs: Technology --> set[Lab]
+#+BEGIN_SRC 
+
+#+END_SRC
+
+***** getTechnology: TechnologyId --> Technology
+
+***** getVersion: Technology --> Version
+
+***** isFOSS: Technology --> Boolean
+
+***** setVersion: Technology, Version --> Void
+
+***** setFOSS: Technology, Boolean --> Void
+
+***** to_client
+#+BEGIN_SRC 
+    def to_client(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'version': self.version,
+            'foss': self.foss
+        }
+#+END_SRC
+
+**** HostingPlatform
+
+   HostingPlatform is {IIIT, Badal, AWS, Else}.
+
+#+BEGIN_SRC 
+class HostingPlatform(Entity):
+    __tablename__ = 'hosting_platforms'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(32), nullable=False)
+
+    labs = db.relationship('Lab', backref='hosted_on')
+#+END_SRC
 **** Version
 
    Version is an alphanumeric string including '-' and '.'.
 
+#+BEGIN_SRC 
+class Version(object):
+    pass
+#+END_SRC
 **** URL
 
    URL is a type as defined in RFC 1738.
 
+#+BEGIN_SRC 
+class URL(object):
+    pass
+#+END_SRC
 **** Name
 
    Name is an alphabetical string.
+   Following is the constructor for this class.
 
+#+BEGIN_SRC 
+class Name(object):
+    def __init__(self, value):
+        # if the string contains any non-alphabet and non-space character, raise
+        # a type error
+        if re.search('[^a-zA-Z ]+', value):
+            raise TypeError('%s is not a Name!' % value)
+
+        self.value = value
+#+END_SRC
+
+**** InstituteName
+    
+     InstituteName is an alphabetical string including a '-'.
+     Following is the constructor for this class.
+
+#+BEGIN_SRC 
+class InstituteName(object):
+    def __init__(self, value):
+        # if the string contains any non-alphabet, non-hyphen and non-space
+        # character, raise a type error
+        if re.search('[^a-zA-Z\- ]+', value):
+            raise TypeError('%s is not a Name!' % value)
+
+        self.value = value
+#+END_SRC
+     
 **** LabId
 
    LabId is a natural number.
@@ -211,7 +869,15 @@ These are the data associated with Technoloy type, which are mutable.
 **** Email
 
    Email is a type as defined in RFC 5321, 5322 and 6531.
+   Following is the constructor for this class.
 
+#+BEGIN_SRC 
+class Email(object):
+    def __init__(self, value):
+        if not re.search('[^@]+@[^@]+\.[^@]+', value):
+            raise TypeError('%s is not an email_id!' % value)
+        self.value = value
+#+END_SRC
 **** TypeOfLab
 
    TypeOfLab is { Simulation,
@@ -219,198 +885,35 @@ These are the data associated with Technoloy type, which are mutable.
                  Simulation and Remote Triggered,
                  Pilot Phase }
 
+#+BEGIN_SRC 
+class TypeOfLab(Entity):
+    __tablename__ = 'type_of_labs'
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(64), nullable=False)
+
+    labs = db.relationship('Lab', backref='type_of_lab')
+#+END_SRC
 **** IntegrationLevel
       
    IntegrationLevel is {L0, L1, L2, L3, L4, L5, L6}.
 
-*** Functions: List of all possible functions in the model
+#+BEGIN_SRC 
+class IntegrationLevel(Entity):
+    __tablename__ = 'integration_levels'
+    id = db.Column(db.Integer, primary_key=True)
+    level = db.Column(db.Integer, nullable=False)
+
+    labs = db.relationship('Lab', backref='integration_level')
+#+END_SRC
     
-**** Functions operating on multiple domains
+*** Functions operating on multiple domains
      
-***** getLabs: X --> set[Lab]
-
-      X = Union Of {Institute, Discipline, Developer, Technology}
-
-***** getAllInstitutes: Nil --> set[Institute]
-
-***** getInstitute: X --> Institute
-
-      X = Union Of {Lab, Developer}
-
-***** getDevelopers: X --> set[Developer]
-
-      X = Union Of {Lab, Institute}
-
-***** getAllTechnologies: Nil --> set[Technology]
-
-***** getTechnologies: X --> set[Technology]
-
-      X = Union Of {Lab, Experiment}
-
-***** getAllDisciplines: Nil --> set[Discipline]
-
 ***** NOTE: is it necessary? getAllLabs: Nil --> set[Lab]
 
 ***** NOTE: is it necessary? getAllDevelopers: Nil --> set[Developer]
 
 ***** NOTE: is it necessary? getAllExperiments: Nil --> set[Experiment]
 
-**** Functions that operate on the Lab domain
-
-***** getId: Lab --> LabId
-
-***** getLab: LabId --> Lab
-
-***** getMnemonic: Lab --> Mnemonic
-
-***** getLab: Mnemonic --> Lab
-
-***** getName: Lab --> Name
-
-       This is similar to the =getId= function and all types will have this
-       function.
-
-***** getIntegrationLevel: Lab --> Level
-
-***** getHostedURL: Lab --> Nil + URL
-
-       URL: when hosted
-
-       Nil: when not hosted
-
-***** getRepoURL: Lab --> Nil + URL
-
-       URL: when sources are available
-
-       Nil: otherwise
-
-***** getType: Lab --> TypeOfLab
-
-***** getNoOfExperiments: Lab --> Nat
-
-***** getHostedOn: Lab --> Platform + Nil
-
-***** isWeb2Compliant: Lab --> Boolean
-
-***** isPhase2Lab: Lab --> Boolean
-
-***** getDiscipline: Lab --> Discipline
-
-***** getExperiments: Lab --> set[Experiment]
-
-***** setName: Lab, Name --> Void
-
-       NOTE: All types will have a =setName= function.
-
-***** setInstitute: Lab, Institute --> Void
-
-***** setDiscipline: Lab, Discipline --> Void
-
-***** setIntegrationLevel: Lab, Level --> Void
-
-***** setHostedURL: Lab, URL --> Void
-
-***** setRepoURL: Lab, URL --> Void
-
-***** setTypeOfLab: Lab, TypeOfLab --> Void
-
-***** setHostedOn: Lab, Platform --> Void
-
-***** setisWeb2Compliant: Lab, Boolean --> Void
-
-***** setisPhase2: Lab, Boolean --> Void
-
-***** addDeveloper: Lab, Developer --> Void
-
-***** removeDeveloper: Lab, Developer --> Void
-
-***** addTechnology: Lab, Technology --> Void
-
-***** removeTechnology: Lab, Technology --> Void
-
-***** addExperiment: Lab, Experiment --> Void
-
-***** removeExperiment: Lab, Experiment --> Void
-
-**** Functions that operate on Institute domain
-
-***** getId: Institute --> InstituteId
-
-***** getInstitute: InstituteId --> Institute
-
-***** getMnemonic: Institute --> Mnemonic
-
-***** getInstitute: Mnemonic --> Institute
-
-***** getPIC: Institute --> Name
-
-***** getIIC: Institute --> Name
-
-***** setPIC: Institute, Name --> Void
-
-***** setIIC: Institute, Name --> Void
-
-**** Functions that operate on Discipline domain
-
-***** getId: Discipline --> DisciplineId
-
-***** getDiscipline: DisciplineId --> Discipline
-
-***** getMnemonic: Discipline --> Mnemonic
-
-***** getDiscipline: Mnemonic --> Discipline
-
-***** getDNC: Discipline --> Name
-
-***** setDNC: Discipline, Name --> Void
-
-**** Functions that operate on the Experiment domain
-
-***** getId: Experiment --> ExperimentId
-
-***** getExperiment: ExperimentId --> Experiment
-
-***** getContentURL: Experiment --> URL + Nil
-
-***** getSimulationURL: Experiment --> URL + Nil
-
-***** contentHostedOn: Experiment --> Platform + Nil
-
-***** simulationHostedOn: Experiment --> Platform + Nil
-
-***** getLab: Experiment --> Lab
-
-***** setContentURL: Experiment, URL --> Void
-
-***** setSimulationURL: Experiment, URL --> Void
-
-***** setContentHostedOn: Experiment, Platform --> Void
-
-***** setSimulationHostedOn: Experiment, Platform --> Void
-
-**** Functions that operate on the Developer domain
-
-***** getId: Developer --> DeveloperId
-
-***** getDeveloper: DeveloperId --> Developer
-
-***** getEmail: Developer --> Email
-
-***** setEmail: Developer, Email --> Void
-
-**** Functions that operate on the Technology domain
-
-***** getId: Technology --> TechnologyId
-
-***** getTechnology: TechnologyId --> Technology
-
-***** getVersion: Technology --> Version
-
-***** isFOSS: Technology --> Boolean
-
-***** setVersion: Technology, Version --> Void
-
-***** setFOSS: Technology, Boolean --> Void
 
 *** Relationship between different entities
   #+CAPTION: Entity Diagram
