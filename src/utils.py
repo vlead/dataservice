@@ -127,7 +127,7 @@ def typecheck(**typemap):
                 # iterate over the `types` tuple to see the arg matches any of
                 # the type provided in the tuple
                 if True not in map(lambda type: isinstance(arg, type), types):
-                    print "types are not fine"
+                    # print "types are not fine"
                     raise TypeError("For %s type should have been %s. But "
                                     "provided: %s" % (arg_name,
                                                       typemap[arg_name],
