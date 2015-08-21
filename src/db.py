@@ -109,14 +109,17 @@ class Institute(Entity):
     @typecheck(name=InstituteName)
     def set_name(self, name):
         self.name = name.value
+        self.save()
 
     @typecheck(pic=Name)
     def set_pic(self, pic):
         self.pic = pic.value
+        self.save()
 
     @typecheck(iic=Name)
     def set_iic(self, iic):
         self.iic = iic.value
+        self.save()
 
     def to_client(self):
         return {
@@ -171,26 +174,81 @@ class Discipline(Entity):
     @typecheck(name=Name)
     def set_name(self, name):
         self.name = name.value
+        self.save()
 
     @typecheck(dnc=Name)
     def set_dnc(self, dnc):
         self.dnc = dnc.value
+        self.save()
 
 
-class IntegrationLevel(Entity):
-    __tablename__ = 'integration_levels'
+class Developer(Entity):
+
+    __tablename__ = 'developers'
+
     id = db.Column(db.Integer, primary_key=True)
-    level = db.Column(db.Integer, nullable=False)
 
-    labs = db.relationship('Lab', backref='integration_level')
+    email_id = db.Column(db.String(128))
+    name = db.Column(db.String(64), nullable=False)
+
+    institute_id = db.Column(db.Integer, db.ForeignKey('institutes.id'))
+
+    @staticmethod
+    def get_all():
+        return [i.to_client() for i in Developer.query.all()]
+
+    @staticmethod
+    def get_developer(id):
+        return Developer.query.get(id)
+
+    def get_id(self):
+        return self.id
+
+    def get_email(self):
+        return self.email_id
+
+    def get_name(self):
+        return self.name
+
+    @typecheck(name=Name)
+    def set_name(self, name):
+        self.name = name.value
+        self.save()
+
+    @typecheck(email_id=Email)
+    def set_email(self, email_id):
+        self.email_id = email_id.value
+        self.save()
+
+    def to_client(self):
+        return {
+            'id': self.id,
+            'email_id': self.email_id,
+            'name': self.name,
+            'institute': self.institute.to_client()
+        }
 
 
-class TypeOfLab(Entity):
-    __tablename__ = 'type_of_labs'
+class Technology(Entity):
+
+    __tablename__ = 'technologies'
+
     id = db.Column(db.Integer, primary_key=True)
-    type = db.Column(db.String(64), nullable=False)
+    name = db.Column(db.String(64), nullable=False)
+    version = db.Column(db.String(32))
+    foss = db.Column(db.Boolean)
 
-    labs = db.relationship('Lab', backref='type_of_lab')
+    @staticmethod
+    def get_all():
+        return [i.to_client() for i in Technology.query.all()]
+
+    def to_client(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'version': self.version,
+            'foss': self.foss
+        }
 
 
 class HostingPlatform(Entity):
@@ -221,6 +279,107 @@ technologies_used_expt = db.Table(
     db.Column('expt_id', db.Integer, db.ForeignKey('experiments.id')),
     db.Column('tech_id', db.Integer, db.ForeignKey('technologies.id'))
 )
+
+
+class Experiment(Entity):
+
+    __tablename__ = 'experiments'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    # Our data set has really, really long experiment names and URLs!!
+    name = db.Column(db.String(256))
+
+    lab_id = db.Column(db.Integer, db.ForeignKey('labs.id'))
+
+    content_url = db.Column(db.String(256))
+    # content_on = db.Column(db.Enum('CPE', 'ELSE', 'NA'))
+    content_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
+    content_on = db.relationship('HostingPlatform',
+                                 foreign_keys=[content_on_id])
+
+    simulation_url = db.Column(db.String(256))
+    # simulation_on = db.Column(db.Enum('CPE', 'ELSE', 'NA'))
+    simulation_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
+    simulation_on = db.relationship('HostingPlatform',
+                                    foreign_keys=[simulation_on_id])
+
+    technologies = db.relationship('Technology',
+                                   secondary=technologies_used_expt,
+                                   backref='experiments')
+
+    def __init__(self, **kwargs):
+        # TODO: implement the constructor and check the validity!
+        pass
+
+    def get_id(self):
+        return self.id
+
+    @staticmethod
+    def get_experiment(id):
+        return Experiment.query.get(id)
+
+    def get_content_url(self):
+        return self.content_url
+
+    def get_simulation_url(self):
+        return self.simulation_url
+
+    def content_hosted_on(self):
+        return self.content_hosted_on
+
+    def simulation_hosted_on(self):
+        return self.simulation_hosted_on
+
+    def get_lab(self):
+        return self.lab
+
+    @typecheck(url=URL)
+    def set_content_url(self, url):
+        self.content_url = url
+        self.save()
+
+    @typecheck(url=URL)
+    def set_simulation_url(self, url):
+        self.simulation_url = url
+        self.save()
+
+    @typecheck(platform=HostingPlatform)
+    def set_content_hosted_on(self, platform):
+        self.content_hosted_on = platform
+        self.save()
+
+    @typecheck(platform=HostingPlatform)
+    def set_simulation_hosted_on(self, platform):
+        self.simulation_hosted_on = platform
+        self.save()
+
+    def to_client(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'content_url': self.content_url,
+            'content_on': self.content_on,
+            'simulation_url': self.simulation_url,
+            'simulation_on': self.simulation_on,
+            'lab': self.lab.to_client()
+        }
+
+
+class IntegrationLevel(Entity):
+    __tablename__ = 'integration_levels'
+    id = db.Column(db.Integer, primary_key=True)
+    level = db.Column(db.Integer, nullable=False)
+
+    labs = db.relationship('Lab', backref='integration_level')
+
+
+class TypeOfLab(Entity):
+    __tablename__ = 'type_of_labs'
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(64), nullable=False)
+
+    labs = db.relationship('Lab', backref='type_of_lab')
 
 
 class Lab(Entity):
@@ -278,21 +437,21 @@ class Lab(Entity):
         formatted_labs = Lab.format_labs_by_fields(labs, fields)
         return formatted_labs
 
-    @staticmethod
-    def get_lab_by_id(id, fields=None):
-        # get the lab from the db
-        lab = Lab.query.get(id)
-        # if lab does not exist
-        if not lab:
-            return None
-        lab = lab.to_client()
-        # if request do not contain fields, return the data
-        if not fields:
-            return lab
-        # if fields exist in the request, format the lab to have only the
-        # fields requested by the user
-        formatted_lab = Lab.format_labs_by_fields([lab], fields)[0]
-        return formatted_lab
+    # @staticmethod
+    # def get_lab_by_id(id, fields=None):
+    #     # get the lab from the db
+    #     lab = Lab.query.get(id)
+    #     # if lab does not exist
+    #     if not lab:
+    #         return None
+    #     lab = lab.to_client()
+    #     # if request do not contain fields, return the data
+    #     if not fields:
+    #         return lab
+    #     # if fields exist in the request, format the lab to have only the
+    #     # fields requested by the user
+    #     formatted_lab = Lab.format_labs_by_fields([lab], fields)[0]
+    #     return formatted_lab
 
     @staticmethod
     def format_labs_by_fields(labs, fields):
@@ -309,6 +468,145 @@ class Lab(Entity):
             # print fmttd_lab
             formatted_labs.append(formatted_lab)
         return formatted_labs
+
+    @staticmethod
+    def get_lab_by_id(id):
+        return Lab.query.get(id)
+
+    @staticmethod
+    def get_lab_by_mnemonic(mnemonic):
+        return Lab.query.filter_by(mnemonic=mnemonic).first()
+
+    def get_id(self):
+        return self.id
+
+    def get_mnemonic(self):
+        return self.mnemonic
+
+    def get_name(self):
+        return self.name
+
+    def get_institute(self):
+        return self.institute
+
+    def get_discipline(self):
+        return self.discipline
+
+    def get_experiments(self):
+        return self.experiments
+
+    def get_integration_level(self):
+        return self.integration_level.level
+
+    def get_hosted_url(self):
+        return self.hosted_url
+
+    def get_repo_url(self):
+        return self.repo_url
+
+    def get_type(self):
+        return self.type_of_lab
+
+    def get_num_of_experiments(self):
+        return len(self.experiments)
+
+    def get_hosted_on(self):
+        return self.hosted_on
+
+    def is_web_2_compliant(self):
+        return self.is_web_2_compliant
+
+    def is_phase_2(self):
+        return self.is_phase_2_lab
+
+    def get_developers(self):
+        return self.developers
+
+    def get_technologies(self):
+        return self.technologies
+
+    @typecheck(name=Name)
+    def set_name(self, name):
+        self.name = name
+        self.save()
+
+    @typecheck(institute=Institute)
+    def set_institute(self, institute):
+        self.institute = institute
+        self.save()
+
+    @typecheck(discipline=Discipline)
+    def set_discipline(self, discipline):
+        self.discipline = discipline
+        self.save()
+
+    @typecheck(level=IntegrationLevel)
+    def set_integration_level(self, level):
+        self.integration_level = level
+        self.save()
+
+    @typecheck(url=URL)
+    def set_hosted_url(self, url):
+        self.hosted_url = url
+        self.save()
+
+    @typecheck(url=URL)
+    def set_repo_url(self, url):
+        self.repo_url = url
+        self.save()
+
+    @typecheck(type=TypeOfLab)
+    def set_type_of_lab(self, type):
+        self.type_of_lab = type
+        self.save()
+
+    @typecheck(platform=HostingPlatform)
+    def set_hosted_on(self, platform):
+        self.hosted_on = platform
+        self.save()
+
+    @typecheck(compliant=bool)
+    def set_is_web_2_compliant(self, compliant):
+        self.is_web_2_compliant = compliant
+        self.save()
+
+    @typecheck(phase2=bool)
+    def set_is_phase_2_lab(self, phase2):
+        self.is_phase_2_lab = phase2
+        self.save()
+
+    @typecheck(developer=Developer)
+    def add_developer(self, developer):
+        self.developers.append(developer)
+        self.save()
+
+    @typecheck(developer=Developer)
+    def remove_developer(self, developer):
+        if developer in self.developers:
+            self.developers.remove(developer)
+            self.save()
+
+    @typecheck(technology=Technology)
+    def add_technology(self, technology):
+        self.technologies.append(technology)
+        self.save()
+
+    @typecheck(technology=Technology)
+    def remove_technology(self, technology):
+        if technology in self.technologies:
+            self.technologies.remove(technology)
+            self.save()
+
+    @typecheck(experiment=Experiment)
+    def add_experiment(self, experiment):
+        self.experiments.append(experiment)
+        self.save()
+
+    @typecheck(experiment=Experiment)
+    def remove_experiment(self, experiment):
+        if experiment in self.experiments:
+            self.experiments.remove(experiment)
+            self.save()
 
     def to_client(self):
         return {
@@ -330,153 +628,4 @@ class Lab(Entity):
             'is_web_2_compliant': self.is_web_2_compliant,
             'is_phase_2_lab': self.is_phase_2_lab,
             'remarks': self.remarks
-        }
-
-
-class Developer(Entity):
-
-    __tablename__ = 'developers'
-
-    id = db.Column(db.Integer, primary_key=True)
-
-    email_id = db.Column(db.String(128))
-    name = db.Column(db.String(64), nullable=False)
-
-    institute_id = db.Column(db.Integer, db.ForeignKey('institutes.id'))
-
-    @staticmethod
-    def get_all():
-        return [i.to_client() for i in Developer.query.all()]
-
-    @staticmethod
-    def get_developer(id):
-        return Developer.query.get(id)
-
-    def get_id(self):
-        return self.id
-
-    def get_email(self):
-        return self.email_id
-
-    def get_name(self):
-        return self.name
-
-    @typecheck(name=Name)
-    def set_name(self, name):
-        self.name = name.value
-
-    @typecheck(email_id=Email)
-    def set_email(self, email_id):
-        self.email_id = email_id.value
-
-    def to_client(self):
-        return {
-            'id': self.id,
-            'email_id': self.email_id,
-            'name': self.name,
-            'institute': self.institute.to_client()
-        }
-
-
-class Technology(Entity):
-
-    __tablename__ = 'technologies'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), nullable=False)
-    version = db.Column(db.String(32))
-    foss = db.Column(db.Boolean)
-
-    @staticmethod
-    def get_all():
-        return [i.to_client() for i in Technology.query.all()]
-
-    def to_client(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'version': self.version,
-            'foss': self.foss
-        }
-
-
-class Experiment(Entity):
-
-    __tablename__ = 'experiments'
-
-    id = db.Column(db.Integer, primary_key=True)
-
-    # Our data set has really, really long experiment names and URLs!!
-    name = db.Column(db.String(256))
-
-    lab_id = db.Column(db.Integer, db.ForeignKey('labs.id'))
-
-    content_url = db.Column(db.String(256))
-    # content_on = db.Column(db.Enum('CPE', 'ELSE', 'NA'))
-    content_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
-    content_on = db.relationship('HostingPlatform',
-                                 foreign_keys=[content_on_id])
-
-    simulation_url = db.Column(db.String(256))
-    # simulation_on = db.Column(db.Enum('CPE', 'ELSE', 'NA'))
-    simulation_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
-    simulation_on = db.relationship('HostingPlatform',
-                                    foreign_keys=[simulation_on_id])
-
-    technologies = db.relationship('Technology',
-                                   secondary=technologies_used_expt,
-                                   backref='experiments')
-
-    @typecheck(lab=Lab, content_url=URL, content_hosted_on=HostingPlatform,
-               simulation_url=URL, simulation_hosted_on=HostingPlatform)
-    def __init__(self, **kwargs):
-        # TODO: implement the constructor and check the validity!
-        pass
-
-    def get_id(self):
-        return self.id
-
-    @staticmethod
-    def get_experiment(id):
-        return Experiment.query.get(id)
-
-    def get_content_url(self):
-        return self.content_url
-
-    def get_simulation_url(self):
-        return self.simulation_url
-
-    def content_hosted_on(self):
-        return self.content_hosted_on
-
-    def simulation_hosted_on(self):
-        return self.simulation_hosted_on
-
-    def get_lab(self):
-        return self.lab
-
-    @typecheck(url=URL)
-    def set_content_url(self, url):
-        self.content_url = url
-
-    def set_simulation_url(self, url):
-        self.simulation_url = url
-
-    @typecheck(platform=HostingPlatform)
-    def set_content_hosted_on(self, platform):
-        self.content_hosted_on = platform
-
-    @typecheck(platform=HostingPlatform)
-    def set_simulation_hosted_on(self, platform):
-        self.simulation_hosted_on = platform
-
-    def to_client(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'content_url': self.content_url,
-            'content_on': self.content_on,
-            'simulation_url': self.simulation_url,
-            'simulation_on': self.simulation_on,
-            'lab': self.lab.to_client()
         }

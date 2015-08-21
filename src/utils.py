@@ -101,6 +101,9 @@ def typecheck(**typemap):
             # TODO: have more comments to better describe each line
             arg_names = decorated_func.func_code.co_varnames
             # print arg_names
+            # if not arg_vals:
+            #     print kw_vals
+            #     # arg_vals = kw_vals
             # print arg_vals
 
             # iterate over the typemap passed to the typecheck decorator and
