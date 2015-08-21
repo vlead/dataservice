@@ -17,7 +17,7 @@
   3. REST API is provided for various applications to perform CRUD operations
      on the data.
 
-* Design
+* Design & Implementation
 
 ** Data Model
 Description of the data model.
@@ -27,7 +27,7 @@ Description of the data model.
 **** Lab
 
 ***** Immutable Data
-
+      
 These are the data associated with Lab type, which are immutable.
 
 + LabId
@@ -102,156 +102,320 @@ class Lab(Entity):
 **** Functions that operate on the Lab domain
 ***** getId: Lab --> LabId
 #+BEGIN_SRC 
-
+    def get_id(self):
+        return self.id
 #+END_SRC
+
 ***** getLab: LabId --> Lab
 #+BEGIN_SRC 
-
+    @staticmethod
+    def get_lab_by_id(id):
+        return Lab.query.get(id)
 #+END_SRC
+
+***** getAllLabs: Nil --> set[Lab]
+#+BEGIN_SRC 
+    @staticmethod
+    def get_all(fields=None):
+        # get all labs from db
+        labs = [i.to_client() for i in Lab.query.all()]
+        print 'total count of labs'
+        print len(labs)
+        # print fields
+        # if request do not contain fields, return the data
+        if not fields:
+            return labs
+        # if fields exist in the request, format all the labs to have only the
+        # fields requested by the user
+        formatted_labs = Lab.format_labs_by_fields(labs, fields)
+        return formatted_labs
+#+END_SRC
+
 ***** getMnemonic: Lab --> Mnemonic
 #+BEGIN_SRC 
-
+    def get_mnemonic(self):
+        return self.mnemonic
 #+END_SRC
+
 ***** getLab: Mnemonic --> Lab
 #+BEGIN_SRC 
-
+    @staticmethod
+    def get_lab_by_mnemonic(mnemonic):
+        return Lab.query.filter_by(mnemonic=mnemonic).first()
 #+END_SRC
+
 ***** getName: Lab --> Name
 
        This is similar to the =getId= function and all types will have this
        function.
 #+BEGIN_SRC 
-
+    def get_name(self):
+        return self.name
 #+END_SRC
+
 ***** getIntegrationLevel: Lab --> Level
 #+BEGIN_SRC 
-
+    def get_integration_level(self):
+        return self.integration_level.level
 #+END_SRC
+
 ***** getHostedURL: Lab --> Nil + URL
 
        URL: when hosted
 
        Nil: when not hosted
 #+BEGIN_SRC 
-
+    def get_hosted_url(self):
+        return self.hosted_url
 #+END_SRC
+       
 ***** getRepoURL: Lab --> Nil + URL
 
        URL: when sources are available
 
        Nil: otherwise
 #+BEGIN_SRC 
-
+    def get_repo_url(self):
+        return self.repo_url
 #+END_SRC
+
 ***** getType: Lab --> TypeOfLab
 #+BEGIN_SRC 
-
+    def get_type(self):
+        return self.type_of_lab
 #+END_SRC
+
 ***** getNoOfExperiments: Lab --> Nat
 #+BEGIN_SRC 
-
+    def get_num_of_experiments(self):
+        return len(self.experiments)
 #+END_SRC
+
 ***** getHostedOn: Lab --> HostingPlatform + Nil
 #+BEGIN_SRC 
-
+    def get_hosted_on(self):
+        return self.hosted_on
 #+END_SRC
+
 ***** isWeb2Compliant: Lab --> Boolean
 #+BEGIN_SRC 
-
+    def is_web_2_compliant(self):
+        return self.is_web_2_compliant
 #+END_SRC
+
 ***** isPhase2Lab: Lab --> Boolean
 #+BEGIN_SRC 
-
+    def is_phase_2(self):
+        return self.is_phase_2_lab
 #+END_SRC
+
 ***** getDiscipline: Lab --> Discipline
 #+BEGIN_SRC 
-
+    def get_discipline(self):
+        return self.discipline
 #+END_SRC
+
 ***** getExperiments: Lab --> set[Experiment]
 #+BEGIN_SRC 
-
+    def get_experiments(self):
+        return self.experiments
 #+END_SRC
+
 ***** getInstitute: Lab --> Institute
 #+BEGIN_SRC 
-
+    def get_institute(self):
+        return self.institute
 #+END_SRC
 
 ***** getDevelopers: Lab --> set[Developer]
 #+BEGIN_SRC 
-
+    def get_developers(self):
+        return self.developers
 #+END_SRC
 
 ***** getTechnologies: Lab --> set[Technology]
 #+BEGIN_SRC 
-
+    def get_technologies(self):
+        return self.technologies
 #+END_SRC
 
 ***** setName: Lab, Name --> Void
 
        NOTE: All types will have a =setName= function.
 #+BEGIN_SRC 
-
+    @typecheck(name=Name)
+    def set_name(self, name):
+        self.name = name
+        self.save()
 #+END_SRC
+
 ***** setInstitute: Lab, Institute --> Void
 #+BEGIN_SRC 
-
+    @typecheck(institute=Institute)
+    def set_institute(self, institute):
+        self.institute = institute
+        self.save()
 #+END_SRC
+
 ***** setDiscipline: Lab, Discipline --> Void
 #+BEGIN_SRC 
-
+    @typecheck(discipline=Discipline)
+    def set_discipline(self, discipline):
+        self.discipline = discipline
+        self.save()
 #+END_SRC
+
 ***** setIntegrationLevel: Lab, Level --> Void
 #+BEGIN_SRC 
-
+    @typecheck(level=IntegrationLevel)
+    def set_integration_level(self, level):
+        self.integration_level = level
+        self.save()
 #+END_SRC
+
 ***** setHostedURL: Lab, URL --> Void
 #+BEGIN_SRC 
-
+    @typecheck(url=URL)
+    def set_hosted_url(self, url):
+        self.hosted_url = url
+        self.save()
 #+END_SRC
+
 ***** setRepoURL: Lab, URL --> Void
 #+BEGIN_SRC 
-
+    @typecheck(url=URL)
+    def set_repo_url(self, url):
+        self.repo_url = url
+        self.save()
 #+END_SRC
+
 ***** setTypeOfLab: Lab, TypeOfLab --> Void
 #+BEGIN_SRC 
-
+    @typecheck(type=TypeOfLab)
+    def set_type_of_lab(self, type):
+        self.type_of_lab = type
+        self.save()
 #+END_SRC
+
 ***** setHostedOn: Lab, HostingPlatform --> Void
 #+BEGIN_SRC 
-
+    @typecheck(platform=HostingPlatform)
+    def set_hosted_on(self, platform):
+        self.hosted_on = platform
+        self.save()
 #+END_SRC
+
 ***** setisWeb2Compliant: Lab, Boolean --> Void
 #+BEGIN_SRC 
-
+    @typecheck(compliant=bool)
+    def set_is_web_2_compliant(self, compliant):
+        self.is_web_2_compliant = compliant
+        self.save()
 #+END_SRC
+
 ***** setisPhase2: Lab, Boolean --> Void
 #+BEGIN_SRC 
-
+    @typecheck(phase2=bool)
+    def set_is_phase_2_lab(self, phase2):
+        self.is_phase_2_lab = phase2
+        self.save()
 #+END_SRC
+
 ***** addDeveloper: Lab, Developer --> Void
 #+BEGIN_SRC 
-
+    @typecheck(developer=Developer)
+    def add_developer(self, developer):
+        self.developers.append(developer)
+        self.save()
 #+END_SRC
+
 ***** removeDeveloper: Lab, Developer --> Void
 #+BEGIN_SRC 
-
+    @typecheck(developer=Developer)
+    def remove_developer(self, developer):
+        if developer in self.developers:
+            self.developers.remove(developer)
+            self.save()
 #+END_SRC
+
 ***** addTechnology: Lab, Technology --> Void
 #+BEGIN_SRC 
-
+    @typecheck(technology=Technology)
+    def add_technology(self, technology):
+        self.technologies.append(technology)
+        self.save()
 #+END_SRC
+
 ***** removeTechnology: Lab, Technology --> Void
 #+BEGIN_SRC 
-
+    @typecheck(technology=Technology)
+    def remove_technology(self, technology):
+        if technology in self.technologies:
+            self.technologies.remove(technology)
+            self.save()
 #+END_SRC
+
 ***** addExperiment: Lab, Experiment --> Void
 #+BEGIN_SRC 
-
+    @typecheck(experiment=Experiment)
+    def add_experiment(self, experiment):
+        self.experiments.append(experiment)
+        self.save()
 #+END_SRC
+
 ***** removeExperiment: Lab, Experiment --> Void
 #+BEGIN_SRC 
-
+    @typecheck(experiment=Experiment)
+    def remove_experiment(self, experiment):
+        if experiment in self.experiments:
+            self.experiments.remove(experiment)
+            self.save()
 #+END_SRC
+
+***** formatLabsByFields
+#+BEGIN_SRC 
+    @staticmethod
+    def format_labs_by_fields(labs, fields):
+        current_app.logger.debug("labs recvd: %s" % labs)
+        formatted_labs = []  # all labs
+        for lab in labs:
+            formatted_lab = {}  # formatted lab
+            for field in fields:
+                try:
+                    formatted_lab[field] = lab[field]
+                except KeyError:
+                    raise Exception('Invalid field %s', field)
+
+            # print fmttd_lab
+            formatted_labs.append(formatted_lab)
+        return formatted_labs
+#+END_SRC
+
+***** to_client
+#+BEGIN_SRC 
+    def to_client(self):
+        return {
+            'id': self.id,
+            'mnemonic': self.mnemonic,
+            'name': self.name,
+            'slug': self.slug,
+            'institute': self.institute.to_client(),
+            'discipline': self.discipline.to_client(),
+            'integration_level': self.integration_level,
+            'number_of_experiments': self.number_of_experiments,
+            'repo_url': self.repo_url,
+            'hosted_url': self.hosted_url,
+            'hosted_on': self.hosted_on,
+            'technologies': self.technologies,
+            'developers': self.developers,
+            'type_of_lab': self.type_of_lab,
+            'status': self.status,
+            'is_web_2_compliant': self.is_web_2_compliant,
+            'is_phase_2_lab': self.is_phase_2_lab,
+            'remarks': self.remarks
+        }
+#+END_SRC
+
 **** Institute
 
 ***** Immutable Data
@@ -346,12 +510,14 @@ class Institute(Entity):
 
 ***** getLabs: Institute --> set[Lab]
 #+BEGIN_SRC 
-
+    def get_labs(self):
+        return self.labs
 #+END_SRC
 
 ***** getDevelopers: Institute --> set[Developer]
 #+BEGIN_SRC 
-
+    def get_developers(self):
+        return self.developers
 #+END_SRC
 
 ***** getAllInstitutes: Nil --> set[Institute]
@@ -480,7 +646,8 @@ class Discipline(Entity):
 
 ***** getLabs: Discipline --> set[Lab]
 #+BEGIN_SRC 
-
+    def get_labs(self):
+        return self.labs
 #+END_SRC
 
 ***** getDNC: Discipline --> Name
@@ -572,21 +739,27 @@ Following is the constructor for this class.
 
 ***** getId: Experiment --> ExperimentId
 #+BEGIN_SRC 
-
+    def get_id(self):
+        return self.id
 #+END_SRC
 
 ***** getExperiment: ExperimentId --> Experiment
 #+BEGIN_SRC 
+    @staticmethod
+    def get_experiment(id):
+        return Experiment.query.get(id)
 #+END_SRC
 
 ***** getContentURL: Experiment --> URL + Nil
 #+BEGIN_SRC 
-
+    def get_content_url(self):
+        return self.content_url
 #+END_SRC
 
 ***** getSimulationURL: Experiment --> URL + Nil
 #+BEGIN_SRC 
-
+    def get_simulation_url(self):
+        return self.simulation_url
 #+END_SRC
 
 ***** getTechnologies: Experiment --> set[Technology]
@@ -596,37 +769,66 @@ Following is the constructor for this class.
 
 ***** contentHostedOn: Experiment --> HostingPlatform + Nil
 #+BEGIN_SRC 
-
+    def content_hosted_on(self):
+        return self.content_hosted_on
 #+END_SRC
 
 ***** simulationHostedOn: Experiment --> HostingPlatform + Nil
 #+BEGIN_SRC 
-
+    def simulation_hosted_on(self):
+        return self.simulation_hosted_on
 #+END_SRC
 
 ***** getLab: Experiment --> Lab
 #+BEGIN_SRC 
-
+    def get_lab(self):
+        return self.lab
 #+END_SRC
 
 ***** setContentURL: Experiment, URL --> Void
 #+BEGIN_SRC 
-
+    @typecheck(url=URL)
+    def set_content_url(self, url):
+        self.content_url = url
+        self.save()
 #+END_SRC
 
 ***** setSimulationURL: Experiment, URL --> Void
 #+BEGIN_SRC 
-
+    @typecheck(url=URL)
+    def set_simulation_url(self, url):
+        self.simulation_url = url
+        self.save()
 #+END_SRC
 
 ***** setContentHostedOn: Experiment, HostingPlatform --> Void
 #+BEGIN_SRC 
-
+    @typecheck(platform=HostingPlatform)
+    def set_content_hosted_on(self, platform):
+        self.content_hosted_on = platform
+        self.save()
 #+END_SRC
 
 ***** setSimulationHostedOn: Experiment, HostingPlatform --> Void
 #+BEGIN_SRC 
+    @typecheck(platform=HostingPlatform)
+    def set_simulation_hosted_on(self, platform):
+        self.simulation_hosted_on = platform
+        self.save()
+#+END_SRC
 
+***** to_client
+#+BEGIN_SRC 
+    def to_client(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'content_url': self.content_url,
+            'content_on': self.content_on,
+            'simulation_url': self.simulation_url,
+            'simulation_on': self.simulation_on,
+            'lab': self.lab.to_client()
+        }
 #+END_SRC
 
 **** Developer
@@ -855,7 +1057,7 @@ class InstituteName(object):
    DisciplineId is a natural number.
 
 **** DeveloperId
-
+     
    DeveloperId is a natural number.
 
 **** ExperimentId
@@ -920,7 +1122,6 @@ class IntegrationLevel(Entity):
   #+NAME:   entity
   [[https://drive.google.com/open?id%3D0B6LLRcwXMzt8N3RzZGVkb0NpUDA][ER-Diagram]]
 
-* Implementation
 * Test Cases
 * Design discussions
 * Releases
