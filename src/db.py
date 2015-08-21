@@ -90,7 +90,7 @@ class Institute(Entity):
     @staticmethod
     def get_institute_by_id(id):
         return Institute.query.get(id)
-
+        
     def get_id(self):
         return self.id
 
@@ -106,6 +106,9 @@ class Institute(Entity):
     def get_iic(self):
         return self.iic
 
+    def get_labs(self):
+        return self.labs
+    
     @typecheck(name=InstituteName)
     def set_name(self, name):
         self.name = name.value
@@ -171,6 +174,9 @@ class Discipline(Entity):
     def get_dnc(self):
         return self.dnc
 
+    def get_labs(self):
+        return self.labs
+
     @typecheck(name=Name)
     def set_name(self, name):
         self.name = name.value
@@ -209,6 +215,9 @@ class Developer(Entity):
 
     def get_name(self):
         return self.name
+
+    def get_labs(self):
+        return self.labs
 
     @typecheck(name=Name)
     def set_name(self, name):

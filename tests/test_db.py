@@ -7,7 +7,7 @@ from src.db import *
 from src.app import create_app
 
 config = {
-    'SQLALCHEMY_DATABASE_URI': ''
+    'SQLALCHEMY_DATABASE_URI': 'mysql+oursql://root:root@localhost:8080/vlabs_database'
 }
 
 
@@ -182,7 +182,7 @@ class TestDeveloper(TestCase):
         name = dev.get_name()
         self.assertEqual(name, "Joe")
 
-
+   
 class TestInstitute(TestCase):
     TESTING = True
 
@@ -258,7 +258,14 @@ class TestInstitute(TestCase):
         instt.save()
         self.assertEqual(instt.get_institute_by_id(1).name, "IndianInstitute")
 
-
+    def test_get_institute_labs(self):
+        print "test_get_institute_labs"
+        lab1 = Lab(name="Micro Controllers", mnemonic="micro")
+        lab2 = Lab(name="Digital Logic Design", mnemonic="digital")
+        labs = [lab1, lab2]
+        instt = Institute(name="MIT", mnemonic="mit", labs=labs)
+        self.assertItemsEqual(instt.get_labs(), labs)
+        
 class TestDiscipline(TestCase):
     TESTING = True
 
@@ -301,6 +308,13 @@ class TestDiscipline(TestCase):
         disc.save()
         self.assertEqual(disc.get_discipline_by_id(1).name, disc.name)
 
+    def test_get_discipline_labs(self):
+        print "test_get_discipline_labs"
+        lab1 = Lab(name="Micro Controllers", mnemonic="micro")
+        lab2 = Lab(name="Digital Logic Design", mnemonic="digital")
+        labs = [lab1, lab2]
+        disc = Discipline(name="Electronics", mnemonic="ece", labs=labs)
+        self.assertItemsEqual(disc.get_labs(), labs)
 
 if __name__ == '__main__':
     unittest.main()
