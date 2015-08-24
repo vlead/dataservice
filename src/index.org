@@ -55,7 +55,7 @@ These are the data associated with Lab type, which are mutable.
 + Experiment
 
 ***** TODO: Mnemonic assigned for each lab
-
+***** Definition
 #+BEGIN_SRC 
 class Lab(Entity):
 
@@ -450,6 +450,7 @@ These are the data associated with Institute type, which are mutable
 | Dayalbagh Educational Institute | dei      |
 |---------------------------------+----------|
 
+***** Definition
 #+BEGIN_SRC 
 class Institute(Entity):
 
@@ -595,6 +596,7 @@ This is the data associated with Discipline type, which is mutable.
 | Material Sciences                        | mat-sc    |
 |------------------------------------------+-----------|
 
+***** Definition
 #+BEGIN_SRC 
 class Discipline(Entity):
 
@@ -697,6 +699,7 @@ These are the data associated with Discipline type, which are mutable.
 + ContentHostedOn
 + SimulationHostedOn
 
+***** Definition
 #+BEGIN_SRC 
 class Experiment(Entity):
 
@@ -831,7 +834,7 @@ Following is the constructor for this class.
             'lab': self.lab.to_client()
         }
 #+END_SRC
-
+       
 **** Developer
 
 ***** Immutable Data
@@ -844,6 +847,7 @@ This is the data associated with Developer type, which is mutable.
 
 + Email
 
+***** Definition
 #+BEGIN_SRC 
 class Developer(Entity):
 
@@ -938,6 +942,7 @@ These are the data associated with Technoloy type, which are mutable.
 + Version
 + FOSS
 
+***** Definition
 #+BEGIN_SRC 
 class Technology(Entity):
 
