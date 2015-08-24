@@ -18,9 +18,41 @@
      on the data.
 
 * Design & Implementation
+** Python imports
+#+BEGIN_SRC python :tangle db.py :eval no
+# -*- coding: utf-8 -*-
 
+from flask.ext.sqlalchemy import SQLAlchemy
+from flask import current_app
+
+import re
+
+from utils import typecheck
+from exceptions import AttributeRequired
+
+db = SQLAlchemy()
+
+
+# Abstract class to hold common methods
+class Entity(db.Model):
+
+    __abstract__ = True
+
+    # save a db.Model to the database. commit it.
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    # update the object, and commit to the database
+    def update(self, **kwargs):
+        for attr, val in kwargs.iteritems():
+            self.__setattr__(attr, val)
+
+        self.save()
+
+#+END_SRC
 ** Data Model
-Description of the data model.
+   Description of the data model.
 
 *** Types & Functions: List of all the types and functions in the model
 
@@ -101,7 +133,7 @@ class Lab(Entity):
 
 ***** Functions that operate on the Lab domain
 ****** getId: Lab --> LabId
-#+BEGIN_SRC python :tangle db.py :eval no
+#+BEGIN_SRC 
     def get_id(self):
         return self.id
 
@@ -549,7 +581,6 @@ class Institute(Entity):
         self.name = name.value
 #+END_SRC
 
-
 ****** to_client
 #+BEGIN_SRC 
     def to_client(self):
@@ -561,6 +592,7 @@ class Institute(Entity):
             'iic': self.iic
         }
 #+END_SRC
+
 
 **** Discipline
 
@@ -833,18 +865,18 @@ Following is the constructor for this class.
 #+END_SRC
 
 **** Developer
-
 ***** Immutable Data
-This is the data associated with Developer type, which is immutable.
-
-+ DeveloperId
-
+      This is the data associated with Developer type, which is immutable.
+      + DeveloperId
 ***** Mutable Data
-This is the data associated with Developer type, which is mutable.
+      This is the data associated with Developer type, which is mutable.
+      + Name
+      + Email
+      + Institute Id
 
-+ Email
+***** Definition
+#+BEGIN_SRC python :tangle db.py :eval no
 
-#+BEGIN_SRC 
 class Developer(Entity):
 
     __tablename__ = 'developers'
@@ -853,10 +885,15 @@ class Developer(Entity):
 
     email_id = db.Column(db.String(128))
     name = db.Column(db.String(64), nullable=False)
-
     institute_id = db.Column(db.Integer, db.ForeignKey('institutes.id'))
-#+END_SRC
 
+    def __init__(self, **kwargs):
+        keys = kwargs.keys()
+        if name not in keys:
+            raise AttributeRequired("name not passed to the constructor")
+            
+            
+#+END_SRC
 
 ***** Functions that operate on the Developer domain
 ****** getId: Developer --> DeveloperId
@@ -1123,6 +1160,19 @@ class IntegrationLevel(Entity):
   #+NAME:   entity
   [[https://drive.google.com/open?id%3D0B6LLRcwXMzt8N3RzZGVkb0NpUDA][ER-Diagram]]
   
+** Exceptions
+*** AttributeRequired
+#+BEGIN_SRC python :tangle exceptions.py :eval no
+class AttributeRequired(Exception):
+    str = None
+
+    def __init__(self, str):
+        self.str = str
+
+    def __str__(self):
+        return repr(self.str)
+
+#+END_SRC
 * Test Cases
 * Design discussions
 * Releases
@@ -1199,3 +1249,4 @@ class IntegrationLevel(Entity):
     4. Filters
 
     5. Provisioning
+
