@@ -107,11 +107,16 @@ class URL(object):
 #+END_SRC
 **** Version
 
-   Version is an alphanumeric string including '-' and '.'.
+     Version is an alphanumeric string including '-' and '.'.
 
 #+BEGIN_SRC python :tangle src/db.py :eval no
 class Version(object):
-    pass
+    def __init__(self, value):
+        if re.search('[a-bA-z]+-[0-9]+(.[0-9]+)+(-[a-zA-Z]+)*', value):
+            raise TypeError('%s is not a version!' % value)
+
+        self.value = value
+    
 #+END_SRC
      
 **** LabId
@@ -156,7 +161,7 @@ class InstituteName(object):
 
 **** IntegrationLevel
       
-   IntegrationLevel is {L0, L1, L2, L3, L4, L5, L6}.
+     IntegrationLevel is {L0, L1, L2, L3, L4, L5, L6}.
 
 #+BEGIN_SRC python :tangle src/db.py :eval no 
 class IntegrationLevel(Entity):
@@ -173,6 +178,7 @@ class IntegrationLevel(Entity):
 #+BEGIN_SRC python :tangle src/db.py :eval no 
 class HostingPlatform(Entity):
     __tablename__ = 'hosting_platforms'
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), nullable=False)
 
@@ -216,10 +222,15 @@ class Developer(Entity):
     email_id = db.Column(db.String(128))
     institute_id = db.Column(db.Integer, db.ForeignKey('institutes.id'))
 
-    # signature of constructor
-    # developer = Developer(name=instance of class Name,
-    #               email_id=instance of Email,
-    #               institute=instance of Institute)
+#+END_SRC
+***** Constructor 
+     signature of constructor
+#+BEGIN_EXAMPLE
+    developer = Developer(name=instance of class Name,
+                          email_id=instance of Email,
+                          institute=instance of Institute)
+#+END_EXAMPLE
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def __init__(self, **kwargs):
         keys = kwargs.keys()
         if 'name' and 'email_id' and 'institute' not in keys:
@@ -231,13 +242,10 @@ class Developer(Entity):
                 raise TypeError("kwargs['email_id'] is not of type Email")
             if not isinstance(kwargs['institute'], Name):
                 raise TypeError("kwargs['institute'] is not of type Institute")
-            
+            self.name = kwargs['name']
+            self.email_id = kwargs['email_id']
+            self.institute = kwargs['institute']
 
-        
-
-        
-            
-            
 #+END_SRC
 
 ***** Functions that operate on the Developer domain
@@ -1536,7 +1544,8 @@ def typecheck(**typemap):
 print "test package"
 #+END_SRC
 
-** Imports and Initialization of testcases
+** Testing Python API
+*** Imports and Initialization of testcases
 
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
 # -*- coding: utf-8 -*-
@@ -1555,7 +1564,7 @@ config = {
 #+END_SRC
 
 *** Tests for Custom Types
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+#+BEGIN_SRC
 
 class TestCustomTypes(TestCase):
     TESTING = True
@@ -1594,7 +1603,7 @@ class TestCustomTypes(TestCase):
 #+END_SRC
 
 *** Tests for Lab
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+#+BEGIN_SRC
 
 class TestLab(TestCase):
 
@@ -1716,7 +1725,7 @@ class TestLab(TestCase):
 #+END_SRC
 
 *** Tests for Developer
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
 class TestDeveloper(TestCase):
 
     TESTING = True
