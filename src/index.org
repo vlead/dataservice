@@ -356,25 +356,25 @@ class Institute(Entity):
     developers = db.relationship('Developer', backref='institute')
 
     def __init__(self, **kwargs):
-        if self.name not in kwargs:
+        if 'name' not in kwargs:
             raise AttributeRequired("name is required when initializing an institute")
 
-        if not isinstance(self.name, InstituteName):
-            raise TypeError
+        if not isinstance(kwargs['name'], InstituteName):
+            raise TypeError("kwargs['name'] is not of type InstituteName")
 
         self.name = name
 
-        if self.mnemonic not in kwargs:
+        if 'mnemonic' not in kwargs:
             raise AttributeRequired("mnemonic is required when initializing an institute")
 
-        if self.pic in kwargs:
-            if not isinstance(self.pic, Name):
-                raise TypeError
+        if 'pic' in kwargs:
+            if not isinstance(kwargs['pic'], Name):
+                raise TypeError("kwargs['pic'] is not of type Name)
             self.pic = pic
               
-        if self.iic in kwargs:
-            if not isinstance(self.iic, Name):
-                raise TypeError
+        if 'iic' in kwargs:
+            if not isinstance(kwargs['iic'], Name):
+                raise TypeError("kwargs['iic'] is not of type Name)
             self.iic = iic
 
 #+END_SRC
@@ -537,20 +537,20 @@ class Discipline(Entity):
     labs = db.relationship('Lab', backref='discipline')
 
     def __init__(self, **kwargs):
-        if self.name not in kwargs:
+        if 'name' not in kwargs:
             raise AttributeRequired("name is required when initializing discipline")
 
-        if not isinstance(self.name, Name):
-            raise TypeError
+        if not isinstance(kwargs['name'], Name):
+            raise TypeError("kwargs['name'] is not of type Name")
 
         self.name = name
 
-        if self.mnemonic not in kwargs:
+        if 'mnemonic' not in kwargs:
             raise AttributeRequired("mnemonic is required when initializing discipline")
 
-        if self.dnc in kwargs:
-            if not isinstance(self.dnc, Name):
-                raise TypeError
+        if 'dnc' in kwargs:
+            if not isinstance(kwargs['dnc'], Name):
+                raise TypeError("kwargs['dnc'] is not of type Name")
             self.dnc = dnc
 
 #+END_SRC
