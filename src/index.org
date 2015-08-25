@@ -333,24 +333,24 @@ class Institute(Entity):
     developers = db.relationship('Developer', backref='institute')
 
     def __init__(self, **kwargs):
-        if name not in kwargs:
+        if self.name not in kwargs:
             raise AttributeRequired("name is required when initializing an institute")
 
-        if not isinstance(name, InstituteName):
+        if not isinstance(self.name, InstituteName):
             raise TypeError
 
         self.name = name
 
-        if mnemonic not in kwargs:
+        if self.mnemonic not in kwargs:
             raise AttributeRequired("mnemonic is required when initializing an institute")
 
-        if pic in kwargs:
-            if not isinstance(pic, Name):
+        if self.pic in kwargs:
+            if not isinstance(self.pic, Name):
                 raise TypeError
             self.pic = pic
               
-        if iic in kwargs:
-            if not isinstance(iic, Name):
+        if self.iic in kwargs:
+            if not isinstance(self.iic, Name):
                 raise TypeError
             self.iic = iic
 
@@ -514,19 +514,19 @@ class Discipline(Entity):
     labs = db.relationship('Lab', backref='discipline')
 
     def __init__(self, **kwargs):
-        if name not in kwargs:
+        if self.name not in kwargs:
             raise AttributeRequired("name is required when initializing discipline")
 
-        if not isinstance(name, Name):
+        if not isinstance(self.name, Name):
             raise TypeError
 
         self.name = name
 
-        if mnemonic not in kwargs:
+        if self.mnemonic not in kwargs:
             raise AttributeRequired("mnemonic is required when initializing discipline")
 
-        if dnc in kwargs:
-            if not isinstance(dnc, Name):
+        if self.dnc in kwargs:
+            if not isinstance(self.dnc, Name):
                 raise TypeError
             self.dnc = dnc
 
@@ -1450,7 +1450,7 @@ from src.db import *
 from src.app import create_app
 
 config = {
-    'SQLALCHEMY_DATABASE_URI': 'mysql+oursql://root:root@localhost:8080/dataservice'
+    'SQLALCHEMY_DATABASE_URI': 'mysql+oursql://root:root@localhost/dataservice'
 }
 
 
@@ -1479,6 +1479,10 @@ class TestCustomTypes(TestCase):
         # incorrect name
         self.assertRaises(TypeError, Email, "@@@@smithgmail.com")
 
+#+END_SRC
+
+*** Tests for Lab
+#+BEGIN_SRC 
 
 class TestLab(TestCase):
 
@@ -1565,7 +1569,10 @@ class TestLab(TestCase):
         lab = Lab(name="DS", mnemonic="ds", technologies=techs)
         self.assertItemsEqual(lab.get_technologies(), techs)
 
+#+END_SRC
 
+*** Tests for Developer
+#+BEGIN_SRC 
 class TestDeveloper(TestCase):
 
     TESTING = True
@@ -1625,7 +1632,10 @@ class TestDeveloper(TestCase):
         name = dev.get_name()
         self.assertEqual(name, "Joe")
 
-   
+#+END_SRC   
+
+*** Tests for Institute
+#+BEGIN_SRC 
 class TestInstitute(TestCase):
     TESTING = True
 
@@ -1718,8 +1728,11 @@ class TestInstitute(TestCase):
         labs = [lab1, lab2]
         instt = Institute(name="MIT", mnemonic="mit", labs=labs)
         self.assertItemsEqual(instt.get_labs(), labs)
-        
 
+#+END_SRC        
+
+*** Tests for Discipline
+#+BEGIN_SRC 
 class TestDiscipline(TestCase):
     TESTING = True
 
@@ -1792,6 +1805,9 @@ class TestDiscipline(TestCase):
         disc = Discipline(name="Electronics", mnemonic="ece", labs=labs)
         self.assertItemsEqual(disc.get_labs(), labs)
 
+#+END_SRC
+
+#+BEGIN_SRC 
 if __name__ == '__main__':
     unittest.main()
 
@@ -1889,7 +1905,7 @@ if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0')
 
 #+END_SRC
-
+   
 ** Config
 #+BEGIN_SRC python :tangle src/config.py :eval no
 # DB URI
@@ -1897,7 +1913,7 @@ if __name__ == "__main__":
 # mysql+oursql://scott:tiger@localhost/mydatabase
 # postgresql+psycopg2://scott:tiger@localhost/mydatabase
 SQLALCHEMY_DATABASE_URI =\
-    'mysql+oursql://root:mysql@localhost/dataservice'
+    'mysql+oursql://root:root@localhost/dataservice'
 
 # Debug from SQLAlchemy
 # Turn this to False on production
