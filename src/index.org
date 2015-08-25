@@ -35,6 +35,7 @@ from flask import current_app
 import re
 
 from ds_exceptions import AttributeRequired
+from utils import typecheck
 
 db = SQLAlchemy()
 
@@ -239,7 +240,7 @@ class Developer(Entity):
     def get_id(self):
         return self.id
 #+END_SRC
-
+       
 ****** getName: Developer --> Name
 #+BEGIN_SRC 
     def get_name(self):
@@ -347,94 +348,132 @@ class Institute(Entity):
 
     labs = db.relationship('Lab', backref='institute')
     developers = db.relationship('Developer', backref='institute')
+
+    def __init__(self, **kwargs):
+        if name not in kwargs:
+            raise AttributeRequired("name is required when initializing an institute")
+
+        if not isinstance(name, InstituteName):
+            raise TypeError
+
+        self.name = name
+
+        if mnemonic not in kwargs:
+            raise AttributeRequired("mnemonic is required when initializing an institute")
+
+        if pic in kwargs:
+            if not isinstance(pic, Name):
+                raise TypeError
+            self.pic = pic
+              
+        if iic in kwargs:
+            if not isinstance(iic, Name):
+                raise TypeError
+            self.iic = iic
+
 #+END_SRC
 
 ***** Functions that operate on Institute domain
 
 ****** getId: Institute --> InstituteId
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def get_id(self):
         return self.id
+
 #+END_SRC
 
 ****** getName: Institute --> Name
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     def get_name(self):
         return self.name
+
 #+END_SRC
 
 ****** getInstitute: InstituteId --> Institute
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     @staticmethod
     def get_institute_by_id(id):
         return Institute.query.get(id)
+
 #+END_SRC
 
 ****** getMnemonic: Institute --> Mnemonic
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     def get_mnemonic(self):
         return self.mnemonic
+
 #+END_SRC
 
 ****** getInstitute: Mnemonic --> Institute
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
+    @staticmethod                                                                
+    def get_institute_by_mnemonic(mnemonic):                                     
+        return Institute.query.filter_by(mnemonic=mnemonic).first()              
 
 #+END_SRC
 
 ****** getPIC: Institute --> Name
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     def get_pic(self):
         return self.pic
+
 #+END_SRC
       
 ****** getIIC: Institute --> Name
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     def get_iic(self):
         return self.iic
+
 #+END_SRC
 
 ****** getLabs: Institute --> set[Lab]
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     def get_labs(self):
         return self.labs
+
 #+END_SRC
 
 ****** getDevelopers: Institute --> set[Developer]
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     def get_developers(self):
         return self.developers
+
 #+END_SRC
 
 ****** getAllInstitutes: Nil --> set[Institute]
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     @staticmethod
     def get_all():
         return [i.to_client() for i in Institute.query.all()]
+
 #+END_SRC
 
 ****** setPIC: Institute, Name --> Void
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     @typecheck(pic=Name)
     def set_pic(self, pic):
         self.pic = pic.value
+
 #+END_SRC
 
 ****** setIIC: Institute, Name --> Void
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     @typecheck(iic=Name)
     def set_iic(self, iic):
         self.iic = iic.value
+
 #+END_SRC
       
 ****** setName: Institute, Name --> Void
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     @typecheck(name=InstituteName)
     def set_name(self, name):
         self.name = name.value
+
 #+END_SRC
 
 ****** to_client
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     def to_client(self):
         return {
             'id': self.id,
@@ -443,6 +482,7 @@ class Institute(Entity):
             'pic': self.pic,
             'iic': self.iic
         }
+
 #+END_SRC
 **** Discipline
 
@@ -489,73 +529,103 @@ class Discipline(Entity):
     dnc = db.Column(db.String(64))
 
     labs = db.relationship('Lab', backref='discipline')
+
+    def __init__(self, **kwargs):
+        if name not in kwargs:
+            raise AttributeRequired("name is required when initializing discipline")
+
+        if not isinstance(name, Name):
+            raise TypeError
+
+        self.name = name
+
+        if mnemonic not in kwargs:
+            raise AttributeRequired("mnemonic is required when initializing discipline")
+
+        if dnc in kwargs:
+            if not isinstance(dnc, Name):
+                raise TypeError
+            self.dnc = dnc
+
 #+END_SRC
 
 
 ***** Functions that operate on Discipline domain
 ****** getAllDisciplines: Nil --> set[Discipline]
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     @staticmethod
     def get_all():
         return [i.to_client() for i in Discipline.query.all()]
+
 #+END_SRC
 
 ****** getId: Discipline --> DisciplineId
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     def get_id(self):
         return self.id
+
 #+END_SRC
 
 ****** getName: Discipline --> Name
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     def get_name(self):
         return self.name
+
 #+END_SRC
 ****** getDiscipline: DisciplineId --> Discipline
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     def get_discipline_by_id(id):
         return Discipline.query.get(id)
+
 #+END_SRC
 
 ****** getMnemonic: Discipline --> Mnemonic
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     def get_mnemonic(self):
         return self.mnemonic
+
 #+END_SRC
 
 ****** getDiscipline: Mnemonic --> Discipline
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
+    @staticmethod
+    def get_discipline_by_mnemonic(mnemonic):
+        return Discipline.query.filter_by(mnemonic=mnemonic).first()
 
 #+END_SRC
 
 ****** getLabs: Discipline --> set[Lab]
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     def get_labs(self):
         return self.labs
+
 #+END_SRC
 
 ****** getDNC: Discipline --> Name
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     def get_dnc(self):
         return self.dnc
+
 #+END_SRC
 
 ****** setName: Discipline --> Void
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     @typecheck(name=Name)
     def set_name(self, name):
         self.name = name.value
+
 #+END_SRC
 
 ****** setDNC: Discipline, Name --> Void
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     @typecheck(name=Name)
     def set_name(self, name):
         self.name = name.value
+
 #+END_SRC      
 
 ****** to_client
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     def to_client(self):
         return {
             'id': self.id,
@@ -563,6 +633,7 @@ class Discipline(Entity):
             'mnemonic': self.mnemonic,
             'dnc': self.dnc
         }
+
 #+END_SRC
 **** Technology
 
@@ -676,6 +747,7 @@ class Experiment(Entity):
     technologies = db.relationship('Technology',
                                    secondary=technologies_used_expt,
                                    backref='experiments')
+
 #+END_SRC
 
 Following is the constructor for this class.
@@ -684,92 +756,104 @@ Following is the constructor for this class.
     def __init__(self, **kwargs):
         # TODO: implement the constructor and check the validity!
         pass
+
 #+END_SRC
 
 ***** Functions that operate on the Experiment domain
 
 ****** getId: Experiment --> ExperimentId
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     def get_id(self):
         return self.id
+
 #+END_SRC
 
 ****** getExperiment: ExperimentId --> Experiment
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     @staticmethod
     def get_experiment(id):
         return Experiment.query.get(id)
+
 #+END_SRC
 
 ****** getContentURL: Experiment --> URL + Nil
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     def get_content_url(self):
         return self.content_url
+
 #+END_SRC
 
 ****** getSimulationURL: Experiment --> URL + Nil
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     def get_simulation_url(self):
         return self.simulation_url
+
 #+END_SRC
 
 ****** getTechnologies: Experiment --> set[Technology]
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
 
 #+END_SRC
 
 ****** contentHostedOn: Experiment --> HostingPlatform + Nil
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     def content_hosted_on(self):
         return self.content_hosted_on
+
 #+END_SRC
 
 ****** simulationHostedOn: Experiment --> HostingPlatform + Nil
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     def simulation_hosted_on(self):
         return self.simulation_hosted_on
+
 #+END_SRC
 
 ****** getLab: Experiment --> Lab
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     def get_lab(self):
         return self.lab
+
 #+END_SRC
 
 ****** setContentURL: Experiment, URL --> Void
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     @typecheck(url=URL)
     def set_content_url(self, url):
         self.content_url = url
         self.save()
+
 #+END_SRC
 
 ****** setSimulationURL: Experiment, URL --> Void
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     @typecheck(url=URL)
     def set_simulation_url(self, url):
         self.simulation_url = url
         self.save()
+
 #+END_SRC
 
 ****** setContentHostedOn: Experiment, HostingPlatform --> Void
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     @typecheck(platform=HostingPlatform)
     def set_content_hosted_on(self, platform):
         self.content_hosted_on = platform
         self.save()
+
 #+END_SRC
 
 ****** setSimulationHostedOn: Experiment, HostingPlatform --> Void
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     @typecheck(platform=HostingPlatform)
     def set_simulation_hosted_on(self, platform):
         self.simulation_hosted_on = platform
         self.save()
+
 #+END_SRC
 
 ****** to_client
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     def to_client(self):
         return {
             'id': self.id,
@@ -780,6 +864,7 @@ Following is the constructor for this class.
             'simulation_on': self.simulation_on,
             'lab': self.lab.to_client()
         }
+
 #+END_SRC
 
 **** Lab
@@ -1218,6 +1303,152 @@ class AttributeRequired(Exception):
         return repr(self.str)
 
 #+END_SRC
+** Utility Functions
+#+BEGIN_SRC python :tangle src/utils.py :eval no 
+# module to hold all utilities/helper functions
+
+import json
+
+from flask import make_response
+
+
+# return a list of dicts as json with correct mime types
+# flask does not provide a jsonify for lists; hence this method
+def jsonify_list(data):
+    if type(data) is not list:
+        raise Exception('jsonify_list function accepts only a list')
+
+    return make_response(json.dumps(data), 200,
+                         {'content-type': 'application/json'})
+
+
+# take in a flask request object and try to parse out a dictionary from the
+# request
+# try to find if request is as JSON first, then look into forms, finally force
+# find it.
+# If not found return a dict; else return the parsed data
+def parse_request(request):
+    if request.json:
+        # print 'found in request.json'
+        data = request.get_json()
+
+    elif request.data:
+        # print 'found in request.data'
+        data = json.loads(request.data)
+
+    elif request.form:
+        # print 'found in request.form'
+        data = request.form.to_dict()
+        # try to detect if form contains integers and boolean data and attempt
+        # to convert them
+        # FIXME: is this a good idea? Fix this to do it in a better way?
+        for k in data:
+            if is_number(data[k]):
+                data[k] = int(data[k])
+            if is_bool_in_str(data[k]):
+                data[k] = str_to_bool(data[k])
+
+            # print k, data[k]
+
+    else:
+        data = request.get_json(force=True)
+
+    if not data:
+        return False
+
+    return data
+
+
+# check if a given string is a number
+def is_number(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+
+
+# check if in a given string python bool types are represented
+def is_bool_in_str(s):
+    if s == "True" or s == "False":
+        return True
+    return False
+
+
+# convert python bool types in string to native bool types
+def str_to_bool(s):
+    if s == "True":
+        return True
+    if s == "False":
+        return False
+    return None
+
+
+# decorator to do typechecking of arguments passed to functions
+# usage: @typecheck(var1=<type>, var2=(<type1>, <type2>), ..)
+#        def yourfunc(var1, var2, ..):
+#           ....
+def typecheck(**typemap):
+    """
+    Decorator to do typechecking of arguments passed to functions. Similar to
+    function annotations in Python 3, but this also does strict type checking
+    when a function is called.
+    The type to an argument can be single or multiple types. Mutiple types are
+    to be specified in a tuple.
+    Usage:
+        @typecheck(var1=<type>, var2=(<type1>, <type2>), ..)
+        def yourfunc(var1, var2, ..):
+            ....
+    """
+    # print "all valid types: %s" % typemap
+
+    def make_wrapper(decorated_func):
+
+        def wrapper(*arg_vals, **kw_vals):
+            # TODO: have more comments to better describe each line
+            arg_names = decorated_func.func_code.co_varnames
+            # print arg_names
+            # if not arg_vals:
+            #     print kw_vals
+            #     # arg_vals = kw_vals
+            # print arg_vals
+
+            # iterate over the typemap passed to the typecheck decorator and
+            # compare with the actual arguments passed to the function
+            for key, val in typemap.iteritems():
+                arg_name = key
+                idx = arg_names.index(arg_name)
+                arg = arg_vals[idx]
+                # print "arg_name: %s, arg: %s, typemap[arg_name]: %s" %\
+                #    (arg_name, arg, typemap[arg_name])
+
+                # if the passed type is a list throw an error
+                if typemap[arg_name] is list:
+                    raise SyntaxError("The types of %s has to be a tuple, "
+                                      "not list. \n See usage of `typecheck`" %
+                                      arg_name)
+
+                # check if the passed type is a tuple, if not make it
+                if typemap[arg_name] is not tuple:
+                    types = (typemap[arg_name],)
+                else:
+                    types = typemap[arg_name]
+
+                # iterate over the `types` tuple to see the arg matches any of
+                # the type provided in the tuple
+                if True not in map(lambda type: isinstance(arg, type), types):
+                    # print "types are not fine"
+                    raise TypeError("For %s type should have been %s. But "
+                                    "provided: %s" % (arg_name,
+                                                      typemap[arg_name],
+                                                      type(arg)))
+
+            return decorated_func(*arg_vals, **kw_vals)
+        return wrapper
+
+    return make_wrapper
+
+#+END_SRC
 * Test Cases
 ** __init__ 
 #+BEGIN_SRC python :tangle tests/__init__.py :eval no
@@ -1429,13 +1660,11 @@ class TestInstitute(TestCase):
         db.session.remove()
         db.drop_all()
 
-    # Tests for Institute entity.
     def test_set_institute_pic(self):
         print "test_set_institute_pic"
         instt = Institute(name="IndianInstitute", mnemonic="ii",
                           pic="Avinash", iic="Amit")
         new_pic = Name("John Doe")
-        # print new_pic
         instt.set_pic(new_pic)
         self.assertEqual(instt.pic, "John Doe")
 
@@ -1462,6 +1691,11 @@ class TestInstitute(TestCase):
                           pic="John", iic="Jane")
         inst_name = instt.get_name()
         self.assertEqual(inst_name, "IndianInstitute")
+
+    def test_get_institute_mnemonic(self):
+        print "test_get_institute_mnemonic"
+        instt = Institute(name="MIT", mnemonic="mit")
+        self.assertEqual(instt.get_mnemonic(), "mit")
 
     def test_get_institute_pic(self):
         print "test_get_institute_pic"
@@ -1490,6 +1724,13 @@ class TestInstitute(TestCase):
         instt.save()
         self.assertEqual(instt.get_institute_by_id(1).name, "IndianInstitute")
 
+    def test_get_institute_by_mnemonic(self):
+        print "test_get_institute_by_mnemonic"
+        instt = Institute(name="MIT", mnemonic="mit")
+        instt.save()
+        some_instt = Institute.get_institute_by_mnemonic("mit")
+        self.assertEqual(some_instt, instt)
+
     def test_get_institute_labs(self):
         print "test_get_institute_labs"
         lab1 = Lab(name="Micro Controllers", mnemonic="micro")
@@ -1498,6 +1739,7 @@ class TestInstitute(TestCase):
         instt = Institute(name="MIT", mnemonic="mit", labs=labs)
         self.assertItemsEqual(instt.get_labs(), labs)
         
+
 class TestDiscipline(TestCase):
     TESTING = True
 
@@ -1512,7 +1754,6 @@ class TestDiscipline(TestCase):
         db.session.remove()
         db.drop_all()
 
-    # Test for set_dnc attribute of Discipline entity
     def test_set_discipline_dnc(self):
         print "test_set_discipline_dnc"
         disc = Discipline(name="CSE", mnemonic="cs")
@@ -1521,24 +1762,47 @@ class TestDiscipline(TestCase):
         self.assertEqual(disc.dnc, "James roy")
         self.assertRaises(TypeError, disc.set_dnc, "123 James roy")
 
-    # Test for get_id attribute of Discipline entity
+    def test_set_discipline_name(self):
+        print "test_set_discipline_name"
+        disc = Discipline(name="Electronics & Communication", mnemonic="ece")
+        new_disc = Name("Electronics & Communication Engineering")
+        disc.set_name(new_name)
+        self.assertEqual(disc.name, "Electronics & Communication Engineering")
+
     def test_get_discipline_id(self):
         print "test_get_discipline_id"
         disc = Discipline(name="CSE", mnemonic="cs")
         disc.save()
         self.assertEqual(disc.id, disc.get_id())
 
-    # Test for get_dnc attribute of Discipline entity
+    def test_get_discipline_name(self):
+        print "test_get_discipline_name"
+        disc = Discipline(name="CSE", mnemonic="cs")
+        disc.save()
+        self.assertEqual(disc.get_name(), "CSE")
+
     def test_get_discipline_dnc(self):
         print "test_get_discipline_dnc"
         disc = Discipline(name="CSE", mnemonic="cs", dnc="James")
         self.assertEqual(disc.get_dnc(), "James")
+
+    def test_get_discipline_mnemonic(self):
+        print "test_get_discipline_mnemonic"
+        disc = Discipline(name="CSE", mnemonic="cs", dnc="James")
+        self.assertEqual(disc.get_mnemonic(), "cs")
 
     def test_get_discipline_by_id(self):
         print "test_get_discipline_name"
         disc = Discipline(name="CSE", mnemonic="cs", dnc="James")
         disc.save()
         self.assertEqual(disc.get_discipline_by_id(1).name, disc.name)
+
+    def test_get_discipline_by_mnemonic(self):
+        print "test_get_discipline_by_mnemonic"
+        disc = Discipline(name="Computer Science", mnemonic="cse")
+        disc.save()
+        some_disc = Discipline.get_discipline_by_mnemonic("cse")
+        self.assertEqual(some_disc, disc)
 
     def test_get_discipline_labs(self):
         print "test_get_discipline_labs"
