@@ -173,11 +173,12 @@ class HostingPlatform(Entity):
 #+END_SRC
 **** TypeOfLab
 
-   TypeOfLab is { Simulation,
-                 Remote Triggered,
-                 Simulation and Remote Triggered,
-                 Pilot Phase }
-
+     TypeOfLab is 
+     { Simulation,
+     Remote Triggered,
+     Simulation and Remote Triggered,
+     Pilot Phase }
+     
 #+BEGIN_SRC python :tangle src/db.py :eval no
 class TypeOfLab(Entity):
     __tablename__ = 'type_of_labs'
@@ -204,14 +205,30 @@ class Developer(Entity):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    email_id = db.Column(db.String(128))
     name = db.Column(db.String(64), nullable=False)
+    email_id = db.Column(db.String(128))
     institute_id = db.Column(db.Integer, db.ForeignKey('institutes.id'))
 
+    # signature of constructor
+    # developer = Developer(name=instance of class Name,
+    #               email_id=instance of Email,
+    #               institute=instance of Institute)
     def __init__(self, **kwargs):
         keys = kwargs.keys()
-        if name not in keys:
-            raise AttributeRequired("name not passed to the constructor")
+        if 'name' and 'email_id' and 'institute' not in keys:
+            raise AttributeRequired("non-nullable attribute(s) missing")
+
+            if not isinstance(kwargs['name'], Name):
+                raise TypeError("kwargs['name'] is not of type Name")
+            if not isinstance(kwargs['email_id'], Email):
+                raise TypeError("kwargs['email_id'] is not of type Email")
+            if not isinstance(kwargs['institute'], Name):
+                raise TypeError("kwargs['institute'] is not of type Institute")
+            
+
+        
+
+        
             
             
 #+END_SRC
@@ -1208,7 +1225,7 @@ class AttributeRequired(Exception):
 print "test package"
 #+END_SRC
 
-**  API Tests
+**  DB Tests
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
 # -*- coding: utf-8 -*-
 
@@ -1217,11 +1234,6 @@ from flask.ext.testing import TestCase
 # import json
 from src.db import *
 from src.app import create_app
-
-config = {
-    'SQLALCHEMY_DATABASE_URI': 'mysql+oursql://root:root@localhost:8080/dataservice'
-}
-
 
 class TestCustomTypes(TestCase):
     TESTING = True
@@ -1351,6 +1363,14 @@ class TestDeveloper(TestCase):
         db.drop_all()
 
     # Tests for developer entity
+    def test_developer(self):
+        print "test_developer_creation"
+        name = Name("Thirumal Ravula")
+        email_id = Email("travula@gmail.com")
+        instt = Institute(name="MIT", mnemonic="mit")
+        developer = Developer(name=name, email_id=email_id, institute=instt)
+        self.assertEqual(developer.name, name)
+
     def test_set_developer_name(self):
         print "test_set_developer_name"
         instt = Institute(name="MIT", mnemonic="mit")
