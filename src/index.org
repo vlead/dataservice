@@ -1751,6 +1751,62 @@ class TestLab(TestCase):
         self.assertEqual(lab.get_name(), "Data Structures")
         self.assertRaises(TypeError, lab.set_name, "Data Structures")
 
+    def test_lab_set_institute(self):
+        print "test_lab_set_institute"
+        lab = Lab(name="DS", mnemonic="ds")
+        instt = Institute(name="MIT", mnemonic="mit")
+        lab.set_institute(instt)
+        self.assertEqual(lab.get_institute(), instt)
+        self.assertRaises(TypeError, lab.set_institute, "IIT")
+
+    def test_lab_set_discipline(self):
+        print "test_lab_set_discipline"
+        lab = Lab(name="DS", mnemonic="ds")
+        disc = Discipline(name="CSE", mnemonic="cse")
+        lab.set_discipline(disc)
+        self.assertEqual(lab.get_discipline(), disc)
+        self.assertRaises(TypeError, lab.set_discipline, "ECE")
+
+    def test_lab_set_integration_level(self):
+        print "test_lab_set_integration_level"
+        lab = Lab(name="DS", mnemonic="ds")
+        ilevel = IntegrationLevel(level=5)
+        lab.set_integration_level(ilevel)
+        self.assertEqual(lab.get_integration_level(), ilevel)
+        self.assertRaises(TypeError, lab.set_integration_level, 6)
+
+    def test_lab_set_hosted_url(self):
+        print "test_lab_set_hosted_url"
+        lab = Lab(name="DS", mnemonic="ds")
+        url = URL("http://ds.vlabs.ac.in")
+        lab.set_hosted_url(url)
+        self.assertEqual(lab.get_hosted_url(), "http://ds.vlabs.ac.in")
+        self.assertRaises(TypeError, lab.set_hosted_url, "http://vlab.ac.in")
+
+    def test_lab_set_repo_url(self):
+        print "test_lab_set_repo_url"
+        lab = Lab(name="DS", mnemonic="ds")
+        url = URL("http://ds.vlabs.ac.in")
+        lab.set_repo_url(url)
+        self.assertEqual(lab.get_repo_url(), "http://ds.vlabs.ac.in")
+        self.assertRaises(TypeError, lab.set_repo_url, "http://vlab.ac.in")
+
+    def test_lab_set_type_of_lab(self):
+        print "test_lab_set_type_of_lab"
+        lab = Lab(name="DS", mnemonic="ds")
+        lab_type = TypeOfLab(name="Simulation")
+        lab.set_type_of_lab(lab_type)
+        self.assertEqual(lab.get_type_of_lab(), lab_type)
+        self.assertRaises(TypeError, lab.set_type_of_lab, "Simulation")
+
+    def test_lab_set_hosted_on(self):
+        print "test_lab_set_hosted_on"
+        lab = Lab(name="DS", mnemonic="ds")
+        plat = HostingPlatform(name="IIIT")
+        lab.set_hosted_on(plat)
+        self.assertEqual(lab.get_hosted_on(), plat)
+        self.assertRaises(TypeError, lab.set_hosted_on, "AWS")
+
 #+END_SRC
 
 *** Tests for Developer
