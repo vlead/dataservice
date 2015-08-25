@@ -1184,14 +1184,6 @@ class AttributeRequired(Exception):
 
 #+END_SRC
 * Test Cases
-** Run Test Cases
-#+BEGIN_SRC sh :tangle run_tests.sh
-#!/bin/bash
-# Run the tests
-python -m tests.test_db
-# python -m tests.test_api
-
-#+END_SRC
 ** __init__ 
 #+BEGIN_SRC python :tangle tests/__init__.py :eval=no
 #something
@@ -1639,6 +1631,8 @@ LOG_FILE = 'logs/dataservice.log'
 LOG_LEVEL = 'ERROR'
 
 #+END_SRC
+* Provisioning
+  [[./setup.org][Set up the environment]]
 * Design discussions
 * Releases
 ** v0.1.0

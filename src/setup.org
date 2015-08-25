@@ -1,0 +1,99 @@
+#+TITLE: Setup Dataservice
+#+Author: VLEAD
+#+Date: [2015-08-25 Tue]
+#+PROPERTY: results output
+#+PROPERTY: exports code
+#+SETUPFILE: org-templates/level-1.org
+
+* Introduction
+
+* Set up the environment
+  Environment for running dataservice is set up.
+** Set up python dependencies 
+#+BEGIN_SRC python :tangle setup.py :eval=no
+from setuptools import setup
+
+requires = [
+    'flask',
+    'Flask-SQLAlchemy',
+    'oursql',
+    'flask-cors',
+    'flask-testing',
+    'requests'
+]
+
+setup(
+    name='DataService',
+    version='0.1',
+    install_requires=requires
+)
+
+#+END_SRC
+** set up DB
+#+BEGIN_SRC python :tangle dbsetup.py :eval=no
+from src.app import create_app
+from src.db import *
+import src.config as config
+
+
+def create_integration_levels():
+    int_levels = (0, 1, 2, 3, 4, 5, 6)
+    for level in int_levels:
+        int_level = IntegrationLevel(level=level)
+        int_level.save()
+
+
+def create_hosting_platforms():
+    platforms = ('IIIT', 'BADAL', 'AWS', 'ELSE')
+    for plat in platforms:
+        platform = HostingPlatform(name=plat)
+        platform.save()
+
+
+def create_type_of_labs():
+    types = ('Simulation', 'Remote Triggered',
+             'Simulation and Remote Triggered', 'Pilot Phase')
+    for type in types:
+        lab_type = TypeOfLab(type=type)
+        lab_type.save()
+
+
+if __name__ == "__main__":
+    db.create_all(app=create_app(config))
+    create_integration_levels()
+    create_hosting_platforms()
+    create_type_of_labs()
+
+#+END_SRC
+** Set up both DB and Python dependencies
+#+BEGIN_SRC sh :tangle setup.sh :eval=no
+#!/bin/bash
+# Shell script to install deb package dependencies as well as python package
+# dependencies for dataservice.
+
+if [[ `id -u` -ne 0 ]]; then
+  echo "You have to execute this script as super user!"
+  exit 1;
+fi
+# Update the packages
+echo "Installing pre-requisite dependencies.."
+apt-get update
+apt-get install mysql-server python-dev libmysqld-dev
+echo "Installing dependencies.."
+# Installing dependencies
+python setup.py install
+if [[ $? -ne 0 ]]; then
+  echo "Installation failed!"
+  exit 1;
+fi
+exit 0
+
+#+END_SRC
+* Run Test Cases
+#+BEGIN_SRC sh :tangle run_tests.sh :eval=no
+#!/bin/bash
+# Run the tests
+python -m tests.test_db
+# python -m tests.test_api
+
+#+END_SRC
