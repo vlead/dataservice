@@ -7,7 +7,7 @@
 
 * Introduction
   Dataservice is a micro service that allows persistence of data by other micro
-  services over HTTP using REST API.  dataservie hides the implementation
+  services over HTTP using REST API.  dataservice hides the implementation
   details of the data store that is required for data persistence.
 
 * Requirements
