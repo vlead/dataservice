@@ -360,25 +360,31 @@ class Institute(Entity):
             raise AttributeRequired("name is required when initializing an institute")
 
         if not isinstance(kwargs['name'], InstituteName):
-            raise TypeError("kwargs['name'] is not of type InstituteName")
+            raise TypeError("%s is not of type Name" % kwargs['name'])
 
-        self.name = name
+        self.name = kwargs['name']
 
         if 'mnemonic' not in kwargs:
             raise AttributeRequired("mnemonic is required when initializing an institute")
 
+        self.mnemonic = kwargs['mnemonic']
+
         if 'pic' in kwargs:
             if not isinstance(kwargs['pic'], Name):
-                raise TypeError("kwargs['pic'] is not of type Name)
-            self.pic = pic
+                raise TypeError("%s is not of type Name" % kwargs['pic'])
+            self.pic = kwargs['pic']
               
         if 'iic' in kwargs:
             if not isinstance(kwargs['iic'], Name):
-                raise TypeError("kwargs['iic'] is not of type Name)
-            self.iic = iic
+                raise TypeError("%s is not of type Name" %kwargs['iic'])
+            self.iic = kwargs['iic']
 
 #+END_SRC
 
+***** Constructor for the Institute
+#+BEGIN_SRC python :tangle src/db.py :eval no 
+
+#+END_SRC
 ***** Functions that operate on Institute domain
 
 ****** getId: Institute --> InstituteId
@@ -540,18 +546,20 @@ class Discipline(Entity):
         if 'name' not in kwargs:
             raise AttributeRequired("name is required when initializing discipline")
 
-        if not isinstance(kwargs['name'], Name):
-            raise TypeError("kwargs['name'] is not of type Name")
+      #  if not isinstance(kwargs['name'], Name):
+      #      raise TypeError("%s is not of type Name" % kwargs['name'])
 
-        self.name = name
+        self.name = kwargs['name']
 
         if 'mnemonic' not in kwargs:
             raise AttributeRequired("mnemonic is required when initializing discipline")
 
+        self.mnemonic = kwargs['mnemonic']
+
         if 'dnc' in kwargs:
             if not isinstance(kwargs['dnc'], Name):
-                raise TypeError("kwargs['dnc'] is not of type Name")
-            self.dnc = dnc
+                raise TypeError("%s is not of type Name" % kwargs['dnc'])
+            self.dnc = kwargs['dnc']
 
 #+END_SRC
 
@@ -1594,7 +1602,7 @@ class TestCustomTypes(TestCase):
 #+END_SRC
 
 *** Tests for Lab
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
 
 class TestLab(TestCase):
 
@@ -1716,7 +1724,7 @@ class TestLab(TestCase):
 #+END_SRC
 
 *** Tests for Developer
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no  
 class TestDeveloper(TestCase):
 
     TESTING = True
@@ -1743,7 +1751,7 @@ class TestDeveloper(TestCase):
 #+END_SRC   
 
 *** Tests for Institute
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
 class TestInstitute(TestCase):
     TESTING = True
 
@@ -1758,85 +1766,17 @@ class TestInstitute(TestCase):
         db.session.remove()
         db.drop_all()
 
-    def test_set_institute_pic(self):
-        print "test_set_institute_pic"
-        instt = Institute(name="IndianInstitute", mnemonic="ii",
-                          pic="Avinash", iic="Amit")
-        new_pic = Name("John Doe")
-        instt.set_pic(new_pic)
-        self.assertEqual(instt.pic, "John Doe")
-
-    def test_set_institute_iic(self):
-        print "test_set_institute_iic"
-        instt = Institute(name="IndianInstitute", mnemonic="ii",
-                          pic="John", iic="Amit")
-        new_iic = Name("Jane Doe")
-        # print new_iic
-        instt.set_iic(new_iic)
-        self.assertEqual(instt.iic, "Jane Doe")
-
-    def test_set_institute_name(self):
-        print "test_set_institute_name"
-        instt = Institute(name="IndianInstitute", mnemonic="ii",
-                          pic="John", iic="Amit")
-        new_name = InstituteName("IIT-Hyd Telangana")
-        instt.set_name(new_name)
-        self.assertEqual(instt.name, "IIT-Hyd Telangana")
-
-    def test_get_institute_name(self):
-        print "test_get_institute_name"
-        instt = Institute(name="IndianInstitute", mnemonic="ii",
-                          pic="John", iic="Jane")
-        inst_name = instt.get_name()
-        self.assertEqual(inst_name, "IndianInstitute")
-
-    def test_get_institute_mnemonic(self):
-        print "test_get_institute_mnemonic"
-        instt = Institute(name="MIT", mnemonic="mit")
-        self.assertEqual(instt.get_mnemonic(), "mit")
-
-    def test_get_institute_pic(self):
-        print "test_get_institute_pic"
-        instt = Institute(name="IndianInstitute", mnemonic="ii",
-                          pic="John", iic="Jane")
-        inst_pic = instt.get_pic()
-        self.assertEqual(inst_pic, "John")
-
-    def test_get_institute_iic(self):
-        print "test_get_institute_iic"
-        instt = Institute(name="IndianInstitute", mnemonic="ii",
-                          pic="John", iic="Jane")
-        inst_iic = instt.get_iic()
-        self.assertEqual(inst_iic, "Jane")
-
-    def test_get_id_of_institute(self):
-        print "test_get_id_of_institute"
-        instt = Institute(id="1", name="SomeInstitute", mnemonic="si")
-        institute_id = instt.get_id()
-        self.assertEqual(institute_id, "1")
-
-    def test_get_institute_by_id(self):
-        print "test_get_institute_by_id"
-        instt = Institute(name="IndianInstitute", mnemonic="ii",
-                          pic="John", iic="Jane")
-        instt.save()
-        self.assertEqual(instt.get_institute_by_id(1).name, "IndianInstitute")
-
-    def test_get_institute_by_mnemonic(self):
-        print "test_get_institute_by_mnemonic"
-        instt = Institute(name="MIT", mnemonic="mit")
-        instt.save()
-        some_instt = Institute.get_institute_by_mnemonic("mit")
-        self.assertEqual(some_instt, instt)
-
-    def test_get_institute_labs(self):
-        print "test_get_institute_labs"
-        lab1 = Lab(name="Micro Controllers", mnemonic="micro")
-        lab2 = Lab(name="Digital Logic Design", mnemonic="digital")
-        labs = [lab1, lab2]
-        instt = Institute(name="MIT", mnemonic="mit", labs=labs)
-        self.assertItemsEqual(instt.get_labs(), labs)
-
+    def test_create_institute(self):
+        name = InstituteName("MIT")
+        mnemonic = "mit"
+        pic = Name("John")
+        iic = Name("jane")
+          
+        inst = Institute(name=name, mnemonic=mnemonic, pic=pic, iic=iic)
+          
+        self.assertEqual(isinstance(inst, Institute), True)
+            
+   
 #+END_SRC        
 
 *** Tests for Discipline
