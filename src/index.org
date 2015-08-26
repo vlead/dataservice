@@ -264,7 +264,7 @@ class Developer(Entity):
 
 ***** Functions that operate on the Developer domain
 ****** getId: Developer --> DeveloperId
-#+BEGIN_SRC
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def get_id(self):
         return self.id
 #+END_SRC
@@ -1577,6 +1577,7 @@ from flask.ext.testing import TestCase
 # import json
 
 from src.db import *
+from tests.helper import *
 from src.app import create_app
 from src.ds_exceptions import AttributeRequired
 
@@ -1625,7 +1626,7 @@ class TestCustomTypes(TestCase):
 #+END_SRC
 
 *** Tests for Lab
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+#+BEGIN_SRC
 
 class TestLab(TestCase):
 
@@ -1866,16 +1867,25 @@ class TestDeveloper(TestCase):
         mnemonic = "mit"
         pic = Name("John")
         iic = Name("jane")
-        inst = Institute(name=name, mnemonic=mnemonic, pic=pic, iic=iic)
-        name = Name("Thirumal Ravula")
-        email_id = Email("travula@gmail.com")
-        developer = Developer(name=name, email_id=email_id, institute=inst)
+        inst = create_institute("MIT", "mit", "John", "Blake")
+        developer = create_developer("Thirumal Ravula",
+                                     "travula@gmail.com", inst)
         print "developer = %s" % developer
-        self.assertEqual(isinstance(developer, Developer), True)
+        self.assertEqual("Thirumal Ravula", developer.name)
+        self.assertEqual("travula@gmail.com", developer.email_id)
+
+    def test_developer_get_id(self):
+        print "test_developer_get_id"
+        inst = create_institute("MIT", "mit", "John", "Blake")
+        developer = create_developer("Thirumal Ravula",
+                                     "travula@gmail.com", inst)
+        developer.save()
+        self.assertEqual(developer.get_id(), 1)
+
 #+END_SRC
 
 *** Tests for Institute
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+#+BEGIN_SRC
 class TestInstitute(TestCase):
     TESTING = True
 
@@ -1986,6 +1996,24 @@ if __name__ == '__main__':
 
 #+END_SRC
 
+** Helper Functions
+#+BEGIN_SRC python :tangle tests/helper.py :eval no
+from src.db import *
+
+
+def create_institute(_name, _mnemonic, _pic, _iic):
+    __name = InstituteName(_name)
+    __pic = Name(_pic)
+    __iic = Name(_iic)
+    return Institute(name=__name, mnemonic=_mnemonic, pic=__pic, iic=__iic)
+
+
+def create_developer(_name, _email, _inst):
+    __name = Name(_name)
+    __email_id = Email(_email)
+    return Developer(name=__name, email_id=__email_id, institute=_inst)
+
+#+END_SRC
 ** APP.py
 #+BEGIN_SRC python :tangle src/app.py :eval no
 # -*- coding: utf-8 -*-
