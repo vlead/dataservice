@@ -1950,8 +1950,41 @@ class TestInstitute(TestCase):
         instt = Institute(name=InstituteName("MIT"), mnemonic="mit")
         self.assertEqual(instt.get_mnemonic(), "mit")
 
+    def test_get_institute_pic(self):
+        print "test_get_institute_pic"
+        instt = Institute(name=InstituteName("IndianInstitute"), mnemonic="ii",
+                          pic=Name("John"), iic=Name("Jane"))
+        inst_pic = instt.get_pic()
+        self.assertEqual(inst_pic, "John")
 
-                       
+    def test_get_institute_iic(self):
+        print "test_get_institute_iic"
+        instt = Institute(name=InstituteName("IndianInstitute"), mnemonic="ii",
+                          pic=Name("John"), iic=Name("Jane"))
+        inst_iic = instt.get_iic()
+        self.assertEqual(inst_iic, "Jane")
+
+    def test_get_id_of_institute(self):
+        print "test_get_id_of_institute"
+        instt = Institute(name=InstituteName("SomeInstitute"), mnemonic="si")
+        instt.save()       
+        institute_id = instt.get_id()
+        self.assertEqual(institute_id, 1)
+
+    def test_get_institute_by_id(self):
+        print "test_get_institute_by_id"
+        instt = Institute(name=InstituteName("IndianInstitute"), mnemonic="ii",
+                          pic=Name("John"), iic=Name("Jane"))
+        instt.save()
+        self.assertEqual(instt.get_institute_by_id(1).name, "IndianInstitute")
+
+    def test_get_institute_by_mnemonic(self):
+        print "test_get_institute_by_mnemonic"
+        instt = Institute(name=InstituteName("MIT"), mnemonic="mit")
+        instt.save()
+        some_instt = Institute.get_institute_by_mnemonic("mit")
+        self.assertEqual(some_instt, instt)
+
 #+END_SRC        
 
 *** Tests for Discipline
