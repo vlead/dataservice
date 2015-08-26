@@ -398,6 +398,12 @@ class Institute(Entity):
         if 'iic' in kwargs:
             self.set_iic(kwargs['iic'])
 
+        if 'labs' in kwargs:
+            if not isinstance(kwargs['labs'], list):
+                raise TypeError('`labs` attribute should be of list type'
+                                ' and each item belongs to Lab class')
+            self.labs = kwargs['labs']
+         
 #+END_SRC
 
 ***** Functions that operate on Institute domain
@@ -574,6 +580,12 @@ class Discipline(Entity):
 
         if 'dnc' in kwargs:
             self.set_dnc(kwargs['dnc'])
+
+        if 'labs' in kwargs:
+            if not isinstance(kwargs['labs'], list):
+                raise TypeError('`labs` attribute should be of list type'
+                                ' and each item belongs to Lab class')
+            self.labs = kwargs['labs']
 
 #+END_SRC
 
@@ -2065,6 +2077,14 @@ class TestInstitute(TestCase):
         some_instt = Institute.get_institute_by_mnemonic("mit")
         self.assertEqual(some_instt, instt)
 
+    def test_get_institute_labs(self):                                           
+        print "test_get_institute_labs"                                          
+        lab1 = Lab(name="Micro Controllers", mnemonic="micro")                   
+        lab2 = Lab(name="Digital Logic Design", mnemonic="digital")              
+        labs = [lab1, lab2]                                                      
+        instt = Institute(name=InstituteName("MIT"), mnemonic="mit", labs=labs)                 
+        self.assertItemsEqual(instt.get_labs(), labs)                            
+  
 #+END_SRC        
 
 *** Tests for Discipline
@@ -2160,6 +2180,14 @@ class TestDiscipline(TestCase):
         disc = Discipline(name=Name("CSE"), mnemonic="cs", dnc=Name("James"))
         disc.save()
         self.assertEqual(disc.get_discipline_by_id(1).name, disc.name)
+
+    def test_get_discipline_labs(self):                                          
+        print "test_get_discipline_labs"                                         
+        lab1 = Lab(name="Micro Controllers", mnemonic="micro")                   
+        lab2 = Lab(name="Digital Logic Design", mnemonic="digital")              
+        labs = [lab1, lab2]                                                      
+        disc = Discipline(name=Name("Electronics"), mnemonic="ece", labs=labs)         
+        self.assertItemsEqual(disc.get_labs(), labs)                             
 
 #+END_SRC
 
