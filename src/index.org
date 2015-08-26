@@ -377,14 +377,15 @@ class Institute(Entity):
     labs = db.relationship('Lab', backref='institute')
     developers = db.relationship('Developer', backref='institute')
 
+#+END_SRC
+
+***** Constructor for the Institute
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     def __init__(self, **kwargs):
         if 'name' not in kwargs:
             raise AttributeRequired("name is required when initializing an institute")
 
-        if not isinstance(kwargs['name'], InstituteName):
-            raise TypeError("%s is not of type Name" % kwargs['name'])
-
-        self.name = kwargs['name']
+        self.set_name(kwargs['name'])
 
         if 'mnemonic' not in kwargs:
             raise AttributeRequired("mnemonic is required when initializing an institute")
@@ -392,34 +393,26 @@ class Institute(Entity):
         self.mnemonic = kwargs['mnemonic']
 
         if 'pic' in kwargs:
-            if not isinstance(kwargs['pic'], Name):
-                raise TypeError("%s is not of type Name" % kwargs['pic'])
-            self.pic = kwargs['pic']
+            self.set_pic(kwargs['pic'])            
               
         if 'iic' in kwargs:
-            if not isinstance(kwargs['iic'], Name):
-                raise TypeError("%s is not of type Name" %kwargs['iic'])
-            self.iic = kwargs['iic']
+            self.set_iic(kwargs['iic'])
 
 #+END_SRC
 
-***** Constructor for the Institute
-#+BEGIN_SRC python :tangle src/db.py :eval no 
-
-#+END_SRC
 ***** Functions that operate on Institute domain
-
-****** getId: Institute --> InstituteId
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_id(self):
-        return self.id
-
-#+END_SRC
 
 ****** getName: Institute --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_name(self):
         return self.name
+
+#+END_SRC
+
+****** getId: Institute --> InstituteId
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_id(self):
+        return self.id
 
 #+END_SRC
 
@@ -1399,7 +1392,7 @@ class Lab(Entity):
   #+CAPTION: Entity Diagram
   #+NAME:   entity
   [[https://drive.google.com/open?id%3D0B6LLRcwXMzt8N3RzZGVkb0NpUDA][ER-Diagram]]
-
+  
 ** Exceptions
 *** AttributeRequired
 #+BEGIN_SRC python :tangle src/ds_exceptions.py :eval no
@@ -1626,7 +1619,8 @@ class TestCustomTypes(TestCase):
 #+END_SRC
 
 *** Tests for Lab
-#+BEGIN_SRC
+
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
 
 class TestLab(TestCase):
 
@@ -1843,7 +1837,6 @@ class TestLab(TestCase):
 
 *** Tests for Developer
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
-
 class TestDeveloper(TestCase):
 
     TESTING = True
@@ -1900,17 +1893,77 @@ class TestInstitute(TestCase):
         db.session.remove()
         db.drop_all()
 
-    def test_create_institute(self):
+    def test_institute_constructor(self):
+        print "test_institute_constructor"
         name = InstituteName("MIT")
         mnemonic = "mit"
         pic = Name("John")
         iic = Name("jane")
           
         inst = Institute(name=name, mnemonic=mnemonic, pic=pic, iic=iic)
-          
         self.assertEqual(isinstance(inst, Institute), True)
-            
-   
+        
+        # Calling the institute constructor without any arguments should
+        # raise AttributeRequired exception
+        self.assertRaises(AttributeRequired, Institute)
+        
+        # Calling the institute constructor without necessary arguments
+        # like name or mnemonic should raise AttributeRequired exception
+        self.assertRaises(AttributeRequired, Institute,
+                          **{'name': InstituteName('IIT'),
+                             'pic': 'Alan',
+                             'iic': 'John'
+                            })
+
+        # Calling the institute constructor with necessary arguments
+        # (name, mnemonic) but with wrong type of other arguments should
+        # raise TypeError
+        self.assertRaises(TypeError, Institute,
+                          **{'name': InstituteName('IIT'),
+                             'mnemonic': 'iit',
+                             'pic': Name('Alan'),
+                             'iic': 'John'
+                            })
+
+    def test_set_institute_pic(self):
+        print "test_set_institute_pic"
+        instt = Institute(name=InstituteName("IndianInstitute"), mnemonic="ii",
+                          pic=Name("Avinash"), iic=Name("Amit"))
+        new_pic = Name("John Doe")
+        instt.set_pic(new_pic)
+        self.assertEqual(instt.pic, "John Doe")
+
+    def test_set_institute_iic(self):
+        print "test_set_institute_iic"
+        instt = Institute(name=InstituteName("IndianInstitute"), mnemonic="ii",
+                          pic=Name("John"), iic=Name("Amit"))
+        new_iic = Name("Jane Doe")
+        # print new_iic
+        instt.set_iic(new_iic)
+        self.assertEqual(instt.iic, "Jane Doe")
+
+    def test_set_institute_name(self):
+        print "test_set_institute_name"
+        instt = Institute(name=InstituteName("IndianInstitute"), mnemonic="ii",
+                          pic=Name("John"), iic=Name("Amit"))
+        new_name = InstituteName("IIT-Hyd Telangana")
+        instt.set_name(new_name)
+        self.assertEqual(instt.name, "IIT-Hyd Telangana")
+
+    def test_get_institute_name(self):
+        print "test_get_institute_name"
+        instt = Institute(name=InstituteName("IndianInstitute"), mnemonic="ii",
+                          pic=Name("John"), iic=Name("Jane"))
+        inst_name = instt.get_name()
+        self.assertEqual(inst_name, "IndianInstitute")
+
+    def test_get_institute_mnemonic(self):
+        print "test_get_institute_mnemonic"
+        instt = Institute(name=InstituteName("MIT"), mnemonic="mit")
+        self.assertEqual(instt.get_mnemonic(), "mit")
+
+
+                       
 #+END_SRC        
 
 *** Tests for Discipline
