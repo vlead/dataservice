@@ -111,6 +111,7 @@ class URL(object):
 
 #+BEGIN_SRC python :tangle src/db.py :eval no
 class Version(object):
+    value = None
     def __init__(self, value):
         if re.search('[a-bA-z]+-[0-9]+(.[0-9]+)+(-[a-zA-Z]+)*', value):
             raise TypeError('%s is not a version!' % value)
@@ -118,7 +119,7 @@ class Version(object):
         self.value = value
     
 #+END_SRC
-     
+
 **** LabId
 
      LabId is a natural number.
@@ -132,7 +133,7 @@ class Version(object):
      InstituteId is a natural number.
 
 **** InstituteName
-    
+
      InstituteName is an alphabetical string including a '-'.
      Following is the constructor for this class.
 
@@ -152,7 +153,7 @@ class InstituteName(object):
      DisciplineId is a natural number.
 
 **** DeveloperId
-     
+
      DeveloperId is a natural number.
 
 **** ExperimentId
@@ -160,10 +161,12 @@ class InstituteName(object):
      ExperimentId is a natural number.
 
 **** IntegrationLevel
-      
-     IntegrationLevel is {L0, L1, L2, L3, L4, L5, L6}.
 
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+
+   IntegrationLevel is {L0, L1, L2, L3, L4, L5, L6}.
+
+
+#+BEGIN_SRC python :tangle src/db.py :eval no
 class IntegrationLevel(Entity):
     __tablename__ = 'integration_levels'
     id = db.Column(db.Integer, primary_key=True)
@@ -175,7 +178,7 @@ class IntegrationLevel(Entity):
 
      HostingPlatform is {IIIT, Badal, AWS, Else}.
 
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
 class HostingPlatform(Entity):
     __tablename__ = 'hosting_platforms'
 
@@ -186,12 +189,12 @@ class HostingPlatform(Entity):
 #+END_SRC
 **** TypeOfLab
 
-     TypeOfLab is 
+     TypeOfLab is
      { Simulation,
      Remote Triggered,
      Simulation and Remote Triggered,
      Pilot Phase }
-     
+
 #+BEGIN_SRC python :tangle src/db.py :eval no
 class TypeOfLab(Entity):
     __tablename__ = 'type_of_labs'
@@ -236,76 +239,87 @@ class Developer(Entity):
         if 'name' and 'email_id' and 'institute' not in keys:
             raise AttributeRequired("non-nullable attribute(s) missing")
 
-            if not isinstance(kwargs['name'], Name):
-                raise TypeError("kwargs['name'] is not of type Name")
-            if not isinstance(kwargs['email_id'], Email):
-                raise TypeError("kwargs['email_id'] is not of type Email")
-            if not isinstance(kwargs['institute'], Name):
-                raise TypeError("kwargs['institute'] is not of type Institute")
-            self.name = kwargs['name']
-            self.email_id = kwargs['email_id']
-            self.institute = kwargs['institute']
+        if not isinstance(kwargs['name'], Name):
+            raise TypeError("kwargs['name'] is not of type Name")
+
+        if not isinstance(kwargs['email_id'], Email):
+            raise TypeError("kwargs['email_id'] is not of type Email")
+
+        if not isinstance(kwargs['institute'], Institute):
+            raise TypeError("kwargs['institute'] is not of type Institute")
+
+        self.name = kwargs['name'].value
+        self.email_id = kwargs['email_id'].value
+        self.institute = kwargs['institute']
+
+    def __str__(self):
+        return "Name = %s, e-mail id = %s, institute = %s" % \
+            (self.name, self.email_id, self.institute.name)
+
+    def __repr__(self):
+        return "Name = %s, e-mail id = %s, institute = %s" % \
+            (self.name, self.email_id, self.institute.name)
 
 #+END_SRC
 
 ***** Functions that operate on the Developer domain
 ****** getId: Developer --> DeveloperId
-#+BEGIN_SRC 
+#+BEGIN_SRC
     def get_id(self):
         return self.id
 #+END_SRC
-       
+
 ****** getName: Developer --> Name
-#+BEGIN_SRC 
+#+BEGIN_SRC
     def get_name(self):
         return self.name
 #+END_SRC
 
 ****** getAllDevelopers: Nil --> set[Developer]
-#+BEGIN_SRC 
+#+BEGIN_SRC
     @staticmethod
     def get_developer(id):
         return Developer.query.get(id)
 #+END_SRC
 
 ****** getLabs: Developer --> set[Lab]
-#+BEGIN_SRC 
+#+BEGIN_SRC
 
 #+END_SRC
 
 ****** getInstitute: Developer --> Institute
-#+BEGIN_SRC 
+#+BEGIN_SRC
 
 #+END_SRC
 
 ****** getDeveloper: DeveloperId --> Developer
-#+BEGIN_SRC 
+#+BEGIN_SRC
     def get_developer(id):
         return Developer.query.get(id)
 #+END_SRC
 
 ****** getEmail: Developer --> Email
-#+BEGIN_SRC 
+#+BEGIN_SRC
     def get_email(self):
         return self.email_id
 #+END_SRC
 
 ****** setName: Developer, Name --> Void
-#+BEGIN_SRC 
+#+BEGIN_SRC
     @typecheck(name=Name)
     def set_name(self, name):
         self.name = name.value
 #+END_SRC
 
 ****** setEmail: Developer, Email --> Void
-#+BEGIN_SRC 
+#+BEGIN_SRC
     @typecheck(email_id=Email)
     def set_email(self, email_id):
         self.email_id = email_id.value
 #+END_SRC
 
 ****** to_client
-#+BEGIN_SRC 
+#+BEGIN_SRC
     def to_client(self):
         return {
             'id': self.id,
@@ -368,25 +382,31 @@ class Institute(Entity):
             raise AttributeRequired("name is required when initializing an institute")
 
         if not isinstance(kwargs['name'], InstituteName):
-            raise TypeError("kwargs['name'] is not of type InstituteName")
+            raise TypeError("%s is not of type Name" % kwargs['name'])
 
-        self.name = name
+        self.name = kwargs['name']
 
         if 'mnemonic' not in kwargs:
             raise AttributeRequired("mnemonic is required when initializing an institute")
 
+        self.mnemonic = kwargs['mnemonic']
+
         if 'pic' in kwargs:
             if not isinstance(kwargs['pic'], Name):
-                raise TypeError("kwargs['pic'] is not of type Name)
-            self.pic = pic
+                raise TypeError("%s is not of type Name" % kwargs['pic'])
+            self.pic = kwargs['pic']
               
         if 'iic' in kwargs:
             if not isinstance(kwargs['iic'], Name):
-                raise TypeError("kwargs['iic'] is not of type Name)
-            self.iic = iic
+                raise TypeError("%s is not of type Name" %kwargs['iic'])
+            self.iic = kwargs['iic']
 
 #+END_SRC
 
+***** Constructor for the Institute
+#+BEGIN_SRC python :tangle src/db.py :eval no 
+
+#+END_SRC
 ***** Functions that operate on Institute domain
 
 ****** getId: Institute --> InstituteId
@@ -397,14 +417,14 @@ class Institute(Entity):
 #+END_SRC
 
 ****** getName: Institute --> Name
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def get_name(self):
         return self.name
 
 #+END_SRC
 
 ****** getInstitute: InstituteId --> Institute
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_institute_by_id(id):
         return Institute.query.get(id)
@@ -412,50 +432,50 @@ class Institute(Entity):
 #+END_SRC
 
 ****** getMnemonic: Institute --> Mnemonic
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def get_mnemonic(self):
         return self.mnemonic
 
 #+END_SRC
 
 ****** getInstitute: Mnemonic --> Institute
-#+BEGIN_SRC python :tangle src/db.py :eval no 
-    @staticmethod                                                                
-    def get_institute_by_mnemonic(mnemonic):                                     
-        return Institute.query.filter_by(mnemonic=mnemonic).first()              
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @staticmethod
+    def get_institute_by_mnemonic(mnemonic):
+        return Institute.query.filter_by(mnemonic=mnemonic).first()
 
 #+END_SRC
 
 ****** getPIC: Institute --> Name
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def get_pic(self):
         return self.pic
 
 #+END_SRC
-      
+
 ****** getIIC: Institute --> Name
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def get_iic(self):
         return self.iic
 
 #+END_SRC
 
 ****** getLabs: Institute --> set[Lab]
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def get_labs(self):
         return self.labs
 
 #+END_SRC
 
 ****** getDevelopers: Institute --> set[Developer]
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def get_developers(self):
         return self.developers
 
 #+END_SRC
 
 ****** getAllInstitutes: Nil --> set[Institute]
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_all():
         return [i.to_client() for i in Institute.query.all()]
@@ -463,7 +483,7 @@ class Institute(Entity):
 #+END_SRC
 
 ****** setPIC: Institute, Name --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(pic=Name)
     def set_pic(self, pic):
         self.pic = pic.value
@@ -471,15 +491,15 @@ class Institute(Entity):
 #+END_SRC
 
 ****** setIIC: Institute, Name --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(iic=Name)
     def set_iic(self, iic):
         self.iic = iic.value
 
 #+END_SRC
-      
+
 ****** setName: Institute, Name --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(name=InstituteName)
     def set_name(self, name):
         self.name = name.value
@@ -487,7 +507,7 @@ class Institute(Entity):
 #+END_SRC
 
 ****** to_client
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def to_client(self):
         return {
             'id': self.id,
@@ -548,25 +568,27 @@ class Discipline(Entity):
         if 'name' not in kwargs:
             raise AttributeRequired("name is required when initializing discipline")
 
-        if not isinstance(kwargs['name'], Name):
-            raise TypeError("kwargs['name'] is not of type Name")
+      #  if not isinstance(kwargs['name'], Name):
+      #      raise TypeError("%s is not of type Name" % kwargs['name'])
 
-        self.name = name
+        self.name = kwargs['name']
 
         if 'mnemonic' not in kwargs:
             raise AttributeRequired("mnemonic is required when initializing discipline")
 
+        self.mnemonic = kwargs['mnemonic']
+
         if 'dnc' in kwargs:
             if not isinstance(kwargs['dnc'], Name):
-                raise TypeError("kwargs['dnc'] is not of type Name")
-            self.dnc = dnc
+                raise TypeError("%s is not of type Name" % kwargs['dnc'])
+            self.dnc = kwargs['dnc']
 
 #+END_SRC
 
 
 ***** Functions that operate on Discipline domain
 ****** getAllDisciplines: Nil --> set[Discipline]
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_all():
         return [i.to_client() for i in Discipline.query.all()]
@@ -574,34 +596,34 @@ class Discipline(Entity):
 #+END_SRC
 
 ****** getId: Discipline --> DisciplineId
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def get_id(self):
         return self.id
 
 #+END_SRC
 
 ****** getName: Discipline --> Name
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def get_name(self):
         return self.name
 
 #+END_SRC
 ****** getDiscipline: DisciplineId --> Discipline
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def get_discipline_by_id(id):
         return Discipline.query.get(id)
 
 #+END_SRC
 
 ****** getMnemonic: Discipline --> Mnemonic
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def get_mnemonic(self):
         return self.mnemonic
 
 #+END_SRC
 
 ****** getDiscipline: Mnemonic --> Discipline
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_discipline_by_mnemonic(mnemonic):
         return Discipline.query.filter_by(mnemonic=mnemonic).first()
@@ -609,21 +631,21 @@ class Discipline(Entity):
 #+END_SRC
 
 ****** getLabs: Discipline --> set[Lab]
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def get_labs(self):
         return self.labs
 
 #+END_SRC
 
 ****** getDNC: Discipline --> Name
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def get_dnc(self):
         return self.dnc
 
 #+END_SRC
 
 ****** setName: Discipline --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(name=Name)
     def set_name(self, name):
         self.name = name.value
@@ -631,15 +653,15 @@ class Discipline(Entity):
 #+END_SRC
 
 ****** setDNC: Discipline, Name --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(name=Name)
     def set_name(self, name):
         self.name = name.value
 
-#+END_SRC      
+#+END_SRC
 
 ****** to_client
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def to_client(self):
         return {
             'id': self.id,
@@ -678,14 +700,14 @@ class Technology(Entity):
 ****** getId: Technology --> TechnologyId
 
 ****** getAllTechnologies: Nil --> set[Technology]
-#+BEGIN_SRC 
+#+BEGIN_SRC
     @staticmethod
     def get_all():
         return [i.to_client() for i in Technology.query.all()]
 #+END_SRC
 
 ****** getLabs: Technology --> set[Lab]
-#+BEGIN_SRC 
+#+BEGIN_SRC
 
 #+END_SRC
 
@@ -700,7 +722,7 @@ class Technology(Entity):
 ****** setFOSS: Technology, Boolean --> Void
 
 ****** to_client
-#+BEGIN_SRC 
+#+BEGIN_SRC
     def to_client(self):
         return {
             'id': self.id,
@@ -726,12 +748,12 @@ class Technology(Entity):
 
 ***** Association
 #+BEGIN_SRC python :tangle src/db.py :eval no
-# association table of technologies and experiments                              
-technologies_used_expt = db.Table(                                               
-    'technologies_used_expt',                                                    
-    db.Column('expt_id', db.Integer, db.ForeignKey('experiments.id')),           
-    db.Column('tech_id', db.Integer, db.ForeignKey('technologies.id'))           
-) 
+# association table of technologies and experiments
+technologies_used_expt = db.Table(
+    'technologies_used_expt',
+    db.Column('expt_id', db.Integer, db.ForeignKey('experiments.id')),
+    db.Column('tech_id', db.Integer, db.ForeignKey('technologies.id'))
+)
 #+END_SRC
 ***** Definition
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -776,14 +798,14 @@ Following is the constructor for this class.
 ***** Functions that operate on the Experiment domain
 
 ****** getId: Experiment --> ExperimentId
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def get_id(self):
         return self.id
 
 #+END_SRC
 
 ****** getExperiment: ExperimentId --> Experiment
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_experiment(id):
         return Experiment.query.get(id)
@@ -791,47 +813,47 @@ Following is the constructor for this class.
 #+END_SRC
 
 ****** getContentURL: Experiment --> URL + Nil
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def get_content_url(self):
         return self.content_url
 
 #+END_SRC
 
 ****** getSimulationURL: Experiment --> URL + Nil
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def get_simulation_url(self):
         return self.simulation_url
 
 #+END_SRC
 
 ****** getTechnologies: Experiment --> set[Technology]
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
 
 #+END_SRC
 
 ****** contentHostedOn: Experiment --> HostingPlatform + Nil
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def content_hosted_on(self):
         return self.content_hosted_on
 
 #+END_SRC
 
 ****** simulationHostedOn: Experiment --> HostingPlatform + Nil
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def simulation_hosted_on(self):
         return self.simulation_hosted_on
 
 #+END_SRC
 
 ****** getLab: Experiment --> Lab
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def get_lab(self):
         return self.lab
 
 #+END_SRC
 
 ****** setContentURL: Experiment, URL --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(url=URL)
     def set_content_url(self, url):
         self.content_url = url
@@ -840,7 +862,7 @@ Following is the constructor for this class.
 #+END_SRC
 
 ****** setSimulationURL: Experiment, URL --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(url=URL)
     def set_simulation_url(self, url):
         self.simulation_url = url
@@ -849,7 +871,7 @@ Following is the constructor for this class.
 #+END_SRC
 
 ****** setContentHostedOn: Experiment, HostingPlatform --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(platform=HostingPlatform)
     def set_content_hosted_on(self, platform):
         self.content_hosted_on = platform
@@ -858,7 +880,7 @@ Following is the constructor for this class.
 #+END_SRC
 
 ****** setSimulationHostedOn: Experiment, HostingPlatform --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(platform=HostingPlatform)
     def set_simulation_hosted_on(self, platform):
         self.simulation_hosted_on = platform
@@ -867,7 +889,7 @@ Following is the constructor for this class.
 #+END_SRC
 
 ****** to_client
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def to_client(self):
         return {
             'id': self.id,
@@ -883,13 +905,13 @@ Following is the constructor for this class.
 
 **** Lab
 ***** Immutable Data
-      
+
       These are the data associated with Lab type, which are immutable.
 
       + LabId
       + Mnemonic
       + NoOfExperiments
-  
+
       As the number of experiments should be derived by the system from the
       experiments already associated with each lab.
 
@@ -913,20 +935,20 @@ Following is the constructor for this class.
 ***** TODO: Mnemonic assigned for each lab
 ***** Association
 #+BEGIN_SRC python :tangle src/db.py :eval no
-# association table of developers and labs                                                                                            
-developers_engaged = db.Table(                                                      
-    'developers_engaged',                                                           
-    db.Column('lab_id', db.Integer, db.ForeignKey('labs.id')),                      
+# association table of developers and labs
+developers_engaged = db.Table(
+    'developers_engaged',
+    db.Column('lab_id', db.Integer, db.ForeignKey('labs.id')),
     db.Column('developer_id', db.Integer, db.ForeignKey('developers.id'))
 )
 
- # association table of technologies and labs                                        
-technologies_used_labs = db.Table(                                                  
-    'technologies_used_labs',                                                       
-    db.Column('lab_id', db.Integer, db.ForeignKey('labs.id')),                      
-    db.Column('tech_id', db.Integer, db.ForeignKey('technologies.id'))              
-)                                                                                  
-     
+ # association table of technologies and labs
+technologies_used_labs = db.Table(
+    'technologies_used_labs',
+    db.Column('lab_id', db.Integer, db.ForeignKey('labs.id')),
+    db.Column('tech_id', db.Integer, db.ForeignKey('technologies.id'))
+)
+
 #+END_SRC
 ***** Definition
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -967,10 +989,10 @@ class Lab(Entity):
     remarks = db.Column(db.Text)
     status = db.Column(db.String(32))
 
-    is_web_2_compliant = db.Column(db.Boolean)
+    is_web_2_compliant_lab = db.Column(db.Boolean)
     is_phase_2_lab = db.Column(db.Boolean)
 #+END_SRC
-      
+
 
 ***** Constructor for the Lab
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -1007,11 +1029,11 @@ class Lab(Entity):
         if 'hosted_url' in kwargs:
             self.set_hosted_url(kwargs['hosted_url'])
 
-        if 'is_web_2_compliant' in kwargs:
-            self.set_is_web_2_compliant(kwargs['is_web_2_compliant'])
+        if 'is_web_2_compliant_lab' in kwargs:
+            self.set_is_web_2_compliant(kwargs['is_web_2_compliant_lab'])
 
         if 'is_phase_2_lab' in kwargs:
-            self.set_is_phase_2_lab(kwargs['is_phase_2_lab'])
+            self.set_is_phase_2(kwargs['is_phase_2_lab'])
 
         if 'slug' in kwargs:
             self.set_slug(kwargs['slug'])
@@ -1116,7 +1138,7 @@ class Lab(Entity):
     def get_hosted_url(self):
         return self.hosted_url
 #+END_SRC
-       
+
 ****** getRepoURL: Lab --> Nil + URL
 
        URL: when sources are available
@@ -1148,7 +1170,7 @@ class Lab(Entity):
 ****** isWeb2Compliant: Lab --> Boolean
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def is_web_2_compliant(self):
-        return self.is_web_2_compliant
+        return self.is_web_2_compliant_lab
 #+END_SRC
 
 ****** isPhase2Lab: Lab --> Boolean
@@ -1193,7 +1215,7 @@ class Lab(Entity):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(name=Name)
     def set_name(self, name):
-        self.name = name
+        self.name = name.value
         self.save()
 #+END_SRC
 
@@ -1257,14 +1279,14 @@ class Lab(Entity):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(compliant=bool)
     def set_is_web_2_compliant(self, compliant):
-        self.is_web_2_compliant = compliant
+        self.is_web_2_compliant_lab = compliant
         self.save()
 #+END_SRC
 
 ****** setisPhase2: Lab, Boolean --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(phase2=bool)
-    def set_is_phase_2_lab(self, phase2):
+    def set_is_phase_2(self, phase2):
         self.is_phase_2_lab = phase2
         self.save()
 #+END_SRC
@@ -1363,9 +1385,9 @@ class Lab(Entity):
             'remarks': self.remarks
         }
 #+END_SRC
-       
+
 *** COMMENT Functions operating on multiple domains
-     
+
 ***** NOTE: is it necessary? getAllLabs: Nil --> set[Lab]
 
 ***** NOTE: is it necessary? getAllDevelopers: Nil --> set[Developer]
@@ -1377,7 +1399,7 @@ class Lab(Entity):
   #+CAPTION: Entity Diagram
   #+NAME:   entity
   [[https://drive.google.com/open?id%3D0B6LLRcwXMzt8N3RzZGVkb0NpUDA][ER-Diagram]]
-  
+
 ** Exceptions
 *** AttributeRequired
 #+BEGIN_SRC python :tangle src/ds_exceptions.py :eval no
@@ -1392,7 +1414,7 @@ class AttributeRequired(Exception):
 
 #+END_SRC
 ** Utility Functions
-#+BEGIN_SRC python :tangle src/utils.py :eval no 
+#+BEGIN_SRC python :tangle src/utils.py :eval no
 # module to hold all utilities/helper functions
 
 import json
@@ -1538,7 +1560,7 @@ def typecheck(**typemap):
 
 #+END_SRC
 * Test Cases
-** __init__ 
+** __init__
 #+BEGIN_SRC python :tangle tests/__init__.py :eval no
 #something
 print "test package"
@@ -1564,7 +1586,7 @@ config = {
 #+END_SRC
 
 *** Tests for Custom Types
-#+BEGIN_SRC
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
 
 class TestCustomTypes(TestCase):
     TESTING = True
@@ -1603,7 +1625,7 @@ class TestCustomTypes(TestCase):
 #+END_SRC
 
 *** Tests for Lab
-#+BEGIN_SRC
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
 
 class TestLab(TestCase):
 
@@ -1700,16 +1722,47 @@ class TestLab(TestCase):
         lab = Lab(name="DS", mnemonic="ds", experiments=exps)
         self.assertEqual(lab.get_num_of_experiments(), 2)
 
+    def test_lab_get_lab_hosted_on(self):
+        print "test_get_lab_hosted_on"
+        platform = HostingPlatform(name="Badal")
+        lab = Lab(name="DS", mnemonic="ds", hosted_on=platform)
+        self.assertEqual(lab.get_hosted_on(), platform)
+
+    def test_lab_is_web2_compliant(self):
+        print "test_lab_is_web2_compliant"
+        lab = Lab(name="DS", mnemonic="ds", is_web_2_compliant_lab=True)
+        self.assertEqual(lab.is_web_2_compliant(), True)
+
+    def test_lab_is_phase_2(self):
+        print "test_lab_is_phase_2"
+        lab = Lab(name="DS", mnemonic="ds", is_phase_2_lab=True)
+        self.assertEqual(lab.is_phase_2(), True)
+
+    def test_lab_get_discipline(self):
+        print "test_lab_get_discipline"
+        disc = Discipline(name="CSE", mnemonic="cse")
+        lab = Lab(name="DS", mnemonic="ds", discipline=disc)
+        self.assertEqual(lab.get_discipline(), disc)
+
+    def test_lab_get_experiments(self):
+        print "test_lab_get_experiments"
+        exp1 = Experiment(name='Pendulum')
+        exp2 = Experiment(name='Gravity')
+        exps = [exp1, exp2]
+        lab = Lab(name="DS", mnemonic="ds", experiments=exps)
+        self.assertItemsEqual(lab.get_experiments(), exps)
+
     def test_lab_get_institute(self):
         print "test_lab_get_institute"
         instt = Institute(name="MIT", mnemonic="mit")
         lab = Lab(name="DS", mnemonic="ds", institute=instt)
-        self.assertEqual(lab.get_institute().name, "MIT")
+        self.assertEqual(lab.get_institute(), instt)
 
     def test_lab_get_developers(self):
         print "test_lab_get_developers"
-        dev1 = Developer(name="Joe")
-        dev2 = Developer(name="Smith")
+        intt = Institute(name="MIT", mnemonic="mit")
+        dev1 = Developer(name="Joe", email_id="joe@mit.com", institute=instt)
+        dev2 = Developer(name="Poe", email_id="poe@mit.com", institute=instt)
         devs = [dev1, dev2]
         lab = Lab(name="DS", mnemonic="ds", developers=devs)
         self.assertItemsEqual(lab.get_developers(), devs)
@@ -1722,10 +1775,74 @@ class TestLab(TestCase):
         lab = Lab(name="DS", mnemonic="ds", technologies=techs)
         self.assertItemsEqual(lab.get_technologies(), techs)
 
+    def test_lab_set_name(self):
+        print "test_lab_set_name"
+        lab = Lab(name="DS", mnemonic="ds")
+        lab.set_name(Name("Data Structures"))
+        self.assertEqual(lab.get_name(), "Data Structures")
+        self.assertRaises(TypeError, lab.set_name, "Data Structures")
+
+    def test_lab_set_institute(self):
+        print "test_lab_set_institute"
+        lab = Lab(name="DS", mnemonic="ds")
+        instt = Institute(name="MIT", mnemonic="mit")
+        lab.set_institute(instt)
+        self.assertEqual(lab.get_institute(), instt)
+        self.assertRaises(TypeError, lab.set_institute, "IIT")
+
+    def test_lab_set_discipline(self):
+        print "test_lab_set_discipline"
+        lab = Lab(name="DS", mnemonic="ds")
+        disc = Discipline(name="CSE", mnemonic="cse")
+        lab.set_discipline(disc)
+        self.assertEqual(lab.get_discipline(), disc)
+        self.assertRaises(TypeError, lab.set_discipline, "ECE")
+
+    def test_lab_set_integration_level(self):
+        print "test_lab_set_integration_level"
+        lab = Lab(name="DS", mnemonic="ds")
+        ilevel = IntegrationLevel(level=5)
+        lab.set_integration_level(ilevel)
+        self.assertEqual(lab.get_integration_level(), ilevel)
+        self.assertRaises(TypeError, lab.set_integration_level, 6)
+
+    def test_lab_set_hosted_url(self):
+        print "test_lab_set_hosted_url"
+        lab = Lab(name="DS", mnemonic="ds")
+        url = URL("http://ds.vlabs.ac.in")
+        lab.set_hosted_url(url)
+        self.assertEqual(lab.get_hosted_url(), "http://ds.vlabs.ac.in")
+        self.assertRaises(TypeError, lab.set_hosted_url, "http://vlab.ac.in")
+
+    def test_lab_set_repo_url(self):
+        print "test_lab_set_repo_url"
+        lab = Lab(name="DS", mnemonic="ds")
+        url = URL("http://ds.vlabs.ac.in")
+        lab.set_repo_url(url)
+        self.assertEqual(lab.get_repo_url(), "http://ds.vlabs.ac.in")
+        self.assertRaises(TypeError, lab.set_repo_url, "http://vlab.ac.in")
+
+    def test_lab_set_type_of_lab(self):
+        print "test_lab_set_type_of_lab"
+        lab = Lab(name="DS", mnemonic="ds")
+        lab_type = TypeOfLab(name="Simulation")
+        lab.set_type_of_lab(lab_type)
+        self.assertEqual(lab.get_type_of_lab(), lab_type)
+        self.assertRaises(TypeError, lab.set_type_of_lab, "Simulation")
+
+    def test_lab_set_hosted_on(self):
+        print "test_lab_set_hosted_on"
+        lab = Lab(name="DS", mnemonic="ds")
+        plat = HostingPlatform(name="IIIT")
+        lab.set_hosted_on(plat)
+        self.assertEqual(lab.get_hosted_on(), plat)
+        self.assertRaises(TypeError, lab.set_hosted_on, "AWS")
+
 #+END_SRC
 
 *** Tests for Developer
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
+
 class TestDeveloper(TestCase):
 
     TESTING = True
@@ -1742,17 +1859,23 @@ class TestDeveloper(TestCase):
         db.drop_all()
 
     # Tests for developer entity
-    def test_developer(self):
+    def test_developer_constructor(self):
         print "test_developer_creation"
+
+        name = InstituteName("MIT")
+        mnemonic = "mit"
+        pic = Name("John")
+        iic = Name("jane")
+        inst = Institute(name=name, mnemonic=mnemonic, pic=pic, iic=iic)
         name = Name("Thirumal Ravula")
         email_id = Email("travula@gmail.com")
-        instt = Institute(name="MIT", mnemonic="mit")
-        developer = Developer(name=name, email_id=email_id, institute=instt)
-        self.assertEqual(developer.name, name)
-#+END_SRC   
+        developer = Developer(name=name, email_id=email_id, institute=inst)
+        print "developer = %s" % developer
+        self.assertEqual(isinstance(developer, Developer), True)
+#+END_SRC
 
 *** Tests for Institute
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
 class TestInstitute(TestCase):
     TESTING = True
 
@@ -1767,89 +1890,21 @@ class TestInstitute(TestCase):
         db.session.remove()
         db.drop_all()
 
-    def test_set_institute_pic(self):
-        print "test_set_institute_pic"
-        instt = Institute(name="IndianInstitute", mnemonic="ii",
-                          pic="Avinash", iic="Amit")
-        new_pic = Name("John Doe")
-        instt.set_pic(new_pic)
-        self.assertEqual(instt.pic, "John Doe")
-
-    def test_set_institute_iic(self):
-        print "test_set_institute_iic"
-        instt = Institute(name="IndianInstitute", mnemonic="ii",
-                          pic="John", iic="Amit")
-        new_iic = Name("Jane Doe")
-        # print new_iic
-        instt.set_iic(new_iic)
-        self.assertEqual(instt.iic, "Jane Doe")
-
-    def test_set_institute_name(self):
-        print "test_set_institute_name"
-        instt = Institute(name="IndianInstitute", mnemonic="ii",
-                          pic="John", iic="Amit")
-        new_name = InstituteName("IIT-Hyd Telangana")
-        instt.set_name(new_name)
-        self.assertEqual(instt.name, "IIT-Hyd Telangana")
-
-    def test_get_institute_name(self):
-        print "test_get_institute_name"
-        instt = Institute(name="IndianInstitute", mnemonic="ii",
-                          pic="John", iic="Jane")
-        inst_name = instt.get_name()
-        self.assertEqual(inst_name, "IndianInstitute")
-
-    def test_get_institute_mnemonic(self):
-        print "test_get_institute_mnemonic"
-        instt = Institute(name="MIT", mnemonic="mit")
-        self.assertEqual(instt.get_mnemonic(), "mit")
-
-    def test_get_institute_pic(self):
-        print "test_get_institute_pic"
-        instt = Institute(name="IndianInstitute", mnemonic="ii",
-                          pic="John", iic="Jane")
-        inst_pic = instt.get_pic()
-        self.assertEqual(inst_pic, "John")
-
-    def test_get_institute_iic(self):
-        print "test_get_institute_iic"
-        instt = Institute(name="IndianInstitute", mnemonic="ii",
-                          pic="John", iic="Jane")
-        inst_iic = instt.get_iic()
-        self.assertEqual(inst_iic, "Jane")
-
-    def test_get_id_of_institute(self):
-        print "test_get_id_of_institute"
-        instt = Institute(id="1", name="SomeInstitute", mnemonic="si")
-        institute_id = instt.get_id()
-        self.assertEqual(institute_id, "1")
-
-    def test_get_institute_by_id(self):
-        print "test_get_institute_by_id"
-        instt = Institute(name="IndianInstitute", mnemonic="ii",
-                          pic="John", iic="Jane")
-        instt.save()
-        self.assertEqual(instt.get_institute_by_id(1).name, "IndianInstitute")
-
-    def test_get_institute_by_mnemonic(self):
-        print "test_get_institute_by_mnemonic"
-        instt = Institute(name="MIT", mnemonic="mit")
-        instt.save()
-        some_instt = Institute.get_institute_by_mnemonic("mit")
-        self.assertEqual(some_instt, instt)
-
-    def test_get_institute_labs(self):
-        print "test_get_institute_labs"
-        lab1 = Lab(name="Micro Controllers", mnemonic="micro")
-        lab2 = Lab(name="Digital Logic Design", mnemonic="digital")
-        labs = [lab1, lab2]
-        instt = Institute(name="MIT", mnemonic="mit", labs=labs)
-        self.assertItemsEqual(instt.get_labs(), labs)
-
+    def test_create_institute(self):
+        name = InstituteName("MIT")
+        mnemonic = "mit"
+        pic = Name("John")
+        iic = Name("jane")
+          
+        inst = Institute(name=name, mnemonic=mnemonic, pic=pic, iic=iic)
+          
+        self.assertEqual(isinstance(inst, Institute), True)
+            
+   
 #+END_SRC        
 
 *** Tests for Discipline
-#+BEGIN_SRC 
+#+BEGIN_SRC
 class TestDiscipline(TestCase):
     TESTING = True
 
@@ -2023,7 +2078,7 @@ if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0')
 
 #+END_SRC
-   
+
 ** Config
 #+BEGIN_SRC python :tangle src/config.py :eval no
 # DB URI
@@ -2044,7 +2099,7 @@ ALLOWED_ORIGINS = ["*"]
 LOG_FILE = 'logs/dataservice.log'
 
 # Log level for the application
-LOG_LEVEL = 'ERROR'
+LOG_LEVEL = 'DEBUG'
 
 #+END_SRC
 * Provisioning
