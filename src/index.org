@@ -255,6 +255,14 @@ class Institute(Entity):
 #+END_SRC
 
 ***** Constructor for the Institute
+     Signature of constructor
+#+BEGIN_EXAMPLE
+    institute = Institute(name=instance of class InstituteName,
+                          mnemonic=String
+                          pic=instance of class Name,
+                          iic=instance of class Name)
+#+END_EXAMPLE
+
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def __init__(self, **kwargs):
         if 'name' not in kwargs:
@@ -435,6 +443,13 @@ class Discipline(Entity):
 #+END_SRC
 
 ***** Constructor for the Discipline
+     Signature of constructor
+#+BEGIN_EXAMPLE
+    discipline = Discipline(name=instance of class Name,
+                            mnemonic=String,
+                            dnc=instance of class Name)
+#+END_EXAMPLE
+
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def __init__(self, **kwargs):
         if 'name' not in kwargs:
@@ -853,6 +868,16 @@ class Experiment(Entity):
 #+END_SRC
 
 ***** Constructor for the Experiment
+     Signature of constructor
+#+BEGIN_EXAMPLE
+    experiment = Experiment(name=instance of class Name,
+                            content_url=instance of class URL,
+                            simulation_url=instance of class URL,
+                            content_hosted_on=instance of class HostingPlatform,
+                            simulation_hosted_on=instance of class HostingPlatform,
+                            technologies=list type attribute where each item belongs to class Technology)
+#+END_EXAMPLE
+
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def __init__(self, **kwargs):
         if 'name' not in kwargs:
