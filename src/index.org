@@ -1158,7 +1158,7 @@ class Lab(Entity):
 ****** getLab: LabId --> Lab
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
-    def get_lab_by_id(id):
+    def get_by_id(id):
         return Lab.query.get(id)
 #+END_SRC
 
@@ -1189,7 +1189,7 @@ class Lab(Entity):
 ****** getLab: Mnemonic --> Lab
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
-    def get_lab_by_mnemonic(mnemonic):
+    def get_by_mnemonic(mnemonic):
         return Lab.query.filter_by(mnemonic=mnemonic).first()
 #+END_SRC
 
@@ -1750,11 +1750,11 @@ class TestLab(TestCase):
         lab.save()
         self.assertEqual(lab.get_id(), 1)
 
-    def test_lab_get_lab_by_id(self):
-        print "test_lab_get_lab_by_id"
+    def test_lab_get_by_id(self):
+        print "test_lab_get_by_id"
         lab = Lab(name="DS", mnemonic="ds")
         lab.save()
-        some_lab = Lab.get_lab_by_id(1)
+        some_lab = Lab.get_by_id(1)
         self.assertEqual(some_lab, lab)
 
     def test_lab_get_mnemonic(self):
@@ -1762,11 +1762,11 @@ class TestLab(TestCase):
         lab = Lab(name="DS", mnemonic="ds")
         self.assertEqual(lab.get_mnemonic(), "ds")
 
-    def test_lab_get_lab_by_mnemonic(self):
-        print "test_lab_get_lab_by_mnemonic"
+    def test_lab_get_by_mnemonic(self):
+        print "test_lab_get_by_mnemonic"
         lab = Lab(name="DS", mnemonic="ds")
         lab.save()
-        some_lab = Lab.get_lab_by_mnemonic("ds")
+        some_lab = Lab.get_by_mnemonic("ds")
         self.assertEqual(some_lab, lab)
 
     def test_lab_get_name(self):
@@ -1930,7 +1930,7 @@ class TestLab(TestCase):
         self.assertRaises(TypeError, lab.set_is_web_2_compliant, "Yes")
 
     def test_lab_set_is_phase_2(self):
-        print "test_lab_set_is_web_2_compliant"
+        print "test_lab_set_is_phase_2"
         lab = Lab(name="DS", mnemonic="ds")
         lab.set_is_phase_2(True)
         self.assertEqual(lab.is_phase_2(), True)
@@ -2447,6 +2447,11 @@ class TestTechnology(TestCase):
         techs = Technology.get_all()
         self.assertItemsEqual(techs, [tech1, tech2, tech3])
 
+    def test_technology_get_name(self):
+        print "test_technology_get_name"
+        tech = Technology(name="php5")
+        self.assertEqual(tech.get_name(), "php5")
+
     def test_technology_get_labs(self):
         print "test_technology_get_labs"
         tech = Technology(name="php5", version="5.0")
@@ -2469,6 +2474,12 @@ class TestTechnology(TestCase):
         print "test_technology_is_foss"
         tech = Technology(name="Python", version="2.7", foss=True)
         self.assertEqual(tech.is_foss(), True)
+
+    def test_technology_set_name(self):
+        print "test_technology_set_name"
+        tech = Technology(name="Python")
+        tech.set_name("Python2.7")
+        self.assertEqual(tech.get_name(), "Python2.7")
 
     def test_technology_set_version(self):
         print "test_technology_set_version"
