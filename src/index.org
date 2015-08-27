@@ -1998,8 +1998,8 @@ class TestDeveloper(TestCase):
         dev = Developer.get_by_id(1)
         self.assertEqual("travula@gmail.com", dev.get_email())
 
-    def test_developer_get_all_developers(self):
-        print "test_developer_get_all_developers"
+    def test_developer_get_all(self):
+        print "test_developer_get_all"
         inst = create_institute("MIT", "mit", "John", "Blake")
         developer_1 = create_developer("Thirumal Ravula",
                                      "travula@gmail.com", inst)
@@ -2026,7 +2026,23 @@ class TestDeveloper(TestCase):
     def test_developer_get_labs(self):
         # This test case has to be implemented
         print "test_developer_get_labs"
-        self.assertEqual(True, True)
+        inst = create_institute("MIT", "mit", "John", "Blake")
+        developer = create_developer("Thirumal Ravula",
+                                     "travula@gmail.com", inst)
+        developer.save()
+
+        devs = [developer]
+        lab1 = Lab(name="DS", mnemonic="ds", developers=devs)
+        lab1.save()
+        lab2 = Lab(name="POPL", mnemonic="popl", developers=devs)
+        lab2.save()
+        labs = [lab1, lab2]
+        dev = Developer.get_by_id(1)
+        get_labs = dev.get_labs()
+        for lab in get_labs:
+            print lab.name
+        self.assertItemsEqual(labs, dev.get_labs())
+
 
     def test_developer_get_institute(self):
         print "test_developer_get_institute"
@@ -2034,8 +2050,10 @@ class TestDeveloper(TestCase):
         developer = create_developer("Thirumal Ravula",
                                      "travula@gmail.com", inst)
         developer.save()
-        institute = developer.get_institute()
-        self.assertEqual("MIT", institute.name)
+        dev = Developer.get_by_id(1)
+        institute = dev.get_institute()
+        print institute.name
+        self.assertEqual(inst, institute)
 
     def test_developer_set_name(self):
         print "test_developer_set_name"
@@ -2069,7 +2087,7 @@ class TestDeveloper(TestCase):
         developer.set_institute(inst_1)
         developer.save()
         dev = Developer.get_by_id(1)
-        self.assertEqual("Purdue", dev.institute.name)
+        self.assertEqual(inst_1, dev.institute)
 
 #+END_SRC
 
