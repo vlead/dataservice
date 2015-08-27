@@ -703,6 +703,13 @@ class Technology(Entity):
 #+END_SRC
 
 ***** Constructor for Technology
+Signature for the constructor is as follows. Attributes inside [...] are
+optional. Other attributes are mandatory.
+#+BEGIN_EXAMPLE python
+Technology(name=String
+           [,version=String]
+           [,foss=Boolean])
+#+END_EXAMPLE
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def __init__(self, **kwargs):
         if 'name' not in kwargs:
@@ -1070,8 +1077,33 @@ class Lab(Entity):
     is_phase_2_lab = db.Column(db.Boolean)
 #+END_SRC
 
+***** Constructor for Lab
+Signature of the constructor for Lab is as follows. Attributes inside [...]
+are optional when constructing the lab. Other attributes are mandatory.
 
-***** Constructor for the Lab
+Experiments are never a part of the constructor. That is experiemtns are not
+associated with a lab when the lab is being created. That would mean the
+experiments existed before the lab existed independently, which is not the
+case in reality. Hence a lab is created first, and then experiments are
+created and associated with an existing lab. So, experiments are never a part
+of Lab constructor.
+#+BEGIN_EXAMPLE python
+Lab(name=<instance of Name class>,
+    mnemonic=String
+    [,slug=String]
+    [,institute=<instance of Institute class>]
+    [,discipline=<instance of Discipline class>]
+    [,integration_level=<instance of IntegrationLevel class>]
+    [,developers=<list of instance of Developer class>]
+    [,technologies=<list of instance of Technology class>]
+    [,repo_url=<instance of URL class>]
+    [,hosted_url=<instance of URL class>]
+    [,hosted_on=<instance of HostingPlatform class>]
+    [,type_of_lab=<instance of TypeOfLab class>]
+    [,is_web_2_compliant_lab=Boolean]
+    [,is_phase_2_lab=Boolean])
+#+END_EXAMPLE
+
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def __init__(self, **kwargs):
 
@@ -1138,13 +1170,6 @@ class Lab(Entity):
             for technology in kwargs['technologies']:
                 self.add_technology(technology)
 
-        if 'experiments' in kwargs:
-            if not isinstance(kwargs['experiments'], list):
-                raise TypeError('`experiments` attribute should be of list '
-                                'type. Each item being of Experiment class')
-            for experiment in kwargs['experiments']:
-                self.add_experiment(experiment)
-
 #+END_SRC
 
 ***** Functions that operate on the Lab domain
@@ -1208,6 +1233,14 @@ class Lab(Entity):
         return self.integration_level.level
 #+END_SRC
 
+****** isHosted: Lab --> Boolean
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def is_hosted(self):
+        if self.hosted_url:
+            return True
+        return False
+#+END_SRC
+
 ****** getHostedURL: Lab --> Nil + URL
 
        URL: when hosted
@@ -1216,6 +1249,14 @@ class Lab(Entity):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_hosted_url(self):
         return self.hosted_url
+#+END_SRC
+
+****** isSourceAvailable: Lab --> Boolean
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def is_source_available(self):
+        if self.repo_url:
+            return True
+        return False
 #+END_SRC
 
 ****** getRepoURL: Lab --> Nil + URL
@@ -1785,10 +1826,18 @@ class TestLab(TestCase):
         lab = Lab(name="DS", mnemonic="ds", hosted_url=URL("http://gnu.org"))
         self.assertEqual(lab.get_hosted_url(), "http://gnu.org")
 
+    def test_lab_is_hosted(self):
+        print "test_lab_is_hosted"
+        #TODO: implement this!
+
     def test_lab_get_repo_url(self):
         print "test_lab_get_repo_url"
         lab = Lab(name="DS", mnemonic="ds", repo_url=URL("http://gnu.org"))
         self.assertEqual(lab.get_repo_url(), "http://gnu.org")
+
+    def test_lab_is_source_available(self):
+        print "test_lab_is_source_available"
+        #TODO: implement this!
 
     def test_lab_get_type_of_lab(self):
         print "test_lab_get_type_of_lab"
@@ -1801,7 +1850,9 @@ class TestLab(TestCase):
         exp1 = Experiment(name='Pendulum')
         exp2 = Experiment(name='Gravity')
         exps = [exp1, exp2]
-        lab = Lab(name="DS", mnemonic="ds", experiments=exps)
+        lab = Lab(name="DS", mnemonic="ds")
+        lab.add_experiment(exp1)
+        lab.add_experiment(exp2)
         self.assertEqual(lab.get_num_of_experiments(), 2)
 
     def test_lab_get_hosted_on(self):
@@ -1831,7 +1882,9 @@ class TestLab(TestCase):
         exp1 = Experiment(name=Name('Pendulum'))
         exp2 = Experiment(name=Name('Gravity'))
         exps = [exp1, exp2]
-        lab = Lab(name="DS", mnemonic="ds", experiments=exps)
+        lab = Lab(name="DS", mnemonic="ds")
+        lab.add_experiment(exp1)
+        lab.add_experiment(exp2)
         self.assertItemsEqual(lab.get_experiments(), exps)
 
     def test_lab_get_institute(self):
@@ -1983,7 +2036,8 @@ class TestLab(TestCase):
     def test_lab_remove_experiment(self):
         print "test_lab_remove_experiment"
         exp = Experiment(name=Name("Pendulum"))
-        lab = Lab(name="DS", mnemonic="ds", experiments=[exp])
+        lab = Lab(name="DS", mnemonic="ds")
+        lab.add_experiment(exp)
         self.assertEqual(len(lab.get_experiments()), 1)
         lab.remove_experiment(exp)
         self.assertEqual(len(lab.get_experiments()), 0)
