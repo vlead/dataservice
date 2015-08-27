@@ -680,15 +680,15 @@ class Developer(Entity):
 **** Technology
 
 ***** Immutable Data
-This is the data associated with Technology type, which is immutable.
+      This is the data associated with Technology type, which is immutable.
 
-+ TechnologyId
+      + TechnologyId
 
 ***** Mutable Data
-These are the data associated with Technoloy type, which are mutable.
+      These are the data associated with Technoloy type, which are mutable.
 
-+ Version
-+ FOSS
+      + Version
+      + FOSS
 
 ***** Definition
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -2634,77 +2634,49 @@ LOG_LEVEL = 'DEBUG'
   [[./setup.org][Set up the environment]]
 * Design discussions
 * Releases
+
+    
 ** v0.1.0
     This release will satisfy requirements 1 & 2
     Release Date :: [2015-08-26 Wed]
-*** Work Split
-**** Overview
-     #+CAPTION: Total Hours
-     #+NAME:    total-hours
-
-     |------------------+------------------+--------+--------+--------|
-     |                  |                  |        |        | Total  |
-     |                  |                  | No. of | No. of | number |
-     | Start Date       | End Date         | days   | people | of     |
-     |                  |                  |        |        | person |
-     |                  |                  |        |        | days   |
-     |------------------+------------------+--------+--------+--------|
-     | [2015-08-13 Thu] | [2015-08-26 Wed] | 10     | 5      | 50     |
-     |------------------+------------------+--------+--------+--------|
-
-**** Detailed
-     #+CAPTION: Detailed Hours
-     #+NAME:    detailed-hours
-
-     |----------------------+------------------+--------------------+-------------------------+------+------------------|
-     | Task Name            |                  | Date of Completion |                         |      |           Effort |
-     |                      | Start Date       |                    | no.                     |  no. | (in person days) |
-     |                      |                  |                    | of                      |   of |                  |
-     |                      |                  |                    | persons                 | days |                  |
-     |----------------------+------------------+--------------------+-------------------------+------+------------------|
-     | Data Model           | [2015-08-13 Thu] | [2015-08-18 Tue]   | 1                       |    4 |                4 |
-     | (Initial Cut)        |                  |                    |                         |      |                  |
-     |                      |                  |                    |                         |      |                  |
-     |----------------------+------------------+--------------------+-------------------------+------+------------------|
-     | Python API           |                  |                    |                         |      |                  |
-     | & REST API           | [2015-08-19 Wed] | [2015-08-26 Wed]   | 2                       |    6 |               12 |
-     |----------------------+------------------+--------------------+-------------------------+------+------------------|
-     | VIEW -               |                  |                    | 4 till [2015-08-18 Tue] |    4 |               16 |
-     | list, detail         | [2015-08-13 Thu] | [2015-08-26 Wed]   |                         |      |                  |
-     | and update           |                  |                    |                         |      |                  |
-     |                      |                  |                    | 2 till [2015-08-26 Wed] |    6 |               12 |
-     |----------------------+------------------+--------------------+-------------------------+------+------------------|
-     | Provisioning &       |                  |                    |                         |      |                  |
-     | Data Model Evolution | [2015-08-19 Wed] | [2015-08-26 Wed]   | 1                       |    6 |                6 |
-     |----------------------+------------------+--------------------+-------------------------+------+------------------|
-     | Filters              |                  |                    |                         |      |                  |
-     |----------------------+------------------+--------------------+-------------------------+------+------------------|
-
 *** Tasks & Deadlines
-    1. Data Model
-       + Completion Date :: [2015-08-18 Tue]
-       + Effort :: 3 person days
-       + Tasks
-         - Describe each entity and capture the model of data for each entity.
-         - Describe the relationship between all the entities.
-    2. Python API , REST API and Migration scripts from old data to new model
-       + Completion Data :: [2015-08-26 Wed]
-       + Effort :: 12 person days
-       + Tasks
-         - Provide Python API to perform CRUD operations on different entities.
-         - Provide REST API for different application to perform CRUD
-           operations on different entities.
-         - Provide a migration script that converts the legacy data into the
-           new data model.
-    3. VIEW - list, detail and update views of each entity
-       + Completion Data :: [2015-08-26 Wed]
-       + Effort :: 12 person days
-       + Tasks
-         - Provide a mechanism to list all the rows in an entity for all entities.
-         - Provide a mechanism to a detailed view of a row in a selected entity.
-         - Provide a mechanism to update a row in an entity.
+**** DONE Data Model
+     + Tasks
+       - Describe each entity and capture the model of data for each entity.
+       - Describe the relationship between all the entities.
 
-    4. Filters
+**** TODO Python API , 
+     + Completion Data :: [2015-08-26 Wed]
+     + Completed Date :: 
+     + Tasks
+       - Provide Python API to perform CRUD operations on different entities.
+*** Hours
+    |------------------+----------+------+--------+-------+---|
+    | Date             | Thirumal | Anon | Ambika | Total |   |
+    |------------------+----------+------+--------+-------+---|
+    | [2015-08-24 Mon] |        6 |    6 |      7 |    19 |   |
+    |------------------+----------+------+--------+-------+---|
+    | [2015-08-25 Tue] |        6 |    6 |      7 |    19 |   |
+    |------------------+----------+------+--------+-------+---|
+    | [2015-08-26 Wed] |        6 |    6 |      7 |    19 |   |
+    |------------------+----------+------+--------+-------+---|
+    | [2015-08-27 Thu] |        6 |    5 |      7 |    18 |   |
+    |------------------+----------+------+--------+-------+---|
+    | Total            |          |      |        |    75 |   |
+    |------------------+----------+------+--------+-------+---|
 
-    5. Provisioning
+    
+** v0.2.0
+    This release will satisfy requirements 3
+    Release Date :: 
+**** TODO REST API and Migration scripts from old data to new model
+***** Tasks
+      1. Provide REST API for different application to perform CRUD
+         operations on different entities.
+      2. Provide a migration script that converts the legacy data into the
+         new data model.
 
+
+
+** v1.0.0
+**** TODO Provisioning
