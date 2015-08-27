@@ -117,7 +117,7 @@ class Version(object):
             raise TypeError('%s is not a version!' % value)
 
         self.value = value
-    
+
 #+END_SRC
 
 **** LabId
@@ -255,7 +255,7 @@ class Institute(Entity):
 #+END_SRC
 
 ***** Constructor for the Institute
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def __init__(self, **kwargs):
         if 'name' not in kwargs:
             raise AttributeRequired("name is required when initializing an institute")
@@ -268,8 +268,8 @@ class Institute(Entity):
         self.mnemonic = kwargs['mnemonic']
 
         if 'pic' in kwargs:
-            self.set_pic(kwargs['pic'])            
-              
+            self.set_pic(kwargs['pic'])
+
         if 'iic' in kwargs:
             self.set_iic(kwargs['iic'])
 
@@ -278,7 +278,7 @@ class Institute(Entity):
                 raise TypeError('`labs` attribute should be of list type'
                                 ' and each item belongs to Lab class')
             self.labs = kwargs['labs']
-         
+
 #+END_SRC
 
 ***** Functions that operate on Institute domain
@@ -439,9 +439,9 @@ class Discipline(Entity):
     labs = db.relationship('Lab', backref='discipline')
 
 #+END_SRC
-      
+
 ***** Constructor for the Discipline
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def __init__(self, **kwargs):
         if 'name' not in kwargs:
             raise AttributeRequired("name is required when initializing discipline")
@@ -573,7 +573,7 @@ class Developer(Entity):
     institute_id = db.Column(db.Integer, db.ForeignKey('institutes.id'))
 
 #+END_SRC
-***** Constructor 
+***** Constructor
      signature of constructor
 #+BEGIN_EXAMPLE
     developer = Developer(name=instance of class Name,
@@ -615,7 +615,7 @@ class Developer(Entity):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_id(self):
         return self.id
-#+END_SRC 
+#+END_SRC
 
 ****** getDeveloper: DeveloperId --> Developer
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -655,7 +655,7 @@ class Developer(Entity):
     def get_institute(self):
         return self.institute
 
-#+END_SRC 
+#+END_SRC
 
 ****** setName: Developer, Name --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -676,6 +676,7 @@ class Developer(Entity):
     def set_institute(self, institute):
         self.institute = institute
 #+END_SRC
+
 **** Technology
 
 ***** Immutable Data
@@ -701,32 +702,102 @@ class Technology(Entity):
     foss = db.Column(db.Boolean)
 #+END_SRC
 
+***** Constructor for Technology
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def __init__(self, **kwargs):
+        if 'name' not in kwargs:
+            raise AttributeRequired('`name` attribute is required to'
+                                    ' initialize Technology')
+        if not isinstance(kwargs['name'], str):
+            raise TypeError('`name` attribute should be of type "str"')
+
+        self.name = kwargs['name']
+
+        if 'version' in kwargs:
+            self.set_version(kwargs['version'])
+
+        if 'foss' in kwargs:
+            self.set_foss(kwargs['foss'])
+
+#+END_SRC
 ***** Functions that operate on the Technology domain
 ****** getId: Technology --> TechnologyId
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_id(self):
+        return self.id
+
+#+END_SRC
+
+****** getName: Technology --> String
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_name(self):
+        return self.name
+
+#+END_SRC
 
 ****** getAllTechnologies: Nil --> set[Technology]
-#+BEGIN_SRC
+#+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_all():
-        return [i.to_client() for i in Technology.query.all()]
+        return [i for i in Technology.query.all()]
+
 #+END_SRC
 
 ****** getLabs: Technology --> set[Lab]
-#+BEGIN_SRC
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_labs(self):
+        return self.labs
 
 #+END_SRC
 
 ****** getTechnology: TechnologyId --> Technology
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @staticmethod
+    def get_by_id(id):
+        return Technology.query.get(id)
+
+#+END_SRC
 
 ****** getVersion: Technology --> Version
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_version(self):
+        return self.version
+
+#+END_SRC
 
 ****** isFOSS: Technology --> Boolean
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def is_foss(self):
+        return self.foss
 
+#+END_SRC
+
+****** setName: Technology, String --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(name=str)
+    def set_name(self, name):
+        self.name = name
+
+#+END_SRC
 ****** setVersion: Technology, Version --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(version=str)
+    def set_version(self, version):
+        self.version = version
+
+#+END_SRC
 
 ****** setFOSS: Technology, Boolean --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(foss=bool)
+    def set_foss(self, foss):
+        self.foss = foss
 
-****** to_client
+#+END_SRC
+
+****** to_client: Technology --> Dictionary
+       Returns a dictionary of necessary attributes for a client to consume
+       all the attributes of a technology
 #+BEGIN_SRC
     def to_client(self):
         return {
@@ -736,6 +807,7 @@ class Technology(Entity):
             'foss': self.foss
         }
 #+END_SRC
+
 **** Experiment
 
 ***** Immutable Data
@@ -1406,7 +1478,7 @@ class Lab(Entity):
   #+CAPTION: Entity Diagram
   #+NAME:   entity
   [[https://drive.google.com/open?id%3D0B6LLRcwXMzt8N3RzZGVkb0NpUDA][ER-Diagram]]
-  
+
 ** Exceptions
 *** AttributeRequired
 #+BEGIN_SRC python :tangle src/ds_exceptions.py :eval no
@@ -1732,8 +1804,8 @@ class TestLab(TestCase):
         lab = Lab(name="DS", mnemonic="ds", experiments=exps)
         self.assertEqual(lab.get_num_of_experiments(), 2)
 
-    def test_lab_get_lab_hosted_on(self):
-        print "test_get_lab_hosted_on"
+    def test_lab_get_hosted_on(self):
+        print "test_lab_get_hosted_on"
         platform = HostingPlatform(name="Badal")
         lab = Lab(name="DS", mnemonic="ds", hosted_on=platform)
         self.assertEqual(lab.get_hosted_on(), platform)
@@ -1978,7 +2050,7 @@ class TestDeveloper(TestCase):
         self.assertEqual("travula@gmail.com", dev.email_id)
         self.assertEqual("MIT", dev.institute.name)
         self.assertEqual("mit", dev.institute.mnemonic)
-        
+
 
     def test_developer_get_name(self):
         print "test_developer_get_name"
@@ -2095,14 +2167,14 @@ class TestInstitute(TestCase):
         mnemonic = "mit"
         pic = Name("John")
         iic = Name("jane")
-          
+
         inst = Institute(name=name, mnemonic=mnemonic, pic=pic, iic=iic)
         self.assertEqual(isinstance(inst, Institute), True)
-        
+
         # Calling the institute constructor without any arguments should
         # raise AttributeRequired exception
         self.assertRaises(AttributeRequired, Institute)
-        
+
         # Calling the institute constructor without necessary arguments
         # like name or mnemonic should raise AttributeRequired exception
         self.assertRaises(AttributeRequired, Institute,
@@ -2175,7 +2247,7 @@ class TestInstitute(TestCase):
     def test_get_id_of_institute(self):
         print "test_get_id_of_institute"
         instt = Institute(name=InstituteName("SomeInstitute"), mnemonic="si")
-        instt.save()       
+        instt.save()
         institute_id = instt.get_id()
         self.assertEqual(institute_id, 1)
 
@@ -2193,18 +2265,18 @@ class TestInstitute(TestCase):
         some_instt = Institute.get_institute_by_mnemonic("mit")
         self.assertEqual(some_instt, instt)
 
-    def test_get_institute_labs(self):                                           
-        print "test_get_institute_labs"                                          
-        lab1 = Lab(name="Micro Controllers", mnemonic="micro")                   
-        lab2 = Lab(name="Digital Logic Design", mnemonic="digital")              
-        labs = [lab1, lab2]                                                      
-        instt = Institute(name=InstituteName("MIT"), mnemonic="mit", labs=labs)                 
-        self.assertItemsEqual(instt.get_labs(), labs)                            
-  
-#+END_SRC        
+    def test_get_institute_labs(self):
+        print "test_get_institute_labs"
+        lab1 = Lab(name="Micro Controllers", mnemonic="micro")
+        lab2 = Lab(name="Digital Logic Design", mnemonic="digital")
+        labs = [lab1, lab2]
+        instt = Institute(name=InstituteName("MIT"), mnemonic="mit", labs=labs)
+        self.assertItemsEqual(instt.get_labs(), labs)
+
+#+END_SRC
 
 *** Tests for Discipline
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
 class TestDiscipline(TestCase):
     TESTING = True
 
@@ -2297,13 +2369,104 @@ class TestDiscipline(TestCase):
         disc.save()
         self.assertEqual(disc.get_discipline_by_id(1).name, disc.name)
 
-    def test_get_discipline_labs(self):                                          
-        print "test_get_discipline_labs"                                         
-        lab1 = Lab(name="Micro Controllers", mnemonic="micro")                   
-        lab2 = Lab(name="Digital Logic Design", mnemonic="digital")              
-        labs = [lab1, lab2]                                                      
-        disc = Discipline(name=Name("Electronics"), mnemonic="ece", labs=labs)         
-        self.assertItemsEqual(disc.get_labs(), labs)                             
+    def test_get_discipline_labs(self):
+        print "test_get_discipline_labs"
+        lab1 = Lab(name="Micro Controllers", mnemonic="micro")
+        lab2 = Lab(name="Digital Logic Design", mnemonic="digital")
+        labs = [lab1, lab2]
+        disc = Discipline(name=Name("Electronics"), mnemonic="ece", labs=labs)
+        self.assertItemsEqual(disc.get_labs(), labs)
+
+#+END_SRC
+
+*** Tests for Technology
+
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+class TestTechnology(TestCase):
+    TESTING = True
+
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def test_technology_constructor(self):
+        print "test_technology_constructor"
+        tech = Technology(name="php5", version="5.0")
+        self.assertEqual(isinstance(tech, Technology), True)
+        self.assertEqual(tech.get_name(), "php5")
+        # Calling Technology constructor w/o any argument should raise
+        # AttributeRequired exception
+        self.assertRaises(AttributeRequired, Technology)
+        # Calling Technology constructor w/o required args should raise
+        # AttributeRequired exception
+        self.assertRaises(AttributeRequired, Technology,
+                          **{'version': '5.0', 'foss': False})
+        # Calling constructor with req. args but wrong types
+        self.assertRaises(TypeError, Technology,
+                          **{'name': 45, 'version': '5.0'})
+
+    def test_technology_get_id(self):
+        print "test_technology_get_id"
+        tech = Technology(name="php5")
+        tech.save()
+        self.assertEqual(tech.get_id(), 1)
+
+    def test_technology_get_all(self):
+        print "test_technology_get_all"
+        tech1 = Technology(name="php5")
+        tech1.save()
+        tech2 = Technology(name="Python")
+        tech2.save()
+        tech3 = Technology(name="Apache")
+        tech3.save()
+        techs = Technology.get_all()
+        self.assertItemsEqual(techs, [tech1, tech2, tech3])
+
+    def test_technology_get_labs(self):
+        print "test_technology_get_labs"
+        tech = Technology(name="php5", version="5.0")
+        lab1 = Lab(name="DS", mnemonic="ds", technologies=[tech])
+        lab2 = Lab(name="CG", mnemonic="cg", technologies=[tech])
+        self.assertItemsEqual(tech.get_labs(), [lab1, lab2])
+
+    def test_technology_get_by_id(self):
+        print "test_technology_get_by_id"
+        tech = Technology(name="php5")
+        tech.save()
+        self.assertEqual(Technology.get_by_id(1), tech)
+
+    def test_technology_get_version(self):
+        print "test_technology_get_version"
+        tech = Technology(name="php5", version="5.5")
+        self.assertEqual(tech.get_version(), "5.5")
+
+    def test_technology_is_foss(self):
+        print "test_technology_is_foss"
+        tech = Technology(name="Python", version="2.7", foss=True)
+        self.assertEqual(tech.is_foss(), True)
+
+    def test_technology_set_version(self):
+        print "test_technology_set_version"
+        tech = Technology(name="Python")
+        tech.set_version("2.7.3")
+        self.assertEqual(tech.get_version(), "2.7.3")
+        # Wrong type of `version` should throw TypeError
+        self.assertRaises(TypeError, tech.set_version, 2.7)
+
+    def test_technology_set_foss(self):
+        print "test_technology_set_foss"
+        tech = Technology(name="Python")
+        tech.set_foss(True)
+        self.assertEqual(tech.is_foss(), True)
+        # Wrong type of `version` should throw TypeError
+        self.assertRaises(TypeError, tech.set_foss, "Yes")
 
 #+END_SRC
 
@@ -2332,6 +2495,7 @@ def create_developer(_name, _email, _inst):
     return Developer(name=__name, email_id=__email_id, institute=_inst)
 
 #+END_SRC
+
 ** APP.py
 #+BEGIN_SRC python :tangle src/app.py :eval no
 # -*- coding: utf-8 -*-
