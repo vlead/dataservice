@@ -2676,11 +2676,12 @@ class TestExperiment(TestCase):
         techs = [tech1, tech2]
         expt = Experiment(name=Name("Simple Pendulum"), technologies=techs)
         self.assertItemsEqual(expt.get_technologies(), techs)
-        
+
     def test_get_experiment_lab(self):
         print "test_get_experiment_lab"
+        lab = Lab(name="Data Structures", mnemonic="dsa")
         expt = Experiment(name=Name("Merge Sort"))
-        lab = Lab(name="Data Structures", mnemonic="dsa", experiments=[expt])
+        lab.add_experiment(expt)
         self.assertEqual(expt.get_lab(), lab)
 
     def test_experiment_content_hosted_on(self):
