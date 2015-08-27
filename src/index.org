@@ -255,6 +255,15 @@ class Institute(Entity):
 #+END_SRC
 
 ***** Constructor for the Institute
+     Signature of the constructor is as follows. Fields in [...]  are
+     optional. Others are mandatory.
+#+BEGIN_EXAMPLE
+    institute = Institute(name=instance of class InstituteName,
+                          mnemonic=String
+                          [,pic=instance of class Name]
+                          [,iic=instance of class Name])
+#+END_EXAMPLE
+
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def __init__(self, **kwargs):
         if 'name' not in kwargs:
@@ -272,12 +281,6 @@ class Institute(Entity):
 
         if 'iic' in kwargs:
             self.set_iic(kwargs['iic'])
-
-        if 'labs' in kwargs:
-            if not isinstance(kwargs['labs'], list):
-                raise TypeError('`labs` attribute should be of list type'
-                                ' and each item belongs to Lab class')
-            self.labs = kwargs['labs']
 
 #+END_SRC
 
@@ -441,6 +444,14 @@ class Discipline(Entity):
 #+END_SRC
 
 ***** Constructor for the Discipline
+     Signature of the constructor is as follows. Fields in [...]  are
+     optional. Others are mandatory.
+#+BEGIN_EXAMPLE
+    discipline = Discipline(name=instance of class Name,
+                            mnemonic=String
+                            [,dnc=instance of class Name])
+#+END_EXAMPLE
+
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def __init__(self, **kwargs):
         if 'name' not in kwargs:
@@ -456,11 +467,6 @@ class Discipline(Entity):
         if 'dnc' in kwargs:
             self.set_dnc(kwargs['dnc'])
 
-        if 'labs' in kwargs:
-            if not isinstance(kwargs['labs'], list):
-                raise TypeError('`labs` attribute should be of list type'
-                                ' and each item belongs to Lab class')
-            self.labs = kwargs['labs']
 
 #+END_SRC
 
@@ -823,7 +829,7 @@ Technology(name=String
       + ExperimentId
 
 ***** Mutable Data
-      These are the data associated with Discipline type, which are mutable.
+      These are the data associated with Experiment type, which are mutable.
 
       + ContentURL
       + SimulationURL
@@ -855,13 +861,13 @@ class Experiment(Entity):
     content_url = db.Column(db.String(256))
     # content_on = db.Column(db.Enum('CPE', 'ELSE', 'NA'))
     content_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
-    content_on = db.relationship('HostingPlatform',
+    content_hosted_on = db.relationship('HostingPlatform',
                                  foreign_keys=[content_on_id])
 
     simulation_url = db.Column(db.String(256))
     # simulation_on = db.Column(db.Enum('CPE', 'ELSE', 'NA'))
     simulation_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
-    simulation_on = db.relationship('HostingPlatform',
+    simulation_hosted_on = db.relationship('HostingPlatform',
                                     foreign_keys=[simulation_on_id])
 
     technologies = db.relationship('Technology',
@@ -870,13 +876,45 @@ class Experiment(Entity):
 
 #+END_SRC
 
-Following is the constructor for this class.
+***** Constructor for the Experiment
+     Signature of the constructor is as follows. Fields in [...]  are
+     optional. Others are mandatory.
+#+BEGIN_EXAMPLE
+    experiment = Experiment(name=instance of class Name
+                            [,content_url=instance of class URL]
+                            [,simulation_url=instance of class URL]
+                            [,content_hosted_on=instance of class HostingPlatform]
+                            [,simulation_hosted_on=instance of class HostingPlatform]
+                            [,technologies=list type attribute where each item belongs to class Technology])
+#+END_EXAMPLE
 
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def __init__(self, **kwargs):
-        # TODO: implement the constructor and check the validity!
-        pass
+        if 'name' not in kwargs:
+            raise AttributeRequired("name is required when initializing experiment")
 
+        if not isinstance(kwargs['name'], Name):
+            raise TypeError('`name` attribute should be of type "Name"')
+        self.name = kwargs['name'].value
+
+        if 'content_url' in kwargs:
+            self.set_content_url(kwargs['content_url'])
+
+        if 'simulation_url' in kwargs:
+            self.set_simulation_url(kwargs['simulation_url'])
+
+        if 'technologies' in kwargs:
+            if not isinstance(kwargs['technologies'], list):
+                raise TypeError('`technologies` attribute should be of list'
+                                ' type and each item belongs to Technology class')
+            self.technologies = kwargs['technologies']
+
+        if 'content_hosted_on' in kwargs:
+            self.set_content_hosted_on(kwargs['content_hosted_on'])
+
+        if 'simulation_hosted_on' in kwargs:
+            self.set_simulation_hosted_on(kwargs['simulation_hosted_on'])
+        
 #+END_SRC
 
 ***** Functions that operate on the Experiment domain
@@ -912,19 +950,21 @@ Following is the constructor for this class.
 
 ****** getTechnologies: Experiment --> set[Technology]
 #+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_technologies(self):
+        return self.technologies
 
 #+END_SRC
 
 ****** contentHostedOn: Experiment --> HostingPlatform + Nil
 #+BEGIN_SRC python :tangle src/db.py :eval no
-    def content_hosted_on(self):
+    def get_content_hosted_on(self):
         return self.content_hosted_on
 
 #+END_SRC
 
 ****** simulationHostedOn: Experiment --> HostingPlatform + Nil
 #+BEGIN_SRC python :tangle src/db.py :eval no
-    def simulation_hosted_on(self):
+    def get_simulation_hosted_on(self):
         return self.simulation_hosted_on
 
 #+END_SRC
@@ -940,7 +980,7 @@ Following is the constructor for this class.
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(url=URL)
     def set_content_url(self, url):
-        self.content_url = url
+        self.content_url = url.value
         self.save()
 
 #+END_SRC
@@ -949,11 +989,11 @@ Following is the constructor for this class.
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(url=URL)
     def set_simulation_url(self, url):
-        self.simulation_url = url
+        self.simulation_url = url.value
         self.save()
 
 #+END_SRC
-
+       
 ****** setContentHostedOn: Experiment, HostingPlatform --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(platform=HostingPlatform)
@@ -986,7 +1026,7 @@ Following is the constructor for this class.
         }
 
 #+END_SRC
-
+       
 **** Lab
 ***** Immutable Data
 
@@ -1847,8 +1887,8 @@ class TestLab(TestCase):
 
     def test_lab_get_num_of_exps(self):
         print "test_lab_get_num_of_exps"
-        exp1 = Experiment(name='Pendulum')
-        exp2 = Experiment(name='Gravity')
+        exp1 = Experiment(name=Name('Pendulum'))
+        exp2 = Experiment(name=Name('Gravity'))
         exps = [exp1, exp2]
         lab = Lab(name="DS", mnemonic="ds")
         lab.add_experiment(exp1)
@@ -2337,15 +2377,25 @@ class TestInstitute(TestCase):
         some_instt = Institute.get_institute_by_mnemonic("mit")
         self.assertEqual(some_instt, instt)
 
-    def test_get_institute_labs(self):
-        print "test_get_institute_labs"
-        lab1 = Lab(name="Micro Controllers", mnemonic="micro")
-        lab2 = Lab(name="Digital Logic Design", mnemonic="digital")
-        labs = [lab1, lab2]
-        instt = Institute(name=InstituteName("MIT"), mnemonic="mit", labs=labs)
-        self.assertItemsEqual(instt.get_labs(), labs)
+    def test_get_institute_labs(self):                                           
+        print "test_get_institute_labs"                                          
+        instt = Institute(name=InstituteName("MIT"), mnemonic="mit")
+        lab1 = Lab(name="Micro Controllers", mnemonic="micro", institute=instt)                   
+        lab2 = Lab(name="Digital Logic Design", mnemonic="digital", institute=instt)              
+        labs = [lab1, lab2]                                                      
+        self.assertItemsEqual(instt.get_labs(), labs)                            
 
-#+END_SRC
+    def test_get_institute_developers(self):                                           
+        print "test_get_institute_developers"                                          
+        instt = Institute(name=InstituteName("MIT"), mnemonic="mit")                 
+        dev1 = Developer(name=Name("Alan"), email_id=Email("alan@example.com"), institute=instt)                   
+        dev2 = Developer(name=Name("john"), email_id=Email("john@example.com"), institute=instt)              
+        devs = [dev1, dev2]                                                      
+
+        self.assertItemsEqual(instt.get_developers(), devs)                            
+  
+#+END_SRC        
+
 
 *** Tests for Discipline
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
@@ -2441,13 +2491,13 @@ class TestDiscipline(TestCase):
         disc.save()
         self.assertEqual(disc.get_discipline_by_id(1).name, disc.name)
 
-    def test_get_discipline_labs(self):
-        print "test_get_discipline_labs"
-        lab1 = Lab(name="Micro Controllers", mnemonic="micro")
-        lab2 = Lab(name="Digital Logic Design", mnemonic="digital")
-        labs = [lab1, lab2]
-        disc = Discipline(name=Name("Electronics"), mnemonic="ece", labs=labs)
-        self.assertItemsEqual(disc.get_labs(), labs)
+    def test_get_discipline_labs(self):                                          
+        print "test_get_discipline_labs"                                         
+        disc = Discipline(name=Name("Electronics"), mnemonic="ece")
+        lab1 = Lab(name="Micro Controllers", mnemonic="micro", discipline=disc)                   
+        lab2 = Lab(name="Digital Logic Design", mnemonic="digital", discipline=disc)              
+        labs = [lab1, lab2]                                                      
+        self.assertItemsEqual(disc.get_labs(), labs)                             
 
 #+END_SRC
 
@@ -2550,6 +2600,129 @@ class TestTechnology(TestCase):
         self.assertEqual(tech.is_foss(), True)
         # Wrong type of `version` should throw TypeError
         self.assertRaises(TypeError, tech.set_foss, "Yes")
+
+#+END_SRC
+
+*** Tests for Experiment
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
+class TestExperiment(TestCase):
+    TESTING = True
+
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+  
+    def test_experiment_constructor(self):
+        print "test_experiment_constructor"
+        name = Name("Searching and Sorting")
+        content_url = URL("http://deploy.virtual-labs.ac.in/labs/cse04/exp1/index.php")
+        simulation_url = URL("http://deploy.virtual-labs.ac.in/labs/cse04/exp1/lab.html")
+
+        expt = Experiment(name=name, content_url=content_url, simulation_url=simulation_url)
+        self.assertEqual(isinstance(expt, Experiment), True)
+
+        # Calling the experiment constructor without any arguments should
+        # raise AttributeRequired exception
+        self.assertRaises(AttributeRequired, Experiment)
+
+        # Calling the experiment constructor without name argument
+        # should raise AttributeRequired exception
+        self.assertRaises(AttributeRequired, Discipline,
+                          **{'content_url': URL('http://deploy.virtual-labs.ac.in/labs/cse04/exp1/index.php'),
+                            })
+
+        # Calling the experiment constructor with wrong type of 
+        # arguments should raise TypeError
+        self.assertRaises(TypeError, Experiment,
+                          **{'name': Name('Searching and Sorting'),
+                             'content_url': ('http://deploy.virtual-labs.ac.in/labs/cse04/exp1/index.php')
+                            })
+
+    def test_get_content_url(self):
+        print "test_experiment_get_content_url"
+        expt = Experiment(name=Name("Searching and Sorting"), content_url=URL("http://vlabs.ac.in"))
+        self.assertEqual(expt.get_content_url(), "http://vlabs.ac.in")
+        
+    def test_get_simulation_url(self):
+        print "test_experiment_get_simulation_url"
+        expt = Experiment(name=Name("Searching and Sorting"), simulation_url=URL("http://vlabs.ac.in"))
+        self.assertEqual(expt.get_simulation_url(), "http://vlabs.ac.in")
+
+    def test_get_id_of_experiment(self):
+        print "test_get_id_of_experiment"
+        expt = Experiment(name=Name("Simple Pendulum"))
+        expt.save()       
+        expt_id = expt.get_id()
+        self.assertEqual(expt_id, 1)
+
+    def test_get_experiment_by_id(self):
+        print "test_get_experiment_by_id"
+        expt = Experiment(name=Name("Simple Pendulum"))
+        expt.save()
+        self.assertEqual(expt.get_experiment(1).name, "Simple Pendulum")
+
+
+    def test_get_experiment_technologies(self):
+        print "test_get_experiment_technologies"
+        tech1 = Technology(name="php5")
+        tech2 = Technology(name="apache2")
+        techs = [tech1, tech2]
+        expt = Experiment(name=Name("Simple Pendulum"), technologies=techs)
+        self.assertItemsEqual(expt.get_technologies(), techs)
+        
+    def test_get_experiment_lab(self):
+        print "test_get_experiment_lab"
+        expt = Experiment(name=Name("Merge Sort"))
+        lab = Lab(name="Data Structures", mnemonic="dsa", experiments=[expt])
+        self.assertEqual(expt.get_lab(), lab)
+
+    def test_experiment_content_hosted_on(self):
+        print "test_get_content_hosted_on"
+        platform = HostingPlatform(name="IIIT")
+        expt = Experiment(name=Name("Simple Pendulum"), content_hosted_on=platform)
+        self.assertEqual(expt.get_content_hosted_on(), platform)
+
+    def test_experiment_simulation_hosted_on(self):
+        print "test_get_simulation_hosted_on"
+        platform = HostingPlatform(name="IIIT")
+        expt = Experiment(name=Name("Simple Pendulum"), simulation_hosted_on=platform)
+        self.assertEqual(expt.get_simulation_hosted_on(), platform)
+
+    def test_set_experiment_content_url(self):
+        print "test_set_experiment_content_url"
+        expt = Experiment(name=Name("Simple Pendulum"))
+        url = URL("http://vlabs.ac.in")
+        expt.set_content_url(url)
+        self.assertEqual(expt.get_content_url(), "http://vlabs.ac.in")
+
+    def test_set_experiment_simulation_url(self):
+        print "test_set_experiment_simulation_url"
+        expt = Experiment(name=Name("Simple Pendulum"))
+        url = URL("http://vlabs.ac.in")
+        expt.set_simulation_url(url)
+        self.assertEqual(expt.get_simulation_url(), "http://vlabs.ac.in")
+
+    def test_set_experiment_content_hosted_on(self):
+        print "test_set_content_hosted_on"
+        expt = Experiment(name=Name("Pendulum"))
+        plat = HostingPlatform(name="IIIT")
+        expt.set_content_hosted_on(plat)
+        self.assertEqual(expt.get_content_hosted_on(), plat)
+        self.assertRaises(TypeError, expt.set_content_hosted_on, "AWS")
+
+    def test_set_experiment_simulation_hosted_on(self):
+        print "test_set_simulation_hosted_on"
+        expt = Experiment(name=Name("Pendulum"))
+        plat = HostingPlatform(name="IIIT")
+        expt.set_simulation_hosted_on(plat)
+        self.assertEqual(expt.get_simulation_hosted_on(), plat)
 
 #+END_SRC
 
