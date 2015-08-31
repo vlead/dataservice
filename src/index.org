@@ -369,8 +369,8 @@ class Institute(Entity):
 ***** Immutable Data
 This is the data associated with Discipline type, which is immutable.
 
++ Id
 + DisciplineId
-+ Mnemonic
 
 ***** Mutable Data
 This is the data associated with Discipline type, which is mutable.
@@ -406,7 +406,7 @@ class Discipline(Entity):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
-    mnemonic = db.Column(db.String(16), nullable=False)
+    discipline_id = db.Column(db.String(16), nullable=False)
     dnc = db.Column(db.String(64))
 
     labs = db.relationship('Lab', backref='discipline')
@@ -418,7 +418,7 @@ class Discipline(Entity):
      optional. Others are mandatory.
 #+BEGIN_EXAMPLE
     discipline = Discipline(name=String,
-                            mnemonic=String
+                            discipline_id=String
                             [,dnc=<instance of class Name>])
 #+END_EXAMPLE
 
@@ -429,10 +429,10 @@ class Discipline(Entity):
 
         self.set_name(kwargs['name'])
 
-        if 'mnemonic' not in kwargs:
-            raise AttributeRequired("mnemonic is required when initializing discipline")
+        if 'discipline_id' not in kwargs:
+            raise AttributeRequired("discipline_id is required when initializing discipline")
 
-        self.mnemonic = kwargs['mnemonic']
+        self.discipline_id = kwargs['discipline_id']
 
         if 'dnc' in kwargs:
             self.set_dnc(kwargs['dnc'])
@@ -449,7 +449,7 @@ class Discipline(Entity):
 
 #+END_SRC
 
-****** getId: Discipline --> DisciplineId
+****** getId: Discipline --> Id
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_id(self):
         return self.id
@@ -462,26 +462,26 @@ class Discipline(Entity):
         return self.name
 
 #+END_SRC
-****** getDiscipline: DisciplineId --> Discipline
+****** getDiscipline: Id --> Discipline
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
-    def get_discipline_by_id(id):
+    def get_by_id(id):
         return Discipline.query.get(id)
 
 #+END_SRC
 
-****** getMnemonic: Discipline --> Mnemonic
+****** getDisciplineId: Discipline --> DisciplineId
 #+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_mnemonic(self):
-        return self.mnemonic
+    def get_discipline_id(self):
+        return self.discipline_id
 
 #+END_SRC
 
-****** getDiscipline: Mnemonic --> Discipline
+****** getDiscipline: DisciplineId --> Discipline
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
-    def get_discipline_by_mnemonic(mnemonic):
-        return Discipline.query.filter_by(mnemonic=mnemonic).first()
+    def get_by_discipline_id(discipline_id):
+        return Discipline.query.filter_by(discipline_id=discipline_id).first()
 
 #+END_SRC
 
@@ -521,7 +521,7 @@ class Discipline(Entity):
         return {
             'id': self.id,
             'name': self.name,
-            'mnemonic': self.mnemonic,
+            'discipline_id': self.discipline_id,
             'dnc': self.dnc
         }
 
@@ -1883,7 +1883,7 @@ class TestLab(TestCase):
 
     def test_lab_get_discipline(self):
         print "test_lab_get_discipline"
-        disc = Discipline(name="CSE", mnemonic="cse")
+        disc = Discipline(name="CSE", discipline_id="cse")
         lab = Lab(name="DS", mnemonic="ds", discipline=disc)
         self.assertEqual(lab.get_discipline(), disc)
 
@@ -1940,7 +1940,7 @@ class TestLab(TestCase):
     def test_lab_set_discipline(self):
         print "test_lab_set_discipline"
         lab = Lab(name="DS", mnemonic="ds")
-        disc = Discipline(name="CSE", mnemonic="cse")
+        disc = Discipline(name="CSE", discipline_id="cse")
         lab.set_discipline(disc)
         self.assertEqual(lab.get_discipline(), disc)
         self.assertRaises(TypeError, lab.set_discipline, "ECE")
@@ -2386,10 +2386,10 @@ class TestDiscipline(TestCase):
     def test_discipline_constructor(self):
         print "test_discipline_constructor"
         name = "ECE"
-        mnemonic = "ece"
+        discipline_id = "ece"
         dnc = Name("Alan Joe")
 
-        disc = Discipline(name=name, mnemonic=mnemonic, dnc=dnc)
+        disc = Discipline(name=name, discipline_id=discipline_id, dnc=dnc)
         self.assertEqual(isinstance(disc, Discipline), True)
 
         # Calling the discipline constructor without any arguments should
@@ -2397,7 +2397,7 @@ class TestDiscipline(TestCase):
         self.assertRaises(AttributeRequired, Discipline)
 
         # Calling the discipline constructor without necessary arguments
-        # like name and/or mnemonic should raise AttributeRequired exception
+        # like name and/or discipline_id should raise AttributeRequired exception
         self.assertRaises(AttributeRequired, Discipline,
                           **{'name': 'ECE',
                              'dnc': Name('John')
@@ -2407,63 +2407,63 @@ class TestDiscipline(TestCase):
         # should raise TypeError
         self.assertRaises(TypeError, Discipline,
                           **{'name': 'CSE',
-                             'mnemonic': 'cse',
+                             'discipline_id': 'cse',
                              'dnc': 'Jane'
                             })
 
     def test_set_discipline_name(self):
         print "test_set_discipline_name"
-        disc = Discipline(name="Electrical Engineering", mnemonic="eee")
+        disc = Discipline(name="Electrical Engineering", discipline_id="eee")
         new_name = "Electrical"
         disc.set_name(new_name)
         self.assertEqual(disc.name, "Electrical")
 
     def test_set_discipline_dnc(self):
         print "test_set_discipline_dnc"
-        disc = Discipline(name="CSE", mnemonic="cs")
+        disc = Discipline(name="CSE", discipline_id="cs")
         new_dnc = Name("James roy")
         disc.set_dnc(new_dnc)
         self.assertEqual(disc.dnc, "James roy")
         self.assertRaises(TypeError, disc.set_dnc, "123 James roy")
 
-    def test_get_discipline_id(self):
-        print "test_get_discipline_id"
-        disc = Discipline(name="CSE", mnemonic="cs")
+    def test_get_id(self):
+        print "test_get_id_of_discipline"
+        disc = Discipline(name="CSE", discipline_id="cs")
         disc.save()
         self.assertEqual(disc.id, disc.get_id())
 
     def test_get_discipline_name(self):
         print "test_get_discipline_name"
-        disc = Discipline(name="CSE", mnemonic="cs")
+        disc = Discipline(name="CSE", discipline_id="cs")
         disc.save()
         self.assertEqual(disc.get_name(), "CSE")
 
     def test_get_discipline_dnc(self):
         print "test_get_discipline_dnc"
-        disc = Discipline(name="CSE", mnemonic="cs", dnc=Name("James"))
+        disc = Discipline(name="CSE", discipline_id="cs", dnc=Name("James"))
         self.assertEqual(disc.get_dnc(), "James")
 
-    def test_get_discipline_mnemonic(self):
-        print "test_get_discipline_mnemonic"
-        disc = Discipline(name="CSE", mnemonic="cs", dnc=Name("James"))
-        self.assertEqual(disc.get_mnemonic(), "cs")
+    def test_get_discipline_id(self):
+        print "test_get_discipline_id"
+        disc = Discipline(name="CSE", discipline_id="cs", dnc=Name("James"))
+        self.assertEqual(disc.get_discipline_id(), "cs")
 
-    def test_get_discipline_by_mnemonic(self):
-        print "test_get_discipline_by_mnemonic"
-        disc = Discipline(name="Computer Science", mnemonic="cse")
+    def test_get_by_discipline_id(self):
+        print "test_get_by_discipline_id"
+        disc = Discipline(name="Computer Science", discipline_id="cse")
         disc.save()
-        some_disc = Discipline.get_discipline_by_mnemonic("cse")
+        some_disc = Discipline.get_by_discipline_id("cse")
         self.assertEqual(some_disc, disc)
 
     def test_get_discipline_by_id(self):
-        print "test_get_discipline_name"
-        disc = Discipline(name="CSE", mnemonic="cs", dnc=Name("James"))
+        print "test_get_discipline_by_id"
+        disc = Discipline(name="CSE", discipline_id="cs", dnc=Name("James"))
         disc.save()
-        self.assertEqual(disc.get_discipline_by_id(1).name, disc.name)
+        self.assertEqual(disc.get_by_id(1).name, disc.name)
 
     def test_get_discipline_labs(self):                                          
         print "test_get_discipline_labs"                                         
-        disc = Discipline(name="Electronics", mnemonic="ece")
+        disc = Discipline(name="Electronics", discipline_id="ece")
         lab1 = Lab(name="Micro Controllers", mnemonic="micro", discipline=disc)                   
         lab2 = Lab(name="Digital Logic Design", mnemonic="digital", discipline=disc)              
         labs = [lab1, lab2]                                                      
