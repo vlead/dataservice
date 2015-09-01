@@ -2872,7 +2872,7 @@ if __name__ == "__main__":
 # mysql+oursql://scott:tiger@localhost/mydatabase
 # postgresql+psycopg2://scott:tiger@localhost/mydatabase
 SQLALCHEMY_DATABASE_URI =\
-    'mysql+oursql://root:root@localhost/vlabs_database'
+    'mysql+oursql://root:root@localhost/dataservice'
 
 # Debug from SQLAlchemy
 # Turn this to False on production

@@ -29,15 +29,15 @@
 
 ** In Experiment entity :
 1. Write name as part of the mutable data
-2. Include lab in experiment constructor and make it mandatory , also
-   describe it in documentation
-3. New methods to add are:
+2. Change type of =Experiment= name from =Name= to =String=
+3. =get_experiment= becomes =get_by_id=
+4. =ExperimentId= becomes just =Id=
+5. New methods to add are:
     set_name, get_name, add_technology, remove_technology
-4. Change type of =Experiment= name from =Name= to =String=
-5. self.technologies = kwargs['technology'] is wrong and check if
+6. self.technologies = kwargs['technology'] is wrong and check if
    input is a list first and then each item belongs =Technology= class
-6. =get_experiment= becomes =get_by_id=
-7. =ExperimentId= becomes just =Id=
+7. Include lab in experiment constructor and make it mandatory , also
+   describe it in documentation
 8. Correct test case for =get_lab=
 9. Include save() in setters for data persistence
 
