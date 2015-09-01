@@ -6,17 +6,19 @@
 #+SETUPFILE: org-templates/level-0.org
 
 * Introduction
-  Dataservice is a micro service that allows persistence of data by other micro
-  services over HTTP using REST API.  dataservice hides the implementation
-  details of the data store that is required for data persistence.
+  =dataservice= is a micro service that allows persistence of data by
+  other micro services over HTTP using REST API.  =dataservice= hides
+  the implementation details of the data store that is required for
+  data persistence.
 
 * Requirements
-  1. The model of the data on whose foundation dataservice is built is
-     explicitly laid out. <<req1>>
-  2. Python API is provided as a wrapper to make CRUD operations on the data.
+  1. The model of the data on whose foundation =dataservice= is built
+     is explicitly laid out. <<req1>>
+  2. Python API is provided as a wrapper to make CRUD operations on
+     the data.
   3. REST API is provided for various applications to perform CRUD operations
      on the data.
-
+     
 * Design & Implementation
 ** Python
 *** __init__
@@ -124,10 +126,6 @@ class URL(object):
 
      DeveloperId is a natural number.
 
-**** ExperimentId
-
-     ExperimentId is a natural number.
-
 **** IntegrationLevel
 
 
@@ -188,23 +186,23 @@ These are the data associated with Institute type, which are mutable
 + PIC
 + IIC
 
-***** Mnemonic assigned to each institute
-|---------------------------------+----------|
-| Name                            | Mnemonic |
-|---------------------------------+----------|
-| IIIT Hyderabad                  | iiith    |
-| IIT Bombay                      | iitb     |
-| IIT Delhi                       | iitd     |
-| IIT Roorkee                     | iitrrk   |
-| IIT Guwahati                    | iitg     |
-| IIT Kanpur                      | iitk     |
-| IIT Kharagpur                   | iitkgp   |
-| IIT Madras                      | iitm     |
-| NIT Surathkal                   | nitk     |
-| Amrita University               | amrita   |
-| College of Engineering, Pune    | coep     |
-| Dayalbagh Educational Institute | dei      |
-|---------------------------------+----------|
+***** InstituteId assigned to each institute
+|---------------------------------+-------------|
+| Name                            | InstituteId |
+|---------------------------------+-------------|
+| IIIT Hyderabad                  | iiith       |
+| IIT Bombay                      | iitb        |
+| IIT Delhi                       | iitd        |
+| IIT Roorkee                     | iitrrk      |
+| IIT Guwahati                    | iitg        |
+| IIT Kanpur                      | iitk        |
+| IIT Kharagpur                   | iitkgp      |
+| IIT Madras                      | iitm        |
+| NIT Surathkal                   | nitk        |
+| Amrita University               | amrita      |
+| College of Engineering, Pune    | coep        |
+| Dayalbagh Educational Institute | dei         |
+|---------------------------------+-------------|
 
 ***** Definition
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -222,7 +220,7 @@ class Institute(Entity):
     developers = db.relationship('Developer', backref='institute')
 
 #+END_SRC
-
+      
 ***** Constructor for the Institute
      Signature of the constructor is as follows. Fields in [...]  are
      optional. Others are mandatory.
@@ -333,7 +331,7 @@ class Institute(Entity):
     @typecheck(pic=Name)
     def set_pic(self, pic):
         self.pic = pic.value
-
+        self.save()
 #+END_SRC
 
 ****** setIIC: Institute, Name --> Void
@@ -341,7 +339,7 @@ class Institute(Entity):
     @typecheck(iic=Name)
     def set_iic(self, iic):
         self.iic = iic.value
-
+        self.save()
 #+END_SRC
 
 ****** setName: Institute, Name --> Void
@@ -378,25 +376,25 @@ This is the data associated with Discipline type, which is mutable.
 + Name
 + DNC
 
-***** Mnemonic assigned to each discipline
-|------------------------------------------+-----------|
-| Name                                     | Mnemonic  |
-|------------------------------------------+-----------|
-| Aerospace Engineering                    | aero      |
-| Biotechnology and Biomedical Engineering | biotech   |
-| Chemical Engineering                     | chem-engg |
-| Chemical Sciences                        | chem      |
-| Civil Engineering                        | civil     |
-| Computer Science and Engineering         | cse       |
-| Electrical Engineering                   | ee        |
-| Electronics and Communication            | ece       |
-| Humanities                               | human     |
-| Mechanical Engineering                   | mech      |
-| Physical Sciences                        | phy-sc    |
-| Textile Engineering                      | tex-engg  |
-| Design Engineering                       | dsgn-engg |
-| Material Sciences                        | mat-sc    |
-|------------------------------------------+-----------|
+***** DisciplineId assigned to each discipline
+|------------------------------------------+--------------|
+| Name                                     | DisciplineId |
+|------------------------------------------+--------------|
+| Aerospace Engineering                    | aero         |
+| Biotechnology and Biomedical Engineering | biotech      |
+| Chemical Engineering                     | chem-engg    |
+| Chemical Sciences                        | chem         |
+| Civil Engineering                        | civil        |
+| Computer Science and Engineering         | cse          |
+| Electrical Engineering                   | ee           |
+| Electronics and Communication            | ece          |
+| Humanities                               | human        |
+| Mechanical Engineering                   | mech         |
+| Physical Sciences                        | phy-sc       |
+| Textile Engineering                      | tex-engg     |
+| Design Engineering                       | dsgn-engg    |
+| Material Sciences                        | mat-sc       |
+|------------------------------------------+--------------|
 
 ***** Definition
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -412,7 +410,7 @@ class Discipline(Entity):
     labs = db.relationship('Lab', backref='discipline')
 
 #+END_SRC
-
+      
 ***** Constructor for the Discipline
      Signature of the constructor is as follows. Fields in [...]  are
      optional. Others are mandatory.
@@ -512,7 +510,7 @@ class Discipline(Entity):
     @typecheck(name=Name)
     def set_dnc(self, name):
         self.dnc = name.value
-
+        self.save()
 #+END_SRC
 
 ****** to_client
@@ -796,11 +794,12 @@ Technology(name=String
 ***** Immutable Data
       This is the data associated with Experiment type, which is immutable.
 
-      + ExperimentId
+      + Id
 
 ***** Mutable Data
       These are the data associated with Experiment type, which are mutable.
-
+  
+      + Name
       + ContentURL
       + SimulationURL
       + ContentHostedOn
@@ -850,12 +849,12 @@ class Experiment(Entity):
      Signature of the constructor is as follows. Fields in [...]  are
      optional. Others are mandatory.
 #+BEGIN_EXAMPLE
-    experiment = Experiment(name=instance of class Name
-                            [,content_url=instance of class URL]
-                            [,simulation_url=instance of class URL]
-                            [,content_hosted_on=instance of class HostingPlatform]
-                            [,simulation_hosted_on=instance of class HostingPlatform]
-                            [,technologies=list type attribute where each item belongs to class Technology])
+    experiment = Experiment(name=String
+                            [,content_url=<instance of class URL>]
+                            [,simulation_url=<instance of class URL>]
+                            [,content_hosted_on=<instance of class HostingPlatform>]
+                            [,simulation_hosted_on=<instance of class HostingPlatform>]
+                            [,technologies=<list type attribute where each item belongs to class Technology>])
 #+END_EXAMPLE
 
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -863,9 +862,7 @@ class Experiment(Entity):
         if 'name' not in kwargs:
             raise AttributeRequired("name is required when initializing experiment")
 
-        if not isinstance(kwargs['name'], Name):
-            raise TypeError('`name` attribute should be of type "Name"')
-        self.name = kwargs['name'].value
+        self.set_name(kwargs['name'])
 
         if 'content_url' in kwargs:
             self.set_content_url(kwargs['content_url'])
@@ -877,7 +874,8 @@ class Experiment(Entity):
             if not isinstance(kwargs['technologies'], list):
                 raise TypeError('`technologies` attribute should be of list'
                                 ' type and each item belongs to Technology class')
-            self.technologies = kwargs['technologies']
+            for technology in kwargs['technologies']:
+                self.add_technology(technology)
 
         if 'content_hosted_on' in kwargs:
             self.set_content_hosted_on(kwargs['content_hosted_on'])
@@ -889,17 +887,24 @@ class Experiment(Entity):
 
 ***** Functions that operate on the Experiment domain
 
-****** getId: Experiment --> ExperimentId
+****** getName: Experiment --> Name
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_name(self):
+        return self.name
+
+#+END_SRC
+
+****** getId: Experiment --> Id
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_id(self):
         return self.id
 
 #+END_SRC
 
-****** getExperiment: ExperimentId --> Experiment
+****** getExperiment: Id --> Experiment
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
-    def get_experiment(id):
+    def get_by_id(id):
         return Experiment.query.get(id)
 
 #+END_SRC
@@ -946,6 +951,14 @@ class Experiment(Entity):
 
 #+END_SRC
 
+****** setName: Experiment, Name --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(name=str)
+    def set_name(self, name):
+        self.name = name
+
+#+END_SRC
+
 ****** setContentURL: Experiment, URL --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(url=URL)
@@ -980,6 +993,23 @@ class Experiment(Entity):
         self.simulation_hosted_on = platform
         self.save()
 
+#+END_SRC
+
+****** addTechnology: Lab, Technology --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(technology=Technology)
+    def add_technology(self, technology):
+        self.technologies.append(technology)
+        self.save()
+#+END_SRC
+
+****** removeTechnology: Lab, Technology --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(technology=Technology)
+    def remove_technology(self, technology):
+        if technology in self.technologies:
+            self.technologies.remove(technology)
+            self.save()
 #+END_SRC
 
 ****** to_client
@@ -1857,8 +1887,8 @@ class TestLab(TestCase):
 
     def test_lab_get_num_of_exps(self):
         print "test_lab_get_num_of_exps"
-        exp1 = Experiment(name=Name('Pendulum'))
-        exp2 = Experiment(name=Name('Gravity'))
+        exp1 = Experiment(name='Pendulum')
+        exp2 = Experiment(name='Gravity')
         exps = [exp1, exp2]
         lab = Lab(name="DS", mnemonic="ds")
         lab.add_experiment(exp1)
@@ -1889,8 +1919,8 @@ class TestLab(TestCase):
 
     def test_lab_get_experiments(self):
         print "test_lab_get_experiments"
-        exp1 = Experiment(name=Name('Pendulum'))
-        exp2 = Experiment(name=Name('Gravity'))
+        exp1 = Experiment(name='Pendulum')
+        exp2 = Experiment(name='Gravity')
         exps = [exp1, exp2]
         lab = Lab(name="DS", mnemonic="ds")
         lab.add_experiment(exp1)
@@ -2038,14 +2068,14 @@ class TestLab(TestCase):
     def test_lab_add_experiment(self):
         print "test_lab_add_experiment"
         lab = Lab(name="DS", mnemonic="ds")
-        exp = Experiment(name=Name("Pendulum"))
+        exp = Experiment(name="Pendulum")
         self.assertEqual(len(lab.get_experiments()), 0)
         lab.add_experiment(exp)
         self.assertEqual(len(lab.get_experiments()), 1)
 
     def test_lab_remove_experiment(self):
         print "test_lab_remove_experiment"
-        exp = Experiment(name=Name("Pendulum"))
+        exp = Experiment(name="Pendulum")
         lab = Lab(name="DS", mnemonic="ds")
         lab.add_experiment(exp)
         self.assertEqual(len(lab.get_experiments()), 1)
@@ -2591,7 +2621,7 @@ class TestExperiment(TestCase):
   
     def test_experiment_constructor(self):
         print "test_experiment_constructor"
-        name = Name("Searching and Sorting")
+        name = "Searching and Sorting"
         content_url = URL("http://deploy.virtual-labs.ac.in/labs/cse04/exp1/index.php")
         simulation_url = URL("http://deploy.virtual-labs.ac.in/labs/cse04/exp1/lab.html")
 
@@ -2611,78 +2641,93 @@ class TestExperiment(TestCase):
         # Calling the experiment constructor with wrong type of 
         # arguments should raise TypeError
         self.assertRaises(TypeError, Experiment,
-                          **{'name': Name('Searching and Sorting'),
+                          **{'name': 'Searching and Sorting',
                              'content_url': ('http://deploy.virtual-labs.ac.in/labs/cse04/exp1/index.php')
                             })
 
     def test_get_content_url(self):
         print "test_experiment_get_content_url"
-        expt = Experiment(name=Name("Searching and Sorting"), content_url=URL("http://vlabs.ac.in"))
+        expt = Experiment(name="Searching and Sorting", content_url=URL("http://vlabs.ac.in"))
         self.assertEqual(expt.get_content_url(), "http://vlabs.ac.in")
         
     def test_get_simulation_url(self):
         print "test_experiment_get_simulation_url"
-        expt = Experiment(name=Name("Searching and Sorting"), simulation_url=URL("http://vlabs.ac.in"))
+        expt = Experiment(name="Searching and Sorting", simulation_url=URL("http://vlabs.ac.in"))
         self.assertEqual(expt.get_simulation_url(), "http://vlabs.ac.in")
 
     def test_get_id_of_experiment(self):
         print "test_get_id_of_experiment"
-        expt = Experiment(name=Name("Simple Pendulum"))
+        expt = Experiment(name="Simple Pendulum")
         expt.save()       
         expt_id = expt.get_id()
         self.assertEqual(expt_id, 1)
 
     def test_get_experiment_by_id(self):
         print "test_get_experiment_by_id"
-        expt = Experiment(name=Name("Simple Pendulum"))
+        expt = Experiment(name="Simple Pendulum")
         expt.save()
-        self.assertEqual(expt.get_experiment(1).name, "Simple Pendulum")
-
+        self.assertEqual(expt.get_by_id(1).name, "Simple Pendulum")
 
     def test_get_experiment_technologies(self):
         print "test_get_experiment_technologies"
         tech1 = Technology(name="php5")
         tech2 = Technology(name="apache2")
         techs = [tech1, tech2]
-        expt = Experiment(name=Name("Simple Pendulum"), technologies=techs)
+        expt = Experiment(name="Simple Pendulum", technologies=techs)
         self.assertItemsEqual(expt.get_technologies(), techs)
+
+    def test_experiment_add_technology(self):
+        print "test_experiment_add_technology"
+        expt = Experiment(name="Pendulum")
+        tech = Technology(name="php5")
+        self.assertEqual(len(expt.get_technologies()), 0)
+        expt.add_technology(tech)
+        self.assertEqual(len(expt.get_technologies()), 1)
+
+    def test_experiment_remove_technology(self):
+        print "test_experiment_remove_technology"
+        tech = Technology(name="php5")
+        expt = Experiment(name="Pendulum", technologies=[tech])
+        self.assertEqual(len(expt.get_technologies()), 1)
+        expt.remove_technology(tech)
+        self.assertEqual(len(expt.get_technologies()), 0)
 
     def test_get_experiment_lab(self):
         print "test_get_experiment_lab"
         lab = Lab(name="Data Structures", mnemonic="dsa")
-        expt = Experiment(name=Name("Merge Sort"))
+        expt = Experiment(name="Merge Sort")
         lab.add_experiment(expt)
         self.assertEqual(expt.get_lab(), lab)
 
     def test_experiment_content_hosted_on(self):
         print "test_get_content_hosted_on"
         platform = HostingPlatform(name="IIIT")
-        expt = Experiment(name=Name("Simple Pendulum"), content_hosted_on=platform)
+        expt = Experiment(name="Simple Pendulum", content_hosted_on=platform)
         self.assertEqual(expt.get_content_hosted_on(), platform)
 
     def test_experiment_simulation_hosted_on(self):
         print "test_get_simulation_hosted_on"
         platform = HostingPlatform(name="IIIT")
-        expt = Experiment(name=Name("Simple Pendulum"), simulation_hosted_on=platform)
+        expt = Experiment(name="Simple Pendulum", simulation_hosted_on=platform)
         self.assertEqual(expt.get_simulation_hosted_on(), platform)
 
     def test_set_experiment_content_url(self):
         print "test_set_experiment_content_url"
-        expt = Experiment(name=Name("Simple Pendulum"))
+        expt = Experiment(name="Simple Pendulum")
         url = URL("http://vlabs.ac.in")
         expt.set_content_url(url)
         self.assertEqual(expt.get_content_url(), "http://vlabs.ac.in")
 
     def test_set_experiment_simulation_url(self):
         print "test_set_experiment_simulation_url"
-        expt = Experiment(name=Name("Simple Pendulum"))
+        expt = Experiment(name="Simple Pendulum")
         url = URL("http://vlabs.ac.in")
         expt.set_simulation_url(url)
         self.assertEqual(expt.get_simulation_url(), "http://vlabs.ac.in")
 
     def test_set_experiment_content_hosted_on(self):
         print "test_set_content_hosted_on"
-        expt = Experiment(name=Name("Pendulum"))
+        expt = Experiment(name="Pendulum")
         plat = HostingPlatform(name="IIIT")
         expt.set_content_hosted_on(plat)
         self.assertEqual(expt.get_content_hosted_on(), plat)
@@ -2690,7 +2735,7 @@ class TestExperiment(TestCase):
 
     def test_set_experiment_simulation_hosted_on(self):
         print "test_set_simulation_hosted_on"
-        expt = Experiment(name=Name("Pendulum"))
+        expt = Experiment(name="Pendulum")
         plat = HostingPlatform(name="IIIT")
         expt.set_simulation_hosted_on(plat)
         self.assertEqual(expt.get_simulation_hosted_on(), plat)
