@@ -1036,9 +1036,8 @@ class Experiment(Entity):
 
       These are the data associated with Lab type, which are immutable.
 
+      + Id
       + LabId
-      + Mnemonic
-      + NoOfExperiments
 
       As the number of experiments should be derived by the system from the
       experiments already associated with each lab.
@@ -1059,8 +1058,10 @@ class Experiment(Entity):
       + Developer
       + Technology
       + Experiment
+      + Remarks
+      + Status
 
-***** TODO: Mnemonic assigned for each lab
+***** TODO: Lab_Id assigned for each lab
 ***** Association
 #+BEGIN_SRC python :tangle src/db.py :eval no
 # association table of developers and labs
@@ -1087,8 +1088,7 @@ class Lab(Entity):
     id = db.Column(db.Integer, primary_key=True)
 
     name = db.Column(db.String(128), nullable=False)
-    mnemonic = db.Column(db.String(16), nullable=False)
-    slug = db.Column(db.String(128))
+    lab_id = db.Column(db.String(16), nullable=False)
 
     institute_id = db.Column(db.Integer, db.ForeignKey('institutes.id'))
     discipline_id = db.Column(db.Integer, db.ForeignKey('disciplines.id'))
@@ -1133,8 +1133,7 @@ created and associated with an existing lab. So, experiments are never a part
 of Lab constructor.
 #+BEGIN_EXAMPLE python
 Lab(name=<instance of Name class>,
-    mnemonic=String
-    [,slug=String]
+    lab_id=String
     [,institute=<instance of Institute class>]
     [,discipline=<instance of Discipline class>]
     [,integration_level=<instance of IntegrationLevel class>]
@@ -1154,14 +1153,13 @@ Lab(name=<instance of Name class>,
         if 'name' not in kwargs:
             raise AttributeRequired('`name` atttribute is required when '
                                     'initializaing a Lab')
-        if not isinstance(kwargs['name'], str):
             raise TypeError('`name` attribute should be of type "str"')
         self.name = kwargs['name']
 
-        if 'mnemonic' not in kwargs:
-            raise AttributeRequired('`mnemonic` attribute is required when '
+        if 'lab_id' not in kwargs:
+            raise AttributeRequired('`lab_id` attribute is required when '
                                     'initializaing a Lab')
-        self.mnemonic = kwargs['mnemonic']
+        self.lab_id = kwargs['lab_id']
 
         if 'institute' in kwargs:
             self.set_institute(kwargs['institute'])
@@ -1190,9 +1188,6 @@ Lab(name=<instance of Name class>,
         if 'is_phase_2_lab' in kwargs:
             self.set_is_phase_2(kwargs['is_phase_2_lab'])
 
-        if 'slug' in kwargs:
-            self.set_slug(kwargs['slug'])
-
         if 'remarks' in kwargs:
             self.set_remarks(kwargs['remarks'])
 
@@ -1217,14 +1212,14 @@ Lab(name=<instance of Name class>,
 #+END_SRC
 
 ***** Functions that operate on the Lab domain
-****** getId: Lab --> LabId
+****** getId: Lab --> Id
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_id(self):
         return self.id
 
 #+END_SRC
 
-****** getLab: LabId --> Lab
+****** getLab: Id --> Lab
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_by_id(id):
@@ -1249,17 +1244,17 @@ Lab(name=<instance of Name class>,
         return formatted_labs
 #+END_SRC
 
-****** getMnemonic: Lab --> Mnemonic
+****** getLabId: Lab --> LabId
 #+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_mnemonic(self):
-        return self.mnemonic
+    def get_lab_id(self):
+        return self.lab_id
 #+END_SRC
 
-****** getLab: Mnemonic --> Lab
+****** getLab: LabId --> Lab
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
-    def get_by_mnemonic(mnemonic):
-        return Lab.query.filter_by(mnemonic=mnemonic).first()
+    def get_by_lab_id(lab_id):
+        return Lab.query.filter_by(lab_id=lab_id).first()
 #+END_SRC
 
 ****** getName: Lab --> Name
@@ -1530,9 +1525,8 @@ Lab(name=<instance of Name class>,
     def to_client(self):
         return {
             'id': self.id,
-            'mnemonic': self.mnemonic,
+            'lab_id': self.lab_id,
             'name': self.name,
-            'slug': self.slug,
             'institute': self.institute.to_client(),
             'discipline': self.discipline.to_client(),
             'integration_level': self.integration_level,
@@ -1811,63 +1805,63 @@ class TestLab(TestCase):
 
     def test_lab_constructor(self):
         print "test_lab_constructor"
-        lab = Lab(name="DS", mnemonic="cse-ds")
+        lab = Lab(name="DS", lab_id="cse-ds")
         self.assertEqual(isinstance(lab, Lab), True)
         self.assertEqual(lab.get_name(), "DS")
         # Calling the Lab constructor w/o any arguments should raise
         # AttributeRequired exception
         self.assertRaises(AttributeRequired, Lab)
-        # Calling the Lab constructor w/o name, mnemonic arguments should
+        # Calling the Lab constructor w/o name, lab_id arguments should
         # raise AttributeRequired exception
         self.assertRaises(AttributeRequired, Lab,
-                          **{'slug': 'ds', 'remarks': 'Completed'})
-        # Calling the Lab constructor with required arguments (name, mnemonic)
+                          **{'remarks': 'Completed'})
+        # Calling the Lab constructor with required arguments (name, lab_id)
         # but Type of other arguments are wrong, should raise TypeError
         self.assertRaises(TypeError, Lab,
                           **{'name': Name('DS'),
-                             'mnemonic': 'ds',
+                             'lab_id': 'ds',
                              'integration_level': 6
                              })
 
     def test_lab_get_id(self):
         print "test_lab_get_id"
-        lab = Lab(name="DS", mnemonic="ds")
+        lab = Lab(name="DS", lab_id="ds")
         lab.save()
         self.assertEqual(lab.get_id(), 1)
 
     def test_lab_get_by_id(self):
         print "test_lab_get_by_id"
-        lab = Lab(name="DS", mnemonic="ds")
+        lab = Lab(name="DS", lab_id="ds")
         lab.save()
         some_lab = Lab.get_by_id(1)
         self.assertEqual(some_lab, lab)
 
-    def test_lab_get_mnemonic(self):
-        print "test_lab_get_mnemonic"
-        lab = Lab(name="DS", mnemonic="ds")
-        self.assertEqual(lab.get_mnemonic(), "ds")
+    def test_get_lab_id(self):
+        print "test_get_lab_id"
+        lab = Lab(name="DS", lab_id="ds")
+        self.assertEqual(lab.get_lab_id(), "ds")
 
-    def test_lab_get_by_mnemonic(self):
-        print "test_lab_get_by_mnemonic"
-        lab = Lab(name="DS", mnemonic="ds")
+    def test_get_by_lab_id(self):
+        print "test_get_by_lab_id"
+        lab = Lab(name="DS", lab_id="ds")
         lab.save()
-        some_lab = Lab.get_by_mnemonic("ds")
+        some_lab = Lab.get_by_lab_id("ds")
         self.assertEqual(some_lab, lab)
 
     def test_lab_get_name(self):
         print "test_lab_get_name"
-        lab = Lab(name="DS", mnemonic="ds")
+        lab = Lab(name="DS", lab_id="ds")
         self.assertEqual(lab.get_name(), "DS")
 
     def test_lab_get_integration_level(self):
         print "test_lab_get_integration_level"
         ilevel = IntegrationLevel(level=1)
-        lab = Lab(name="DS", mnemonic="ds", integration_level=ilevel)
+        lab = Lab(name="DS", lab_id="ds", integration_level=ilevel)
         self.assertEqual(lab.get_integration_level(), 1)
 
     def test_lab_get_hosted_url(self):
         print "test_lab_get_hosted_url"
-        lab = Lab(name="DS", mnemonic="ds", hosted_url=URL("http://gnu.org"))
+        lab = Lab(name="DS", lab_id="ds", hosted_url=URL("http://gnu.org"))
         self.assertEqual(lab.get_hosted_url(), "http://gnu.org")
 
     def test_lab_is_hosted(self):
@@ -1876,7 +1870,7 @@ class TestLab(TestCase):
 
     def test_lab_get_repo_url(self):
         print "test_lab_get_repo_url"
-        lab = Lab(name="DS", mnemonic="ds", repo_url=URL("http://gnu.org"))
+        lab = Lab(name="DS", lab_id="ds", repo_url=URL("http://gnu.org"))
         self.assertEqual(lab.get_repo_url(), "http://gnu.org")
 
     def test_lab_is_source_available(self):
@@ -1886,7 +1880,7 @@ class TestLab(TestCase):
     def test_lab_get_type_of_lab(self):
         print "test_lab_get_type_of_lab"
         lab_type = TypeOfLab(type="Simulation")
-        lab = Lab(name="DS", mnemonic="ds", type_of_lab=lab_type)
+        lab = Lab(name="DS", lab_id="ds", type_of_lab=lab_type)
         self.assertEqual(lab.get_type(), lab_type)
 
     def test_lab_get_num_of_exps(self):
@@ -1894,7 +1888,7 @@ class TestLab(TestCase):
         exp1 = Experiment(name='Pendulum')
         exp2 = Experiment(name='Gravity')
         exps = [exp1, exp2]
-        lab = Lab(name="DS", mnemonic="ds")
+        lab = Lab(name="DS", lab_id="ds")
         lab.add_experiment(exp1)
         lab.add_experiment(exp2)
         self.assertEqual(lab.get_num_of_experiments(), 2)
@@ -1902,23 +1896,23 @@ class TestLab(TestCase):
     def test_lab_get_hosted_on(self):
         print "test_lab_get_hosted_on"
         platform = HostingPlatform(name="Badal")
-        lab = Lab(name="DS", mnemonic="ds", hosted_on=platform)
+        lab = Lab(name="DS", lab_id="ds", hosted_on=platform)
         self.assertEqual(lab.get_hosted_on(), platform)
 
     def test_lab_is_web2_compliant(self):
         print "test_lab_is_web2_compliant"
-        lab = Lab(name="DS", mnemonic="ds", is_web_2_compliant_lab=True)
+        lab = Lab(name="DS", lab_id="ds", is_web_2_compliant_lab=True)
         self.assertEqual(lab.is_web_2_compliant(), True)
 
     def test_lab_is_phase_2(self):
         print "test_lab_is_phase_2"
-        lab = Lab(name="DS", mnemonic="ds", is_phase_2_lab=True)
+        lab = Lab(name="DS", lab_id="ds", is_phase_2_lab=True)
         self.assertEqual(lab.is_phase_2(), True)
 
     def test_lab_get_discipline(self):
         print "test_lab_get_discipline"
         disc = Discipline(name="CSE", discipline_id="cse")
-        lab = Lab(name="DS", mnemonic="ds", discipline=disc)
+        lab = Lab(name="DS", lab_id="ds", discipline=disc)
         self.assertEqual(lab.get_discipline(), disc)
 
     def test_lab_get_experiments(self):
@@ -1926,7 +1920,7 @@ class TestLab(TestCase):
         exp1 = Experiment(name='Pendulum')
         exp2 = Experiment(name='Gravity')
         exps = [exp1, exp2]
-        lab = Lab(name="DS", mnemonic="ds")
+        lab = Lab(name="DS", lab_id="ds")
         lab.add_experiment(exp1)
         lab.add_experiment(exp2)
         self.assertItemsEqual(lab.get_experiments(), exps)
@@ -1934,7 +1928,7 @@ class TestLab(TestCase):
     def test_lab_get_institute(self):
         print "test_lab_get_institute"
         instt = Institute(name="MIT", institute_id="mit")
-        lab = Lab(name="DS", mnemonic="ds", institute=instt)
+        lab = Lab(name="DS", lab_id="ds", institute=instt)
         self.assertEqual(lab.get_institute(), instt)
 
     def test_lab_get_developers(self):
@@ -1945,7 +1939,7 @@ class TestLab(TestCase):
         dev2 = Developer(name=Name("Poe"), email_id=Email("poe@mit.com"),
                          institute=instt)
         devs = [dev1, dev2]
-        lab = Lab(name="DS", mnemonic="ds", developers=devs)
+        lab = Lab(name="DS", lab_id="ds", developers=devs)
         self.assertItemsEqual(lab.get_developers(), devs)
 
     def test_lab_get_technologies(self):
@@ -1953,19 +1947,19 @@ class TestLab(TestCase):
         tech1 = Technology(name="php5")
         tech2 = Technology(name="apache2")
         techs = [tech1, tech2]
-        lab = Lab(name="DS", mnemonic="ds", technologies=techs)
+        lab = Lab(name="DS", lab_id="ds", technologies=techs)
         self.assertItemsEqual(lab.get_technologies(), techs)
 
     def test_lab_set_name(self):
         print "test_lab_set_name"
-        lab = Lab(name="DS", mnemonic="ds")
+        lab = Lab(name="DS", lab_id="ds")
         lab.set_name("Data Structures")
         self.assertEqual(lab.get_name(), "Data Structures")
         self.assertRaises(TypeError, lab.set_name, 123)
 
     def test_lab_set_institute(self):
         print "test_lab_set_institute"
-        lab = Lab(name="DS", mnemonic="ds")
+        lab = Lab(name="DS", lab_id="ds")
         instt = Institute(name="MIT", institute_id="mit")
         lab.set_institute(instt)
         self.assertEqual(lab.get_institute(), instt)
@@ -1973,7 +1967,7 @@ class TestLab(TestCase):
 
     def test_lab_set_discipline(self):
         print "test_lab_set_discipline"
-        lab = Lab(name="DS", mnemonic="ds")
+        lab = Lab(name="DS", lab_id="ds")
         disc = Discipline(name="CSE", discipline_id="cse")
         lab.set_discipline(disc)
         self.assertEqual(lab.get_discipline(), disc)
@@ -1981,7 +1975,7 @@ class TestLab(TestCase):
 
     def test_lab_set_integration_level(self):
         print "test_lab_set_integration_level"
-        lab = Lab(name="DS", mnemonic="ds")
+        lab = Lab(name="DS", lab_id="ds")
         ilevel = IntegrationLevel(level=5)
         lab.set_integration_level(ilevel)
         self.assertEqual(lab.get_integration_level(), 5)
@@ -1989,7 +1983,7 @@ class TestLab(TestCase):
 
     def test_lab_set_hosted_url(self):
         print "test_lab_set_hosted_url"
-        lab = Lab(name="DS", mnemonic="ds")
+        lab = Lab(name="DS", lab_id="ds")
         url = URL("http://ds.vlabs.ac.in")
         lab.set_hosted_url(url)
         self.assertEqual(lab.get_hosted_url(), "http://ds.vlabs.ac.in")
@@ -1997,7 +1991,7 @@ class TestLab(TestCase):
 
     def test_lab_set_repo_url(self):
         print "test_lab_set_repo_url"
-        lab = Lab(name="DS", mnemonic="ds")
+        lab = Lab(name="DS", lab_id="ds")
         url = URL("http://ds.vlabs.ac.in")
         lab.set_repo_url(url)
         self.assertEqual(lab.get_repo_url(), "http://ds.vlabs.ac.in")
@@ -2005,7 +1999,7 @@ class TestLab(TestCase):
 
     def test_lab_set_type_of_lab(self):
         print "test_lab_set_type_of_lab"
-        lab = Lab(name="DS", mnemonic="ds")
+        lab = Lab(name="DS", lab_id="ds")
         lab_type = TypeOfLab(type="Simulation")
         lab.set_type_of_lab(lab_type)
         self.assertEqual(lab.get_type(), lab_type)
@@ -2013,7 +2007,7 @@ class TestLab(TestCase):
 
     def test_lab_set_hosted_on(self):
         print "test_lab_set_hosted_on"
-        lab = Lab(name="DS", mnemonic="ds")
+        lab = Lab(name="DS", lab_id="ds")
         plat = HostingPlatform(name="IIIT")
         lab.set_hosted_on(plat)
         self.assertEqual(lab.get_hosted_on(), plat)
@@ -2021,21 +2015,21 @@ class TestLab(TestCase):
 
     def test_lab_set_is_web_2_compliant(self):
         print "test_lab_set_is_web_2_compliant"
-        lab = Lab(name="DS", mnemonic="ds")
+        lab = Lab(name="DS", lab_id="ds")
         lab.set_is_web_2_compliant(True)
         self.assertEqual(lab.is_web_2_compliant(), True)
         self.assertRaises(TypeError, lab.set_is_web_2_compliant, "Yes")
 
     def test_lab_set_is_phase_2(self):
         print "test_lab_set_is_phase_2"
-        lab = Lab(name="DS", mnemonic="ds")
+        lab = Lab(name="DS", lab_id="ds")
         lab.set_is_phase_2(True)
         self.assertEqual(lab.is_phase_2(), True)
         self.assertRaises(TypeError, lab.set_is_phase_2, "Yes")
 
     def test_lab_add_developer(self):
         print "test_lab_add_developer"
-        lab = Lab(name="DS", mnemonic="ds")
+        lab = Lab(name="DS", lab_id="ds")
         instt = Institute(name="MIT", institute_id="mit")
         dev = Developer(name=Name("Joe"), email_id=Email("joe@mit.com"),
                         institute=instt)
@@ -2048,14 +2042,14 @@ class TestLab(TestCase):
         instt = Institute(name="MIT", institute_id="mit")
         dev = Developer(name=Name("Joe"), email_id=Email("joe@mit.com"),
                         institute=instt)
-        lab = Lab(name="DS", mnemonic="ds", developers=[dev])
+        lab = Lab(name="DS", lab_id="ds", developers=[dev])
         self.assertEqual(len(lab.get_developers()), 1)
         lab.remove_developer(dev)
         self.assertEqual(len(lab.get_developers()), 0)
 
     def test_lab_add_technology(self):
         print "test_lab_add_technology"
-        lab = Lab(name="DS", mnemonic="ds")
+        lab = Lab(name="DS", lab_id="ds")
         tech = Technology(name="php5")
         self.assertEqual(len(lab.get_technologies()), 0)
         lab.add_technology(tech)
@@ -2064,14 +2058,14 @@ class TestLab(TestCase):
     def test_lab_remove_technology(self):
         print "test_lab_remove_technology"
         tech = Technology(name="php5")
-        lab = Lab(name="DS", mnemonic="ds", technologies=[tech])
+        lab = Lab(name="DS", lab_id="ds", technologies=[tech])
         self.assertEqual(len(lab.get_technologies()), 1)
         lab.remove_technology(tech)
         self.assertEqual(len(lab.get_technologies()), 0)
 
     def test_lab_add_experiment(self):
         print "test_lab_add_experiment"
-        lab = Lab(name="DS", mnemonic="ds")
+        lab = Lab(name="DS", lab_id="ds")
         exp = Experiment(name="Pendulum")
         self.assertEqual(len(lab.get_experiments()), 0)
         lab.add_experiment(exp)
@@ -2080,7 +2074,7 @@ class TestLab(TestCase):
     def test_lab_remove_experiment(self):
         print "test_lab_remove_experiment"
         exp = Experiment(name="Pendulum")
-        lab = Lab(name="DS", mnemonic="ds")
+        lab = Lab(name="DS", lab_id="ds")
         lab.add_experiment(exp)
         self.assertEqual(len(lab.get_experiments()), 1)
         lab.remove_experiment(exp)
@@ -2202,9 +2196,9 @@ class TestDeveloper(TestCase):
         developer.save()
 
         devs = [developer]
-        lab1 = Lab(name="DS", mnemonic="ds", developers=devs)
+        lab1 = Lab(name="DS", lab_id="ds", developers=devs)
         lab1.save()
-        lab2 = Lab(name="POPL", mnemonic="popl", developers=devs)
+        lab2 = Lab(name="POPL", lab_id="popl", developers=devs)
         lab2.save()
         labs = [lab1, lab2]
         dev = Developer.get_by_id(1)
@@ -2300,7 +2294,7 @@ class TestInstitute(TestCase):
                             })
 
         # Calling the institute constructor with necessary arguments
-        # (name, mnemonic) but with wrong type of other arguments should
+        # (name, institute_id) but with wrong type of other arguments should
         # raise TypeError
         self.assertRaises(TypeError, Institute,
                           **{'name': 'IIT',
@@ -2384,8 +2378,8 @@ class TestInstitute(TestCase):
     def test_get_institute_labs(self):                                           
         print "test_get_institute_labs"                                          
         instt = Institute(name="MIT", institute_id="mit")
-        lab1 = Lab(name="Micro Controllers", mnemonic="micro", institute=instt)                   
-        lab2 = Lab(name="Digital Logic Design", mnemonic="digital", institute=instt)              
+        lab1 = Lab(name="Micro Controllers", lab_id="micro", institute=instt)                   
+        lab2 = Lab(name="Digital Logic Design", lab_id="digital", institute=instt)              
         labs = [lab1, lab2]                                                      
         self.assertItemsEqual(instt.get_labs(), labs)                            
 
@@ -2498,8 +2492,8 @@ class TestDiscipline(TestCase):
     def test_get_discipline_labs(self):                                          
         print "test_get_discipline_labs"                                         
         disc = Discipline(name="Electronics", discipline_id="ece")
-        lab1 = Lab(name="Micro Controllers", mnemonic="micro", discipline=disc)                   
-        lab2 = Lab(name="Digital Logic Design", mnemonic="digital", discipline=disc)              
+        lab1 = Lab(name="Micro Controllers", lab_id="micro", discipline=disc)                   
+        lab2 = Lab(name="Digital Logic Design", lab_id="digital", discipline=disc)              
         labs = [lab1, lab2]                                                      
         self.assertItemsEqual(disc.get_labs(), labs)                             
 
@@ -2563,8 +2557,8 @@ class TestTechnology(TestCase):
     def test_technology_get_labs(self):
         print "test_technology_get_labs"
         tech = Technology(name="php5", version="5.0")
-        lab1 = Lab(name="DS", mnemonic="ds", technologies=[tech])
-        lab2 = Lab(name="CG", mnemonic="cg", technologies=[tech])
+        lab1 = Lab(name="DS", lab_id="ds", technologies=[tech])
+        lab2 = Lab(name="CG", lab_id="cg", technologies=[tech])
         self.assertItemsEqual(tech.get_labs(), [lab1, lab2])
 
     def test_technology_get_by_id(self):
@@ -2698,7 +2692,7 @@ class TestExperiment(TestCase):
 
     def test_get_experiment_lab(self):
         print "test_get_experiment_lab"
-        lab = Lab(name="Data Structures", mnemonic="dsa")
+        lab = Lab(name="Data Structures", lab_id="dsa")
         expt = Experiment(name="Merge Sort")
         lab.add_experiment(expt)
         self.assertEqual(expt.get_lab(), lab)
