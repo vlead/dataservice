@@ -527,12 +527,12 @@ class Discipline(Entity):
 **** Developer
 ***** Immutable Data
       This is the data associated with Developer type, which is immutable.
-      + DeveloperId
+      + Id
 ***** Mutable Data
       This is the data associated with Developer type, which is mutable.
       + Name
       + Email
-      + Institute Id
+      + Institute --> Id
 
 ***** Definition
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -550,18 +550,22 @@ class Developer(Entity):
 ***** Constructor
      signature of constructor
 #+BEGIN_EXAMPLE
-    developer = Developer(name=instance of class Name,
-                          email_id=instance of Email,
-                          institute=instance of Institute)
+    developer = Developer(name=<instance of class Name>,
+                          email_id=<instance of Email>,
+                          institute=<instance of Institute>)
 #+END_EXAMPLE
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def __init__(self, **kwargs):
-        keys = kwargs.keys()
-        if 'name' and 'email_id' and 'institute' not in keys:
-            raise AttributeRequired("non-nullable attribute(s) missing")
-
+        if 'name' not in kwargs:
+            raise AttributeRequired("non-nullable attribute name is missing")
         self.set_name(kwargs['name'])
+
+        if 'email_id' not in kwargs:
+            raise AttributeRequired("non-nullable attribute email is missing")
         self.set_email(kwargs['email_id'])
+
+        if 'institute' not in kwargs:
+            raise AttributeRequired("non-nullable attribute institute is missing")
         self.set_institute(kwargs['institute'])
 
     def __str__(self):
@@ -585,13 +589,13 @@ class Developer(Entity):
             'institute': self.institute.to_client()
         }
 #+END_SRC
-****** getId: Developer --> DeveloperId
+****** getId: Developer --> Id
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_id(self):
         return self.id
 #+END_SRC
 
-****** getDeveloper: DeveloperId --> Developer
+****** getDeveloper: Id --> Developer
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_by_id(id):
@@ -643,12 +647,14 @@ class Developer(Entity):
     @typecheck(email_id=Email)
     def set_email(self, email_id):
         self.email_id = email_id.value
+        self.save()
 #+END_SRC
 ****** setInstitute: Developer, Institute --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(institute=Institute)
     def set_institute(self, institute):
         self.institute = institute
+        self.save()
 #+END_SRC
 
 **** Technology
@@ -656,11 +662,12 @@ class Developer(Entity):
 ***** Immutable Data
       This is the data associated with Technology type, which is immutable.
 
-      + TechnologyId
+      + Id
 
 ***** Mutable Data
       These are the data associated with Technology type, which are mutable.
 
+      + Name
       + Version
       + FOSS
 
@@ -689,10 +696,7 @@ Technology(name=String
         if 'name' not in kwargs:
             raise AttributeRequired('`name` attribute is required to'
                                     ' initialize Technology')
-        if not isinstance(kwargs['name'], str):
-            raise TypeError('`name` attribute should be of type "str"')
-
-        self.name = kwargs['name']
+        self.set_name(kwargs['name'])
 
         if 'version' in kwargs:
             self.set_version(kwargs['version'])
@@ -702,7 +706,7 @@ Technology(name=String
 
 #+END_SRC
 ***** Functions that operate on the Technology domain
-****** getId: Technology --> TechnologyId
+****** getId: Technology --> Id
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_id(self):
         return self.id
@@ -731,7 +735,7 @@ Technology(name=String
 
 #+END_SRC
 
-****** getTechnology: TechnologyId --> Technology
+****** getTechnology: Id --> Technology
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_by_id(id):
@@ -765,7 +769,7 @@ Technology(name=String
     @typecheck(version=str)
     def set_version(self, version):
         self.version = version
-
+        self.save()
 #+END_SRC
 
 ****** setFOSS: Technology, Boolean --> Void
@@ -773,7 +777,7 @@ Technology(name=String
     @typecheck(foss=bool)
     def set_foss(self, foss):
         self.foss = foss
-
+        self.save()
 #+END_SRC
 
 ****** to_client: Technology --> Dictionary
@@ -1116,7 +1120,7 @@ class Lab(Entity):
     is_web_2_compliant_lab = db.Column(db.Boolean)
     is_phase_2_lab = db.Column(db.Boolean)
 #+END_SRC
-
+      
 ***** Constructor for Lab
 Signature of the constructor for Lab is as follows. Attributes inside [...]
 are optional when constructing the lab. Other attributes are mandatory.
@@ -2288,7 +2292,7 @@ class TestInstitute(TestCase):
         self.assertRaises(AttributeRequired, Institute)
 
         # Calling the institute constructor without necessary arguments
-        # like name or mnemonic should raise AttributeRequired exception
+        # like name or institute_id should raise AttributeRequired exception
         self.assertRaises(AttributeRequired, Institute,
                           **{'name': 'IIT',
                              'pic': 'Alan',
@@ -2868,7 +2872,7 @@ if __name__ == "__main__":
 # mysql+oursql://scott:tiger@localhost/mydatabase
 # postgresql+psycopg2://scott:tiger@localhost/mydatabase
 SQLALCHEMY_DATABASE_URI =\
-    'mysql+oursql://root:root@localhost/dataservice'
+    'mysql+oursql://root:root@localhost/vlabs_database'
 
 # Debug from SQLAlchemy
 # Turn this to False on production
