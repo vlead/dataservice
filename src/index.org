@@ -106,21 +106,9 @@ class URL(object):
 
         self.value = value
 #+END_SRC
-**** LabId
-
-     LabId is a natural number.
-
 **** TechnologyId
 
      TechnologyId is a natural number.
-
-**** InstituteId
-
-     InstituteId is a natural number.
-
-**** DisciplineId
-
-     DisciplineId is a natural number.
 
 **** DeveloperId
 
@@ -233,15 +221,14 @@ class Institute(Entity):
 
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def __init__(self, **kwargs):
+        if 'institute_id' not in kwargs:
+            raise AttributeRequired("institute_id is required when initializing an institute")
+        self.institute_id = kwargs['institute_id']
+
         if 'name' not in kwargs:
             raise AttributeRequired("name is required when initializing an institute")
 
-        self.name = kwargs['name']
-
-        if 'institute_id' not in kwargs:
-            raise AttributeRequired("institute_id is required when initializing an institute")
-
-        self.institute_id = kwargs['institute_id']
+        self.set_name(kwargs['name'])
 
         if 'pic' in kwargs:
             self.set_pic(kwargs['pic'])
@@ -422,15 +409,15 @@ class Discipline(Entity):
 
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def __init__(self, **kwargs):
-        if 'name' not in kwargs:
-            raise AttributeRequired("name is required when initializing discipline")
-
-        self.name = kwargs['name']
-
         if 'discipline_id' not in kwargs:
             raise AttributeRequired("discipline_id is required when initializing discipline")
 
         self.discipline_id = kwargs['discipline_id']
+
+        if 'name' not in kwargs:
+            raise AttributeRequired("name is required when initializing discipline")
+
+        self.name = kwargs['name']
 
         if 'dnc' in kwargs:
             self.set_dnc(kwargs['dnc'])
@@ -1151,16 +1138,16 @@ Lab(name=<instance of Name class>,
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def __init__(self, **kwargs):
 
-        if 'name' not in kwargs:
-            raise AttributeRequired('`name` atttribute is required when '
-                                    'initializaing a Lab')
-            raise TypeError('`name` attribute should be of type "str"')
-        self.name = kwargs['name']
-
         if 'lab_id' not in kwargs:
             raise AttributeRequired('`lab_id` attribute is required when '
                                     'initializaing a Lab')
         self.lab_id = kwargs['lab_id']
+
+        if 'name' not in kwargs:
+            raise AttributeRequired('`name` atttribute is required when '
+                                    'initializaing a Lab')
+            raise TypeError('`name` attribute should be of type "str"')
+        self.set_name(kwargs['name'])
 
         if 'institute' in kwargs:
             self.set_institute(kwargs['institute'])
