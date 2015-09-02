@@ -43,17 +43,17 @@
 
 ** In Lab entity : 
 
-1. Change LabId --> Id
-2. Change Mnemonic --> LabId
-3. =No. of expts= is a function and not an attribute, so remove this
+1. Use =set_name= in constructor
+2. Include =no_of_labs= just like =no_of_experiments=
+3. Change in documentation : =setisweb2compliant= to =isweb2compliant=
+4. Change LabId --> Id
+5. Change Mnemonic --> LabId
+6. =No. of expts= is a function and not an attribute, so remove this
    from immutable data and definition
-4. Add =remarks= and =status= as part of mutable data
-5. Remove slug
-6. Use =set_name= in constructor
-7. Include =no_of_labs= just like =no_of_experiments=
-8. Change in documentation : =setisweb2compliant= to =isweb2compliant=
- 
-** DONE In Institute and Discipline entities :
+7. Add =remarks= and =status= as part of mutable data
+8. Remove slug
+   
+** In Institute and Discipline entities :
 1. Change entity id to just =Id= and =mnemonic= to EntityId
    everywhere - in documentation as well as in methods
 2. Change =get_entity_by_id= to =get_by_id= and
@@ -63,9 +63,9 @@
 5. Discipline name shouldn't be of type =Name= but of type
    =String=. Same for =Institute= too
 
-** DONE Remove =Version= from types
-** DONE Remove =InstituteName= and make respective change in =Institute= entity too 
-** DONE Give links in =Email= and =URL=
-** DONE Change the definition of =Integration Level=
+** Remove =Version= from types
+** Remove =InstituteName= and make respective change in =Institute= entity too 
+** Give links in =Email= and =URL=
+** Change the definition of =Integration Level=
 ** The name attribute of Integration Level and Hosting Platform should be unique
 ** Change org-templates (low priority)
