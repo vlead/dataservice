@@ -236,7 +236,7 @@ class Institute(Entity):
         if 'name' not in kwargs:
             raise AttributeRequired("name is required when initializing an institute")
 
-        self.set_name(kwargs['name'])
+        self.name = kwargs['name']
 
         if 'institute_id' not in kwargs:
             raise AttributeRequired("institute_id is required when initializing an institute")
@@ -347,7 +347,7 @@ class Institute(Entity):
     @typecheck(name=str)
     def set_name(self, name):
         self.name = name
-
+        self.save()
 #+END_SRC
 
 ****** to_client
@@ -425,7 +425,7 @@ class Discipline(Entity):
         if 'name' not in kwargs:
             raise AttributeRequired("name is required when initializing discipline")
 
-        self.set_name(kwargs['name'])
+        self.name = kwargs['name']
 
         if 'discipline_id' not in kwargs:
             raise AttributeRequired("discipline_id is required when initializing discipline")
@@ -502,7 +502,7 @@ class Discipline(Entity):
     @typecheck(name=str)
     def set_name(self, name):
         self.name = name
-
+        self.save()
 #+END_SRC
 
 ****** setDNC: Discipline, Name --> Void
@@ -640,6 +640,7 @@ class Developer(Entity):
     @typecheck(name=Name)
     def set_name(self, name):
         self.name = name.value
+
 #+END_SRC
 
 ****** setEmail: Developer, Email --> Void
@@ -762,7 +763,7 @@ Technology(name=String
     @typecheck(name=str)
     def set_name(self, name):
         self.name = name
-
+        self.save()
 #+END_SRC
 ****** setVersion: Technology, Version --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -960,7 +961,7 @@ class Experiment(Entity):
     @typecheck(name=str)
     def set_name(self, name):
         self.name = name
-
+        self.save()
 #+END_SRC
 
 ****** setContentURL: Experiment, URL --> Void
