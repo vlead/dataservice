@@ -1,15 +1,17 @@
-#+TITLE: dataservice code review
+#+TITLE: dataservice model review
 #+DATE: [2015-08-28 Fri]
 #+Options: ^:nil
 
 
-* MOM for the =dataservice= code review
- 
- Code review was done in two parts. One on [2015-08-27 Thu] at 4:00
- p.m and other on [2015-08-28 Fri] at 11:30 a.m. The test cases are
- yet to be reviewed. Following are the changes suggested:
+* Review Comments
 
-** In Developer entity :
+** [2015-08-28 Fri]
+
+  Code review was done in two parts. One on [2015-08-27 Thu] at 4:00
+  p.m and other on [2015-08-28 Fri] at 11:30 a.m. The test cases are
+  yet to be reviewed. Following are the changes suggested:
+
+*** In Developer entity :
 1. Change DeveloperId --> Id
 2. Under the mutable data section - InstituteId can be represented as
    institute.id or institute --> id
@@ -20,14 +22,14 @@
    objects is returned. This is true for all other entities too.
 7. Setter methods to include save()
 
-** In Technology entity :
+*** In Technology entity :
 1. TechnologyId --> Id
 2. Technology name should be mentioned in mutable data
 3. Since it is mutable, use =set_name()= in constructor
 4. =getAllTechnologies= - same as point 6 of =Developer= entity
 5. Setter methods to include save()
 
-** In Experiment entity :
+*** In Experiment entity :
 1. Write name as part of the mutable data
 2. Change type of =Experiment= name from =Name= to =String=
 3. =get_experiment= becomes =get_by_id=
@@ -41,7 +43,7 @@
 8. Correct test case for =get_lab=
 9. Include save() in setters for data persistence
 
-** In Lab entity : 
+*** In Lab entity : 
 
 1. Use =set_name= in constructor
 2. Include =no_of_labs= just like =no_of_experiments=
@@ -53,7 +55,7 @@
 7. Add =remarks= and =status= as part of mutable data
 8. Remove slug
    
-** In Institute and Discipline entities :
+*** In Institute and Discipline entities :
 1. Change entity id to just =Id= and =mnemonic= to EntityId
    everywhere - in documentation as well as in methods
 2. Change =get_entity_by_id= to =get_by_id= and
@@ -63,9 +65,34 @@
 5. Discipline name shouldn't be of type =Name= but of type
    =String=. Same for =Institute= too
 
-** Remove =Version= from types
-** Remove =InstituteName= and make respective change in =Institute= entity too 
-** Give links in =Email= and =URL=
-** Change the definition of =Integration Level=
-** The name attribute of Integration Level and Hosting Platform should be unique
-** Change org-templates (low priority)
+*** Remove =Version= from types
+*** Remove =InstituteName= and make respective change in =Institute= entity too 
+*** Give links in =Email= and =URL=
+*** Change the definition of =Integration Level=
+*** The name attribute of Integration Level and Hosting Platform should be unique
+*** Change org-templates (low priority)
+
+** [2015-09-02 Wed]
+
+ - =Code-review= folder to be deleted from =src= and replaced with
+   =review.org=.
+
+ - Remove =LabId=, =InstituteId= and =DisciplineId= as =Types= since
+   they no longer represent natural numbers.
+
+ - In the constructors of various entities, move =name= after the
+   =entity_id=.  This is done as a temporary solution for now to avoid
+   IntegrityErrors.
+
+ - Error Handling for duplicate values needs to be done.  For example,
+   the constructor for =Institute= can throw an error if one tries to
+   create two objects with the same value of the field =institute_id=.
+   In the current scenario this is not possible since it is an
+   immutable field.
+
+ - We can also think of assigning EntityIds like =institute_id= as
+   unique. 
+ 
+ - Also, saving to the database can be a one time thing done at the
+   end of the constructor, rather than saving repeatedly through
+   setter methods.
