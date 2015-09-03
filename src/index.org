@@ -309,7 +309,7 @@ class Institute(Entity):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_all():
-        return [i.to_client() for i in Institute.query.all()]
+        return [i in Institute.query.all()]
 
 #+END_SRC
 
@@ -430,7 +430,7 @@ class Discipline(Entity):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_all():
-        return [i.to_client() for i in Discipline.query.all()]
+        return [i in Discipline.query.all()]
 
 #+END_SRC
 
@@ -535,7 +535,7 @@ class Developer(Entity):
 
 #+END_SRC
 ***** Constructor
-     signature of constructor
+      Signature of constructor
 #+BEGIN_EXAMPLE
     developer = Developer(name=<instance of class Name>,
                           email_id=<instance of Email>,
@@ -627,9 +627,9 @@ class Developer(Entity):
     @typecheck(name=Name)
     def set_name(self, name):
         self.name = name.value
-
+        
 #+END_SRC
-
+       
 ****** setEmail: Developer, Email --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(email_id=Email)
@@ -672,8 +672,8 @@ class Technology(Entity):
 #+END_SRC
 
 ***** Constructor for Technology
-Signature for the constructor is as follows. Attributes inside [...] are
-optional. Other attributes are mandatory.
+      Signature for the constructor is as follows. Attributes inside [...] are
+      optional. Other attributes are mandatory.
 #+BEGIN_EXAMPLE python
 Technology(name=String
            [,version=String]
@@ -838,10 +838,15 @@ class Experiment(Entity):
 #+END_SRC
 
 ***** Constructor for the Experiment
-     Signature of the constructor is as follows. Fields in [...]  are
+     Signature of the constructor is as follows. Attributes inside [...]  are
      optional. Others are mandatory.
+
+     Lab is a mandatory part of the constructor, since an experiment can not 
+     exist independent of a lab. Once lab is created, the creation of an experiment
+     must be linked to this lab. 
 #+BEGIN_EXAMPLE
-    experiment = Experiment(name=String
+    experiment = Experiment(name=String,
+                            lab=<instance of Lab>
                             [,content_url=<instance of class URL>]
                             [,simulation_url=<instance of class URL>]
                             [,content_hosted_on=<instance of class HostingPlatform>]
@@ -851,6 +856,11 @@ class Experiment(Entity):
 
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def __init__(self, **kwargs):
+        if 'lab' not in kwargs:
+            raise AttributeRequired("lab is required when initializing experiment")
+     
+        self.lab = kwargs['lab']     
+  
         if 'name' not in kwargs:
             raise AttributeRequired("name is required when initializing experiment")
 
@@ -878,7 +888,7 @@ class Experiment(Entity):
 #+END_SRC
 
 ***** Functions that operate on the Experiment domain
-
+      
 ****** getName: Experiment --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_name(self):
@@ -942,7 +952,7 @@ class Experiment(Entity):
         return self.lab
 
 #+END_SRC
-
+a
 ****** setName: Experiment, Name --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(name=str)
@@ -1171,7 +1181,7 @@ Lab(name=<instance of Name class>,
             self.set_hosted_url(kwargs['hosted_url'])
 
         if 'is_web_2_compliant_lab' in kwargs:
-            self.set_is_web_2_compliant(kwargs['is_web_2_compliant_lab'])
+            self.set_web_2_compliant(kwargs['is_web_2_compliant_lab'])
 
         if 'is_phase_2_lab' in kwargs:
             self.set_is_phase_2(kwargs['is_phase_2_lab'])
@@ -1219,7 +1229,7 @@ Lab(name=<instance of Name class>,
     @staticmethod
     def get_all(fields=None):
         # get all labs from db
-        labs = [i.to_client() for i in Lab.query.all()]
+        labs = [i in Lab.query.all()]
         print 'total count of labs'
         print len(labs)
         # print fields
@@ -1422,10 +1432,10 @@ Lab(name=<instance of Name class>,
         self.save()
 #+END_SRC
 
-****** setisWeb2Compliant: Lab, Boolean --> Void
+****** setWeb2Compliant: Lab, Boolean --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(compliant=bool)
-    def set_is_web_2_compliant(self, compliant):
+    def set_web_2_compliant(self, compliant):
         self.is_web_2_compliant_lab = compliant
         self.save()
 #+END_SRC
@@ -1873,10 +1883,10 @@ class TestLab(TestCase):
 
     def test_lab_get_num_of_exps(self):
         print "test_lab_get_num_of_exps"
-        exp1 = Experiment(name='Pendulum')
-        exp2 = Experiment(name='Gravity')
-        exps = [exp1, exp2]
         lab = Lab(name="DS", lab_id="ds")
+        exp1 = Experiment(name='Pendulum', lab=lab)
+        exp2 = Experiment(name='Gravity', lab=lab)
+        exps = [exp1, exp2]
         lab.add_experiment(exp1)
         lab.add_experiment(exp2)
         self.assertEqual(lab.get_num_of_experiments(), 2)
@@ -1905,10 +1915,10 @@ class TestLab(TestCase):
 
     def test_lab_get_experiments(self):
         print "test_lab_get_experiments"
-        exp1 = Experiment(name='Pendulum')
-        exp2 = Experiment(name='Gravity')
-        exps = [exp1, exp2]
         lab = Lab(name="DS", lab_id="ds")
+        exp1 = Experiment(name='Pendulum', lab=lab)
+        exp2 = Experiment(name='Gravity', lab=lab)
+        exps = [exp1, exp2]
         lab.add_experiment(exp1)
         lab.add_experiment(exp2)
         self.assertItemsEqual(lab.get_experiments(), exps)
@@ -2001,12 +2011,12 @@ class TestLab(TestCase):
         self.assertEqual(lab.get_hosted_on(), plat)
         self.assertRaises(TypeError, lab.set_hosted_on, "AWS")
 
-    def test_lab_set_is_web_2_compliant(self):
-        print "test_lab_set_is_web_2_compliant"
+    def test_lab_set_web_2_compliant(self):
+        print "test_lab_set_web_2_compliant"
         lab = Lab(name="DS", lab_id="ds")
-        lab.set_is_web_2_compliant(True)
+        lab.set_web_2_compliant(True)
         self.assertEqual(lab.is_web_2_compliant(), True)
-        self.assertRaises(TypeError, lab.set_is_web_2_compliant, "Yes")
+        self.assertRaises(TypeError, lab.set_web_2_compliant, "Yes")
 
     def test_lab_set_is_phase_2(self):
         print "test_lab_set_is_phase_2"
@@ -2054,15 +2064,16 @@ class TestLab(TestCase):
     def test_lab_add_experiment(self):
         print "test_lab_add_experiment"
         lab = Lab(name="DS", lab_id="ds")
-        exp = Experiment(name="Pendulum")
-        self.assertEqual(len(lab.get_experiments()), 0)
-        lab.add_experiment(exp)
+        exp1 = Experiment(name="Pendulum", lab=lab)
         self.assertEqual(len(lab.get_experiments()), 1)
+        exp2 = Experiment(name="Oscillation", lab=lab)
+        lab.add_experiment(exp2)
+        self.assertEqual(len(lab.get_experiments()), 2)
 
     def test_lab_remove_experiment(self):
         print "test_lab_remove_experiment"
-        exp = Experiment(name="Pendulum")
         lab = Lab(name="DS", lab_id="ds")
+        exp = Experiment(name="Pendulum", lab=lab)
         lab.add_experiment(exp)
         self.assertEqual(len(lab.get_experiments()), 1)
         lab.remove_experiment(exp)
@@ -2611,14 +2622,16 @@ class TestExperiment(TestCase):
         content_url = URL("http://deploy.virtual-labs.ac.in/labs/cse04/exp1/index.php")
         simulation_url = URL("http://deploy.virtual-labs.ac.in/labs/cse04/exp1/lab.html")
 
-        expt = Experiment(name=name, content_url=content_url, simulation_url=simulation_url)
+        lab = Lab(name="DS", lab_id="ds")
+
+        expt = Experiment(name=name, lab=lab, content_url=content_url, simulation_url=simulation_url)
         self.assertEqual(isinstance(expt, Experiment), True)
 
         # Calling the experiment constructor without any arguments should
         # raise AttributeRequired exception
         self.assertRaises(AttributeRequired, Experiment)
 
-        # Calling the experiment constructor without name argument
+        # Calling the experiment constructor without name/lab argument
         # should raise AttributeRequired exception
         self.assertRaises(AttributeRequired, Experiment,
                           **{'content_url': URL('http://deploy.virtual-labs.ac.in/labs/cse04/exp1/index.php'),
@@ -2628,29 +2641,34 @@ class TestExperiment(TestCase):
         # arguments should raise TypeError
         self.assertRaises(TypeError, Experiment,
                           **{'name': 'Searching and Sorting',
+                             'lab': lab,
                              'content_url': ('http://deploy.virtual-labs.ac.in/labs/cse04/exp1/index.php')
                             })
 
     def test_get_content_url(self):
         print "test_experiment_get_content_url"
-        expt = Experiment(name="Searching and Sorting", content_url=URL("http://vlabs.ac.in"))
+        lab = Lab(name="DS", lab_id="ds")
+        expt = Experiment(name="Searching and Sorting", lab=lab, content_url=URL("http://vlabs.ac.in"))
         self.assertEqual(expt.get_content_url(), "http://vlabs.ac.in")
         
     def test_get_simulation_url(self):
         print "test_experiment_get_simulation_url"
-        expt = Experiment(name="Searching and Sorting", simulation_url=URL("http://vlabs.ac.in"))
+        lab = Lab(name="DS", lab_id="ds")
+        expt = Experiment(name="Searching and Sorting", lab=lab, simulation_url=URL("http://vlabs.ac.in"))
         self.assertEqual(expt.get_simulation_url(), "http://vlabs.ac.in")
 
     def test_get_id_of_experiment(self):
         print "test_get_id_of_experiment"
-        expt = Experiment(name="Simple Pendulum")
+        lab = Lab(name="DS", lab_id="ds")
+        expt = Experiment(name="Simple Pendulum", lab=lab)
         expt.save()       
         expt_id = expt.get_id()
         self.assertEqual(expt_id, 1)
 
     def test_get_experiment_by_id(self):
         print "test_get_experiment_by_id"
-        expt = Experiment(name="Simple Pendulum")
+        lab = Lab(name="DS", lab_id="ds")
+        expt = Experiment(name="Simple Pendulum", lab=lab)
         expt.save()
         self.assertEqual(expt.get_by_id(1).name, "Simple Pendulum")
 
@@ -2659,12 +2677,14 @@ class TestExperiment(TestCase):
         tech1 = Technology(name="php5")
         tech2 = Technology(name="apache2")
         techs = [tech1, tech2]
-        expt = Experiment(name="Simple Pendulum", technologies=techs)
+        lab = Lab(name="DS", lab_id="ds")
+        expt = Experiment(name="Simple Pendulum", lab=lab, technologies=techs)
         self.assertItemsEqual(expt.get_technologies(), techs)
 
     def test_experiment_add_technology(self):
         print "test_experiment_add_technology"
-        expt = Experiment(name="Pendulum")
+        lab = Lab(name="DS", lab_id="ds")
+        expt = Experiment(name="Pendulum", lab=lab)
         tech = Technology(name="php5")
         self.assertEqual(len(expt.get_technologies()), 0)
         expt.add_technology(tech)
@@ -2673,7 +2693,8 @@ class TestExperiment(TestCase):
     def test_experiment_remove_technology(self):
         print "test_experiment_remove_technology"
         tech = Technology(name="php5")
-        expt = Experiment(name="Pendulum", technologies=[tech])
+        lab = Lab(name="DS", lab_id="ds")
+        expt = Experiment(name="Pendulum", lab=lab, technologies=[tech])
         self.assertEqual(len(expt.get_technologies()), 1)
         expt.remove_technology(tech)
         self.assertEqual(len(expt.get_technologies()), 0)
@@ -2681,39 +2702,43 @@ class TestExperiment(TestCase):
     def test_get_experiment_lab(self):
         print "test_get_experiment_lab"
         lab = Lab(name="Data Structures", lab_id="dsa")
-        expt = Experiment(name="Merge Sort")
-        lab.add_experiment(expt)
+        expt = Experiment(name="Merge Sort", lab=lab)
         self.assertEqual(expt.get_lab(), lab)
 
     def test_experiment_content_hosted_on(self):
         print "test_get_content_hosted_on"
+        lab = Lab(name="DS", lab_id="ds")
         platform = HostingPlatform(name="IIIT")
-        expt = Experiment(name="Simple Pendulum", content_hosted_on=platform)
+        expt = Experiment(name="Simple Pendulum", lab=lab, content_hosted_on=platform)
         self.assertEqual(expt.get_content_hosted_on(), platform)
 
     def test_experiment_simulation_hosted_on(self):
         print "test_get_simulation_hosted_on"
+        lab = Lab(name="DS", lab_id="ds")
         platform = HostingPlatform(name="IIIT")
-        expt = Experiment(name="Simple Pendulum", simulation_hosted_on=platform)
+        expt = Experiment(name="Simple Pendulum", lab=lab, simulation_hosted_on=platform)
         self.assertEqual(expt.get_simulation_hosted_on(), platform)
 
     def test_set_experiment_content_url(self):
         print "test_set_experiment_content_url"
-        expt = Experiment(name="Simple Pendulum")
+        lab = Lab(name="DS", lab_id="ds")
+        expt = Experiment(name="Simple Pendulum", lab=lab)
         url = URL("http://vlabs.ac.in")
         expt.set_content_url(url)
         self.assertEqual(expt.get_content_url(), "http://vlabs.ac.in")
 
     def test_set_experiment_simulation_url(self):
         print "test_set_experiment_simulation_url"
-        expt = Experiment(name="Simple Pendulum")
+        lab = Lab(name="DS", lab_id="ds")
+        expt = Experiment(name="Simple Pendulum", lab=lab)
         url = URL("http://vlabs.ac.in")
         expt.set_simulation_url(url)
         self.assertEqual(expt.get_simulation_url(), "http://vlabs.ac.in")
 
     def test_set_experiment_content_hosted_on(self):
         print "test_set_content_hosted_on"
-        expt = Experiment(name="Pendulum")
+        lab = Lab(name="DS", lab_id="ds")
+        expt = Experiment(name="Pendulum", lab=lab)
         plat = HostingPlatform(name="IIIT")
         expt.set_content_hosted_on(plat)
         self.assertEqual(expt.get_content_hosted_on(), plat)
@@ -2721,7 +2746,8 @@ class TestExperiment(TestCase):
 
     def test_set_experiment_simulation_hosted_on(self):
         print "test_set_simulation_hosted_on"
-        expt = Experiment(name="Pendulum")
+        lab = Lab(name="DS", lab_id="ds")
+        expt = Experiment(name="Pendulum", lab=lab)
         plat = HostingPlatform(name="IIIT")
         expt.set_simulation_hosted_on(plat)
         self.assertEqual(expt.get_simulation_hosted_on(), plat)
