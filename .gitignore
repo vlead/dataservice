@@ -9,4 +9,7 @@ DataService.egg-info/
 dist/
 logs/
 build/
+elisp/
+org-templates/
+style/
 sitemap*
