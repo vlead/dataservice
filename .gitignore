@@ -12,4 +12,6 @@ build/
 elisp/
 org-templates/
 style/
+src/org-templates
+src/style
 sitemap*
