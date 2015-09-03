@@ -161,18 +161,18 @@ class TypeOfLab(Entity):
 **** Institute
 
 ***** Immutable Data
-This is the data associated with Institute type, which is immutable.
+      This is the data associated with Institute type, which is immutable.
 
-+ Id
-+ InstituteId
+      + Id
+      + InstituteId
 
 ***** Mutable Data
 
-These are the data associated with Institute type, which are mutable
+      These are the data associated with Institute type, which are mutable
 
-+ Name
-+ PIC
-+ IIC
+      + Name
+      + PIC
+      + IIC
 
 ***** InstituteId assigned to each institute
 |---------------------------------+-------------|
@@ -210,8 +210,8 @@ class Institute(Entity):
 #+END_SRC
       
 ***** Constructor for the Institute
-     Signature of the constructor is as follows. Fields in [...]  are
-     optional. Others are mandatory.
+      Signature of the constructor is as follows. Fields in [...]  are
+      optional. Others are mandatory.
 #+BEGIN_EXAMPLE
     institute = Institute(name=String,
                           institute_id=String
@@ -352,16 +352,16 @@ class Institute(Entity):
 **** Discipline
 
 ***** Immutable Data
-This is the data associated with Discipline type, which is immutable.
+      This is the data associated with Discipline type, which is immutable.
 
-+ Id
-+ DisciplineId
+      + Id
+      + DisciplineId
 
 ***** Mutable Data
-This is the data associated with Discipline type, which is mutable.
+      This is the data associated with Discipline type, which is mutable.
 
-+ Name
-+ DNC
+      + Name
+      + DNC
 
 ***** DisciplineId assigned to each discipline
 |------------------------------------------+--------------|
@@ -399,8 +399,8 @@ class Discipline(Entity):
 #+END_SRC
       
 ***** Constructor for the Discipline
-     Signature of the constructor is as follows. Fields in [...]  are
-     optional. Others are mandatory.
+      Signature of the constructor is as follows. Fields in [...]  are
+      optional. Others are mandatory.
 #+BEGIN_EXAMPLE
     discipline = Discipline(name=String,
                             discipline_id=String
