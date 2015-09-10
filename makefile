@@ -55,17 +55,7 @@ write-version:
 	echo `git log --pretty=format:'%s' -n 1` >> ${CODE_DEST}/${VER_FILE}
 
 lint:
-	$(shell pep8 --ignore=E302 ${PWD}/${CODE_DIR} > ${LINT_FILE}; echo $$? > ${EXIT_FILE})
-ifeq ($(shell cat ${EXIT_FILE}),1)
-	@echo "Lint error(s) found"
-	@echo "The lint file is ${LINT_FILE}"
-else
-ifeq ($(shell cat ${EXIT_FILE}),0)
-	@echo "Success"
-else
-	@echo "Check if pep8 is installed"
-endif
-endif
+	pep8 --ignore=E302 ${PWD}/${CODE_DIR} > ${LINT_FILE};
 
 build-with-lint: build lint
 
