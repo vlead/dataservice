@@ -1061,215 +1061,215 @@ a
 
 ***** LabId assigned for each lab
 
-      |---------+--------------------------------------------------------------------------------------|
-      | LabId   | Name                                                                                 |
-      |---------+--------------------------------------------------------------------------------------|
-      | NULL    | Molecular biology Virtual Lab I                                                      |
-      | NULL    | Biological Image processing Virtual Lab                                              |
-      | NULL    | Ecology Virtual Lab                                                                  |
-      | NULL    | Computer-Aided Drug Design Virtual Lab                                               |
-      | NULL    | Systems Biology Virtual Lab                                                          |
-      | NULL    | Bioinformatics Virtual Lab III                                                       |
-      | NULL    | Bioinformatics Virtual Lab II                                                        |
-      | NULL    | Solid State Physics Virtual Lab                                                      |
-      | NULL    | Virtual Optics Lab                                                                   |
-      | NULL    | Bioinformatics Virtual Lab I                                                         |
-      | NULL    | Bio-inspired Robotics Virtual Lab (Remote Triggered)                                 |
-      | NULL    | Virtual Biophysics Lab (Remote Triggered)                                            |
-      | NULL    | Microbiology Virtual Lab II                                                          |
-      | NULL    | Microbiology Virtual Lab I                                                           |
-      | NULL    | Immunology Virtual Lab II                                                            |
-      | NULL    | Immunology Virtual Lab I                                                             |
-      | NULL    | Population Ecology Virtual Lab II                                                    |
-      | NULL    | Population Ecology Virtual Lab I                                                     |
-      | NULL    | Biochemistry Virtual Lab I                                                           |
-      | NULL    | Neuron Simulation Lab (pilot)                                                        |
-      | NULL    | Neurophysiology (pilot)                                                              |
-      | NULL    | Power Systems Lab                                                                    |
-      | NULL    | Single Board Heater System                                                           |
-      | NULL    | Microelectronics and VLSI Engineering                                                |
-      | NULL    | Basic Electrical and Electronics Lab                                                 |
-      | NULL    | Virtual High Voltage Lab                                                             |
-      | NULL    | Chemical Process Dynamics                                                            |
-      | NULL    | Mine Automation and Virtual Reality                                                  |
-      | NULL    | Mechanical Systems and Signal Processing                                             |
-      | NULL    | Condition Monitoring and Fault Simulation Lab                                        |
-      | NULL    | Virtual Lab for Multiphase Flow                                                      |
-      | NULL    | Robotics Simulation Lab                                                              |
-      | NULL    | Mechanisms and Robotics Lab                                                          |
-      | NULL    | Machinery Health Assessment Lab                                                      |
-      | NULL    | Virtual Proteomics Laboratory                                                        |
-      | NULL    | VLSI Design and Verification                                                         |
-      | NULL    | Virtual and Remote Robotic and Mechatronic Laboratory                                |
-      | NULL    | Virtual Circuits Laboratory                                                          |
-      | NULL    | Electrical Machines, Power Electronics and Drives, Power Systems and Instrumentation |
-      | NULL    | Structural Engineering Lab                                                           |
-      | NULL    | Hydrodynamics and Transport phenomena in Packed Bed and Heat Exchangers              |
-      | NULL    | Virtual Robotics Lab                                                                 |
-      | NULL    | Virtual Lab for Mechanical Vibrations                                                |
-      | NULL    | Model Based Fault Detection Lab                                                      |
-      | NULL    | Molecular biology Virtual Lab II                                                     |
-      | NULL    | Plant Metabolic Pathways Virtual Laboratory                                          |
-      | NULL    | Internet Based Virtual CNC Lab                                                       |
-      | NULL    | Advanced Communication                                                               |
-      | NULL    | Laser Based Flow Diagnostics Laboratory                                              |
-      | NULL    | Binary Distillation                                                                  |
-      | NULL    | Thermal Processing and Microstructural Characterization                              |
-      | NULL    | Mechanical Sciences - Liquid Crystal                                                 |
-      | NULL    | Low Temp Electrical Transport and Property Measurements                              |
-      | NULL    | Optical Device Characterizations                                                     |
-      | NULL    | Aerospace Virtual laboratory                                                         |
-      | NULL    | Control Systems/Magnetic Levitation System                                           |
-      | NULL    | Mechanical Engineering Lab                                                           |
-      | NULL    | Semiconductor Devices Laboratory                                                     |
-      | NULL    | Information System Analysis and Design virtual Lab                                   |
-      | NULL    | Advanced Pulse and Switching Lab                                                     |
-      | NULL    | Substation Automation Lab                                                            |
-      | NULL    | Ergonomics Lab for Assessing Physical Aspects of Design                              |
-      | NULL    | Virtual Interactive Lab                                                              |
-      | NULL    | Biomedical Instrumentation Lab                                                       |
-      | NULL    | Virtual Pulse, Switching and Analogue Circuits                                       |
-      | NULL    | Microelectronics Lab                                                                 |
-      | NULL    | In-flight Particle History Lab                                                       |
-      | NULL    | Manufacturing Laboratory                                                             |
-      | NULL    | Virtual Physical Energy and Materials Science Lab                                    |
-      | NULL    | Virtual Harmonic Motion and Waves Lab                                                |
-      | NULL    | Virtual Modern Physics Lab                                                           |
-      | NULL    | Virtual Heat and Thermodynamics Lab                                                  |
-      | NULL    | Virtual Electricity and Magnetism Lab                                                |
-      | NULL    | Laser Optics Virtual Lab                                                             |
-      | NULL    | Virtual Advanced Mechanics Lab                                                       |
-      | NULL    | Virtual Mechanics Lab/Nonlinear Dynamics                                             |
-      | NULL    | Cell biology Virtual Lab II                                                          |
-      | NULL    | Physical Chemistry(Amrita)                                                           |
-      | NULL    | Organic Chemistry                                                                    |
-      | NULL    | Virtual Combustion and Automation Laboratory                                         |
-      | NULL    | Nanocomposite, Fabrication, Biomaterials and Signal Processing Laboratory            |
-      | NULL    | Mechatronics Lab                                                                     |
-      | NULL    | General Purpose Production Shop Simulation Lab                                       |
-      | NULL    | Acoustics Virtual Lab                                                                |
-      | NULL    | Advanced Geotechnical Lab                                                            |
-      | NULL    | Virtual Wireless and Security                                                        |
-      | NULL    | Electrochemistry                                                                     |
-      | NULL    | Inorganic Chemistry                                                                  |
-      | NULL    | Cell biology Virtual Lab I                                                           |
-      | NULL    | Kinematics and Dynamics of Mechanisms                                                |
-      | NULL    | Real Time Embedded Systems Laboratory                                                |
-      | NULL    | Satellite Modelling and Simulation                                                   |
-      | NULL    | Remote Triggered Fiber Optics Communication Lab                                      |
-      | NULL    | Electro Mechanical Conversion                                                        |
-      | NULL    | Technology CAD (TCAD) Laboratory                                                     |
-      | NULL    | Fading Channels and Mobile Communications                                            |
-      | NULL    | Soft Computing Tools in Engineering                                                  |
-      | NULL    | Analog Signals, Network and Measurement Laboratory                                   |
-      | NULL    | Biochemistry Virtual Lab II                                                          |
-      | ae01    | Aerospace Structures Lab                                                             |
-      | bio15   | Bio-reactor Modeling and Simulation Lab                                              |
-      | bio16   | Biomedical and Signal Processing Laboratory                                          |
-      | ccnsb01 | Molecular Fluorescence Spectroscopy                                                  |
-      | ccnsb02 | Colloid and Surface Chemistry                                                        |
-      | ccnsb03 | Molecular Absorption Spectroscopy                                                    |
-      | ccnsb04 | Quantum Chemistry                                                                    |
-      | ccnsb05 | Circular Dichroism Spectroscopy                                                      |
-      | ccnsb06 | Physical Chemistry (IIIT-H)                                                          |
-      | ccnsb07 | Molecular Interactions                                                               |
-      | che02   | Virtual Lab for Mass Transfer                                                        |
-      | chem01  | Chemical Engineering                                                                 |
-      | chem05  | Unit Operations, Reaction Engineering and Process Control                            |
-      | chs12   | Virtual Chemistry Lab                                                                |
-      | chs13   | Ultrafast Laser Spectroscopy                                                         |
-      | chs14   | Analytical Lab                                                                       |
-      | civil07 | Strength of Materials and Fluid Mechanics                                            |
-      | civil09 | Traffic Engineering                                                                  |
-      | civil11 | Virtual Satellite Image Processing and Analysis                                      |
-      | civil13 | Urban Transportation Systems Planning                                                |
-      | civil15 | Surveying Lab                                                                        |
-      | civil16 | Virtual Smart Structures and Dynamics Lab                                            |
-      | cse01   | Data Structures                                                                      |
-      | cse02   | Computer Programming                                                                 |
-      | cse03   | Programming and Data Structure                                                       |
-      | cse04   | Problem Solving                                                                      |
-      | cse05   | Principles of Programming Languages                                                  |
-      | cse06   | Data Mining                                                                          |
-      | cse07   | Databases                                                                            |
-      | cse08   | Software Engineering                                                                 |
-      | cse09   | Linux Lab                                                                            |
-      | cse10   | Computer Architecture and Organization                                               |
-      | cse11   | Computer Organization                                                                |
-      | cse12   | FPGA and Embedded System Lab                                                         |
-      | cse13   | Advanced VLSI                                                                        |
-      | cse14   | VLSI                                                                                 |
-      | cse15   | Digital Logic Design                                                                 |
-      | cse16   | Speech Signal Processing (IIIT-H)                                                    |
-      | cse17   | Mobile Robotics                                                                      |
-      | cse18   | Computer Graphics                                                                    |
-      | cse19   | Image Processing                                                                     |
-      | cse20   | Pattern Recognition                                                                  |
-      | cse21   | Optical Remote Sensing                                                               |
-      | cse22   | Artificial Neural Networks                                                           |
-      | cse23   | Computational Linguistics                                                            |
-      | cse24   | Natural Language Processing                                                          |
-      | cse25   | Wireless Sensor Networks                                                             |
-      | cse26   | Network Security                                                                     |
-      | cse28   | Advanced Network Technologies                                                        |
-      | cse29   | Cryptography                                                                         |
-      | cse30   | Analog CMOS VLSI Circuit Design                                                      |
-      | ece01   | Speech Signal Processing (IIT-G)                                                     |
-      | ece02   | Electro Magnetic Transmission (Virtual MEMS Lab)                                     |
-      | ece03   | Transducer and Instrumentation Virtual Lab                                           |
-      | ece04   | Electronic design using DSP, FPGA, CPLD and Micro Controllers                        |
-      | ece05   | Digital VLSI Design Virtual Lab                                                      |
-      | ece06   | Digital Signal Processing Lab                                                        |
-      | ece07   | Digital Electronics Circuit Lab                                                      |
-      | ece08   | Engineering Electromagnetic Lab                                                      |
-      | ece09   | Wireless Lab                                                                         |
-      | ece10   | Signals and Systems Laboratory                                                       |
-      | ece11   | Systems, Communication and Control Laboratory                                        |
-      | ece18   | RF Microwave Characterization Lab                                                    |
-      | ece19   | Hybrid Electronics                                                                   |
-      | ece21   | Virtual Queuing Networks Modelling                                                   |
-      | ece22   | Virtual Microwave and Antenna Lab                                                    |
-      | ece23   | Digital Electronics                                                                  |
-      | ece26   | Virtual Advanced Lab for Interactive Design and Test in Electronics                  |
-      | ece28   | FPGA and Digital Design                                                              |
-      | eee01   | Power Electronics                                                                    |
-      | eee02   | Electrical Machines Laboratory                                                       |
-      | eee03   | Electronic Instrumentation                                                           |
-      | eee05   | Sensors Modeling and Simulation                                                      |
-      | eee06   | Virtual Power Laboratory                                                             |
-      | eee07   | Virtual Power Electronics and Electric Drives Lab                                    |
-      | eee08   | Industrial Electric Drives and Application of PLC                                    |
-      | eee09   | Industrial Automation Laboratory                                                     |
-      | eee10   | Electrical Machines                                                                  |
-      | eee12   | PLC                                                                                  |
-      | eee23   | Biomedical Signal and Image Processing                                               |
-      | eee24   | Machine Lab                                                                          |
-      | eerc01  | Basic Engineering Mechanics and Strength of Materials                                |
-      | eerc02  | Soil Mechanics                                                                       |
-      | eerc03  | Hydraulics and Fluid Mechanics                                                       |
-      | eerc04  | Basic Structural Analysis                                                            |
-      | eerc05  | Geotechnical Engineering Lab                                                         |
-      | eerc06  | Structural Dynamics                                                                  |
-      | emt     | Electro Magnetic Theory                                                              |
-      | hss01   | Creative Design, Prototyping and Experiential Simulation Lab                         |
-      | hss02   | Virtual English and Communication Lab                                                |
-      | hss03   | Virtual Anthropology Lab                                                             |
-      | mech01  | Virtual Laboratory Experience in Fluid and Thermal Sciences                          |
-      | mech04  | Vibration and Acoustics Lab                                                          |
-      | mech05  | Mechanics of Machine                                                                 |
-      | mech08  | Material Response to Microstructural, Mechanical, Thermal and Biological Stimuli     |
-      | mech17  | Micromachining Laboratory                                                            |
-      | mech18  | Fab Laboratory                                                                       |
-      | mech21  | Machine Dynamics and Mechanical Vibrations                                           |
-      | mech26  | Metal Forming and Solid Mechanics                                                    |
-      | phy01   | Virtual Astrophysics Lab                                                             |
-      | phy12   | Virtual Microwave Laboratory                                                         |
-      | phy14   | Physical Sciences                                                                    |
-      | phy19   | Virtual Laboratory on Oscillations                                                   |
-      | txtl01  | Carpet Analysis                                                                      |
-      | txtl02  | Electrical Conductivity                                                              |
-      | txtl03  | SEM Central Facility                                                                 |
-      |---------+--------------------------------------------------------------------------------------|
+      |-----------+--------------------------------------------------------------------------------------|
+      | LabId     | Name                                                                                 |
+      |-----------+--------------------------------------------------------------------------------------|
+      | NULL      | Molecular biology Virtual Lab I                                                      |
+      | NULL      | Biological Image processing Virtual Lab                                              |
+      | NULL      | Ecology Virtual Lab                                                                  |
+      | NULL      | Computer-Aided Drug Design Virtual Lab                                               |
+      | NULL      | Systems Biology Virtual Lab                                                          |
+      | NULL      | Bioinformatics Virtual Lab III                                                       |
+      | NULL      | Bioinformatics Virtual Lab II                                                        |
+      | NULL      | Solid State Physics Virtual Lab                                                      |
+      | NULL      | Virtual Optics Lab                                                                   |
+      | NULL      | Bioinformatics Virtual Lab I                                                         |
+      | NULL      | Bio-inspired Robotics Virtual Lab (Remote Triggered)                                 |
+      | NULL      | Virtual Biophysics Lab (Remote Triggered)                                            |
+      | NULL      | Microbiology Virtual Lab II                                                          |
+      | NULL      | Microbiology Virtual Lab I                                                           |
+      | NULL      | Immunology Virtual Lab II                                                            |
+      | NULL      | Immunology Virtual Lab I                                                             |
+      | NULL      | Population Ecology Virtual Lab II                                                    |
+      | NULL      | Population Ecology Virtual Lab I                                                     |
+      | biotech01 | Biochemistry Virtual Lab I                                                           |
+      | NULL      | Neuron Simulation Lab (pilot)                                                        |
+      | NULL      | Neurophysiology (pilot)                                                              |
+      | NULL      | Power Systems Lab                                                                    |
+      | NULL      | Single Board Heater System                                                           |
+      | NULL      | Microelectronics and VLSI Engineering                                                |
+      | NULL      | Basic Electrical and Electronics Lab                                                 |
+      | NULL      | Virtual High Voltage Lab                                                             |
+      | NULL      | Chemical Process Dynamics                                                            |
+      | NULL      | Mine Automation and Virtual Reality                                                  |
+      | NULL      | Mechanical Systems and Signal Processing                                             |
+      | NULL      | Condition Monitoring and Fault Simulation Lab                                        |
+      | NULL      | Virtual Lab for Multiphase Flow                                                      |
+      | NULL      | Robotics Simulation Lab                                                              |
+      | NULL      | Mechanisms and Robotics Lab                                                          |
+      | NULL      | Machinery Health Assessment Lab                                                      |
+      | NULL      | Virtual Proteomics Laboratory                                                        |
+      | NULL      | VLSI Design and Verification                                                         |
+      | NULL      | Virtual and Remote Robotic and Mechatronic Laboratory                                |
+      | NULL      | Virtual Circuits Laboratory                                                          |
+      | NULL      | Electrical Machines, Power Electronics and Drives, Power Systems and Instrumentation |
+      | NULL      | Structural Engineering Lab                                                           |
+      | NULL      | Hydrodynamics and Transport phenomena in Packed Bed and Heat Exchangers              |
+      | NULL      | Virtual Robotics Lab                                                                 |
+      | NULL      | Virtual Lab for Mechanical Vibrations                                                |
+      | NULL      | Model Based Fault Detection Lab                                                      |
+      | NULL      | Molecular biology Virtual Lab II                                                     |
+      | NULL      | Plant Metabolic Pathways Virtual Laboratory                                          |
+      | NULL      | Internet Based Virtual CNC Lab                                                       |
+      | NULL      | Advanced Communication                                                               |
+      | NULL      | Laser Based Flow Diagnostics Laboratory                                              |
+      | NULL      | Binary Distillation                                                                  |
+      | NULL      | Thermal Processing and Microstructural Characterization                              |
+      | NULL      | Mechanical Sciences - Liquid Crystal                                                 |
+      | NULL      | Low Temp Electrical Transport and Property Measurements                              |
+      | NULL      | Optical Device Characterizations                                                     |
+      | NULL      | Aerospace Virtual laboratory                                                         |
+      | NULL      | Control Systems/Magnetic Levitation System                                           |
+      | NULL      | Mechanical Engineering Lab                                                           |
+      | NULL      | Semiconductor Devices Laboratory                                                     |
+      | NULL      | Information System Analysis and Design virtual Lab                                   |
+      | NULL      | Advanced Pulse and Switching Lab                                                     |
+      | NULL      | Substation Automation Lab                                                            |
+      | NULL      | Ergonomics Lab for Assessing Physical Aspects of Design                              |
+      | NULL      | Virtual Interactive Lab                                                              |
+      | NULL      | Biomedical Instrumentation Lab                                                       |
+      | NULL      | Virtual Pulse, Switching and Analogue Circuits                                       |
+      | NULL      | Microelectronics Lab                                                                 |
+      | NULL      | In-flight Particle History Lab                                                       |
+      | NULL      | Manufacturing Laboratory                                                             |
+      | NULL      | Virtual Physical Energy and Materials Science Lab                                    |
+      | NULL      | Virtual Harmonic Motion and Waves Lab                                                |
+      | NULL      | Virtual Modern Physics Lab                                                           |
+      | NULL      | Virtual Heat and Thermodynamics Lab                                                  |
+      | NULL      | Virtual Electricity and Magnetism Lab                                                |
+      | NULL      | Laser Optics Virtual Lab                                                             |
+      | NULL      | Virtual Advanced Mechanics Lab                                                       |
+      | NULL      | Virtual Mechanics Lab/Nonlinear Dynamics                                             |
+      | NULL      | Cell biology Virtual Lab II                                                          |
+      | NULL      | Physical Chemistry(Amrita)                                                           |
+      | NULL      | Organic Chemistry                                                                    |
+      | NULL      | Virtual Combustion and Automation Laboratory                                         |
+      | NULL      | Nanocomposite, Fabrication, Biomaterials and Signal Processing Laboratory            |
+      | NULL      | Mechatronics Lab                                                                     |
+      | NULL      | General Purpose Production Shop Simulation Lab                                       |
+      | NULL      | Acoustics Virtual Lab                                                                |
+      | NULL      | Advanced Geotechnical Lab                                                            |
+      | NULL      | Virtual Wireless and Security                                                        |
+      | NULL      | Electrochemistry                                                                     |
+      | NULL      | Inorganic Chemistry                                                                  |
+      | NULL      | Cell biology Virtual Lab I                                                           |
+      | NULL      | Kinematics and Dynamics of Mechanisms                                                |
+      | NULL      | Real Time Embedded Systems Laboratory                                                |
+      | NULL      | Satellite Modelling and Simulation                                                   |
+      | ece29     | Remote Triggered Fiber Optics Communication Lab                                      |
+      | NULL      | Electro Mechanical Conversion                                                        |
+      | NULL      | Technology CAD (TCAD) Laboratory                                                     |
+      | NULL      | Fading Channels and Mobile Communications                                            |
+      | NULL      | Soft Computing Tools in Engineering                                                  |
+      | NULL      | Analog Signals, Network and Measurement Laboratory                                   |
+      | biotech02 | Biochemistry Virtual Lab II                                                          |
+      | ae01      | Aerospace Structures Lab                                                             |
+      | bio15     | Bio-reactor Modeling and Simulation Lab                                              |
+      | bio16     | Biomedical and Signal Processing Laboratory                                          |
+      | ccnsb01   | Molecular Fluorescence Spectroscopy                                                  |
+      | ccnsb02   | Colloid and Surface Chemistry                                                        |
+      | ccnsb03   | Molecular Absorption Spectroscopy                                                    |
+      | ccnsb04   | Quantum Chemistry                                                                    |
+      | ccnsb05   | Circular Dichroism Spectroscopy                                                      |
+      | ccnsb06   | Physical Chemistry (IIIT-H)                                                          |
+      | ccnsb07   | Molecular Interactions                                                               |
+      | che02     | Virtual Lab for Mass Transfer                                                        |
+      | chem01    | Chemical Engineering                                                                 |
+      | chem05    | Unit Operations, Reaction Engineering and Process Control                            |
+      | chs12     | Virtual Chemistry Lab                                                                |
+      | chs13     | Ultrafast Laser Spectroscopy                                                         |
+      | chs14     | Analytical Lab                                                                       |
+      | civil07   | Strength of Materials and Fluid Mechanics                                            |
+      | civil09   | Traffic Engineering                                                                  |
+      | civil11   | Virtual Satellite Image Processing and Analysis                                      |
+      | civil13   | Urban Transportation Systems Planning                                                |
+      | civil15   | Surveying Lab                                                                        |
+      | civil16   | Virtual Smart Structures and Dynamics Lab                                            |
+      | cse01     | Data Structures                                                                      |
+      | cse02     | Computer Programming                                                                 |
+      | cse03     | Programming and Data Structure                                                       |
+      | cse04     | Problem Solving                                                                      |
+      | cse05     | Principles of Programming Languages                                                  |
+      | cse06     | Data Mining                                                                          |
+      | cse07     | Databases                                                                            |
+      | cse08     | Software Engineering                                                                 |
+      | cse09     | Linux Lab                                                                            |
+      | cse10     | Computer Architecture and Organization                                               |
+      | cse11     | Computer Organization                                                                |
+      | cse12     | FPGA and Embedded System Lab                                                         |
+      | cse13     | Advanced VLSI                                                                        |
+      | cse14     | VLSI                                                                                 |
+      | cse15     | Digital Logic Design                                                                 |
+      | cse16     | Speech Signal Processing (IIIT-H)                                                    |
+      | cse17     | Mobile Robotics                                                                      |
+      | cse18     | Computer Graphics                                                                    |
+      | cse19     | Image Processing                                                                     |
+      | cse20     | Pattern Recognition                                                                  |
+      | cse21     | Optical Remote Sensing                                                               |
+      | cse22     | Artificial Neural Networks                                                           |
+      | cse23     | Computational Linguistics                                                            |
+      | cse24     | Natural Language Processing                                                          |
+      | cse25     | Wireless Sensor Networks                                                             |
+      | cse26     | Network Security                                                                     |
+      | cse28     | Advanced Network Technologies                                                        |
+      | cse29     | Cryptography                                                                         |
+      | cse30     | Analog CMOS VLSI Circuit Design                                                      |
+      | ece01     | Speech Signal Processing (IIT-G)                                                     |
+      | ece02     | Electro Magnetic Transmission (Virtual MEMS Lab)                                     |
+      | ece03     | Transducer and Instrumentation Virtual Lab                                           |
+      | ece04     | Electronic design using DSP, FPGA, CPLD and Micro Controllers                        |
+      | ece05     | Digital VLSI Design Virtual Lab                                                      |
+      | ece06     | Digital Signal Processing Lab                                                        |
+      | ece07     | Digital Electronics Circuit Lab                                                      |
+      | ece08     | Engineering Electromagnetic Lab                                                      |
+      | ece09     | Wireless Lab                                                                         |
+      | ece10     | Signals and Systems Laboratory                                                       |
+      | ece11     | Systems, Communication and Control Laboratory                                        |
+      | ece18     | RF Microwave Characterization Lab                                                    |
+      | ece19     | Hybrid Electronics                                                                   |
+      | ece21     | Virtual Queuing Networks Modelling                                                   |
+      | ece22     | Virtual Microwave and Antenna Lab                                                    |
+      | ece23     | Digital Electronics                                                                  |
+      | ece26     | Virtual Advanced Lab for Interactive Design and Test in Electronics                  |
+      | ece28     | FPGA and Digital Design                                                              |
+      | eee01     | Power Electronics                                                                    |
+      | eee02     | Electrical Machines Laboratory                                                       |
+      | eee03     | Electronic Instrumentation                                                           |
+      | eee05     | Sensors Modeling and Simulation                                                      |
+      | eee06     | Virtual Power Laboratory                                                             |
+      | eee07     | Virtual Power Electronics and Electric Drives Lab                                    |
+      | eee08     | Industrial Electric Drives and Application of PLC                                    |
+      | eee09     | Industrial Automation Laboratory                                                     |
+      | eee10     | Electrical Machines                                                                  |
+      | eee12     | PLC                                                                                  |
+      | eee23     | Biomedical Signal and Image Processing                                               |
+      | eee24     | Machine Lab                                                                          |
+      | eerc01    | Basic Engineering Mechanics and Strength of Materials                                |
+      | eerc02    | Soil Mechanics                                                                       |
+      | eerc03    | Hydraulics and Fluid Mechanics                                                       |
+      | eerc04    | Basic Structural Analysis                                                            |
+      | eerc05    | Geotechnical Engineering Lab                                                         |
+      | eerc06    | Structural Dynamics                                                                  |
+      | emt       | Electro Magnetic Theory                                                              |
+      | hss01     | Creative Design, Prototyping and Experiential Simulation Lab                         |
+      | hss02     | Virtual English and Communication Lab                                                |
+      | hss03     | Virtual Anthropology Lab                                                             |
+      | mech01    | Virtual Laboratory Experience in Fluid and Thermal Sciences                          |
+      | mech04    | Vibration and Acoustics Lab                                                          |
+      | mech05    | Mechanics of Machine                                                                 |
+      | mech08    | Material Response to Microstructural, Mechanical, Thermal and Biological Stimuli     |
+      | mech17    | Micromachining Laboratory                                                            |
+      | mech18    | Fab Laboratory                                                                       |
+      | mech21    | Machine Dynamics and Mechanical Vibrations                                           |
+      | mech26    | Metal Forming and Solid Mechanics                                                    |
+      | phy01     | Virtual Astrophysics Lab                                                             |
+      | phy12     | Virtual Microwave Laboratory                                                         |
+      | phy14     | Physical Sciences                                                                    |
+      | phy19     | Virtual Laboratory on Oscillations                                                   |
+      | txtl01    | Carpet Analysis                                                                      |
+      | txtl02    | Electrical Conductivity                                                              |
+      | txtl03    | SEM Central Facility                                                                 |
+      |-----------+--------------------------------------------------------------------------------------|
 
 ***** Association
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -2150,6 +2150,33 @@ if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0')
 
 #+END_SRC
+
+** Authentication by =dataservice=
+
+   This explains how =dataservice= will authenticate other services
+   communicating with it.
+
+   + By IP Blocking:
+
+     Here the assumption is that =dataservice= is aware of
+     microservices such as =ADS= or =dashboard=.
+
+     According to the IP Blocking technique, =dataservice= will
+     identify those IP addresses from which web requests will be
+     accepted.  This includes =ADS= and other such microservices.
+     Each time a web request is received, =dataservice= will compare
+     the IP address with the list of acceptable IPs.  If IP is on the
+     list, the request is served normally, else it returns a
+     "Forbidden: IP address rejected" error.
+
+   + By CORS (Cross Origin Resource Sharing):
+
+     Since =dataservice= is aware of the microservices, it will allow
+     CORS for ajax requests coming *only* from these microservices.
+
+
+    *TODO* Define a process in =dataservice= for configuring
+     authentication in case a new microservice is introduced.
 
 * Test Cases
 ** __init__
@@ -3243,6 +3270,7 @@ LOG_LEVEL = 'DEBUG'
 * Provisioning
   [[./setup.org][Set up the environment]]
 * Design discussions
+
 * Releases
 
 
