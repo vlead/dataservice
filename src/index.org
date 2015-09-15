@@ -18,9 +18,10 @@
      the data.
   3. REST API is provided for various applications to perform CRUD operations
      on the data.
-     
+  4. A bulk update interface, to update bulk data at once. <<req4>>
+
 * Design & Implementation
-** Python
+** Some initialization and boilerplate code
 *** __init__
 #+BEGIN_SRC python :tangle src/__init__.py :eval no
 print "src package"
@@ -62,7 +63,7 @@ class Entity(db.Model):
 
 #+END_SRC
 
-** Data Model
+** The Data Model
    Description of the data model.
 
 *** Types & Functions: List of all the types and functions in the model
@@ -212,7 +213,7 @@ class Institute(Entity):
     developers = db.relationship('Developer', backref='institute')
 
 #+END_SRC
-      
+
 ***** Constructor for the Institute
       Signature of the constructor is as follows. Fields in [...]  are
       optional. Others are mandatory.
@@ -398,7 +399,7 @@ class Discipline(Entity):
     labs = db.relationship('Lab', backref='discipline')
 
 #+END_SRC
-      
+
 ***** Constructor for the Discipline
       Signature of the constructor is as follows. Fields in [...]  are
       optional. Others are mandatory.
@@ -628,9 +629,9 @@ class Developer(Entity):
     @typecheck(name=Name)
     def set_name(self, name):
         self.name = name.value
-        
+
 #+END_SRC
-       
+
 ****** setEmail: Developer, Email --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(email_id=Email)
@@ -789,7 +790,7 @@ Technology(name=String
 
 ***** Mutable Data
       These are the data associated with Experiment type, which are mutable.
-  
+
       + Name
       + ContentURL
       + SimulationURL
@@ -840,9 +841,9 @@ class Experiment(Entity):
      Signature of the constructor is as follows. Attributes inside [...]  are
      optional. Others are mandatory.
 
-     Lab is a mandatory part of the constructor, since an experiment can not 
+     Lab is a mandatory part of the constructor, since an experiment can not
      exist independent of a lab. Once lab is created, the creation of an experiment
-     must be linked to this lab. 
+     must be linked to this lab.
 #+BEGIN_EXAMPLE
     experiment = Experiment(name=String,
                             lab=<instance of Lab>
@@ -857,9 +858,9 @@ class Experiment(Entity):
     def __init__(self, **kwargs):
         if 'lab' not in kwargs:
             raise AttributeRequired("lab is required when initializing experiment")
-     
-        self.lab = kwargs['lab']     
-  
+
+        self.lab = kwargs['lab']
+
         if 'name' not in kwargs:
             raise AttributeRequired("name is required when initializing experiment")
 
@@ -883,11 +884,11 @@ class Experiment(Entity):
 
         if 'simulation_hosted_on' in kwargs:
             self.set_simulation_hosted_on(kwargs['simulation_hosted_on'])
-        
+
 #+END_SRC
 
 ***** Functions that operate on the Experiment domain
-      
+
 ****** getName: Experiment --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_name(self):
@@ -977,7 +978,7 @@ a
         self.save()
 
 #+END_SRC
-       
+
 ****** setContentHostedOn: Experiment, HostingPlatform --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(platform=HostingPlatform)
@@ -1027,7 +1028,7 @@ a
         }
 
 #+END_SRC
-       
+
 **** Lab
 ***** Immutable Data
 
@@ -1059,7 +1060,7 @@ a
       + Status
 
 ***** LabId assigned for each lab
-      
+
       |---------+--------------------------------------------------------------------------------------|
       | LabId   | Name                                                                                 |
       |---------+--------------------------------------------------------------------------------------|
@@ -1328,7 +1329,7 @@ class Lab(Entity):
     is_web_2_compliant_lab = db.Column(db.Boolean)
     is_phase_2_lab = db.Column(db.Boolean)
 #+END_SRC
-      
+
 ***** Constructor for Lab
 Signature of the constructor for Lab is as follows. Attributes inside [...]
 are optional when constructing the lab. Other attributes are mandatory.
@@ -1467,8 +1468,8 @@ Lab(name=<instance of Name class>,
 
 ****** getName: Lab --> Name
 
-       This is similar to the =getId= function and all types will have this
-       function.
+This is similar to the =getId= function and all types will have this
+function.
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_name(self):
         return self.name
@@ -1751,7 +1752,7 @@ Lab(name=<instance of Name class>,
             'remarks': self.remarks
         }
 #+END_SRC
-       
+
 *** COMMENT Functions operating on multiple domains
 
 ***** NOTE: is it necessary? getAllLabs: Nil --> set[Lab]
@@ -1765,6 +1766,136 @@ Lab(name=<instance of Name class>,
   #+CAPTION: Entity Diagram
   #+NAME:   entity
   [[https://drive.google.com/open?id%3D0B6LLRcwXMzt8N3RzZGVkb0NpUDA][ER-Diagram]]
+
+** REST APIs
+   REST APIs form the interface of the data service with which the
+   external world interacts.
+
+   The Python code to have the imports, boilerplate code etc. for the API.
+#+BEGIN_SRC python :tangle src/api.py :eval no
+  # -*- coding: utf-8 -*-
+
+  from flask import Blueprint, request, jsonify, abort, current_app
+
+  from db import *
+  from utils import parse_request, jsonify_list
+
+  api = Blueprint('APIs', __name__)
+
+#+END_SRC
+
+** Bulk Update interface
+*** Requirement
+   One of the requirement in the application is the bulk update
+   interface. <<req4>>
+   A bulk update interface is such an interface of the application (or a
+   capability of the application) which can support updating multiple records
+   of the data at once.
+
+*** Design decisions
+   The decision is to have this interface in terms of a spreadsheet
+   file. The user downloads the spreadsheet file, edits/adds new
+   entries and then uploads the spreadsheet file, and then the
+   application reads the spreadsheet file and performs bulk update.
+
+   The rationale for using a spreadsheet interface is - providing a
+   bulk update *web* interface is more expensive in terms of development
+   effort and learning effort of the user.
+
+   The design decision is to use a CSV file instead of some
+   spreadsheet file format as the data format with the interface for
+   bulk updates. This is because CSV files can be imported/exported to
+   a spreadsheet programs as well as a database. Otherwise one has to
+   handle a plethora of spreadsheet file formats, which can become
+   very expensive to implement.
+
+*** High-level Design
+   There are two parts to the bulk update interface:
+   1. One part of the interface let users download a template CSV file
+      to populate the data. If data already exist in the system, the
+      downloaded CSV file contains all the current data in the
+      system. The users can then edit, modify or insert new data.
+
+   2. The second part of the interface is where the user can upload
+      the CSV file. Once the user uploads the CSV file, the system
+      then reads the CSV file, uses the internal Python API to check
+      for sanity, integrity constraints etc. and use the Python API to
+      insert the data into the system
+
+*** Technical Design
+    To download the data the Python API has to return a CSV of the
+    entire database. Now CSV dump of the entire database can be made
+    but it is impractical, as the entire dataset will be in one CSV
+    file. This will have the overhead of first splitting the CSV file
+    into multiple CSV files and then importing them to a spreadsheet
+    application; editing them and then putting them back to a single
+    CSV file for upload. And even when the Python API can put all the
+    tables together into one CSV file, but while parsing the data to
+    update, it has to do some string manipulations to figure out where
+    the data for the first table ends and second table begins. This
+    not desired. Hence the straight-forward, simple and elegant
+    solution seems to be that each entity (or table) will have its own
+    CSV file, which will be downloaded, edited and then uploaded back
+    again. One has to do the same for each entity. There will be a
+    list of valid entities. This list is same as the look up table of
+    the REST APIs, described below.
+
+    Hence the actual implementation will consist of:
+    1. one static page to (the static page talks to the below REST APIs):
+       1. select and download data of a particular entity. The downloaded
+	  file is a CSV.
+       2. select and upload data of a particular entity. The uploaded
+	  file is a CSV.
+    2. one REST API to actually provide the download:
+       =/data/download?entity=<entity-name>=
+       Example:
+       =/data/download?entity=labs=
+       =/data/download?entity=institutes=
+    3. one REST API to take the uploaded CSV data and perform the
+       update:
+       =/data/upload?entity=<entity-name>=
+       Example:
+       =/data/upload?entity=labs=
+       =/data/upload?entity=institutes=
+
+*** Implementation
+#+BEGIN_SRC python :tangle src/api.py :eval no
+
+  @api.route('/data/download')
+  def download_data():
+      pass
+
+  @api.route('/data/upload')
+  def upload_data():
+      pass
+#+END_SRC
+
+.
+
+   To provide this facility to download and upload CSV files, the data
+   service also needs to provide a static page, from where CSV files
+   can be downloaded or uploaded.
+
+** REST API - GET - to get and query all information
+   The GET REST APIs are designed in a generic way. That is, APIs for
+   each entity is not designed and implemented specifically, rather
+   three generic API patterns are designed which, presumably, will
+   capture all kinds of query patterns.
+
+   The three API patterns are:
+   1. /<entity>s?query_param1=val1&query_param2=val2&..query_paramn=valn
+   2. /<entity>s/<:id>?fields=field1,field2,field3
+   3. /<entity>s/<:id>/<entity>?query_param1=val1&query_param2=val2...
+
+   There are look up tables defined which map keywords to an
+   entity. Using this look up table the REST APIs can verify and check
+   if a request is valid. Whenever there is an new entity, only the
+   look up table has to be modified.
+
+   Look up table would be like:
+#+BEGIN_SRC python :tangle src/api.py
+
+#+END_SRC
 
 ** Exceptions
 *** AttributeRequired
@@ -1925,6 +2056,101 @@ def typecheck(**typemap):
     return make_wrapper
 
 #+END_SRC
+
+** The web application
+#+BEGIN_SRC python :tangle src/app.py :eval no
+# -*- coding: utf-8 -*-
+
+import os
+import logging
+from logging.handlers import RotatingFileHandler
+
+from flask import Flask, jsonify, make_response
+from flask.ext.cors import CORS
+
+from db import db
+import api
+# import config file
+import config
+
+
+def create_app(config):
+    # init our app
+    app = Flask(__name__)
+
+    # load config values from the config file
+    app.config.from_object(config)
+
+    # init sqlalchemy db instance
+    db.init_app(app)
+    db.app = app
+
+    # register blueprints
+#    app.register_blueprint(api)
+
+    configure_errorhandlers(app)
+    configure_cors(app)
+    configure_logging(app)
+
+    # all set; return app object
+    return app
+
+
+# configure cross origin resource sharing
+def configure_cors(app):
+    # CORS(app)
+    CORS(app, origins=config.ALLOWED_ORIGINS,
+         methods=['GET', 'OPTIONS', 'PUT', 'POST'],
+         allow_headers='Content-Type')
+
+
+# custom error handlers to return JSON errors with appropiate status codes
+def configure_errorhandlers(app):
+
+    @app.errorhandler(404)
+    def not_found(err):
+        if 'description' not in err:
+            return make_response(jsonify(error='No such URL found'), 404)
+
+        return make_response(jsonify(error=err.description), 404)
+
+    @app.errorhandler(400)
+    def bad_request(err):
+        return make_response(jsonify(error=err.description), 400)
+
+
+def configure_logging(app):
+    formatter = logging.Formatter('%(asctime)s: %(levelname)s: %(filename)s:'
+                                  ' %(funcName)s():%(lineno)d: %(message)s')
+
+    if 'LOG_FILE' in app.config:
+        log_filename = app.config['LOG_FILE']
+    else:
+        log_filename = 'dataservice.log'
+    # Also error can be sent out via email. So we can also have a SMTPHandler?
+    log_file = os.path.join(os.path.dirname(__file__), '..', log_filename)
+
+    max_size = 1024 * 1024 * 20  # Max Size for a log file: 20MB
+    log_handler = RotatingFileHandler(log_file, maxBytes=max_size,
+                                      backupCount=10)
+
+    if 'LOG_LEVEL' in app.config:
+        log_level = app.config['LOG_LEVEL'] or 'ERROR'
+    else:
+        log_level = 'ERROR'
+
+    log_handler.setLevel(log_level)
+    log_handler.setFormatter(formatter)
+
+    app.logger.addHandler(log_handler)
+
+
+if __name__ == "__main__":
+    app = create_app(config)
+    app.run(debug=True, host='0.0.0.0')
+
+#+END_SRC
+
 * Test Cases
 ** __init__
 #+BEGIN_SRC python :tangle tests/__init__.py :eval no
@@ -2411,24 +2637,24 @@ class TestInstitute(TestCase):
         some_instt = Institute.get_by_institute_id("mit")
         self.assertEqual(some_instt, instt)
 
-    def test_get_institute_labs(self):                                           
-        print "test_get_institute_labs"                                          
+    def test_get_institute_labs(self):
+        print "test_get_institute_labs"
         instt = Institute(name="MIT", institute_id="mit")
-        lab1 = Lab(name="Micro Controllers", lab_id="micro", institute=instt)                   
-        lab2 = Lab(name="Digital Logic Design", lab_id="digital", institute=instt)              
-        labs = [lab1, lab2]                                                      
-        self.assertItemsEqual(instt.get_labs(), labs)                            
+        lab1 = Lab(name="Micro Controllers", lab_id="micro", institute=instt)
+        lab2 = Lab(name="Digital Logic Design", lab_id="digital", institute=instt)
+        labs = [lab1, lab2]
+        self.assertItemsEqual(instt.get_labs(), labs)
 
-    def test_get_institute_developers(self):                                           
-        print "test_get_institute_developers"                                          
-        instt = Institute(name="MIT", institute_id="mit")                 
-        dev1 = Developer(name=Name("Alan"), email_id=Email("alan@example.com"), institute=instt)                   
-        dev2 = Developer(name=Name("john"), email_id=Email("john@example.com"), institute=instt)              
-        devs = [dev1, dev2]                                                      
+    def test_get_institute_developers(self):
+        print "test_get_institute_developers"
+        instt = Institute(name="MIT", institute_id="mit")
+        dev1 = Developer(name=Name("Alan"), email_id=Email("alan@example.com"), institute=instt)
+        dev2 = Developer(name=Name("john"), email_id=Email("john@example.com"), institute=instt)
+        devs = [dev1, dev2]
 
-        self.assertItemsEqual(instt.get_developers(), devs)                            
-  
-#+END_SRC        
+        self.assertItemsEqual(instt.get_developers(), devs)
+
+#+END_SRC
 
 *** Tests for Developer
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
@@ -2698,13 +2924,13 @@ class TestDiscipline(TestCase):
         disc.save()
         self.assertEqual(disc.get_by_id(1).name, disc.name)
 
-    def test_get_discipline_labs(self):                                          
-        print "test_get_discipline_labs"                                         
+    def test_get_discipline_labs(self):
+        print "test_get_discipline_labs"
         disc = Discipline(name="Electronics", discipline_id="ece")
-        lab1 = Lab(name="Micro Controllers", lab_id="micro", discipline=disc)                   
-        lab2 = Lab(name="Digital Logic Design", lab_id="digital", discipline=disc)              
-        labs = [lab1, lab2]                                                      
-        self.assertItemsEqual(disc.get_labs(), labs)                             
+        lab1 = Lab(name="Micro Controllers", lab_id="micro", discipline=disc)
+        lab2 = Lab(name="Digital Logic Design", lab_id="digital", discipline=disc)
+        labs = [lab1, lab2]
+        self.assertItemsEqual(disc.get_labs(), labs)
 
 #+END_SRC
 
@@ -2811,7 +3037,7 @@ class TestTechnology(TestCase):
 #+END_SRC
 
 *** Tests for Experiment
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
 class TestExperiment(TestCase):
     TESTING = True
 
@@ -2825,7 +3051,7 @@ class TestExperiment(TestCase):
     def tearDown(self):
         db.session.remove()
         db.drop_all()
-  
+
     def test_experiment_constructor(self):
         print "test_experiment_constructor"
         name = "Searching and Sorting"
@@ -2847,7 +3073,7 @@ class TestExperiment(TestCase):
                           **{'content_url': URL('http://deploy.virtual-labs.ac.in/labs/cse04/exp1/index.php'),
                             })
 
-        # Calling the experiment constructor with wrong type of 
+        # Calling the experiment constructor with wrong type of
         # arguments should raise TypeError
         self.assertRaises(TypeError, Experiment,
                           **{'name': 'Searching and Sorting',
@@ -2860,7 +3086,7 @@ class TestExperiment(TestCase):
         lab = Lab(name="DS", lab_id="ds")
         expt = Experiment(name="Searching and Sorting", lab=lab, content_url=URL("http://vlabs.ac.in"))
         self.assertEqual(expt.get_content_url(), "http://vlabs.ac.in")
-        
+
     def test_get_simulation_url(self):
         print "test_experiment_get_simulation_url"
         lab = Lab(name="DS", lab_id="ds")
@@ -2871,7 +3097,7 @@ class TestExperiment(TestCase):
         print "test_get_id_of_experiment"
         lab = Lab(name="DS", lab_id="ds")
         expt = Experiment(name="Simple Pendulum", lab=lab)
-        expt.save()       
+        expt.save()
         expt_id = expt.get_id()
         self.assertEqual(expt_id, 1)
 
@@ -2990,98 +3216,6 @@ def create_developer(_name, _email, _inst):
 
 #+END_SRC
 
-** APP.py
-#+BEGIN_SRC python :tangle src/app.py :eval no
-# -*- coding: utf-8 -*-
-
-import os
-import logging
-from logging.handlers import RotatingFileHandler
-
-from flask import Flask, jsonify, make_response
-from flask.ext.cors import CORS
-
-from db import db
-# import config file
-import config
-
-
-def create_app(config):
-    # init our app
-    app = Flask(__name__)
-
-    # load config values from the config file
-    app.config.from_object(config)
-
-    # init sqlalchemy db instance
-    db.init_app(app)
-    db.app = app
-
-    # register blueprints
-#    app.register_blueprint(api)
-
-    configure_errorhandlers(app)
-    configure_cors(app)
-    configure_logging(app)
-
-    # all set; return app object
-    return app
-
-
-# configure cross origin resource sharing
-def configure_cors(app):
-    # CORS(app)
-    CORS(app, origins=config.ALLOWED_ORIGINS,
-         methods=['GET', 'OPTIONS', 'PUT', 'POST'],
-         allow_headers='Content-Type')
-
-
-# custom error handlers to return JSON errors with appropiate status codes
-def configure_errorhandlers(app):
-
-    @app.errorhandler(404)
-    def not_found(err):
-        if 'description' not in err:
-            return make_response(jsonify(error='No such URL found'), 404)
-
-        return make_response(jsonify(error=err.description), 404)
-
-    @app.errorhandler(400)
-    def bad_request(err):
-        return make_response(jsonify(error=err.description), 400)
-
-
-def configure_logging(app):
-    formatter = logging.Formatter('%(asctime)s: %(levelname)s: %(filename)s:'
-                                  ' %(funcName)s():%(lineno)d: %(message)s')
-
-    if 'LOG_FILE' in app.config:
-        log_filename = app.config['LOG_FILE']
-    else:
-        log_filename = 'dataservice.log'
-    # Also error can be sent out via email. So we can also have a SMTPHandler?
-    log_file = os.path.join(os.path.dirname(__file__), '..', log_filename)
-
-    max_size = 1024 * 1024 * 20  # Max Size for a log file: 20MB
-    log_handler = RotatingFileHandler(log_file, maxBytes=max_size,
-                                      backupCount=10)
-
-    if 'LOG_LEVEL' in app.config:
-        log_level = app.config['LOG_LEVEL'] or 'ERROR'
-    else:
-        log_level = 'ERROR'
-
-    log_handler.setLevel(log_level)
-    log_handler.setFormatter(formatter)
-
-    app.logger.addHandler(log_handler)
-
-
-if __name__ == "__main__":
-    app = create_app(config)
-    app.run(debug=True, host='0.0.0.0')
-
-#+END_SRC
 
 ** Config
 #+BEGIN_SRC python :tangle src/config.py :eval no
@@ -3111,7 +3245,7 @@ LOG_LEVEL = 'DEBUG'
 * Design discussions
 * Releases
 
-    
+
 ** v0.1.0
     This release will satisfy requirements 1 & 2
     Release Date :: [2015-08-26 Wed]
@@ -3121,9 +3255,9 @@ LOG_LEVEL = 'DEBUG'
        - Describe each entity and capture the model of data for each entity.
        - Describe the relationship between all the entities.
 
-**** TODO Python API , 
+**** TODO Python API ,
      + Completion Data :: [2015-08-26 Wed]
-     + Completed Date :: 
+     + Completed Date ::
      + Tasks
        - Provide Python API to perform CRUD operations on different entities.
 *** Hours
@@ -3141,10 +3275,13 @@ LOG_LEVEL = 'DEBUG'
     | Total            |          |      |        |    75 |   |
     |------------------+----------+------+--------+-------+---|
 
-    
+
 ** v0.2.0
+    This release is tracked here:
+    https://issues.vlabs.ac.in/projects/release-v0-2-0
+    Requirements for the release are tracked in the above.
     This release will satisfy requirements 3
-    Release Date :: 
+    Release Date ::
 **** TODO REST API and Migration scripts from old data to new model
 ***** Tasks
       1. Provide REST API for different application to perform CRUD
