@@ -223,7 +223,7 @@ class Institute(Entity):
                           [,pic=<instance of class Name>]
                           [,iic=<instance of class Name>])
 #+END_EXAMPLE
-n
+
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def __init__(self, **kwargs):
         if 'institute_id' not in kwargs:
@@ -1767,24 +1767,7 @@ function.
   #+NAME:   entity
   [[https://drive.google.com/open?id%3D0B6LLRcwXMzt8N3RzZGVkb0NpUDA][ER-Diagram]]
 
-** REST APIs
-   REST APIs form the interface of the data service with which the
-   external world interacts.
-
-   The Python code to have the imports, boilerplate code etc. for the API.
-#+BEGIN_SRC python :tangle src/api.py :eval no
-  # -*- coding: utf-8 -*-
-
-  from flask import Blueprint, request, jsonify, abort, current_app
-
-  from db import *
-  from utils import parse_request, jsonify_list
-
-  api = Blueprint('APIs', __name__)
-
-#+END_SRC
-
-** Bulk Update interface
+** The Bulk Update interface
 *** Requirement
    One of the requirement in the application is the bulk update
    interface. <<req4>>
@@ -1876,28 +1859,306 @@ function.
    service also needs to provide a static page, from where CSV files
    can be downloaded or uploaded.
 
-** REST API - GET - to get and query all information
-   The GET REST APIs are designed in a generic way. That is, APIs for
-   each entity is not designed and implemented specifically, rather
-   three generic API patterns are designed which, presumably, will
-   capture all kinds of query patterns.
+** REST APIs
+*** What are REST APIs?
+   REST APIs are the interface of the data service with which the
+   external world interacts. This interface is over HTTP. So, we
+   expose and publish a set of HTTP URLs. With appropriate HTTP
+   methods and the correct URL, various operations on various entities
+   can be performed, by making the corresponding request.
 
-   The three API patterns are:
-   1. /<entity>s?query_param1=val1&query_param2=val2&..query_paramn=valn
-   2. /<entity>s/<:id>?fields=field1,field2,field3
-   3. /<entity>s/<:id>/<entity>?query_param1=val1&query_param2=val2...
+*** Design
+   A different approach is taken here in designing the REST
+   APIs. Instead of writing specific REST APIs for each operation on
+   each entity, we designed some generic RESTful URL endpoints(APIs)
+   to capture all kinds of operations(read, query, update, delete) on
+   any existing entity in the system.
 
-   There are look up tables defined which map keywords to an
-   entity. Using this look up table the REST APIs can verify and check
-   if a request is valid. Whenever there is an new entity, only the
-   look up table has to be modified.
+   This is achieved by having look up table(s) or map(s) which
+   contains some keyword mapped to existing entities in the system,
+   and maybe some other additional data.
 
-   Look up table would be like:
-#+BEGIN_SRC python :tangle src/api.py
+   This design makes adding of a new entity relatively simple. Once we
+   add a new entity, and design its Python API, to expose the entity
+   over REST APIs, we just have to modify the look up table.
+
+   Generic patterns of URL, and examples of look up table(s) are
+   discussed below.
+
+   **TODO**: usage documentation of all REST APIs for the consumers of data
+   service has to be written down somewhere and published.
+
+*** Some code..
+   The Python code to have the imports, boilerplate code etc. for the
+   APIs.  We are using Flask blueprints to make the API, and then we
+   can plug this blueprint in our main application. [[http://flask.pocoo.org/docs/0.10/blueprints/][More on Flask
+   blueprints]].
+#+BEGIN_SRC python :tangle src/api.py :eval no
+  # -*- coding: utf-8 -*-
+
+  from flask import Blueprint, request, jsonify, abort, current_app
+
+  from db import *
+  from utils import parse_request, jsonify_list
+
+  api = Blueprint('APIs', __name__)
 
 #+END_SRC
 
-** Exceptions
+** REST APIs to read and query data
+   These are the set of REST APIs for read operations.
+
+*** Design
+   The REST APIs to get and query data are designed in a generic
+   way. That is, APIs for each entity is not designed and implemented
+   specifically, rather three generic API patterns are designed which,
+   presumably, will capture all kinds of query patterns.
+
+   The three API patterns are:
+   1. =/<:entity>s?query_param1=val1&query_param2=val2&..query_paramn=valn=
+   2. =/<:entity>s/<:id>?fields=field1,field2,field3=
+   3. =/<:entity>s/<:id>/<entity>s?query_param1=val1&query_param2=val2=
+
+   =<:entity>s= are defined in the corresponding look up table.
+
+   Let's explain each URL pattern:
+   1. The first URL pattern is to get record(s) of an entity which
+      satisfies some query parameters. Note, if one does not pass any
+      query parameter, it returns all records of that entity.  For
+      example:
+      1. To get all labs of IIIT-H at integration level 6 and hosted on
+         AWS:
+        #+BEGIN_EXAMPLE
+	GET /labs?integration_level=6&institute=iiith&hosted_on=AWS
+	#+END_EXAMPLE
+      2. To get all labs in the system:
+         #+BEGIN_EXAMPLE
+	 GET /labs
+	 #+END_EXAMPLE
+      3. To get all the developers associated with IIIT-H:
+         #+BEGIN_EXAMPLE
+	 GET /developers?institute=iiith
+	 #+END_EXAMPLE
+   2. The second URL pattern is to get details of a particular record,
+      identified by a unique identifier =id=. The records can be
+      furthered filtered down with only desired attributes. For example:
+      1. Get only few details the Data Structures lab (where the lab
+         id is known before):
+         #+BEGIN_EXAMPLE
+	 GET /labs/cse02?fields=name,institute,hosted_url
+	 #+END_EXAMPLE
+      2. Get all the details of particular developer (presuming the id
+         is known beforehand):
+         #+BEGIN_EXAMPLE
+	 GET /developers/22
+	 #+END_EXAMPLE
+   3. The third URL pattern is to get record(s) of an entity which is
+      part of another entity. Like to get experiments / technologies /
+      developers of a lab, or to get labs of an institute. The
+      record(s) can also be filtered on some query parameters. Like to
+      get all the technologies of a lab which are non FOSS.  For
+      example:
+      1. Get all technologies of a lab which are non FOSS:
+         #+BEGIN_EXAMPLE
+	 GET /labs/cse02/technologies?foss=false
+	 #+END_EXAMPLE
+      2. Get all experiments of a lab which uses Java3D and Flash:
+         #+BEGIN_EXAMPLE
+	 GET /labs/cse02/experiments?technologies=java3d,flash
+	 #+END_EXAMPLE
+
+
+   Note that, nesting of entities in the URL API is only allowed till
+   2nd level. Arbitrary nesting of entities might have the problem of
+   falling into infinite loop while querying.
+
+   Also note that, attributes with multiple values are
+   comma-separated; and the default action is to use AND operation
+   among them. If the OR operation is needed, they need to be
+   substituted by '+'. Example: To get all experiments of a lab which
+   uses Java3D OR Flash:
+   #+BEGIN_EXAMPLE
+   GET /labs/cse02/experiments?technologies=java3d+flash
+   #+END_EXAMPLE
+
+   In the above, a valid =<:entity>s= can be any of the keywords
+   defined in the look up table. Like, =labs=, =disciplines=,
+   =experiements=, =developers=. Note that the entity name is always
+   plural, but the look up table maps the plural keyword to a
+   particular entity (which is usually in singular form).
+
+   Look up table would be like (this is an example, not the
+   implementation):
+#+BEGIN_SRC python
+  entity_map = {
+      'labs': Lab,
+      'institutes': Institute,
+      'experiments': Experiment,
+      'disciplines': Discipline,
+      'developers': Developer,
+      'technologies': Technology
+  }
+#+END_SRC
+
+   **TODO**: usage documentation of all REST APIs for the consumers of
+   data service has to be written down somewhere and published.
+
+*** Implementation
+
+** REST API to create/update/delete data
+
+*** Design
+   These REST of APIs include APIs to perform create, update and
+   delete operations.
+   These REST APIs will implement the HTTP methods:
+   1. POST - to create new entries
+   2. PUT - to update existing entries
+   3. DELETE - to delete existing entries
+
+   These REST APIs are designed in a generic way. That is, APIs for
+   each entity is not designed and implemented specifically, rather
+   generic API patterns are designed to capture creation, updation and
+   deletion on all entities.
+
+   This is achieved using a look up table which contains valid entries
+   for valid entities. The look up table is same as above, explained
+   in the "REST APIs to get and query all information" section above.
+
+   The API should look into the URL of the request, and verify if the
+   request is for a valid entity from the look up table. Once it
+   verifies the valid entity, then it should invoke the constructor or
+   the appropriate setter function of the corresponding entity found
+   in the look up table. For invoking the constructor/setter and
+   passing the values to the constructor, the API needs to know the
+   type of each argument in the constructor. This can also be achieved
+   through the look up table. Hence, the look up table for this
+   similar to above, but with more information regarding types of
+   arguments of each of the constructors.
+
+   The look up table should like the following: (this is just an
+   example, not the implementation)
+#+BEGIN_SRC python
+  entity_map_types = {
+      'labs': {
+          'entity': Lab,
+          'types': {
+              'hosted_url': URL,
+              'name': str,
+              'integration_level': IntegrationLevel,
+              'lab_id': str
+          }
+      },
+      'discipline': {
+          'entity': Discipline,
+          'types': {
+              'name': str,
+              'discipline_id': str,
+              'dnc': Name
+          }
+      }
+  }
+#+END_SRC
+
+**** API to create new entries
+   The generic API pattern for creating new entries is:
+   POST =/<:entity>s/=
+   That is, create a POST request using =/<:entity>s= as the URL
+   endpoint.
+
+   For example,
+   #+BEGIN_EXAMPLE
+   1. POST /labs
+   2. POST /institutes
+   #+END_EXAMPLE
+   The request body of the POST request contain the relevant data for
+   the request.
+
+   The API creates a new entry, on success it returns a JSON object
+   with the new record, on failure, it should throw an appropriate
+   HTTP response code.
+
+   Essentially, the API should pick up the correct entity from the
+   look up table based on the request. And then based on the body of
+   the request it should go through the types of entity and create
+   instance of the type from the value found in the request body. If
+   there is mis-match or error in creating the types, the API should
+   HTTP 400 (which stands for bad or mal-formed request). Once the
+   correct type of each request variable is formed, it can then pass
+   the values to the corresponding constructor of the entity. If the
+   constructor throws an error, again the API should return 400. If
+   the construction is successful, the API tries to save it to the
+   database. If there is an error, the API should return 500 and log
+   the error. If the database save is successful, then the API returns
+   HTTP 200 and sends the JSON representation of the new entry in the
+   body of the response.
+
+**** API to update entries
+     The generic URL pattern to update existing entries is
+     PUT =/<:entity>s/<:id>=
+
+     That is, create a PUT request using =/<:entity>s/<:id>= as the URL
+     endpoint.
+
+     For example,
+     #+BEGIN_EXAMPLE
+     1. PUT /labs/cse22
+     2. PUT /institutes/iith
+     #+END_EXAMPLE
+     The request body of the PUT request contain the relevant data for
+     the request.
+
+     The API updates the existing entry based on the corresponding id
+     of the entity; on success it returns a JSON object
+     with the new record, on failure, it should throw an appropriate
+     HTTP response code.
+
+     Essentially, the API should pick up the correct entity from the
+     look up table based on the request. And then based on the =id= in
+     the request it tries to fetch the existing entity. If the entry
+     doesn't exist it returns a HTTP 404. If the entry exists, then
+     based on the body of the request (how many attributes the request
+     wants to update) it should go through the types of entity and
+     create instance of the type from the value found in the request
+     body. If there is mis-match or error in creating the types, the
+     API should HTTP 400 (which stands for bad or mal-formed
+     request). Once the correct type of each request variable is
+     formed, it can then pass the values to the corresponding setter
+     function(s) of the entity. If the setter function(s) throws an
+     error, again the API should return 400. If the update is
+     successful, the API tries to save it to the database. If there is
+     an error, the API should return 500 and log the error. If the
+     database save is successful, then the API returns HTTP 200 and
+     sends the JSON representation of the new entry in the body of the
+     response.
+
+**** API to delete entries
+     The generic URL pattern to delete existing entries is:
+     DELETE =/<:entity>s/<:id>=
+
+     That is, create a DELETE request using =/<:entity>s/<:id>= as the URL
+     endpoint.
+
+     For example,
+      #+BEGIN_EXAMPLE
+      1. DELETE /labs/cse22
+      2. DELETE /institutes/iith
+      #+END_EXAMPLE
+
+     The API deletes the existing entry based on the corresponding id
+     of the entity; on success it returns a HTTP 200 OK; on failure,
+     it should throw an appropriate HTTP response code.
+
+     Essentially, the API should pick up the correct entity from the
+     look up table based on the request. And then based on the =id= in
+     the request URL, it tries to fetch the existing entry. If no such
+     entry exist, it returns a HTTP 404. If the entry exist, then it
+     issues a delete method call to the ORM with the current
+     object. If this operation is successful, it returns a 200 OK,
+     else it returns a HTTP 500 and logs the error.
+
+*** Implementation
+
+** Custom Exceptions
 *** AttributeRequired
 #+BEGIN_SRC python :tangle src/ds_exceptions.py :eval no
 class AttributeRequired(Exception):
