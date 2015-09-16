@@ -2412,32 +2412,58 @@ if __name__ == "__main__":
 
 #+END_SRC
 
-** Authentication by =dataservice=
+** Authentication
 
-   This explains how =dataservice= will authenticate other services
+   Authentication is a problem that has to be tackled by data
+   service.
+
+   Authentication, in this context, means how data service will
+   authenticate (or verify the identity of) various other services
    communicating with it.
 
-   + By IP Blocking:
+   For example, data service might allow only ADS or Dashboard to
+   update and create data but not other services. How will data
+   service guarantee that it only allows the correct ADS service or
+   the Dashboard service to modify the data and not some other
+   service.
 
-     Here the assumption is that =dataservice= is aware of
-     microservices such as =ADS= or =dashboard=.
+*** Design
+    Design decision is, data service will allow GET requests from any
+    client. It does not restrict getting information from it.
 
-     According to the IP Blocking technique, =dataservice= will
-     identify those IP addresses from which web requests will be
-     accepted.  This includes =ADS= and other such microservices.
-     Each time a web request is received, =dataservice= will compare
-     the IP address with the list of acceptable IPs.  If IP is on the
+    But for services or clients which want to create, update or delete
+    any data, the data service has to be pre-configured to authorize
+    these identified services. Then, the data service can authenticate
+    these services/clients which want to modify any data. The
+    techniques for authentication are as follows:
+
+   + By Restricting IP addresses:
+
+     Here the assumption is that data service is aware of
+     other services such as ADS or Dashboard, which will communicate
+     with it.
+
+     According to this technique, data service will identify those IP
+     addresses from which HTTP requests will be accepted. Essentially,
+     it knows the IP addresses of other services where they are
+     running.
+
+     Each time a web request is received, data service will compare
+     the IP address with the list of acceptable IPs. If IP is on the
      list, the request is served normally, else it returns a
      "Forbidden: IP address rejected" error.
 
-   + By CORS (Cross Origin Resource Sharing):
+   + By CORS (Cross Origin Resource Sharing) policy for AJAX requests:
 
-     Since =dataservice= is aware of the microservices, it will allow
-     CORS for ajax requests coming *only* from these microservices.
+     Since data service is aware of the services communicating with it
+     (assumption it also knows the FQDN of those services), it will
+     accept AJAX requests coming *only* from these services.
 
 
     *TODO* Define a process in =dataservice= for configuring
      authentication in case a new microservice is introduced.
+
+*** Implementation
 
 * Test Cases
 ** __init__
