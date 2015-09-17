@@ -64,11 +64,9 @@ class Entity(db.Model):
 #+END_SRC
 
 ** The Data Model
-   Description of the data model.
+   TODO: More description of the data model.
 
-*** Types & Functions: List of all the types and functions in the model
-
-**** Name
+*** Name
 
      Name is an alphabetical string.
 
@@ -82,7 +80,7 @@ class Name(object):
 
         self.value = value
 #+END_SRC
-**** Email
+*** Email
 
      Email is a type as defined in RFC [[https://tools.ietf.org/html/rfc5321][5321]], [[https://tools.ietf.org/html/rfc5322][5322]] and [[https://tools.ietf.org/html/rfc6531][6531]].
      Following is the constructor for this class.
@@ -94,7 +92,7 @@ class Email(object):
             raise TypeError('%s is not an email_id!' % value)
         self.value = value
 #+END_SRC
-**** URL
+*** URL
 
    URL is a type as defined in RFC [[https://www.ietf.org/rfc/rfc1738.txt][1738]].
 
@@ -107,19 +105,19 @@ class URL(object):
 
         self.value = value
 #+END_SRC
-**** LabId
+*** LabId
 
      LabId is of type string
 
-**** InstituteId
+*** InstituteId
 
      InstituteId is of type string
 
-**** DisciplineId
+*** DisciplineId
 
      DisciplineId is of type string
 
-**** IntegrationLevel
+*** IntegrationLevel
 
 
      IntegrationLevel is {0, 1, 2, 3, 4, 5, 6}.
@@ -133,7 +131,7 @@ class IntegrationLevel(Entity):
 
     labs = db.relationship('Lab', backref='integration_level')
 #+END_SRC
-**** HostingPlatform
+*** HostingPlatform
 
      HostingPlatform is {IIIT, Badal, AWS, Else}.
 
@@ -146,7 +144,7 @@ class HostingPlatform(Entity):
 
     labs = db.relationship('Lab', backref='hosted_on')
 #+END_SRC
-**** TypeOfLab
+*** TypeOfLab
 
      TypeOfLab is
      { Simulation,
@@ -163,7 +161,7 @@ class TypeOfLab(Entity):
     labs = db.relationship('Lab', backref='type_of_lab')
 #+END_SRC
 
-**** Institute
+*** Institute
 
 ***** Immutable Data
       This is the data associated with Institute type, which is immutable.
@@ -352,7 +350,7 @@ class Institute(Entity):
         }
 
 #+END_SRC
-**** Discipline
+*** Discipline
 ***** Immutable Data
       This is the data associated with Discipline type, which is immutable.
 
@@ -513,7 +511,7 @@ class Discipline(Entity):
         }
 
 #+END_SRC
-**** Developer
+*** Developer
 ***** Immutable Data
       This is the data associated with Developer type, which is immutable.
       + Id
@@ -647,7 +645,7 @@ class Developer(Entity):
         self.save()
 #+END_SRC
 
-**** Technology
+*** Technology
 ***** Immutable Data
       This is the data associated with Technology type, which is immutable.
 
@@ -782,7 +780,7 @@ Technology(name=String
         }
 #+END_SRC
 
-**** Experiment
+*** Experiment
 ***** Immutable Data
       This is the data associated with Experiment type, which is immutable.
 
@@ -1029,7 +1027,7 @@ a
 
 #+END_SRC
 
-**** Lab
+*** Lab
 ***** Immutable Data
 
       These are the data associated with Lab type, which are immutable.
@@ -2177,7 +2175,7 @@ class AttributeRequired(Exception):
 
 import json
 
-from flask import make_response
+from flask import make_response, current_app
 
 
 # return a list of dicts as json with correct mime types
@@ -2318,6 +2316,95 @@ def typecheck(**typemap):
 
 #+END_SRC
 
+** Authentication
+
+   Authentication is a problem that has to be tackled by data
+   service.
+
+   Authentication, in this context, means how data service will
+   authenticate (or verify the identity of) various other services
+   communicating with it.
+
+   For example, data service might allow only ADS or Dashboard to
+   update and create data but not other services. How will data
+   service guarantee that it only allows the correct ADS service or
+   the Dashboard service to modify the data and not some other
+   service.
+
+*** Design
+    Design decision is, data service will allow GET requests from any
+    client. It does not restrict getting information from it.
+
+    But for services or clients which want to create, update or delete
+    any data, the data service has to be pre-configured to authorize
+    these identified services. Then, the data service can authenticate
+    these services/clients which want to modify any data. The
+    techniques for authentication are as follows:
+
+   + By Restricting IP addresses:
+
+     Here the assumption is that data service is aware of
+     other services such as ADS or Dashboard, which will communicate
+     with it.
+
+     According to this technique, data service will identify those IP
+     addresses from which HTTP requests will be accepted. Essentially,
+     it knows the IP addresses of other services where they are
+     running.
+
+     Each time a web request is received, data service will compare
+     the IP address with the list of acceptable IPs. If IP is on the
+     list, the request is served normally, else it returns a
+     "Forbidden: IP address rejected" error.
+
+   + By CORS (Cross Origin Resource Sharing) policy for AJAX requests:
+
+     Since data service is aware of the services communicating with it
+     (assumption it also knows the FQDN of those services), it will
+     accept AJAX requests coming *only* from these services.
+
+
+    *TODO* Define a process in =dataservice= for configuring
+     authentication in case a new microservice is introduced.
+
+*** Technical Design
+Technically, this will be achieved via a decorator. The decorator will
+check if the incoming request is from a white-listed IP address.
+
+Then the required URL endpoints can use the decorator to guard access
+to that endpoint.
+
+*** Implementation
+The function is part of the =utils= module.
+
+#+BEGIN_SRC python :tangle src/utils.py :eval no
+
+  def check_ip(fn):
+      def wrapped_func(*args, **kwargs):
+          if request.remote_addr not in current_app.config.WHITELIST_IPS:
+              abort(403)
+          return fn(*args, **kwargs)
+      return wrapped_func
+#+END_SRC
+*** Usage of this function
+To use this function, use it as a decorator to check for access to any route.
+#+BEGIN_EXAMPLE python
+  @app.route('/labs', methods=['POST'])
+  @check_ip
+  def create_lab():
+      #some code here..
+#+END_EXAMPLE
+
+*Note* that you cannot use the decorator before the =route=
+ decorator. You have to use it after it.
+The following code will *not* work:
+#+BEGIN_EXAMPLE
+  @check_ip
+  @app.route('/labs', methods=['POST'])
+  def create_lab():
+      #some code here.
+#+END_EXAMPLE
+
 ** The web application
 #+BEGIN_SRC python :tangle src/app.py :eval no
 # -*- coding: utf-8 -*-
@@ -2412,58 +2499,32 @@ if __name__ == "__main__":
 
 #+END_SRC
 
-** Authentication
+** Configuring the application
+Below is the configuration for the application
+#+BEGIN_SRC python :tangle src/config.py :eval no
+  # DB URI
+  # example DB URI:
+  # mysql+oursql://scott:tiger@localhost/mydatabase
+  # postgresql+psycopg2://scott:tiger@localhost/mydatabase
+  SQLALCHEMY_DATABASE_URI = 'mysql+oursql://username:password@localhost/dbname'
 
-   Authentication is a problem that has to be tackled by data
-   service.
+  # Debug from SQLAlchemy
+  # Turn this to False on production
+  SQLALCHEMY_ECHO = False
 
-   Authentication, in this context, means how data service will
-   authenticate (or verify the identity of) various other services
-   communicating with it.
+  # List of allowed origins for CORS
+  ALLOWED_ORIGINS = ["*.vlabs.ac.in", "*.virtual-labs.ac.in"]
 
-   For example, data service might allow only ADS or Dashboard to
-   update and create data but not other services. How will data
-   service guarantee that it only allows the correct ADS service or
-   the Dashboard service to modify the data and not some other
-   service.
+  # List of allowed IPs
+  WHITELIST_IPS = ["127.0.0.1"]
 
-*** Design
-    Design decision is, data service will allow GET requests from any
-    client. It does not restrict getting information from it.
+  # Configure your log paths
+  LOG_FILE = 'logs/dataservice.log'
 
-    But for services or clients which want to create, update or delete
-    any data, the data service has to be pre-configured to authorize
-    these identified services. Then, the data service can authenticate
-    these services/clients which want to modify any data. The
-    techniques for authentication are as follows:
+  # Log level for the application
+  LOG_LEVEL = 'DEBUG'
 
-   + By Restricting IP addresses:
-
-     Here the assumption is that data service is aware of
-     other services such as ADS or Dashboard, which will communicate
-     with it.
-
-     According to this technique, data service will identify those IP
-     addresses from which HTTP requests will be accepted. Essentially,
-     it knows the IP addresses of other services where they are
-     running.
-
-     Each time a web request is received, data service will compare
-     the IP address with the list of acceptable IPs. If IP is on the
-     list, the request is served normally, else it returns a
-     "Forbidden: IP address rejected" error.
-
-   + By CORS (Cross Origin Resource Sharing) policy for AJAX requests:
-
-     Since data service is aware of the services communicating with it
-     (assumption it also knows the FQDN of those services), it will
-     accept AJAX requests coming *only* from these services.
-
-
-    *TODO* Define a process in =dataservice= for configuring
-     authentication in case a new microservice is introduced.
-
-*** Implementation
+#+END_SRC
 
 * Test Cases
 ** __init__
@@ -3530,30 +3591,6 @@ def create_developer(_name, _email, _inst):
 
 #+END_SRC
 
-
-** Config
-#+BEGIN_SRC python :tangle src/config.py :eval no
-# DB URI
-# example DB URI:
-# mysql+oursql://scott:tiger@localhost/mydatabase
-# postgresql+psycopg2://scott:tiger@localhost/mydatabase
-SQLALCHEMY_DATABASE_URI =\
-    'mysql+oursql://root:root@localhost/dataservice'
-
-# Debug from SQLAlchemy
-# Turn this to False on production
-SQLALCHEMY_ECHO = False
-
-# List of allowed origins for CORS
-ALLOWED_ORIGINS = ["*"]
-
-# Configure your log paths
-LOG_FILE = 'logs/dataservice.log'
-
-# Log level for the application
-LOG_LEVEL = 'DEBUG'
-
-#+END_SRC
 * Provisioning
   [[./setup.org][Set up the environment]]
 * Design discussions
