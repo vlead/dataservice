@@ -35,13 +35,32 @@ import db
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask import current_app
 
+import sqlalchemy.types as types
+
 import re
 from urlparse import urlparse
+from datetime import datetime
+import json
 
 from ds_exceptions import AttributeRequired
 from utils import typecheck
 
 db = SQLAlchemy()
+
+
+class JSONType(types.TypeDecorator):
+    impl = types.UnicodeText
+
+    def process_bind_param(self, value, engine):
+        if value:
+            return json.dumps(value)
+
+    def process_result_value(self, value, engine):
+        if value:
+            return json.loads(value)
+        else:
+            # default can also be a list
+            return {}
 
 
 # Abstract class to hold common methods
@@ -60,7 +79,6 @@ class Entity(db.Model):
             self.__setattr__(attr, val)
 
         self.save()
-
 #+END_SRC
 
 ** The Data Model
@@ -163,39 +181,39 @@ class TypeOfLab(Entity):
 
 *** Institute
 
-***** Immutable Data
-      This is the data associated with Institute type, which is immutable.
+**** Immutable Data
+     This is the data associated with Institute type, which is immutable.
 
-      + Id
-      + InstituteId
+     + Id
+     + InstituteId
 
-***** Mutable Data
+**** Mutable Data
 
-      These are the data associated with Institute type, which are mutable
+     These are the data associated with Institute type, which are mutable
 
-      + Name
-      + PIC
-      + IIC
+     + Name
+     + PIC
+     + IIC
 
-***** InstituteId assigned to each institute
-      |---------------------------------+-------------|
-      | Name                            | InstituteId |
-      |---------------------------------+-------------|
-      | IIIT Hyderabad                  | iiith       |
-      | IIT Bombay                      | iitb        |
-      | IIT Delhi                       | iitd        |
-      | IIT Roorkee                     | iitrrk      |
-      | IIT Guwahati                    | iitg        |
-      | IIT Kanpur                      | iitk        |
-      | IIT Kharagpur                   | iitkgp      |
-      | IIT Madras                      | iitm        |
-      | NIT Surathkal                   | nitk        |
-      | Amrita University               | amrita      |
-      | College of Engineering, Pune    | coep        |
-      | Dayalbagh Educational Institute | dei         |
-      |---------------------------------+-------------|
+**** InstituteId assigned to each institute
+     |---------------------------------+-------------|
+     | Name                            | InstituteId |
+     |---------------------------------+-------------|
+     | IIIT Hyderabad                  | iiith       |
+     | IIT Bombay                      | iitb        |
+     | IIT Delhi                       | iitd        |
+     | IIT Roorkee                     | iitrrk      |
+     | IIT Guwahati                    | iitg        |
+     | IIT Kanpur                      | iitk        |
+     | IIT Kharagpur                   | iitkgp      |
+     | IIT Madras                      | iitm        |
+     | NIT Surathkal                   | nitk        |
+     | Amrita University               | amrita      |
+     | College of Engineering, Pune    | coep        |
+     | Dayalbagh Educational Institute | dei         |
+     |---------------------------------+-------------|
 
-***** Definition
+**** Definition
 #+BEGIN_SRC python :tangle src/db.py :eval no
 class Institute(Entity):
 
@@ -212,7 +230,7 @@ class Institute(Entity):
 
 #+END_SRC
 
-***** Constructor for the Institute
+**** Constructor for the Institute
       Signature of the constructor is as follows. Fields in [...]  are
       optional. Others are mandatory.
 #+BEGIN_EXAMPLE
@@ -242,23 +260,23 @@ class Institute(Entity):
         self.save()
 #+END_SRC
 
-***** Functions that operate on Institute domain
+**** Functions that operate on Institute domain
 
-****** getName: Institute --> Name
+***** getName: Institute --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_name(self):
         return self.name
 
 #+END_SRC
 
-****** getId: Institute --> Id
+***** getId: Institute --> Id
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_id(self):
         return self.id
 
 #+END_SRC
 
-****** getInstitute: Id --> Institute
+***** getInstitute: Id --> Institute
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_by_id(id):
@@ -266,14 +284,14 @@ class Institute(Entity):
 
 #+END_SRC
 
-****** getInstituteId: Institute --> InstituteId
+***** getInstituteId: Institute --> InstituteId
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_institute_id(self):
         return self.institute_id
 
 #+END_SRC
 
-****** getInstitute: InstituteId --> Institute
+***** getInstitute: InstituteId --> Institute
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_by_institute_id(institute_id):
@@ -281,35 +299,35 @@ class Institute(Entity):
 
 #+END_SRC
 
-****** getPIC: Institute --> Name
+***** getPIC: Institute --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_pic(self):
         return self.pic
 
 #+END_SRC
 
-****** getIIC: Institute --> Name
+***** getIIC: Institute --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_iic(self):
         return self.iic
 
 #+END_SRC
 
-****** getLabs: Institute --> set[Lab]
+***** getLabs: Institute --> set[Lab]
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_labs(self):
         return self.labs
 
 #+END_SRC
 
-****** getDevelopers: Institute --> set[Developer]
+***** getDevelopers: Institute --> set[Developer]
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_developers(self):
         return self.developers
 
 #+END_SRC
 
-****** getAllInstitutes: Nil --> set[Institute]
+***** getAllInstitutes: Nil --> set[Institute]
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_all():
@@ -317,28 +335,28 @@ class Institute(Entity):
 
 #+END_SRC
 
-****** setPIC: Institute, Name --> Void
+***** setPIC: Institute, Name --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(pic=Name)
     def set_pic(self, pic):
         self.pic = pic.value
 #+END_SRC
 
-****** setIIC: Institute, Name --> Void
+***** setIIC: Institute, Name --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(iic=Name)
     def set_iic(self, iic):
         self.iic = iic.value
 #+END_SRC
 
-****** setName: Institute, Name --> Void
+***** setName: Institute, Name --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(name=str)
     def set_name(self, name):
         self.name = name
 #+END_SRC
 
-****** to_client
+***** to_client
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def to_client(self):
         return {
@@ -351,39 +369,39 @@ class Institute(Entity):
 
 #+END_SRC
 *** Discipline
-***** Immutable Data
-      This is the data associated with Discipline type, which is immutable.
+**** Immutable Data
+     This is the data associated with Discipline type, which is immutable.
 
-      + Id
-      + DisciplineId
+     + Id
+     + DisciplineId
 
-***** Mutable Data
-      This is the data associated with Discipline type, which is mutable.
+**** Mutable Data
+     This is the data associated with Discipline type, which is mutable.
 
-      + Name
-      + DNC
+     + Name
+     + DNC
 
-***** DisciplineId assigned to each discipline
-      |------------------------------------------+--------------|
-      | Name                                     | DisciplineId |
-      |------------------------------------------+--------------|
-      | Aerospace Engineering                    | aero         |
-      | Biotechnology and Biomedical Engineering | biotech      |
-      | Chemical Engineering                     | chem-engg    |
-      | Chemical Sciences                        | chem         |
-      | Civil Engineering                        | civil        |
-      | Computer Science and Engineering         | cse          |
-      | Electrical Engineering                   | ee           |
-      | Electronics and Communication            | ece          |
-      | Humanities                               | human        |
-      | Mechanical Engineering                   | mech         |
-      | Physical Sciences                        | phy-sc       |
-      | Textile Engineering                      | tex-engg     |
-      | Design Engineering                       | dsgn-engg    |
-      | Material Sciences                        | mat-sc       |
-      |------------------------------------------+--------------|
+**** DisciplineId assigned to each discipline
+     |------------------------------------------+--------------|
+     | Name                                     | DisciplineId |
+     |------------------------------------------+--------------|
+     | Aerospace Engineering                    | aero         |
+     | Biotechnology and Biomedical Engineering | biotech      |
+     | Chemical Engineering                     | chem-engg    |
+     | Chemical Sciences                        | chem         |
+     | Civil Engineering                        | civil        |
+     | Computer Science and Engineering         | cse          |
+     | Electrical Engineering                   | ee           |
+     | Electronics and Communication            | ece          |
+     | Humanities                               | human        |
+     | Mechanical Engineering                   | mech         |
+     | Physical Sciences                        | phy-sc       |
+     | Textile Engineering                      | tex-engg     |
+     | Design Engineering                       | dsgn-engg    |
+     | Material Sciences                        | mat-sc       |
+     |------------------------------------------+--------------|
 
-***** Definition
+**** Definition
 #+BEGIN_SRC python :tangle src/db.py :eval no
 class Discipline(Entity):
 
@@ -398,7 +416,7 @@ class Discipline(Entity):
 
 #+END_SRC
 
-***** Constructor for the Discipline
+**** Constructor for the Discipline
       Signature of the constructor is as follows. Fields in [...]  are
       optional. Others are mandatory.
 #+BEGIN_EXAMPLE
@@ -425,8 +443,8 @@ class Discipline(Entity):
 
 #+END_SRC
 
-***** Functions that operate on Discipline domain
-****** getAllDisciplines: Nil --> set[Discipline]
+**** Functions that operate on Discipline domain
+***** getAllDisciplines: Nil --> set[Discipline]
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_all():
@@ -434,20 +452,20 @@ class Discipline(Entity):
 
 #+END_SRC
 
-****** getId: Discipline --> Id
+***** getId: Discipline --> Id
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_id(self):
         return self.id
 
 #+END_SRC
 
-****** getName: Discipline --> Name
+***** getName: Discipline --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_name(self):
         return self.name
 
 #+END_SRC
-****** getDiscipline: Id --> Discipline
+***** getDiscipline: Id --> Discipline
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_by_id(id):
@@ -455,14 +473,14 @@ class Discipline(Entity):
 
 #+END_SRC
 
-****** getDisciplineId: Discipline --> DisciplineId
+***** getDisciplineId: Discipline --> DisciplineId
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_discipline_id(self):
         return self.discipline_id
 
 #+END_SRC
 
-****** getDiscipline: DisciplineId --> Discipline
+***** getDiscipline: DisciplineId --> Discipline
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_by_discipline_id(discipline_id):
@@ -470,21 +488,21 @@ class Discipline(Entity):
 
 #+END_SRC
 
-****** getLabs: Discipline --> set[Lab]
+***** getLabs: Discipline --> set[Lab]
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_labs(self):
         return self.labs
 
 #+END_SRC
 
-****** getDNC: Discipline --> Name
+***** getDNC: Discipline --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_dnc(self):
         return self.dnc
 
 #+END_SRC
 
-****** setName: Discipline --> Void
+***** setName: Discipline --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(name=str)
     def set_name(self, name):
@@ -492,7 +510,7 @@ class Discipline(Entity):
         self.save()
 #+END_SRC
 
-****** setDNC: Discipline, Name --> Void
+***** setDNC: Discipline, Name --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(name=Name)
     def set_dnc(self, name):
@@ -500,7 +518,7 @@ class Discipline(Entity):
         self.save()
 #+END_SRC
 
-****** to_client
+***** to_client
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def to_client(self):
         return {
@@ -512,16 +530,16 @@ class Discipline(Entity):
 
 #+END_SRC
 *** Developer
-***** Immutable Data
-      This is the data associated with Developer type, which is immutable.
-      + Id
-***** Mutable Data
-      This is the data associated with Developer type, which is mutable.
-      + Name
-      + Email
-      + Institute --> Id
+**** Immutable Data
+     This is the data associated with Developer type, which is immutable.
+     + Id
+**** Mutable Data
+     This is the data associated with Developer type, which is mutable.
+     + Name
+     + Email
+     + Institute --> Id
 
-***** Definition
+**** Definition
 #+BEGIN_SRC python :tangle src/db.py :eval no
 class Developer(Entity):
 
@@ -534,7 +552,7 @@ class Developer(Entity):
     institute_id = db.Column(db.Integer, db.ForeignKey('institutes.id'))
 
 #+END_SRC
-***** Constructor
+**** Constructor
       Signature of constructor
 #+BEGIN_EXAMPLE
     developer = Developer(name=<instance of class Name>,
@@ -565,8 +583,8 @@ class Developer(Entity):
 
 #+END_SRC
 
-***** Functions that operate on the Developer domain
-****** to_client
+**** Functions that operate on the Developer domain
+***** to_client
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def to_client(self):
         return {
@@ -576,32 +594,32 @@ class Developer(Entity):
             'institute': self.institute.to_client()
         }
 #+END_SRC
-****** getId: Developer --> Id
+***** getId: Developer --> Id
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_id(self):
         return self.id
 #+END_SRC
 
-****** getDeveloper: Id --> Developer
+***** getDeveloper: Id --> Developer
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_by_id(id):
         return Developer.query.get(id)
 #+END_SRC
 
-****** getName: Developer --> Name
+***** getName: Developer --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_name(self):
         return self.name
 #+END_SRC
 
-****** getEmail: Developer --> Email
+***** getEmail: Developer --> Email
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_email(self):
         return self.email_id
 #+END_SRC
 
-****** getAllDevelopers: Nil --> set[Developer]
+***** getAllDevelopers: Nil --> set[Developer]
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_all():
@@ -609,20 +627,20 @@ class Developer(Entity):
 
 #+END_SRC
 
-****** getLabs: Developer --> set[Lab]
+***** getLabs: Developer --> set[Lab]
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_labs(self):
         return self.labs
 #+END_SRC
 
-****** getInstitute: Developer --> Institute
+***** getInstitute: Developer --> Institute
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_institute(self):
         return self.institute
 
 #+END_SRC
 
-****** setName: Developer, Name --> Void
+***** setName: Developer, Name --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(name=Name)
     def set_name(self, name):
@@ -630,14 +648,14 @@ class Developer(Entity):
 
 #+END_SRC
 
-****** setEmail: Developer, Email --> Void
+***** setEmail: Developer, Email --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(email_id=Email)
     def set_email(self, email_id):
         self.email_id = email_id.value
         self.save()
 #+END_SRC
-****** setInstitute: Developer, Institute --> Void
+***** setInstitute: Developer, Institute --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(institute=Institute)
     def set_institute(self, institute):
@@ -646,19 +664,19 @@ class Developer(Entity):
 #+END_SRC
 
 *** Technology
-***** Immutable Data
-      This is the data associated with Technology type, which is immutable.
+**** Immutable Data
+     This is the data associated with Technology type, which is immutable.
 
-      + Id
+     + Id
 
-***** Mutable Data
-      These are the data associated with Technology type, which are mutable.
+**** Mutable Data
+     These are the data associated with Technology type, which are mutable.
 
-      + Name
-      + Version
-      + FOSS
+     + Name
+     + Version
+     + FOSS
 
-***** Definition
+**** Definition
 #+BEGIN_SRC python :tangle src/db.py :eval no
 class Technology(Entity):
 
@@ -670,7 +688,7 @@ class Technology(Entity):
     foss = db.Column(db.Boolean)
 #+END_SRC
 
-***** Constructor for Technology
+**** Constructor for Technology
       Signature for the constructor is as follows. Attributes inside [...] are
       optional. Other attributes are mandatory.
 #+BEGIN_EXAMPLE python
@@ -692,22 +710,22 @@ Technology(name=String
             self.set_foss(kwargs['foss'])
 
 #+END_SRC
-***** Functions that operate on the Technology domain
-****** getId: Technology --> Id
+**** Functions that operate on the Technology domain
+***** getId: Technology --> Id
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_id(self):
         return self.id
 
 #+END_SRC
 
-****** getName: Technology --> String
+***** getName: Technology --> String
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_name(self):
         return self.name
 
 #+END_SRC
 
-****** getAllTechnologies: Nil --> set[Technology]
+***** getAllTechnologies: Nil --> set[Technology]
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_all():
@@ -715,14 +733,14 @@ Technology(name=String
 
 #+END_SRC
 
-****** getLabs: Technology --> set[Lab]
+***** getLabs: Technology --> set[Lab]
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_labs(self):
         return self.labs
 
 #+END_SRC
 
-****** getTechnology: Id --> Technology
+***** getTechnology: Id --> Technology
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_by_id(id):
@@ -730,28 +748,28 @@ Technology(name=String
 
 #+END_SRC
 
-****** getVersion: Technology --> Version
+***** getVersion: Technology --> Version
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_version(self):
         return self.version
 
 #+END_SRC
 
-****** isFOSS: Technology --> Boolean
+***** isFOSS: Technology --> Boolean
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def is_foss(self):
         return self.foss
 
 #+END_SRC
 
-****** setName: Technology, String --> Void
+***** setName: Technology, String --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(name=str)
     def set_name(self, name):
         self.name = name
         self.save()
 #+END_SRC
-****** setVersion: Technology, Version --> Void
+***** setVersion: Technology, Version --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(version=str)
     def set_version(self, version):
@@ -759,7 +777,7 @@ Technology(name=String
         self.save()
 #+END_SRC
 
-****** setFOSS: Technology, Boolean --> Void
+***** setFOSS: Technology, Boolean --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(foss=bool)
     def set_foss(self, foss):
@@ -767,7 +785,7 @@ Technology(name=String
         self.save()
 #+END_SRC
 
-****** to_client: Technology --> Dictionary
+***** to_client: Technology --> Dictionary
        Returns a dictionary of necessary attributes for a client to consume
        all the attributes of a technology
 #+BEGIN_SRC
@@ -781,21 +799,21 @@ Technology(name=String
 #+END_SRC
 
 *** Experiment
-***** Immutable Data
-      This is the data associated with Experiment type, which is immutable.
+**** Immutable Data
+     This is the data associated with Experiment type, which is immutable.
 
-      + Id
+     + Id
 
-***** Mutable Data
-      These are the data associated with Experiment type, which are mutable.
+**** Mutable Data
+     These are the data associated with Experiment type, which are mutable.
 
-      + Name
-      + ContentURL
-      + SimulationURL
-      + ContentHostedOn
-      + SimulationHostedOn
+     + Name
+     + ContentURL
+     + SimulationURL
+     + ContentHostedOn
+     + SimulationHostedOn
 
-***** Association
+**** Association
 #+BEGIN_SRC python :tangle src/db.py :eval no
 # association table of technologies and experiments
 technologies_used_expt = db.Table(
@@ -804,7 +822,7 @@ technologies_used_expt = db.Table(
     db.Column('tech_id', db.Integer, db.ForeignKey('technologies.id'))
 )
 #+END_SRC
-***** Definition
+**** Definition
 #+BEGIN_SRC python :tangle src/db.py :eval no
 class Experiment(Entity):
 
@@ -835,7 +853,7 @@ class Experiment(Entity):
 
 #+END_SRC
 
-***** Constructor for the Experiment
+**** Constructor for the Experiment
      Signature of the constructor is as follows. Attributes inside [...]  are
      optional. Others are mandatory.
 
@@ -885,23 +903,23 @@ class Experiment(Entity):
 
 #+END_SRC
 
-***** Functions that operate on the Experiment domain
+**** Functions that operate on the Experiment domain
 
-****** getName: Experiment --> Name
+***** getName: Experiment --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_name(self):
         return self.name
 
 #+END_SRC
 
-****** getId: Experiment --> Id
+***** getId: Experiment --> Id
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_id(self):
         return self.id
 
 #+END_SRC
 
-****** getExperiment: Id --> Experiment
+***** getExperiment: Id --> Experiment
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_by_id(id):
@@ -909,49 +927,49 @@ class Experiment(Entity):
 
 #+END_SRC
 
-****** getContentURL: Experiment --> URL + Nil
+***** getContentURL: Experiment --> URL + Nil
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_content_url(self):
         return self.content_url
 
 #+END_SRC
 
-****** getSimulationURL: Experiment --> URL + Nil
+***** getSimulationURL: Experiment --> URL + Nil
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_simulation_url(self):
         return self.simulation_url
 
 #+END_SRC
 
-****** getTechnologies: Experiment --> set[Technology]
+***** getTechnologies: Experiment --> set[Technology]
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_technologies(self):
         return self.technologies
 
 #+END_SRC
 
-****** contentHostedOn: Experiment --> HostingPlatform + Nil
+***** contentHostedOn: Experiment --> HostingPlatform + Nil
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_content_hosted_on(self):
         return self.content_hosted_on
 
 #+END_SRC
 
-****** simulationHostedOn: Experiment --> HostingPlatform + Nil
+***** simulationHostedOn: Experiment --> HostingPlatform + Nil
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_simulation_hosted_on(self):
         return self.simulation_hosted_on
 
 #+END_SRC
 
-****** getLab: Experiment --> Lab
+***** getLab: Experiment --> Lab
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_lab(self):
         return self.lab
 
 #+END_SRC
 a
-****** setName: Experiment, Name --> Void
+***** setName: Experiment, Name --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(name=str)
     def set_name(self, name):
@@ -959,7 +977,7 @@ a
         self.save()
 #+END_SRC
 
-****** setContentURL: Experiment, URL --> Void
+***** setContentURL: Experiment, URL --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(url=URL)
     def set_content_url(self, url):
@@ -968,7 +986,7 @@ a
 
 #+END_SRC
 
-****** setSimulationURL: Experiment, URL --> Void
+***** setSimulationURL: Experiment, URL --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(url=URL)
     def set_simulation_url(self, url):
@@ -977,7 +995,7 @@ a
 
 #+END_SRC
 
-****** setContentHostedOn: Experiment, HostingPlatform --> Void
+***** setContentHostedOn: Experiment, HostingPlatform --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(platform=HostingPlatform)
     def set_content_hosted_on(self, platform):
@@ -986,7 +1004,7 @@ a
 
 #+END_SRC
 
-****** setSimulationHostedOn: Experiment, HostingPlatform --> Void
+***** setSimulationHostedOn: Experiment, HostingPlatform --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(platform=HostingPlatform)
     def set_simulation_hosted_on(self, platform):
@@ -995,7 +1013,7 @@ a
 
 #+END_SRC
 
-****** addTechnology: Lab, Technology --> Void
+***** addTechnology: Lab, Technology --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(technology=Technology)
     def add_technology(self, technology):
@@ -1003,7 +1021,7 @@ a
         self.save()
 #+END_SRC
 
-****** removeTechnology: Lab, Technology --> Void
+***** removeTechnology: Lab, Technology --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(technology=Technology)
     def remove_technology(self, technology):
@@ -1012,7 +1030,7 @@ a
             self.save()
 #+END_SRC
 
-****** to_client
+***** to_client
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def to_client(self):
         return {
@@ -1028,248 +1046,248 @@ a
 #+END_SRC
 
 *** Lab
-***** Immutable Data
+**** Immutable Data
 
-      These are the data associated with Lab type, which are immutable.
+     These are the data associated with Lab type, which are immutable.
 
-      + Id
-      + LabId
+     + Id
+     + LabId
 
-      As the number of experiments should be derived by the system from the
-      experiments already associated with each lab.
+     As the number of experiments should be derived by the system from the
+     experiments already associated with each lab.
 
-***** Mutable Data
-      These are the data associated with Lab type, which are mutable.
+**** Mutable Data
+     These are the data associated with Lab type, which are mutable.
 
-      + Name
-      + Institute
-      + Discipline
-      + IntegrationLevel
-      + HostedURL
-      + RepoURL
-      + TypeOfLab
-      + HostedOn
-      + Web2Compliant
-      + Phase2Lab
-      + Developer
-      + Technology
-      + Experiment
-      + Remarks
-      + Status
+     + Name
+     + Institute
+     + Discipline
+     + IntegrationLevel
+     + HostedURL
+     + RepoURL
+     + TypeOfLab
+     + HostedOn
+     + Web2Compliant
+     + Phase2Lab
+     + Developer
+     + Technology
+     + Experiment
+     + Remarks
+     + Status
 
-***** LabId assigned for each lab
+**** LabId assigned for each lab
 
-      |-----------+--------------------------------------------------------------------------------------|
-      | LabId     | Name                                                                                 |
-      |-----------+--------------------------------------------------------------------------------------|
-      | NULL      | Molecular biology Virtual Lab I                                                      |
-      | NULL      | Biological Image processing Virtual Lab                                              |
-      | NULL      | Ecology Virtual Lab                                                                  |
-      | NULL      | Computer-Aided Drug Design Virtual Lab                                               |
-      | NULL      | Systems Biology Virtual Lab                                                          |
-      | NULL      | Bioinformatics Virtual Lab III                                                       |
-      | NULL      | Bioinformatics Virtual Lab II                                                        |
-      | NULL      | Solid State Physics Virtual Lab                                                      |
-      | NULL      | Virtual Optics Lab                                                                   |
-      | NULL      | Bioinformatics Virtual Lab I                                                         |
-      | NULL      | Bio-inspired Robotics Virtual Lab (Remote Triggered)                                 |
-      | NULL      | Virtual Biophysics Lab (Remote Triggered)                                            |
-      | NULL      | Microbiology Virtual Lab II                                                          |
-      | NULL      | Microbiology Virtual Lab I                                                           |
-      | NULL      | Immunology Virtual Lab II                                                            |
-      | NULL      | Immunology Virtual Lab I                                                             |
-      | NULL      | Population Ecology Virtual Lab II                                                    |
-      | NULL      | Population Ecology Virtual Lab I                                                     |
-      | biotech01 | Biochemistry Virtual Lab I                                                           |
-      | NULL      | Neuron Simulation Lab (pilot)                                                        |
-      | NULL      | Neurophysiology (pilot)                                                              |
-      | NULL      | Power Systems Lab                                                                    |
-      | NULL      | Single Board Heater System                                                           |
-      | NULL      | Microelectronics and VLSI Engineering                                                |
-      | NULL      | Basic Electrical and Electronics Lab                                                 |
-      | NULL      | Virtual High Voltage Lab                                                             |
-      | NULL      | Chemical Process Dynamics                                                            |
-      | NULL      | Mine Automation and Virtual Reality                                                  |
-      | NULL      | Mechanical Systems and Signal Processing                                             |
-      | NULL      | Condition Monitoring and Fault Simulation Lab                                        |
-      | NULL      | Virtual Lab for Multiphase Flow                                                      |
-      | NULL      | Robotics Simulation Lab                                                              |
-      | NULL      | Mechanisms and Robotics Lab                                                          |
-      | NULL      | Machinery Health Assessment Lab                                                      |
-      | NULL      | Virtual Proteomics Laboratory                                                        |
-      | NULL      | VLSI Design and Verification                                                         |
-      | NULL      | Virtual and Remote Robotic and Mechatronic Laboratory                                |
-      | NULL      | Virtual Circuits Laboratory                                                          |
-      | NULL      | Electrical Machines, Power Electronics and Drives, Power Systems and Instrumentation |
-      | NULL      | Structural Engineering Lab                                                           |
-      | NULL      | Hydrodynamics and Transport phenomena in Packed Bed and Heat Exchangers              |
-      | NULL      | Virtual Robotics Lab                                                                 |
-      | NULL      | Virtual Lab for Mechanical Vibrations                                                |
-      | NULL      | Model Based Fault Detection Lab                                                      |
-      | NULL      | Molecular biology Virtual Lab II                                                     |
-      | NULL      | Plant Metabolic Pathways Virtual Laboratory                                          |
-      | NULL      | Internet Based Virtual CNC Lab                                                       |
-      | NULL      | Advanced Communication                                                               |
-      | NULL      | Laser Based Flow Diagnostics Laboratory                                              |
-      | NULL      | Binary Distillation                                                                  |
-      | NULL      | Thermal Processing and Microstructural Characterization                              |
-      | NULL      | Mechanical Sciences - Liquid Crystal                                                 |
-      | NULL      | Low Temp Electrical Transport and Property Measurements                              |
-      | NULL      | Optical Device Characterizations                                                     |
-      | NULL      | Aerospace Virtual laboratory                                                         |
-      | NULL      | Control Systems/Magnetic Levitation System                                           |
-      | NULL      | Mechanical Engineering Lab                                                           |
-      | NULL      | Semiconductor Devices Laboratory                                                     |
-      | NULL      | Information System Analysis and Design virtual Lab                                   |
-      | NULL      | Advanced Pulse and Switching Lab                                                     |
-      | NULL      | Substation Automation Lab                                                            |
-      | NULL      | Ergonomics Lab for Assessing Physical Aspects of Design                              |
-      | NULL      | Virtual Interactive Lab                                                              |
-      | NULL      | Biomedical Instrumentation Lab                                                       |
-      | NULL      | Virtual Pulse, Switching and Analogue Circuits                                       |
-      | NULL      | Microelectronics Lab                                                                 |
-      | NULL      | In-flight Particle History Lab                                                       |
-      | NULL      | Manufacturing Laboratory                                                             |
-      | NULL      | Virtual Physical Energy and Materials Science Lab                                    |
-      | NULL      | Virtual Harmonic Motion and Waves Lab                                                |
-      | NULL      | Virtual Modern Physics Lab                                                           |
-      | NULL      | Virtual Heat and Thermodynamics Lab                                                  |
-      | NULL      | Virtual Electricity and Magnetism Lab                                                |
-      | NULL      | Laser Optics Virtual Lab                                                             |
-      | NULL      | Virtual Advanced Mechanics Lab                                                       |
-      | NULL      | Virtual Mechanics Lab/Nonlinear Dynamics                                             |
-      | NULL      | Cell biology Virtual Lab II                                                          |
-      | NULL      | Physical Chemistry(Amrita)                                                           |
-      | NULL      | Organic Chemistry                                                                    |
-      | NULL      | Virtual Combustion and Automation Laboratory                                         |
-      | NULL      | Nanocomposite, Fabrication, Biomaterials and Signal Processing Laboratory            |
-      | NULL      | Mechatronics Lab                                                                     |
-      | NULL      | General Purpose Production Shop Simulation Lab                                       |
-      | NULL      | Acoustics Virtual Lab                                                                |
-      | NULL      | Advanced Geotechnical Lab                                                            |
-      | NULL      | Virtual Wireless and Security                                                        |
-      | NULL      | Electrochemistry                                                                     |
-      | NULL      | Inorganic Chemistry                                                                  |
-      | NULL      | Cell biology Virtual Lab I                                                           |
-      | NULL      | Kinematics and Dynamics of Mechanisms                                                |
-      | NULL      | Real Time Embedded Systems Laboratory                                                |
-      | NULL      | Satellite Modelling and Simulation                                                   |
-      | ece29     | Remote Triggered Fiber Optics Communication Lab                                      |
-      | NULL      | Electro Mechanical Conversion                                                        |
-      | NULL      | Technology CAD (TCAD) Laboratory                                                     |
-      | NULL      | Fading Channels and Mobile Communications                                            |
-      | NULL      | Soft Computing Tools in Engineering                                                  |
-      | NULL      | Analog Signals, Network and Measurement Laboratory                                   |
-      | biotech02 | Biochemistry Virtual Lab II                                                          |
-      | ae01      | Aerospace Structures Lab                                                             |
-      | bio15     | Bio-reactor Modeling and Simulation Lab                                              |
-      | bio16     | Biomedical and Signal Processing Laboratory                                          |
-      | ccnsb01   | Molecular Fluorescence Spectroscopy                                                  |
-      | ccnsb02   | Colloid and Surface Chemistry                                                        |
-      | ccnsb03   | Molecular Absorption Spectroscopy                                                    |
-      | ccnsb04   | Quantum Chemistry                                                                    |
-      | ccnsb05   | Circular Dichroism Spectroscopy                                                      |
-      | ccnsb06   | Physical Chemistry (IIIT-H)                                                          |
-      | ccnsb07   | Molecular Interactions                                                               |
-      | che02     | Virtual Lab for Mass Transfer                                                        |
-      | chem01    | Chemical Engineering                                                                 |
-      | chem05    | Unit Operations, Reaction Engineering and Process Control                            |
-      | chs12     | Virtual Chemistry Lab                                                                |
-      | chs13     | Ultrafast Laser Spectroscopy                                                         |
-      | chs14     | Analytical Lab                                                                       |
-      | civil07   | Strength of Materials and Fluid Mechanics                                            |
-      | civil09   | Traffic Engineering                                                                  |
-      | civil11   | Virtual Satellite Image Processing and Analysis                                      |
-      | civil13   | Urban Transportation Systems Planning                                                |
-      | civil15   | Surveying Lab                                                                        |
-      | civil16   | Virtual Smart Structures and Dynamics Lab                                            |
-      | cse01     | Data Structures                                                                      |
-      | cse02     | Computer Programming                                                                 |
-      | cse03     | Programming and Data Structure                                                       |
-      | cse04     | Problem Solving                                                                      |
-      | cse05     | Principles of Programming Languages                                                  |
-      | cse06     | Data Mining                                                                          |
-      | cse07     | Databases                                                                            |
-      | cse08     | Software Engineering                                                                 |
-      | cse09     | Linux Lab                                                                            |
-      | cse10     | Computer Architecture and Organization                                               |
-      | cse11     | Computer Organization                                                                |
-      | cse12     | FPGA and Embedded System Lab                                                         |
-      | cse13     | Advanced VLSI                                                                        |
-      | cse14     | VLSI                                                                                 |
-      | cse15     | Digital Logic Design                                                                 |
-      | cse16     | Speech Signal Processing (IIIT-H)                                                    |
-      | cse17     | Mobile Robotics                                                                      |
-      | cse18     | Computer Graphics                                                                    |
-      | cse19     | Image Processing                                                                     |
-      | cse20     | Pattern Recognition                                                                  |
-      | cse21     | Optical Remote Sensing                                                               |
-      | cse22     | Artificial Neural Networks                                                           |
-      | cse23     | Computational Linguistics                                                            |
-      | cse24     | Natural Language Processing                                                          |
-      | cse25     | Wireless Sensor Networks                                                             |
-      | cse26     | Network Security                                                                     |
-      | cse28     | Advanced Network Technologies                                                        |
-      | cse29     | Cryptography                                                                         |
-      | cse30     | Analog CMOS VLSI Circuit Design                                                      |
-      | ece01     | Speech Signal Processing (IIT-G)                                                     |
-      | ece02     | Electro Magnetic Transmission (Virtual MEMS Lab)                                     |
-      | ece03     | Transducer and Instrumentation Virtual Lab                                           |
-      | ece04     | Electronic design using DSP, FPGA, CPLD and Micro Controllers                        |
-      | ece05     | Digital VLSI Design Virtual Lab                                                      |
-      | ece06     | Digital Signal Processing Lab                                                        |
-      | ece07     | Digital Electronics Circuit Lab                                                      |
-      | ece08     | Engineering Electromagnetic Lab                                                      |
-      | ece09     | Wireless Lab                                                                         |
-      | ece10     | Signals and Systems Laboratory                                                       |
-      | ece11     | Systems, Communication and Control Laboratory                                        |
-      | ece18     | RF Microwave Characterization Lab                                                    |
-      | ece19     | Hybrid Electronics                                                                   |
-      | ece21     | Virtual Queuing Networks Modelling                                                   |
-      | ece22     | Virtual Microwave and Antenna Lab                                                    |
-      | ece23     | Digital Electronics                                                                  |
-      | ece26     | Virtual Advanced Lab for Interactive Design and Test in Electronics                  |
-      | ece28     | FPGA and Digital Design                                                              |
-      | eee01     | Power Electronics                                                                    |
-      | eee02     | Electrical Machines Laboratory                                                       |
-      | eee03     | Electronic Instrumentation                                                           |
-      | eee05     | Sensors Modeling and Simulation                                                      |
-      | eee06     | Virtual Power Laboratory                                                             |
-      | eee07     | Virtual Power Electronics and Electric Drives Lab                                    |
-      | eee08     | Industrial Electric Drives and Application of PLC                                    |
-      | eee09     | Industrial Automation Laboratory                                                     |
-      | eee10     | Electrical Machines                                                                  |
-      | eee12     | PLC                                                                                  |
-      | eee23     | Biomedical Signal and Image Processing                                               |
-      | eee24     | Machine Lab                                                                          |
-      | eerc01    | Basic Engineering Mechanics and Strength of Materials                                |
-      | eerc02    | Soil Mechanics                                                                       |
-      | eerc03    | Hydraulics and Fluid Mechanics                                                       |
-      | eerc04    | Basic Structural Analysis                                                            |
-      | eerc05    | Geotechnical Engineering Lab                                                         |
-      | eerc06    | Structural Dynamics                                                                  |
-      | emt       | Electro Magnetic Theory                                                              |
-      | hss01     | Creative Design, Prototyping and Experiential Simulation Lab                         |
-      | hss02     | Virtual English and Communication Lab                                                |
-      | hss03     | Virtual Anthropology Lab                                                             |
-      | mech01    | Virtual Laboratory Experience in Fluid and Thermal Sciences                          |
-      | mech04    | Vibration and Acoustics Lab                                                          |
-      | mech05    | Mechanics of Machine                                                                 |
-      | mech08    | Material Response to Microstructural, Mechanical, Thermal and Biological Stimuli     |
-      | mech17    | Micromachining Laboratory                                                            |
-      | mech18    | Fab Laboratory                                                                       |
-      | mech21    | Machine Dynamics and Mechanical Vibrations                                           |
-      | mech26    | Metal Forming and Solid Mechanics                                                    |
-      | phy01     | Virtual Astrophysics Lab                                                             |
-      | phy12     | Virtual Microwave Laboratory                                                         |
-      | phy14     | Physical Sciences                                                                    |
-      | phy19     | Virtual Laboratory on Oscillations                                                   |
-      | txtl01    | Carpet Analysis                                                                      |
-      | txtl02    | Electrical Conductivity                                                              |
-      | txtl03    | SEM Central Facility                                                                 |
-      |-----------+--------------------------------------------------------------------------------------|
+     |-----------+--------------------------------------------------------------------------------------|
+     | LabId     | Name                                                                                 |
+     |-----------+--------------------------------------------------------------------------------------|
+     | NULL      | Molecular biology Virtual Lab I                                                      |
+     | NULL      | Biological Image processing Virtual Lab                                              |
+     | NULL      | Ecology Virtual Lab                                                                  |
+     | NULL      | Computer-Aided Drug Design Virtual Lab                                               |
+     | NULL      | Systems Biology Virtual Lab                                                          |
+     | NULL      | Bioinformatics Virtual Lab III                                                       |
+     | NULL      | Bioinformatics Virtual Lab II                                                        |
+     | NULL      | Solid State Physics Virtual Lab                                                      |
+     | NULL      | Virtual Optics Lab                                                                   |
+     | NULL      | Bioinformatics Virtual Lab I                                                         |
+     | NULL      | Bio-inspired Robotics Virtual Lab (Remote Triggered)                                 |
+     | NULL      | Virtual Biophysics Lab (Remote Triggered)                                            |
+     | NULL      | Microbiology Virtual Lab II                                                          |
+     | NULL      | Microbiology Virtual Lab I                                                           |
+     | NULL      | Immunology Virtual Lab II                                                            |
+     | NULL      | Immunology Virtual Lab I                                                             |
+     | NULL      | Population Ecology Virtual Lab II                                                    |
+     | NULL      | Population Ecology Virtual Lab I                                                     |
+     | biotech01 | Biochemistry Virtual Lab I                                                           |
+     | NULL      | Neuron Simulation Lab (pilot)                                                        |
+     | NULL      | Neurophysiology (pilot)                                                              |
+     | NULL      | Power Systems Lab                                                                    |
+     | NULL      | Single Board Heater System                                                           |
+     | NULL      | Microelectronics and VLSI Engineering                                                |
+     | NULL      | Basic Electrical and Electronics Lab                                                 |
+     | NULL      | Virtual High Voltage Lab                                                             |
+     | NULL      | Chemical Process Dynamics                                                            |
+     | NULL      | Mine Automation and Virtual Reality                                                  |
+     | NULL      | Mechanical Systems and Signal Processing                                             |
+     | NULL      | Condition Monitoring and Fault Simulation Lab                                        |
+     | NULL      | Virtual Lab for Multiphase Flow                                                      |
+     | NULL      | Robotics Simulation Lab                                                              |
+     | NULL      | Mechanisms and Robotics Lab                                                          |
+     | NULL      | Machinery Health Assessment Lab                                                      |
+     | NULL      | Virtual Proteomics Laboratory                                                        |
+     | NULL      | VLSI Design and Verification                                                         |
+     | NULL      | Virtual and Remote Robotic and Mechatronic Laboratory                                |
+     | NULL      | Virtual Circuits Laboratory                                                          |
+     | NULL      | Electrical Machines, Power Electronics and Drives, Power Systems and Instrumentation |
+     | NULL      | Structural Engineering Lab                                                           |
+     | NULL      | Hydrodynamics and Transport phenomena in Packed Bed and Heat Exchangers              |
+     | NULL      | Virtual Robotics Lab                                                                 |
+     | NULL      | Virtual Lab for Mechanical Vibrations                                                |
+     | NULL      | Model Based Fault Detection Lab                                                      |
+     | NULL      | Molecular biology Virtual Lab II                                                     |
+     | NULL      | Plant Metabolic Pathways Virtual Laboratory                                          |
+     | NULL      | Internet Based Virtual CNC Lab                                                       |
+     | NULL      | Advanced Communication                                                               |
+     | NULL      | Laser Based Flow Diagnostics Laboratory                                              |
+     | NULL      | Binary Distillation                                                                  |
+     | NULL      | Thermal Processing and Microstructural Characterization                              |
+     | NULL      | Mechanical Sciences - Liquid Crystal                                                 |
+     | NULL      | Low Temp Electrical Transport and Property Measurements                              |
+     | NULL      | Optical Device Characterizations                                                     |
+     | NULL      | Aerospace Virtual laboratory                                                         |
+     | NULL      | Control Systems/Magnetic Levitation System                                           |
+     | NULL      | Mechanical Engineering Lab                                                           |
+     | NULL      | Semiconductor Devices Laboratory                                                     |
+     | NULL      | Information System Analysis and Design virtual Lab                                   |
+     | NULL      | Advanced Pulse and Switching Lab                                                     |
+     | NULL      | Substation Automation Lab                                                            |
+     | NULL      | Ergonomics Lab for Assessing Physical Aspects of Design                              |
+     | NULL      | Virtual Interactive Lab                                                              |
+     | NULL      | Biomedical Instrumentation Lab                                                       |
+     | NULL      | Virtual Pulse, Switching and Analogue Circuits                                       |
+     | NULL      | Microelectronics Lab                                                                 |
+     | NULL      | In-flight Particle History Lab                                                       |
+     | NULL      | Manufacturing Laboratory                                                             |
+     | NULL      | Virtual Physical Energy and Materials Science Lab                                    |
+     | NULL      | Virtual Harmonic Motion and Waves Lab                                                |
+     | NULL      | Virtual Modern Physics Lab                                                           |
+     | NULL      | Virtual Heat and Thermodynamics Lab                                                  |
+     | NULL      | Virtual Electricity and Magnetism Lab                                                |
+     | NULL      | Laser Optics Virtual Lab                                                             |
+     | NULL      | Virtual Advanced Mechanics Lab                                                       |
+     | NULL      | Virtual Mechanics Lab/Nonlinear Dynamics                                             |
+     | NULL      | Cell biology Virtual Lab II                                                          |
+     | NULL      | Physical Chemistry(Amrita)                                                           |
+     | NULL      | Organic Chemistry                                                                    |
+     | NULL      | Virtual Combustion and Automation Laboratory                                         |
+     | NULL      | Nanocomposite, Fabrication, Biomaterials and Signal Processing Laboratory            |
+     | NULL      | Mechatronics Lab                                                                     |
+     | NULL      | General Purpose Production Shop Simulation Lab                                       |
+     | NULL      | Acoustics Virtual Lab                                                                |
+     | NULL      | Advanced Geotechnical Lab                                                            |
+     | NULL      | Virtual Wireless and Security                                                        |
+     | NULL      | Electrochemistry                                                                     |
+     | NULL      | Inorganic Chemistry                                                                  |
+     | NULL      | Cell biology Virtual Lab I                                                           |
+     | NULL      | Kinematics and Dynamics of Mechanisms                                                |
+     | NULL      | Real Time Embedded Systems Laboratory                                                |
+     | NULL      | Satellite Modelling and Simulation                                                   |
+     | ece29     | Remote Triggered Fiber Optics Communication Lab                                      |
+     | NULL      | Electro Mechanical Conversion                                                        |
+     | NULL      | Technology CAD (TCAD) Laboratory                                                     |
+     | NULL      | Fading Channels and Mobile Communications                                            |
+     | NULL      | Soft Computing Tools in Engineering                                                  |
+     | NULL      | Analog Signals, Network and Measurement Laboratory                                   |
+     | biotech02 | Biochemistry Virtual Lab II                                                          |
+     | ae01      | Aerospace Structures Lab                                                             |
+     | bio15     | Bio-reactor Modeling and Simulation Lab                                              |
+     | bio16     | Biomedical and Signal Processing Laboratory                                          |
+     | ccnsb01   | Molecular Fluorescence Spectroscopy                                                  |
+     | ccnsb02   | Colloid and Surface Chemistry                                                        |
+     | ccnsb03   | Molecular Absorption Spectroscopy                                                    |
+     | ccnsb04   | Quantum Chemistry                                                                    |
+     | ccnsb05   | Circular Dichroism Spectroscopy                                                      |
+     | ccnsb06   | Physical Chemistry (IIIT-H)                                                          |
+     | ccnsb07   | Molecular Interactions                                                               |
+     | che02     | Virtual Lab for Mass Transfer                                                        |
+     | chem01    | Chemical Engineering                                                                 |
+     | chem05    | Unit Operations, Reaction Engineering and Process Control                            |
+     | chs12     | Virtual Chemistry Lab                                                                |
+     | chs13     | Ultrafast Laser Spectroscopy                                                         |
+     | chs14     | Analytical Lab                                                                       |
+     | civil07   | Strength of Materials and Fluid Mechanics                                            |
+     | civil09   | Traffic Engineering                                                                  |
+     | civil11   | Virtual Satellite Image Processing and Analysis                                      |
+     | civil13   | Urban Transportation Systems Planning                                                |
+     | civil15   | Surveying Lab                                                                        |
+     | civil16   | Virtual Smart Structures and Dynamics Lab                                            |
+     | cse01     | Data Structures                                                                      |
+     | cse02     | Computer Programming                                                                 |
+     | cse03     | Programming and Data Structure                                                       |
+     | cse04     | Problem Solving                                                                      |
+     | cse05     | Principles of Programming Languages                                                  |
+     | cse06     | Data Mining                                                                          |
+     | cse07     | Databases                                                                            |
+     | cse08     | Software Engineering                                                                 |
+     | cse09     | Linux Lab                                                                            |
+     | cse10     | Computer Architecture and Organization                                               |
+     | cse11     | Computer Organization                                                                |
+     | cse12     | FPGA and Embedded System Lab                                                         |
+     | cse13     | Advanced VLSI                                                                        |
+     | cse14     | VLSI                                                                                 |
+     | cse15     | Digital Logic Design                                                                 |
+     | cse16     | Speech Signal Processing (IIIT-H)                                                    |
+     | cse17     | Mobile Robotics                                                                      |
+     | cse18     | Computer Graphics                                                                    |
+     | cse19     | Image Processing                                                                     |
+     | cse20     | Pattern Recognition                                                                  |
+     | cse21     | Optical Remote Sensing                                                               |
+     | cse22     | Artificial Neural Networks                                                           |
+     | cse23     | Computational Linguistics                                                            |
+     | cse24     | Natural Language Processing                                                          |
+     | cse25     | Wireless Sensor Networks                                                             |
+     | cse26     | Network Security                                                                     |
+     | cse28     | Advanced Network Technologies                                                        |
+     | cse29     | Cryptography                                                                         |
+     | cse30     | Analog CMOS VLSI Circuit Design                                                      |
+     | ece01     | Speech Signal Processing (IIT-G)                                                     |
+     | ece02     | Electro Magnetic Transmission (Virtual MEMS Lab)                                     |
+     | ece03     | Transducer and Instrumentation Virtual Lab                                           |
+     | ece04     | Electronic design using DSP, FPGA, CPLD and Micro Controllers                        |
+     | ece05     | Digital VLSI Design Virtual Lab                                                      |
+     | ece06     | Digital Signal Processing Lab                                                        |
+     | ece07     | Digital Electronics Circuit Lab                                                      |
+     | ece08     | Engineering Electromagnetic Lab                                                      |
+     | ece09     | Wireless Lab                                                                         |
+     | ece10     | Signals and Systems Laboratory                                                       |
+     | ece11     | Systems, Communication and Control Laboratory                                        |
+     | ece18     | RF Microwave Characterization Lab                                                    |
+     | ece19     | Hybrid Electronics                                                                   |
+     | ece21     | Virtual Queuing Networks Modelling                                                   |
+     | ece22     | Virtual Microwave and Antenna Lab                                                    |
+     | ece23     | Digital Electronics                                                                  |
+     | ece26     | Virtual Advanced Lab for Interactive Design and Test in Electronics                  |
+     | ece28     | FPGA and Digital Design                                                              |
+     | eee01     | Power Electronics                                                                    |
+     | eee02     | Electrical Machines Laboratory                                                       |
+     | eee03     | Electronic Instrumentation                                                           |
+     | eee05     | Sensors Modeling and Simulation                                                      |
+     | eee06     | Virtual Power Laboratory                                                             |
+     | eee07     | Virtual Power Electronics and Electric Drives Lab                                    |
+     | eee08     | Industrial Electric Drives and Application of PLC                                    |
+     | eee09     | Industrial Automation Laboratory                                                     |
+     | eee10     | Electrical Machines                                                                  |
+     | eee12     | PLC                                                                                  |
+     | eee23     | Biomedical Signal and Image Processing                                               |
+     | eee24     | Machine Lab                                                                          |
+     | eerc01    | Basic Engineering Mechanics and Strength of Materials                                |
+     | eerc02    | Soil Mechanics                                                                       |
+     | eerc03    | Hydraulics and Fluid Mechanics                                                       |
+     | eerc04    | Basic Structural Analysis                                                            |
+     | eerc05    | Geotechnical Engineering Lab                                                         |
+     | eerc06    | Structural Dynamics                                                                  |
+     | emt       | Electro Magnetic Theory                                                              |
+     | hss01     | Creative Design, Prototyping and Experiential Simulation Lab                         |
+     | hss02     | Virtual English and Communication Lab                                                |
+     | hss03     | Virtual Anthropology Lab                                                             |
+     | mech01    | Virtual Laboratory Experience in Fluid and Thermal Sciences                          |
+     | mech04    | Vibration and Acoustics Lab                                                          |
+     | mech05    | Mechanics of Machine                                                                 |
+     | mech08    | Material Response to Microstructural, Mechanical, Thermal and Biological Stimuli     |
+     | mech17    | Micromachining Laboratory                                                            |
+     | mech18    | Fab Laboratory                                                                       |
+     | mech21    | Machine Dynamics and Mechanical Vibrations                                           |
+     | mech26    | Metal Forming and Solid Mechanics                                                    |
+     | phy01     | Virtual Astrophysics Lab                                                             |
+     | phy12     | Virtual Microwave Laboratory                                                         |
+     | phy14     | Physical Sciences                                                                    |
+     | phy19     | Virtual Laboratory on Oscillations                                                   |
+     | txtl01    | Carpet Analysis                                                                      |
+     | txtl02    | Electrical Conductivity                                                              |
+     | txtl03    | SEM Central Facility                                                                 |
+     |-----------+--------------------------------------------------------------------------------------|
 
-***** Association
+**** Association
 #+BEGIN_SRC python :tangle src/db.py :eval no
 # association table of developers and labs
 developers_engaged = db.Table(
@@ -1286,7 +1304,7 @@ technologies_used_labs = db.Table(
 )
 
 #+END_SRC
-***** Definition
+**** Definition
 #+BEGIN_SRC python :tangle src/db.py :eval no
 class Lab(Entity):
 
@@ -1328,7 +1346,7 @@ class Lab(Entity):
     is_phase_2_lab = db.Column(db.Boolean)
 #+END_SRC
 
-***** Constructor for Lab
+**** Constructor for Lab
 Signature of the constructor for Lab is as follows. Attributes inside [...]
 are optional when constructing the lab. Other attributes are mandatory.
 
@@ -1418,22 +1436,22 @@ Lab(name=<instance of Name class>,
 
 #+END_SRC
 
-***** Functions that operate on the Lab domain
-****** getId: Lab --> Id
+**** Functions that operate on the Lab domain
+***** getId: Lab --> Id
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_id(self):
         return self.id
 
 #+END_SRC
 
-****** getLab: Id --> Lab
+***** getLab: Id --> Lab
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_by_id(id):
         return Lab.query.get(id)
 #+END_SRC
 
-****** getAllLabs: Nil --> set[Lab]
+***** getAllLabs: Nil --> set[Lab]
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_all(fields=None):
@@ -1451,20 +1469,20 @@ Lab(name=<instance of Name class>,
         return formatted_labs
 #+END_SRC
 
-****** getLabId: Lab --> LabId
+***** getLabId: Lab --> LabId
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_lab_id(self):
         return self.lab_id
 #+END_SRC
 
-****** getLab: LabId --> Lab
+***** getLab: LabId --> Lab
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_by_lab_id(lab_id):
         return Lab.query.filter_by(lab_id=lab_id).first()
 #+END_SRC
 
-****** getName: Lab --> Name
+***** getName: Lab --> Name
 
 This is similar to the =getId= function and all types will have this
 function.
@@ -1473,13 +1491,13 @@ function.
         return self.name
 #+END_SRC
 
-****** getIntegrationLevel: Lab --> Level
+***** getIntegrationLevel: Lab --> Level
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_integration_level(self):
         return self.integration_level.level
 #+END_SRC
 
-****** isHosted: Lab --> Boolean
+***** isHosted: Lab --> Boolean
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def is_hosted(self):
         if self.hosted_url:
@@ -1487,7 +1505,7 @@ function.
         return False
 #+END_SRC
 
-****** getHostedURL: Lab --> Nil + URL
+***** getHostedURL: Lab --> Nil + URL
 
        URL: when hosted
 
@@ -1497,7 +1515,7 @@ function.
         return self.hosted_url
 #+END_SRC
 
-****** isSourceAvailable: Lab --> Boolean
+***** isSourceAvailable: Lab --> Boolean
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def is_source_available(self):
         if self.repo_url:
@@ -1505,7 +1523,7 @@ function.
         return False
 #+END_SRC
 
-****** getRepoURL: Lab --> Nil + URL
+***** getRepoURL: Lab --> Nil + URL
 
        URL: when sources are available
 
@@ -1515,67 +1533,67 @@ function.
         return self.repo_url
 #+END_SRC
 
-****** getType: Lab --> TypeOfLab
+***** getType: Lab --> TypeOfLab
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_type(self):
         return self.type_of_lab
 #+END_SRC
 
-****** getNoOfExperiments: Lab --> Nat
+***** getNoOfExperiments: Lab --> Nat
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_num_of_experiments(self):
         return len(self.experiments)
 #+END_SRC
 
-****** getHostedOn: Lab --> HostingPlatform + Nil
+***** getHostedOn: Lab --> HostingPlatform + Nil
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_hosted_on(self):
         return self.hosted_on
 #+END_SRC
 
-****** isWeb2Compliant: Lab --> Boolean
+***** isWeb2Compliant: Lab --> Boolean
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def is_web_2_compliant(self):
         return self.is_web_2_compliant_lab
 #+END_SRC
 
-****** isPhase2Lab: Lab --> Boolean
+***** isPhase2Lab: Lab --> Boolean
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def is_phase_2(self):
         return self.is_phase_2_lab
 #+END_SRC
 
-****** getDiscipline: Lab --> Discipline
+***** getDiscipline: Lab --> Discipline
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_discipline(self):
         return self.discipline
 #+END_SRC
 
-****** getExperiments: Lab --> set[Experiment]
+***** getExperiments: Lab --> set[Experiment]
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_experiments(self):
         return self.experiments
 #+END_SRC
 
-****** getInstitute: Lab --> Institute
+***** getInstitute: Lab --> Institute
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_institute(self):
         return self.institute
 #+END_SRC
 
-****** getDevelopers: Lab --> set[Developer]
+***** getDevelopers: Lab --> set[Developer]
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_developers(self):
         return self.developers
 #+END_SRC
 
-****** getTechnologies: Lab --> set[Technology]
+***** getTechnologies: Lab --> set[Technology]
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_technologies(self):
         return self.technologies
 #+END_SRC
 
-****** setName: Lab, Name --> Void
+***** setName: Lab, Name --> Void
 
        NOTE: All types will have a =setName= function.
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -1585,7 +1603,7 @@ function.
         self.save()
 #+END_SRC
 
-****** setInstitute: Lab, Institute --> Void
+***** setInstitute: Lab, Institute --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(institute=Institute)
     def set_institute(self, institute):
@@ -1593,7 +1611,7 @@ function.
         self.save()
 #+END_SRC
 
-****** setDiscipline: Lab, Discipline --> Void
+***** setDiscipline: Lab, Discipline --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(discipline=Discipline)
     def set_discipline(self, discipline):
@@ -1601,7 +1619,7 @@ function.
         self.save()
 #+END_SRC
 
-****** setIntegrationLevel: Lab, Level --> Void
+***** setIntegrationLevel: Lab, Level --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(level=IntegrationLevel)
     def set_integration_level(self, level):
@@ -1609,7 +1627,7 @@ function.
         self.save()
 #+END_SRC
 
-****** setHostedURL: Lab, URL --> Void
+***** setHostedURL: Lab, URL --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(url=URL)
     def set_hosted_url(self, url):
@@ -1617,7 +1635,7 @@ function.
         self.save()
 #+END_SRC
 
-****** setRepoURL: Lab, URL --> Void
+***** setRepoURL: Lab, URL --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(url=URL)
     def set_repo_url(self, url):
@@ -1625,7 +1643,7 @@ function.
         self.save()
 #+END_SRC
 
-****** setTypeOfLab: Lab, TypeOfLab --> Void
+***** setTypeOfLab: Lab, TypeOfLab --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(type=TypeOfLab)
     def set_type_of_lab(self, type):
@@ -1633,7 +1651,7 @@ function.
         self.save()
 #+END_SRC
 
-****** setHostedOn: Lab, HostingPlatform --> Void
+***** setHostedOn: Lab, HostingPlatform --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(platform=HostingPlatform)
     def set_hosted_on(self, platform):
@@ -1641,7 +1659,7 @@ function.
         self.save()
 #+END_SRC
 
-****** setWeb2Compliant: Lab, Boolean --> Void
+***** setWeb2Compliant: Lab, Boolean --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(compliant=bool)
     def set_web_2_compliant(self, compliant):
@@ -1649,7 +1667,7 @@ function.
         self.save()
 #+END_SRC
 
-****** setisPhase2: Lab, Boolean --> Void
+***** setisPhase2: Lab, Boolean --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(phase2=bool)
     def set_is_phase_2(self, phase2):
@@ -1657,7 +1675,7 @@ function.
         self.save()
 #+END_SRC
 
-****** addDeveloper: Lab, Developer --> Void
+***** addDeveloper: Lab, Developer --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(developer=Developer)
     def add_developer(self, developer):
@@ -1665,7 +1683,7 @@ function.
         self.save()
 #+END_SRC
 
-****** removeDeveloper: Lab, Developer --> Void
+***** removeDeveloper: Lab, Developer --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(developer=Developer)
     def remove_developer(self, developer):
@@ -1674,7 +1692,7 @@ function.
             self.save()
 #+END_SRC
 
-****** addTechnology: Lab, Technology --> Void
+***** addTechnology: Lab, Technology --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(technology=Technology)
     def add_technology(self, technology):
@@ -1682,7 +1700,7 @@ function.
         self.save()
 #+END_SRC
 
-****** removeTechnology: Lab, Technology --> Void
+***** removeTechnology: Lab, Technology --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(technology=Technology)
     def remove_technology(self, technology):
@@ -1691,7 +1709,7 @@ function.
             self.save()
 #+END_SRC
 
-****** addExperiment: Lab, Experiment --> Void
+***** addExperiment: Lab, Experiment --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(experiment=Experiment)
     def add_experiment(self, experiment):
@@ -1699,7 +1717,7 @@ function.
         self.save()
 #+END_SRC
 
-****** removeExperiment: Lab, Experiment --> Void
+***** removeExperiment: Lab, Experiment --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(experiment=Experiment)
     def remove_experiment(self, experiment):
@@ -1708,7 +1726,7 @@ function.
             self.save()
 #+END_SRC
 
-****** formatLabsByFields
+***** formatLabsByFields
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def format_labs_by_fields(labs, fields):
@@ -1727,7 +1745,7 @@ function.
         return formatted_labs
 #+END_SRC
 
-****** to_client
+***** to_client
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def to_client(self):
         return {
@@ -1751,6 +1769,105 @@ function.
         }
 #+END_SRC
 
+*** Feedback data
+**** Immutable data
+     + Id
+     + time
+     + IP address
+     + User Name
+     + User Email
+     + User Institute
+     + User Discipline
+     + Feedback data
+**** Mutable data
+None of the feedback data is mutable. Once entered into the system, it
+can only be read.
+**** Definition
+#+BEGIN_SRC python :tangle src/db.py :eval no
+class Feedback(Entity):
+
+    __tablename__ = 'feedback_data'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    lab_id = db.Column(db.Integer, db.ForeignKey('labs.id'))
+    lab = db.relationship('Lab')
+
+    experiment_id = db.Column(db.Integer, db.ForeignKey('experiments.id'))
+    experiment = db.relationship('Experiment')
+
+    user_name = db.Column(db.String(64))
+    user_email = db.Column(db.String(64))
+
+    user_institute = db.Column(db.String(64))
+    user_discipline = db.Column(db.String(64))
+
+    time = db.Column(db.DateTime, default=datetime.utcnow)
+    ip = db.Column(db.String(16))
+
+    data = db.Column(JSONType)
+#+END_SRC
+**** Constructor
+     Signature of the constructor is as follows. Attributes inside [...]  are
+     optional. Others are mandatory.
+#+BEGIN_EXAMPLE python
+    feedback = Feedback(lab=<instance of Lab>,
+                        experiment=<instance of Experiment>
+                        data=<dict>
+                        [,user_name=<instance of Name>]
+                        [,user_email=<instance of Email>]
+                        [,user_institute=<str>]
+                        [,user_discipline=<str>]
+                        [,ip=<str>])
+#+END_EXAMPLE
+
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def __init__(self, **kwargs):
+        if 'lab' not in kwargs:
+            raise AttributeRequired("`lab` attribute is required.")
+
+        if 'data' not in kwargs:
+            raise AttributeRequired("`data` attribute is required.")
+
+        if not isinstance(kwargs['lab'], Lab):
+            raise TypeError("`lab` should be an instance of class Lab")
+        self.lab = kwargs['lab']
+
+        if not isinstance(kwargs['data'], dict):
+            raise TypeError("`data` should be a python `dict`")
+        self.data = kwargs['data']
+
+        if 'experiment' in kwargs:
+            if not isinstance(kwargs['experiment'], Experiment):
+                raise TypeError("`experiment` should be an instance of class Experiment")
+            self.experiment = kwargs['experiment']
+
+        if 'user_name' in kwargs:
+            if not isinstance(kwargs['user_name'], str):
+                raise TypeError("user_name should be of type str")
+            self.user_name = kwargs['user_name']
+
+        if 'user_email' in kwargs:
+            if not isinstance(kwargs['user_email'], str):
+                raise TypeError("user_email should be of type str")
+            self.user_email = kwargs['user_email']
+
+        if 'user_institute' in kwargs:
+            if not isinstance(kwargs['user_institute'], str):
+                raise TypeError("user_institute should be of type str")
+            self.user_institute = kwargs['user_institute']
+
+        if 'user_discipline' in kwargs:
+            if not isinstance(kwargs['user_discipline'], str):
+                raise TypeError("user_discipline should be of type str")
+            self.user_discipline = kwargs['user_discipline']
+
+        if 'ip' in kwargs:
+            if not isinstance(kwargs['ip'], str):
+                raise TypeError("ip should be of type str")
+            self.ip = kwargs['ip']
+
+#+END_SRC
 *** COMMENT Functions operating on multiple domains
 
 ***** NOTE: is it necessary? getAllLabs: Nil --> set[Lab]
@@ -1842,13 +1959,13 @@ function.
 *** Implementation
 #+BEGIN_SRC python :tangle src/api.py :eval no
 
-  @api.route('/data/download')
-  def download_data():
-      pass
+@api.route('/data/download')
+def download_data():
+    pass
 
-  @api.route('/data/upload')
-  def upload_data():
-      pass
+@api.route('/data/upload')
+def upload_data():
+    pass
 #+END_SRC
 
 .
@@ -2157,6 +2274,8 @@ function.
 *** Implementation
 
 ** Custom Exceptions
+
+These are spme of the custom exceptions used in the application.
 *** AttributeRequired
 #+BEGIN_SRC python :tangle src/ds_exceptions.py :eval no
 class AttributeRequired(Exception):
@@ -2379,12 +2498,12 @@ The function is part of the =utils= module.
 
 #+BEGIN_SRC python :tangle src/utils.py :eval no
 
-  def check_ip(fn):
-      def wrapped_func(*args, **kwargs):
-          if request.remote_addr not in current_app.config.WHITELIST_IPS:
-              abort(403)
-          return fn(*args, **kwargs)
-      return wrapped_func
+def check_ip(fn):
+    def wrapped_func(*args, **kwargs):
+        if request.remote_addr not in current_app.config.WHITELIST_IPS:
+            abort(403)
+        return fn(*args, **kwargs)
+    return wrapped_func
 #+END_SRC
 *** Usage of this function
 To use this function, use it as a decorator to check for access to any route.
