@@ -1959,13 +1959,13 @@ class Feedback(Entity):
 *** Implementation
 #+BEGIN_SRC python :tangle src/api.py :eval no
 
-@api.route('/data/download')
-def download_data():
-    pass
+#@api.route('/data/download')
+#def download_data():
+#    pass
 
-@api.route('/data/upload')
-def upload_data():
-    pass
+#@api.route('/data/upload')
+#def upload_data():
+#    pass
 #+END_SRC
 
 .
@@ -2009,14 +2009,13 @@ def upload_data():
    can plug this blueprint in our main application. [[http://flask.pocoo.org/docs/0.10/blueprints/][More on Flask
    blueprints]].
 #+BEGIN_SRC python :tangle src/api.py :eval no
-  # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
+from flask import Blueprint, request, jsonify, abort, current_app
 
-  from flask import Blueprint, request, jsonify, abort, current_app
+from db import *
+from utils import parse_request, jsonify_list
 
-  from db import *
-  from utils import parse_request, jsonify_list
-
-  api = Blueprint('APIs', __name__)
+api = Blueprint('APIs', __name__)
 
 #+END_SRC
 
@@ -2056,7 +2055,7 @@ def upload_data():
 	 #+END_EXAMPLE
    2. The second URL pattern is to get details of a particular record,
       identified by a unique identifier =id=. The records can be
-      furthered filtered down with only desired attributes. For example:
+      further filtered down with only desired attributes.  For example:
       1. Get only few details the Data Structures lab (where the lab
          id is known before):
          #+BEGIN_EXAMPLE
@@ -2119,7 +2118,14 @@ def upload_data():
    data service has to be written down somewhere and published.
 
 *** Implementation
+#+BEGIN_SRC python :tangle src/api.py :eval no
+#query an entity
+#=/<:entity>s?query_param1=val1&query_param2=val2&..query_paramn=valn=
+@api.route('/<entity>', methods=['GET'])
+def query_an_entity(entity):
+    return "You requested for: %s" % entity
 
+#+END_SRC
 ** REST API to create/update/delete data
 
 *** Design
@@ -2487,14 +2493,14 @@ def typecheck(**typemap):
      authentication in case a new microservice is introduced.
 
 *** Technical Design
-Technically, this will be achieved via a decorator. The decorator will
-check if the incoming request is from a white-listed IP address.
-
-Then the required URL endpoints can use the decorator to guard access
-to that endpoint.
+    Technically, this will be achieved via a decorator. The decorator will
+    check if the incoming request is from a white-listed IP address.
+    
+    Then the required URL endpoints can use the decorator to guard access
+    to that endpoint.
 
 *** Implementation
-The function is part of the =utils= module.
+    The function is part of the =utils= module.
 
 #+BEGIN_SRC python :tangle src/utils.py :eval no
 
@@ -2536,7 +2542,7 @@ from flask import Flask, jsonify, make_response
 from flask.ext.cors import CORS
 
 from db import db
-import api
+from api import api
 # import config file
 import config
 
@@ -2553,7 +2559,7 @@ def create_app(config):
     db.app = app
 
     # register blueprints
-#    app.register_blueprint(api)
+    app.register_blueprint(api)
 
     configure_errorhandlers(app)
     configure_cors(app)
@@ -2621,27 +2627,27 @@ if __name__ == "__main__":
 ** Configuring the application
 Below is the configuration for the application
 #+BEGIN_SRC python :tangle src/config.py :eval no
-  # DB URI
-  # example DB URI:
-  # mysql+oursql://scott:tiger@localhost/mydatabase
-  # postgresql+psycopg2://scott:tiger@localhost/mydatabase
-  SQLALCHEMY_DATABASE_URI = 'mysql+oursql://username:password@localhost/dbname'
+# DB URI
+# example DB URI:
+# mysql+oursql://scott:tiger@localhost/mydatabase
+# postgresql+psycopg2://scott:tiger@localhost/mydatabase
+SQLALCHEMY_DATABASE_URI = 'mysql+oursql://username:password@localhost/dbname'
 
-  # Debug from SQLAlchemy
-  # Turn this to False on production
-  SQLALCHEMY_ECHO = False
+# Debug from SQLAlchemy
+# Turn this to False on production
+SQLALCHEMY_ECHO = False
 
-  # List of allowed origins for CORS
-  ALLOWED_ORIGINS = ["*.vlabs.ac.in", "*.virtual-labs.ac.in"]
+# List of allowed origins for CORS
+ALLOWED_ORIGINS = ["*.vlabs.ac.in", "*.virtual-labs.ac.in"]
 
-  # List of allowed IPs
-  WHITELIST_IPS = ["127.0.0.1"]
+# List of allowed IPs
+WHITELIST_IPS = ["127.0.0.1"]
 
-  # Configure your log paths
-  LOG_FILE = 'logs/dataservice.log'
+# Configure your log paths
+LOG_FILE = 'logs/dataservice.log'
 
-  # Log level for the application
-  LOG_LEVEL = 'DEBUG'
+# Log level for the application
+LOG_LEVEL = 'DEBUG'
 
 #+END_SRC
 
