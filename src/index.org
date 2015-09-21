@@ -1968,17 +1968,47 @@ class Feedback(Entity):
        =/data/upload?entity=institutes=
 
 *** Implementation
-#+BEGIN_SRC python :tangle src/api.py :eval no
-#
-#bulk_update_allowed = [Lab, Institute, Experiment, Technology, Developer,
-#                      Discpline]
-#@api.route('/data/download')
-#def download_data():
-#    pass
-#
-#@api.route('/data/upload')
-#def upload_data():
-#    pass
+#+NAME: bulk-update-interface
+#+BEGIN_SRC python :eval no :exports none
+
+bulk_update_allowed = {
+    'labs': Lab,
+    'institutes': Institute,
+    'experiments': Experiment,
+    'disciplines': Discipline,
+    'developers': Developer,
+    'technologies': Technology
+}
+
+CUR_DIR = os.path.dirname(os.path.realpath(__file__))
+
+@api.route('/data/download')
+def download_data():
+    entity = request.args.get('entity', None)
+    if not entity:
+        abort(400, 'Entity has to be provided in the request')
+
+    if entity and entity not in bulk_update_allowed:
+        abort(400, 'Entity %s is not valid' % entity)
+
+    curr_entity = bulk_update_allowed[entity]
+    data = curr_entity.query.all()
+
+    # open the CSV file for writing
+    filename = entity + '.csv'
+    outfile = open(os.path.join(CUR_DIR, 'static', 'temp', filename),
+                  'wb')
+    outcsv = csv.writer(outfile)
+    outcsv.writerow([col.name for col in curr_entity.__mapper__.columns])
+    [outcsv.writerow([getattr(curr, col.name) for col in curr_entity.__mapper__.columns]) for curr in data]
+    outfile.close()
+
+    return redirect(url_for('static', filename='temp/'+filename))
+    return 'You requested download for %s' % entity
+
+@api.route('/data/upload')
+def upload_data():
+    pass
 #+END_SRC
 
 ** REST APIs
@@ -2015,15 +2045,22 @@ class Feedback(Entity):
    APIs.  We are using Flask blueprints to make the API, and then we
    can plug this blueprint in our main application. [[http://flask.pocoo.org/docs/0.10/blueprints/][More on Flask
    blueprints]].
-#+BEGIN_SRC python :tangle src/api.py :eval no
+#+BEGIN_SRC python :tangle src/api.py :eval no :noweb yes
 # -*- coding: utf-8 -*-
 
-from flask import Blueprint, request, jsonify, abort, current_app
+import os
+import csv
+
+from flask import Blueprint, request, jsonify, abort, current_app, redirect,\
+    url_for
 
 from db import *
 from utils import parse_request, jsonify_list
 
 api = Blueprint('APIs', __name__)
+
+
+<<bulk-update-interface>>
 
 #+END_SRC
 
@@ -2543,7 +2580,7 @@ from flask import Flask, jsonify, make_response
 from flask.ext.cors import CORS
 
 from db import db
-import api
+from api import api
 # import config file
 import config
 
@@ -2560,7 +2597,7 @@ def create_app(config):
     db.app = app
 
     # register blueprints
-#    app.register_blueprint(api)
+    app.register_blueprint(api)
 
     configure_errorhandlers(app)
     configure_cors(app)
