@@ -32,6 +32,8 @@ import db
 #+BEGIN_SRC python :tangle src/db.py :eval no
 # -*- coding: utf-8 -*-
 
+from collections import OrderedDict
+
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask import current_app
 
@@ -145,7 +147,7 @@ class URL(object):
 class IntegrationLevel(Entity):
     __tablename__ = 'integration_levels'
     id = db.Column(db.Integer, primary_key=True)
-    level = db.Column(db.Integer, nullable=False)
+    level = db.Column(db.Integer, nullable=False, unique=True)
 
     labs = db.relationship('Lab', backref='integration_level')
 #+END_SRC
@@ -158,7 +160,7 @@ class HostingPlatform(Entity):
     __tablename__ = 'hosting_platforms'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(32), nullable=False)
+    name = db.Column(db.String(32), nullable=False, unique=True)
 
     labs = db.relationship('Lab', backref='hosted_on')
 #+END_SRC
@@ -174,7 +176,7 @@ class HostingPlatform(Entity):
 class TypeOfLab(Entity):
     __tablename__ = 'type_of_labs'
     id = db.Column(db.Integer, primary_key=True)
-    type = db.Column(db.String(64), nullable=False)
+    type = db.Column(db.String(64), nullable=False, unique=True)
 
     labs = db.relationship('Lab', backref='type_of_lab')
 #+END_SRC
@@ -221,7 +223,7 @@ class Institute(Entity):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
-    institute_id = db.Column(db.String(16), nullable=False)
+    institute_id = db.Column(db.String(16), nullable=False, unique=True)
     pic = db.Column(db.String(128))
     iic = db.Column(db.String(128))
 
@@ -368,6 +370,16 @@ class Institute(Entity):
         }
 
 #+END_SRC
+***** to_csv
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def to_csv(self):
+        d = OrderedDict()
+        d['id'] = self.institute_id
+        d['name'] = self.name
+        d['pic'] = self.pic
+        d['iic'] = self.iic
+        return d
+#+END_SRC
 *** Discipline
 **** Immutable Data
      This is the data associated with Discipline type, which is immutable.
@@ -409,7 +421,7 @@ class Discipline(Entity):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
-    discipline_id = db.Column(db.String(16), nullable=False)
+    discipline_id = db.Column(db.String(16), nullable=False, unique=True)
     dnc = db.Column(db.String(64))
 
     labs = db.relationship('Lab', backref='discipline')
@@ -529,6 +541,16 @@ class Discipline(Entity):
         }
 
 #+END_SRC
+
+***** to_csv
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def to_csv(self):
+        d = OrderedDict()
+        d['id'] = self.discipline_id
+        d['name'] = self.name
+        d['dnc'] = self.dnc
+        return d
+#+END_SRC
 *** Developer
 **** Immutable Data
      This is the data associated with Developer type, which is immutable.
@@ -548,7 +570,7 @@ class Developer(Entity):
     id = db.Column(db.Integer, primary_key=True)
 
     name = db.Column(db.String(64), nullable=False)
-    email_id = db.Column(db.String(128))
+    email_id = db.Column(db.String(128), unique=True)
     institute_id = db.Column(db.Integer, db.ForeignKey('institutes.id'))
 
 #+END_SRC
@@ -661,6 +683,16 @@ class Developer(Entity):
     def set_institute(self, institute):
         self.institute = institute
         self.save()
+#+END_SRC
+
+***** to_csv
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def to_csv(self):
+        d = OrderedDict()
+        d['email_id'] = self.email_id
+        d['name'] = self.name
+        d['institute_id'] = self.institute.institute_id
+        return d
 #+END_SRC
 
 *** Technology
@@ -798,6 +830,16 @@ Technology(name=String
         }
 #+END_SRC
 
+***** to_csv
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def to_csv(self):
+        d = OrderedDict()
+        d['name'] = self.name
+        d['version'] = self.version
+        d['foss'] = self.foss
+        return d
+#+END_SRC
+
 *** Experiment
 **** Immutable Data
      This is the data associated with Experiment type, which is immutable.
@@ -835,13 +877,13 @@ class Experiment(Entity):
 
     lab_id = db.Column(db.Integer, db.ForeignKey('labs.id'))
 
-    content_url = db.Column(db.String(256))
+    content_url = db.Column(db.String(256), unique=True)
     # content_on = db.Column(db.Enum('CPE', 'ELSE', 'NA'))
     content_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
     content_hosted_on = db.relationship('HostingPlatform',
                                  foreign_keys=[content_on_id])
 
-    simulation_url = db.Column(db.String(256))
+    simulation_url = db.Column(db.String(256), unique=True)
     # simulation_on = db.Column(db.Enum('CPE', 'ELSE', 'NA'))
     simulation_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
     simulation_hosted_on = db.relationship('HostingPlatform',
@@ -1043,6 +1085,21 @@ a
             'lab': self.lab.to_client()
         }
 
+#+END_SRC
+
+***** to_csv
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def to_csv(self):
+        d = OrderedDict()
+        d['lab_id'] = self.lab.lab_id
+        d['name'] = self.name
+        d['content_url'] = self.content_url
+        d['content_hosted_on'] = self.content_hosted_on.name if\
+            self.content_hosted_on else None
+        d['simulation_url'] = self.simulation_url,
+        d['simulation_hosted_on'] = self.simulation_hosted_on.name if\
+            self.simulation_hosted_on else None
+        return d
 #+END_SRC
 
 *** Lab
@@ -1754,19 +1811,40 @@ function.
             'name': self.name,
             'institute': self.institute.to_client(),
             'discipline': self.discipline.to_client(),
-            'integration_level': self.integration_level,
-            'number_of_experiments': self.number_of_experiments,
+            'integration_level': self.integration_level.to_client(),
             'repo_url': self.repo_url,
             'hosted_url': self.hosted_url,
             'hosted_on': self.hosted_on,
-            'technologies': self.technologies,
-            'developers': self.developers,
-            'type_of_lab': self.type_of_lab,
+            'technologies': [t.to_client for t in self.get_technologies()],
+            'experiments': [e.to_client for e in self.get_experiments()],
+            'developers': [d.to_client() for d in self.get_developers()],
+            'type_of_lab': self.type_of_lab.to_client(),
             'status': self.status,
-            'is_web_2_compliant': self.is_web_2_compliant,
-            'is_phase_2_lab': self.is_phase_2_lab,
+            'is_web_2_compliant': self.is_web_2_compliant(),
+            'is_phase_2_lab': self.is_phase_2(),
             'remarks': self.remarks
         }
+#+END_SRC
+
+***** to_csv
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def to_csv(self):
+        d = OrderedDict()
+        d['lab_id'] =  self.lab_id
+        d['name'] =  self.name
+        d['institute_id'] = self.institute.institute_id
+        d['discipline_id'] = self.discipline.discipline_id
+        d['integration_level'] = self.integration_level.level if\
+            self.integration_level else None
+        d['repo_url'] =  self.repo_url
+        d['hosted_url'] = self.hosted_url
+        d['hosted_on'] = self.hosted_on.name if self.hosted_on else None
+        d['type_of_lab'] = self.type_of_lab.type if self.type_of_lab else None
+        d['status'] = self.status
+        d['is_web_2_compliant'] = self.is_web_2_compliant_lab
+        d['is_phase_2'] = self.is_phase_2_lab
+        d['remarks'] = self.remarks
+        return d
 #+END_SRC
 
 *** Feedback data
@@ -1994,21 +2072,74 @@ def download_data():
     curr_entity = bulk_update_allowed[entity]
     data = curr_entity.query.all()
 
+    if not len(data):
+        abort(400, "No data for %s found!" % entity)
+
     # open the CSV file for writing
     filename = entity + '.csv'
     outfile = open(os.path.join(CUR_DIR, 'static', 'temp', filename),
                   'wb')
     outcsv = csv.writer(outfile)
-    outcsv.writerow([col.name for col in curr_entity.__mapper__.columns])
-    [outcsv.writerow([getattr(curr, col.name) for col in curr_entity.__mapper__.columns]) for curr in data]
+
+    # write the data..
+    outcsv.writerow(data[0].to_csv().keys())
+    [outcsv.writerow(curr.to_csv().values()) for curr in data]
     outfile.close()
 
+    # return URL of the file for download
     return redirect(url_for('static', filename='temp/'+filename))
-    return 'You requested download for %s' % entity
 
-@api.route('/data/upload')
+
+def allowed_file(filename):
+    return '.' in filename and \
+               filename.rsplit('.', 1)[1] in \
+               current_app.config.ALLOWED_EXTENSIONS
+
+
+@api.route('/data/upload', methods=['POST'])
 def upload_data():
-    pass
+    entity = request.args.get('entity', None)
+    if not entity:
+        abort(400, 'Entity has to be provided in the request')
+
+    if entity and entity not in bulk_update_allowed:
+        abort(400, 'Entity %s is not valid' % entity)
+
+    file = request.files['file']
+    if file and allowed_file(file.filename):
+        reader = csv.reader(file, delimiter=',')
+        fields = reader.next()
+        data = []
+        map(lambda row: data.append(dict(zip(fields, row))), reader)
+        return jsonify_list(data)
+
+@api.route('/data')
+def show_static_data_page():
+    return '''
+    <!doctype html>
+    <title>Data Service - bulk update</title>
+    <h1>Upload new File</h1>
+    <script type="text/javascript">
+        function submitform() {
+            var elem = document.getElementById('entity');
+            var entity = elem.options[elem.selectedIndex].value;
+            document.myform.action = "/data/upload?entity=" + entity;
+            return true;
+        }
+    </script>
+    <select id="entity">
+        <option value="labs">Labs</option>
+        <option value="institutes">Institutes</option>
+        <option value="disciplines">Disciplines</option>
+        <option value="developers">Developers</option>
+        <option value="technologies">Technologies</option>
+        <option value="experiments">Experiments</option>
+    </select>
+    <form name="myform" method=post enctype=multipart/form-data onsubmit="return submitform();">
+    <p><input type=file name=file>
+    <input type=submit value=Upload>
+    </form>
+    '''
 #+END_SRC
 
 ** REST APIs
@@ -2686,6 +2817,12 @@ LOG_FILE = 'logs/dataservice.log'
 
 # Log level for the application
 LOG_LEVEL = 'DEBUG'
+
+# destination for uploaded files
+UPLOAD_FOLDER = 'src/static/temp'
+
+# allowed file extensions that can be uploaded
+ALLOWED_EXTENSIONS = set(['csv'])
 
 #+END_SRC
 
