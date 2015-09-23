@@ -1313,9 +1313,11 @@ class Lab(Entity):
     id = db.Column(db.Integer, primary_key=True)
 
     name = db.Column(db.String(128), nullable=False)
+
     lab_id = db.Column(db.String(16), nullable=False)
 
     institute_id = db.Column(db.Integer, db.ForeignKey('institutes.id'))
+
     discipline_id = db.Column(db.Integer, db.ForeignKey('disciplines.id'))
 
     integration_level_id = db.Column(db.ForeignKey('integration_levels.id'))
@@ -1340,9 +1342,11 @@ class Lab(Entity):
     type_of_lab_id = db.Column(db.ForeignKey('type_of_labs.id'))
 
     remarks = db.Column(db.Text)
+
     status = db.Column(db.String(32))
 
     is_web_2_compliant_lab = db.Column(db.Boolean)
+
     is_phase_2_lab = db.Column(db.Boolean)
 #+END_SRC
 
@@ -1884,7 +1888,7 @@ class Feedback(Entity):
 
 ** The Bulk Update interface
 *** Requirement
-   One of the requirement in the application is the bulk update
+   One of the requirements in the application is the bulk update
    interface. <<req4>>
    A bulk update interface is such an interface of the application (or a
    capability of the application) which can support updating multiple records
@@ -1919,6 +1923,17 @@ class Feedback(Entity):
       then reads the CSV file, uses the internal Python API to check
       for sanity, integrity constraints etc. and use the Python API to
       insert the data into the system
+
+**** Authentication and authorization
+     Access to =/data/download= and =/data/upload= APIs are restricted by IP
+     restriction and CORS policy so only authorized applications can call
+     these APIs. This will prevent anyone in the world from accessing this
+     APIs. The next part is, given, an authorized application how does the
+     data service validate the authorized application is used by an authorized
+     user. For this we need to implement a user login. Which is the same way
+     as it is done in
+     ADS.
+
 
 *** Technical Design
     To download the data the Python API has to return a CSV of the
@@ -1958,21 +1973,18 @@ class Feedback(Entity):
 
 *** Implementation
 #+BEGIN_SRC python :tangle src/api.py :eval no
-
+#
+#bulk_update_allowed = [Lab, Institute, Experiment, Technology, Developer,
+#                      Discpline]
 #@api.route('/data/download')
 #def download_data():
 #    pass
+#
 
 #@api.route('/data/upload')
 #def upload_data():
 #    pass
 #+END_SRC
-
-.
-
-   To provide this facility to download and upload CSV files, the data
-   service also needs to provide a static page, from where CSV files
-   can be downloaded or uploaded.
 
 ** REST APIs
 *** What are REST APIs?
@@ -2010,6 +2022,7 @@ class Feedback(Entity):
    blueprints]].
 #+BEGIN_SRC python :tangle src/api.py :eval no
 # -*- coding: utf-8 -*-
+
 from flask import Blueprint, request, jsonify, abort, current_app
 
 from db import *
@@ -2119,11 +2132,40 @@ api = Blueprint('APIs', __name__)
 
 *** Implementation
 #+BEGIN_SRC python :tangle src/api.py :eval no
-#query an entity
-#=/<:entity>s?query_param1=val1&query_param2=val2&..query_paramn=valn=
+entity_pairs = {
+    'labs': {
+        'class': 'Lab',
+        'attributes': ['id',
+                       'name',
+                       'lab_id',
+                       'institute_id',
+                       'discipline_id',
+                       'integration_level_id',
+                       'developers',
+                       'number_of_experiments',
+                       'experiments',
+                       'technologies',
+                       'repo_url',
+                       'hosted_url',
+                       'hosted_on_id',
+                       'type_of_lab_id',
+                       'remarks',
+                       'status',
+                       'is_web_2_compliant_lab',
+                       'is_phase_2_lab']
+    }
+}
+
+
+# query an entity
+# =/<:entity>s?query_param1=val1&query_param2=val2&..query_paramn=valn=
 @api.route('/<entity>', methods=['GET'])
 def query_an_entity(entity):
-    return "You requested for: %s" % entity
+    (ret_val, entity_class) = validate_entity(entity, request.args.keys())
+
+def validate_entity(entity, attributes):
+    if entiry not in entity
+
 
 #+END_SRC
 ** REST API to create/update/delete data
