@@ -45,6 +45,7 @@ init: pull-literate-tools
 
 build: init write-version
 	emacs  --script elisp/publish.el
+	mkdir -p ${CODE_DEST}/src/static/temp
 	rm -f ${BUILD_DEST}/docs/*.html~
 
 # get the latest commit hash and its subject line
