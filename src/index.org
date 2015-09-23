@@ -150,6 +150,11 @@ class IntegrationLevel(Entity):
     level = db.Column(db.Integer, nullable=False, unique=True)
 
     labs = db.relationship('Lab', backref='integration_level')
+
+    @staticmethod
+    def get_by_id(id):
+        return IntegrationLevel.query.get(id)
+
 #+END_SRC
 *** HostingPlatform
 
@@ -163,6 +168,11 @@ class HostingPlatform(Entity):
     name = db.Column(db.String(32), nullable=False, unique=True)
 
     labs = db.relationship('Lab', backref='hosted_on')
+
+    @staticmethod
+    def get_by_id(id):
+        return HostingPlatform.query.get(id)
+
 #+END_SRC
 *** TypeOfLab
 
@@ -179,6 +189,11 @@ class TypeOfLab(Entity):
     type = db.Column(db.String(64), nullable=False, unique=True)
 
     labs = db.relationship('Lab', backref='type_of_lab')
+
+    @staticmethod
+    def get_by_id(id):
+        return TypeOfLab.query.get(id)
+
 #+END_SRC
 
 *** Institute
@@ -1654,6 +1669,19 @@ function.
         return self.technologies
 #+END_SRC
 
+***** getRemarks: Lab --> Remarks
+
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_remarks(self):
+        return self.remarks
+#+END_SRC
+***** getStatus: Lab --> Status
+
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_status(self):
+        return self.status
+#+END_SRC
+
 ***** setName: Lab, Name --> Void
 
        NOTE: All types will have a =setName= function.
@@ -1728,13 +1756,28 @@ function.
         self.save()
 #+END_SRC
 
-***** setisPhase2: Lab, Boolean --> Void
+***** setIsPhase2: Lab, Boolean --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(phase2=bool)
     def set_is_phase_2(self, phase2):
         self.is_phase_2_lab = phase2
         self.save()
 #+END_SRC
+***** setRemarks: Lab, String --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(remarks=str)
+    def set_remarks(self, remarks):
+        self.remarks = remarks
+        self.save()
+#+END_SRC
+***** setStatus: Lab, String --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(status=str)
+    def set_status(self, status):
+        self.status = status
+        self.save()
+#+END_SRC
+
 
 ***** addDeveloper: Lab, Developer --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -2331,11 +2374,6 @@ entity_pairs = {
 @api.route('/<entity>', methods=['GET'])
 def query_an_entity(entity):
     (ret_val, entity_class) = validate_entity(entity, request.args.keys())
-
-def validate_entity(entity, attributes):
-    if entiry not in entity
-
-
 #+END_SRC
 ** REST API to create/update/delete data
 
@@ -2842,7 +2880,7 @@ Below is the configuration for the application
 # example DB URI:
 # mysql+oursql://scott:tiger@localhost/mydatabase
 # postgresql+psycopg2://scott:tiger@localhost/mydatabase
-SQLALCHEMY_DATABASE_URI = 'mysql+oursql://username:password@localhost/dbname'
+SQLALCHEMY_DATABASE_URI = 'mysql+oursql://root:mysql@localhost/dataservice'
 
 # Debug from SQLAlchemy
 # Turn this to False on production
@@ -2965,11 +3003,11 @@ class TestLab(TestCase):
         # Calling the Lab constructor w/o name, lab_id arguments should
         # raise AttributeRequired exception
         self.assertRaises(AttributeRequired, Lab,
-                          **{'remarks': 'Completed'})
+                          ,**{'remarks': 'Completed'})
         # Calling the Lab constructor with required arguments (name, lab_id)
         # but Type of other arguments are wrong, should raise TypeError
         self.assertRaises(TypeError, Lab,
-                          **{'name': Name('DS'),
+                          ,**{'name': Name('DS'),
                              'lab_id': 'ds',
                              'integration_level': 6
                              })
@@ -3059,6 +3097,18 @@ class TestLab(TestCase):
         print "test_lab_is_phase_2"
         lab = Lab(name="DS", lab_id="ds", is_phase_2_lab=True)
         self.assertEqual(lab.is_phase_2(), True)
+
+    def test_lab_get_remarks(self):
+        print "test_lab_get_remarks"
+        remarks = 'Testing phase'
+        lab = Lab(name="DS", lab_id="ds", remarks=remarks)
+        self.assertEqual(lab.get_remarks(), remarks)
+
+    def test_lab_get_status(self):
+        print "test_lab_get_status"
+        status = 'Being Deployed'
+        lab = Lab(name="DS", lab_id="ds", status=status)
+        self.assertEqual(lab.get_status(), status)
 
     def test_lab_get_discipline(self):
         print "test_lab_get_discipline"

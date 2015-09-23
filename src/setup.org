@@ -58,11 +58,122 @@ def create_type_of_labs():
         lab_type.save()
 
 
+def create_institute():
+    inst = Institute(name='IIIT Hyderabad',
+                     institute_id='IIITH',
+                     pic=Name('Venkatesh Chopella'),
+                     iic=Name('Raghu Reddy'))
+    inst.save()
+
+    inst = Institute(name='IIT Bombay',
+                     institute_id='IITB',
+                     pic=Name('Narendra Dhabolkar'),
+                     iic=Name('Govind Pansare'))
+    inst.save()
+
+
+def create_developer():
+    dev = Developer(name=Name('Linus Tarvolds'),
+                    email_id=Email('linus@linux.org'),
+                    institute=Institute.get_by_id(1))
+    dev.save()
+
+    dev = Developer(name=Name('Claude Shannon'),
+                    email_id=Email('shannon@bell-labs.org'),
+                    institute=Institute.get_by_id(2))
+    dev.save()
+
+
+def create_discipline():
+    disc = Discipline(name='Computer Science',
+                      discipline_id='CSE',
+                      dnc=Name('Suresh Purini'))
+    disc.save()
+
+    disc = Discipline(name='Electronics and Communiations Engineering',
+                      discipline_id='ECE',
+                      dnc=Name('Jayanthi Natarajan'))
+    disc.save()
+
+
+def create_technology():
+    tech = Technology(name="Python", version="2.7", foss=True)
+    tech.save()
+    tech = Technology(name="Apache", version="1.1", foss=True)
+    tech.save()
+    tech = Technology(name="Mysql", version="3.4", foss=True)
+    tech.save()
+    tech = Technology(name="Labview", version="4.1", foss=False)
+    tech.save()
+
+
+def create_lab():
+    lab = Lab(name='Data Structures',
+              lab_id='CSE02',
+              institute=Institute.get_by_id(1),
+              discipline=Discipline.get_by_id(1),
+              integration_level=IntegrationLevel.get_by_id(6),
+              developers=[Developer.get_by_id(1)],
+              technologies=[Technology.get_by_id(1),
+                            Technology.get_by_id(2)],
+              repo_url=URL('http://github.com'),
+              hosted_url=URL('http://gnu.org'),
+              type_of_lab=TypeOfLab.get_by_id(1),
+              remarks='First Entry',
+              status='Not Deployed',
+              is_web_2_compliant_lab=True,
+              is_phase_2_lab=True)
+    lab.save()
+    lab = Lab(name='Radar and Satellite Communication',
+              lab_id='ECE05',
+              institute=Institute.get_by_id(2),
+              discipline=Discipline.get_by_id(2),
+              integration_level=IntegrationLevel.get_by_id(5),
+              developers=[Developer.get_by_id(2)],
+              technologies=[Technology.get_by_id(2),
+                            Technology.get_by_id(3)],
+              repo_url=URL('http://github.com'),
+              hosted_url=URL('http://gnu.org'),
+              type_of_lab=TypeOfLab.get_by_id(2),
+              remarks='First Entry',
+              status='Not Deployed',
+              is_web_2_compliant_lab=True,
+              is_phase_2_lab=True)
+    lab.save()
+
+
+def create_experiment():
+    exp = Experiment(name='Binary Tree',
+                     lab=Lab.get_by_id(1),
+                     content_url=URL("http://vlabs.ac.in"),
+                     content_hosted_on=HostingPlatform.get_by_id(1),
+                     simulation_url=URL("http://vlabs.ac.in"),
+                     simulation_hosted_on=HostingPlatform.get_by_id(2),
+                     technologies=[Technology.get_by_id(1),
+                                   Technology.get_by_id(2)])
+    exp.save()
+    exp = Experiment(name='Doppler Effect',
+                     lab=Lab.get_by_id(2),
+                     content_url=URL("http://vlabs.ac.org"),
+                     content_hosted_on=HostingPlatform.get_by_id(2),
+                     simulation_url=URL("http://vlabs.ac.org"),
+                     simulation_hosted_on=HostingPlatform.get_by_id(3),
+                     technologies=[Technology.get_by_id(2),
+                                   Technology.get_by_id(4)])
+    exp.save()
+
+
 if __name__ == "__main__":
     db.create_all(app=create_app(config))
     create_integration_levels()
     create_hosting_platforms()
     create_type_of_labs()
+    create_institute()
+    create_developer()
+    create_discipline()
+    create_technology()
+    create_lab()
+    create_experiment()
 
 #+END_SRC
 ** Set up both DB and Python dependencies
