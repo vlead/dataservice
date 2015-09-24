@@ -2373,7 +2373,9 @@ entity_pairs = {
 # =/<:entity>s?query_param1=val1&query_param2=val2&..query_paramn=valn=
 @api.route('/<entity>', methods=['GET'])
 def query_an_entity(entity):
-    (ret_val, entity_class) = validate_entity(entity, request.args.keys())
+    # (ret_val, entity_class) = validate_entity(entity, request.args.keys())
+    return str(request.args.lists())
+
 #+END_SRC
 ** REST API to create/update/delete data
 
@@ -2880,7 +2882,9 @@ Below is the configuration for the application
 # example DB URI:
 # mysql+oursql://scott:tiger@localhost/mydatabase
 # postgresql+psycopg2://scott:tiger@localhost/mydatabase
-SQLALCHEMY_DATABASE_URI = 'mysql+oursql://root:mysql@localhost/dataservice'
+SQLALCHEMY_DATABASE_URI = 'mysql+oursql://<userid>:<password>@<servername>/<db_name>'
+# example
+# SQLALCHEMY_DATABASE_URI = 'mysql+oursql://root:mysql>@localhost/dataservice'
 
 # Debug from SQLAlchemy
 # Turn this to False on production
