@@ -78,9 +78,21 @@ class Entity(db.Model):
     # update the object, and commit to the database
     def update(self, **kwargs):
         for attr, val in kwargs.iteritems():
-            self.__setattr__(attr, val)
+            setter_method = "set_" + attr
+            try:
+                self.__getattribute__(setter_method)(val)
+            except Exception as e:
+                raise e
 
         self.save()
+
+    #print "Setting new val"
+    #print "Calling %s on %s" % (method_to_set, curr_entity)
+    #try:
+    #    getattr(record, method_to_set)(new_val)
+    #except Exception as e:
+    #pass
+
 #+END_SRC
 
 ** The Data Model
@@ -155,6 +167,12 @@ class IntegrationLevel(Entity):
     def get_by_id(id):
         return IntegrationLevel.query.get(id)
 
+    def to_client(self):
+        return {
+            'id': self.id,
+            'level': self.level
+        }
+
 #+END_SRC
 *** HostingPlatform
 
@@ -172,6 +190,12 @@ class HostingPlatform(Entity):
     @staticmethod
     def get_by_id(id):
         return HostingPlatform.query.get(id)
+
+    def to_client(self):
+        return {
+            'id': self.id,
+            'name': self.name
+        }
 
 #+END_SRC
 *** TypeOfLab
@@ -193,6 +217,12 @@ class TypeOfLab(Entity):
     @staticmethod
     def get_by_id(id):
         return TypeOfLab.query.get(id)
+
+    def to_client(self):
+        return {
+            'id': self.id,
+            'name': self.name
+        }
 
 #+END_SRC
 
@@ -698,6 +728,17 @@ class Developer(Entity):
     def set_institute(self, institute):
         self.institute = institute
         self.save()
+#+END_SRC
+
+***** to_client
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def to_client(self):
+        return {
+            'id': self.id,
+            'email_id': self.email_id,
+            'name': self.name,
+            'institute': self.institute.to_client()
+        }
 #+END_SRC
 
 ***** to_csv
@@ -1484,10 +1525,10 @@ Lab(name=<instance of Name class>,
             self.set_hosted_url(kwargs['hosted_url'])
 
         if 'is_web_2_compliant_lab' in kwargs:
-            self.set_web_2_compliant(kwargs['is_web_2_compliant_lab'])
+            self.set_is_web_2_compliant_lab(kwargs['is_web_2_compliant_lab'])
 
         if 'is_phase_2_lab' in kwargs:
-            self.set_is_phase_2(kwargs['is_phase_2_lab'])
+            self.set_is_phase_2_lab(kwargs['is_phase_2_lab'])
 
         if 'remarks' in kwargs:
             self.set_remarks(kwargs['remarks'])
@@ -1751,7 +1792,7 @@ function.
 ***** setWeb2Compliant: Lab, Boolean --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(compliant=bool)
-    def set_web_2_compliant(self, compliant):
+    def set_is_web_2_compliant_lab(self, compliant):
         self.is_web_2_compliant_lab = compliant
         self.save()
 #+END_SRC
@@ -1759,7 +1800,7 @@ function.
 ***** setIsPhase2: Lab, Boolean --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(phase2=bool)
-    def set_is_phase_2(self, phase2):
+    def set_is_phase_2_lab(self, phase2):
         self.is_phase_2_lab = phase2
         self.save()
 #+END_SRC
@@ -1856,16 +1897,23 @@ function.
             'id': self.id,
             'lab_id': self.lab_id,
             'name': self.name,
-            'institute': self.institute.to_client(),
-            'discipline': self.discipline.to_client(),
-            'integration_level': self.integration_level.to_client(),
+            'institute': self.institute.to_client() if self.institute else None,
+            'discipline': self.discipline.to_client() if self.discipline else\
+                None,
+            'integration_level': self.integration_level.to_client() if\
+                self.integration_level else None,
             'repo_url': self.repo_url,
             'hosted_url': self.hosted_url,
-            'hosted_on': self.hosted_on,
-            'technologies': [t.to_client for t in self.get_technologies()],
-            'experiments': [e.to_client for e in self.get_experiments()],
-            'developers': [d.to_client() for d in self.get_developers()],
-            'type_of_lab': self.type_of_lab.to_client(),
+            'hosted_on': self.hosted_on.to_client() if self.hosted_on else\
+                None,
+            'technologies': [t.to_client for t in self.get_technologies()] if\
+                self.technologies else None,
+            'experiments': [e.to_client for e in self.get_experiments()] if\
+                self.experiments else None,
+            'developers': [d.to_client() for d in self.get_developers()] if\
+                self.developers else None,
+            'type_of_lab': self.type_of_lab.to_client() if self.type_of_lab
+                else None,
             'status': self.status,
             'is_web_2_compliant': self.is_web_2_compliant(),
             'is_phase_2_lab': self.is_phase_2(),
@@ -2410,25 +2458,25 @@ def query_an_entity(entity):
    The look up table should like the following: (this is just an
    example, not the implementation)
 #+BEGIN_SRC python
-  entity_map_types = {
-      'labs': {
-          'entity': Lab,
-          'types': {
-              'hosted_url': URL,
-              'name': str,
-              'integration_level': IntegrationLevel,
-              'lab_id': str
-          }
-      },
-      'discipline': {
-          'entity': Discipline,
-          'types': {
-              'name': str,
-              'discipline_id': str,
-              'dnc': Name
-          }
-      }
-  }
+entity_map_types = {
+    'labs': {
+        'entity': Lab,
+        'types': {
+            'name': str,
+            'institute': Institute,
+            'hosted_url': URL,
+            'technologies': Technology,
+        }
+    },
+    'disciplines': {
+        'entity': Discipline,
+        'types': {
+            'name': str,
+            'discipline_id': str,
+            'dnc': Name
+        }
+    }
+}
 #+END_SRC
 
 **** API to create new entries
@@ -2529,6 +2577,153 @@ def query_an_entity(entity):
      else it returns a HTTP 500 and logs the error.
 
 *** Implementation
+**** The entity look up table with corresponding types of their attributes
+#+NAME: entity-map-types
+#+BEGIN_SRC python
+entity_map_types = {
+    'labs': {
+        'entity': Lab,
+        'types': {
+            'name': str,
+            'institute': Institute,
+            'discipline': Discipline,
+            'integration_level': IntegrationLevel,
+            'repo_url': URL,
+            'hosted_url': URL,
+            'hosted_on': HostingPlatform,
+            'type_of_lab': TypeOfLab,
+            'remarks': str,
+            'status': str,
+            'is_web_2_compliant': bool,
+            'is_phase_2_lab': bool,
+            'technologies': Technology,
+            'experiments': Experiment,
+            'developers': Developer
+        }
+    },
+    'disciplines': {
+        'entity': Discipline,
+        'types': {
+            'name': str,
+            'discipline_id': str,
+            'dnc': Name
+        }
+    }
+}
+#+END_SRC
+
+**** The API to update/delete entries
+#+NAME: modify-entry
+#+BEGIN_SRC python
+@api.route('/<entity>/<id>', methods=['PUT', 'DELETE'])
+def modify_entity(entity, id):
+    if entity not in entity_map_types:
+        abort(400, 'Entity %s is not valid.' % entity)
+
+    curr_entity = entity_map_types[entity]['entity']
+
+    if request.method == 'DELETE':
+       status = delete_record(curr_entity, id)
+       return status
+
+    if request.method == 'PUT':
+        status = update_record(entity, curr_entity, id)
+        return status
+#+END_SRC
+
+#+BEGIN_SRC python :tangle src/api.py :eval no :noweb yes
+<<entity-map-types>>
+
+
+def delete_record(entity, id):
+    record = entity.get_by_id(id)
+    if not record:
+        abort(404, 'No %s with id %s' % (entity, id))
+    else:
+        try:
+            db.session.delete(record)
+            db.session.commit()
+        except Exception, e:
+            abort(500, e)
+
+    return jsonify(id=id, status="success")
+
+
+# take a constructor, and attr name and the actual attribute and convert the
+# attribute value to its actual type
+def typecast_compound_item(const, key, val):
+    if 'id' not in val:
+        abort(400, "id attr has to be present in %s:%s" % (key,
+                                                           val))
+    try:
+        new_val = const.get_by_id(val['id'])
+    except TypeError:
+        abort(400, '%s is not a valid %s' % (val, key))
+
+    if not new_val:
+        abort(404, 'id %s of %s is not found' % (val['id'], key))
+    print "new val after const: %s" % new_val
+    return new_val
+
+
+# take a constructor, and attr name and the actual attribute and convert the
+# attribute value to its actual type
+def typecast_item(const, attr, val):
+    if type(val) is dict:
+        new_val = typecast_compound_item(const, attr, val)
+        return new_val
+
+    try:
+        new_val = const(val)
+    except TypeError:
+        abort(400, '%s is not a valid %s' % (val, key))
+
+    print "new val after const: %s" % new_val
+    return new_val
+
+
+def typecast_data(entity, data):
+    updated_data = {}
+    for attr, val in data.iteritems():
+        print "attr: %s, val: %s" % (attr, val)
+        const = entity_map_types[entity]['types'][attr]
+        print "const for %s is %s" % (attr, const)
+
+        if type(val) is list:
+            new_val = map(lambda item: typecast_item(const, attr, item), val)
+        else:
+            new_val = typecast_item(const, attr, val)
+
+        updated_data[attr] = new_val
+
+    return updated_data
+
+
+def update_record(entity_name, entity, id):
+    record = entity.get_by_id(id)
+
+    if not record:
+        abort(404, 'No %s with id %s' % (entity_name, id))
+
+    data = parse_request(request)
+    if not data or type(data) is not dict:
+        abort(400, "The data should be in JSON format")
+
+    data = typecast_data(entity_name, data)
+    print "updated, typecasted data: %s" % data
+
+    try:
+        print "Updating record: %s with data: %s" % (record, data)
+        record.update(**data)
+    except Exception, e:
+        abort(500, e)
+
+    return jsonify(record.to_client())
+
+
+<<modify-entry>>
+#+END_SRC
+
 
 ** Custom Exceptions
 
@@ -2833,9 +3028,6 @@ def configure_errorhandlers(app):
 
     @app.errorhandler(404)
     def not_found(err):
-        if 'description' not in err:
-            return make_response(jsonify(error='No such URL found'), 404)
-
         return make_response(jsonify(error=err.description), 404)
 
     @app.errorhandler(400)
@@ -3221,16 +3413,16 @@ class TestLab(TestCase):
     def test_lab_set_web_2_compliant(self):
         print "test_lab_set_web_2_compliant"
         lab = Lab(name="DS", lab_id="ds")
-        lab.set_web_2_compliant(True)
+        lab.set_is_web_2_compliant_lab(True)
         self.assertEqual(lab.is_web_2_compliant(), True)
-        self.assertRaises(TypeError, lab.set_web_2_compliant, "Yes")
+        self.assertRaises(TypeError, lab.set_is_web_2_compliant_lab, "Yes")
 
     def test_lab_set_is_phase_2(self):
         print "test_lab_set_is_phase_2"
         lab = Lab(name="DS", lab_id="ds")
-        lab.set_is_phase_2(True)
+        lab.set_is_phase_2_lab(True)
         self.assertEqual(lab.is_phase_2(), True)
-        self.assertRaises(TypeError, lab.set_is_phase_2, "Yes")
+        self.assertRaises(TypeError, lab.set_is_phase_2_lab, "Yes")
 
     def test_lab_add_developer(self):
         print "test_lab_add_developer"
