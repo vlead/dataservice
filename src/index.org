@@ -221,7 +221,7 @@ class TypeOfLab(Entity):
     def to_client(self):
         return {
             'id': self.id,
-            'name': self.name
+            'type': self.type
         }
 
 #+END_SRC
@@ -876,7 +876,7 @@ Technology(name=String
 ***** to_client: Technology --> Dictionary
        Returns a dictionary of necessary attributes for a client to consume
        all the attributes of a technology
-#+BEGIN_SRC
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def to_client(self):
         return {
             'id': self.id,
@@ -1002,6 +1002,29 @@ class Experiment(Entity):
 #+END_SRC
 
 **** Functions that operate on the Experiment domain
+
+***** update: Experiment --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    # update the object, and commit to the database
+    def update(self, **kwargs):
+
+        for attr, val in kwargs.iteritems():
+            # if the attr is any of the following the setter method names are
+            # not straightforward. And then directly assign the given list to
+            # the attribute
+            if attr in ('technologies'):
+                self.__setattr__(attr, val)
+
+            # else it is a attribute where the setter method name matches!
+            else:
+                setter_method = "set_" + attr
+                try:
+                    self.__getattribute__(setter_method)(val)
+                except Exception as e:
+                    raise e
+
+        self.save()
+#+END_SRC
 
 ***** getName: Experiment --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -1554,6 +1577,65 @@ Lab(name=<instance of Name class>,
 #+END_SRC
 
 **** Functions that operate on the Lab domain
+
+***** update: Lab --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    # update the object, and commit to the database
+    def update(self, **kwargs):
+
+        for attr, val in kwargs.iteritems():
+            # if the attr is any of the following the setter method names are
+            # not straightforward. And then directly assign the given list to
+            # the attribute
+            if attr in ('developers', 'experiments', 'technologies'):
+                self.__setattr__(attr, val)
+
+            # else it is a attribute where the setter method name matches!
+            else:
+                setter_method = "set_" + attr
+                try:
+                    self.__getattribute__(setter_method)(val)
+                except Exception as e:
+                    raise e
+
+        self.save()
+        # the below code is for historical reasons. the below is the
+        # implementation done using setters. the implementation is so complex
+        # that we decided not to use it, and directly set the attribute.
+            # if the attr is any of the following, get the setter method from
+            # the dictionary below, as the setter method names are not
+            # straightforward
+            #setter_methods = {'developers': 'developer',
+            #                  'experiments': 'experiment',
+            #                  'technologies': 'technology'}
+            #if attr in ('developers', 'experiments', 'technologies'):
+                #print "spl attr: %s" % attr
+                ## the val will be a list in this case; iterate over the list
+                ## check if each item is present in the list; if not add it.
+                #for item in val:
+                #    if item not in self.__getattribute__('get_'+attr)():
+                #        print "new val in %s: %s" % (attr, item)
+                #        setter_method = 'add_' + setter_methods[attr]
+                #        try:
+                #            self.__getattribute__(setter_method)(item)
+                #        except Exception as e:
+                #            raise e
+
+                ## now check all the items from existing field with the request
+                ## recvd. If any item is extra in the existing field (which is
+                ## not there in the req), delete it
+                #for item in self.__getattribute__('get_'+attr)():
+                #    # the item exist in the existing field, but not in the
+                #    # req.; remove it.
+                #    if item not in val:
+                #        print "item do not exist %s: %s" % (attr, item)
+                #        setter_method = 'remove_' + setter_methods[attr]
+                #        try:
+                #            self.__getattribute__(setter_method)(item)
+                #        except Exception as e:
+                #            raise e
+#+END_SRC
+
 ***** getId: Lab --> Id
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_id(self):
@@ -1906,9 +1988,9 @@ function.
             'hosted_url': self.hosted_url,
             'hosted_on': self.hosted_on.to_client() if self.hosted_on else\
                 None,
-            'technologies': [t.to_client for t in self.get_technologies()] if\
+            'technologies': [t.to_client() for t in self.get_technologies()] if\
                 self.technologies else None,
-            'experiments': [e.to_client for e in self.get_experiments()] if\
+            'experiments': [e.to_client() for e in self.get_experiments()] if\
                 self.experiments else None,
             'developers': [d.to_client() for d in self.get_developers()] if\
                 self.developers else None,
@@ -2601,6 +2683,15 @@ entity_map_types = {
             'developers': Developer
         }
     },
+    'institutes': {
+        'entity': Institute,
+        'types': {
+            'name': str,
+            'institute_id': str,
+            'pic': Name,
+            'iic': Name
+        }
+    },
     'disciplines': {
         'entity': Discipline,
         'types': {
@@ -2608,12 +2699,46 @@ entity_map_types = {
             'discipline_id': str,
             'dnc': Name
         }
+    },
+    'developers': {
+        'entity': Developer,
+        'types': {
+            'name': Name,
+            'email_id': Email,
+            'institute': Institute
+        }
+    },
+    'technologies': {
+        'entity': Technology,
+        'types': {
+            'name': str,
+            'version': str,
+            'foss': bool
+        }
+    },
+    'experiments': {
+        'entity': Experiment,
+        'types': {
+            'name': str,
+            'lab': Lab,
+            'content_url': URL,
+            'simulation_url': URL,
+            'content_hosted_on': HostingPlatform,
+            'simulation_hosted_on': HostingPlatform,
+            'technologies': Technology
+        }
     }
 }
 #+END_SRC
 
 **** The API to update/delete entries
-#+NAME: modify-entry
+***** API route definition
+The API route definitions. Defining the =/entity/id= API for update and delete
+operations. The following API handler first checks if the requested URL is a
+valid entity. If not it sends back a HTTP 400. If it is a valid entity, then
+it looks at the HTTP method, and calls the appropriate function to actually
+delete or update an existing record.
+#+NAME: modify-entity
 #+BEGIN_SRC python
 @api.route('/<entity>/<id>', methods=['PUT', 'DELETE'])
 def modify_entity(entity, id):
@@ -2631,10 +2756,14 @@ def modify_entity(entity, id):
         return status
 #+END_SRC
 
-#+BEGIN_SRC python :tangle src/api.py :eval no :noweb yes
-<<entity-map-types>>
-
-
+***** Delete Record function
+The function to delete a record given an entity and a id. On success, it
+returns the =id= and a ~status=success~ as a JSON. If no such record with the
+given =id= is found, it return a HTTP 404 not found error. If the record is
+found, but there was error deleting the record, it sends back a HTTP 500 with
+corresponding error.
+#+NAME: delete-record
+#+BEGIN_SRC python
 def delete_record(entity, id):
     record = entity.get_by_id(id)
     if not record:
@@ -2647,58 +2776,28 @@ def delete_record(entity, id):
             abort(500, e)
 
     return jsonify(id=id, status="success")
+#+END_SRC
 
-
-# take a constructor, and attr name and the actual attribute and convert the
-# attribute value to its actual type
-def typecast_compound_item(const, key, val):
-    if 'id' not in val:
-        abort(400, "id attr has to be present in %s:%s" % (key,
-                                                           val))
-    try:
-        new_val = const.get_by_id(val['id'])
-    except TypeError:
-        abort(400, '%s is not a valid %s' % (val, key))
-
-    if not new_val:
-        abort(404, 'id %s of %s is not found' % (val['id'], key))
-    print "new val after const: %s" % new_val
-    return new_val
-
-
-# take a constructor, and attr name and the actual attribute and convert the
-# attribute value to its actual type
-def typecast_item(const, attr, val):
-    if type(val) is dict:
-        new_val = typecast_compound_item(const, attr, val)
-        return new_val
-
-    try:
-        new_val = const(val)
-    except TypeError:
-        abort(400, '%s is not a valid %s' % (val, key))
-
-    print "new val after const: %s" % new_val
-    return new_val
-
-
-def typecast_data(entity, data):
-    updated_data = {}
-    for attr, val in data.iteritems():
-        print "attr: %s, val: %s" % (attr, val)
-        const = entity_map_types[entity]['types'][attr]
-        print "const for %s is %s" % (attr, const)
-
-        if type(val) is list:
-            new_val = map(lambda item: typecast_item(const, attr, item), val)
-        else:
-            new_val = typecast_item(const, attr, val)
-
-        updated_data[attr] = new_val
-
-    return updated_data
-
-
+***** Update Record function
+The function to update an record given the entity name, the actual entity,
+=id= of the record and the request object which has the data to be updated.
+Following steps:
+1. Check if the record with given =id= exist.
+   1. If record doesn't exist, send back a HTTP 404 error.
+2. If record exist, parse the request data into a =dict=, if the =dict= is
+   empty or malformed send back a HTTP 400 error.
+3. Now the request =dict= contains the request data, but they are all in
+   strings. To handover the data to actually operate on to update, the data
+   has to be converted to correct types, looking at the lookup table which has
+   the type information. This type conversion is handled by the function
+   =typecast_data=.
+4. Once, the data is type converted, it calls the =update= method on the
+   record.
+5. If the =update= is not successful, it will send back a HTTP 500 with
+   corresponding error.
+6. If success, it will send back a JSON with the updated record.
+#+NAME: update-record
+#+BEGIN_SRC python
 def update_record(entity_name, entity, id):
     record = entity.get_by_id(id)
 
@@ -2719,9 +2818,105 @@ def update_record(entity_name, entity, id):
         abort(500, e)
 
     return jsonify(record.to_client())
+#+END_SRC
 
+***** Typecast Data function
+The method to typecast the data. It takes in an entity, and the data in a
+=dict= format; and returns another =dict= with all the values having correct
+types, based on the passed entity (this information is stored in the lookup
+table with entity, its attributes and their type information). The following
+functions just takes each item in the data =dict=, finds out its corresponding
+constructor from the type information and calls the =typecast_item= function
+over it.
+#+NAME: typecast-data
+#+BEGIN_SRC python
+def typecast_data(entity, data):
+    updated_data = {}
+    for attr, val in data.iteritems():
+        print "attr: %s, val: %s" % (attr, val)
+        if attr not in entity_map_types[entity]['types']:
+            abort(400, '%s attribute not in %s' % (attr, entity))
+        const = entity_map_types[entity]['types'][attr]
+        print "const for %s is %s" % (attr, const)
 
-<<modify-entry>>
+        if type(val) is list:
+            new_val = map(lambda item: typecast_item(const, attr, item), val)
+        else:
+            new_val = typecast_item(const, attr, val)
+
+        updated_data[attr] = new_val
+
+    return updated_data
+#+END_SRC
+
+The function takes in a constructor, the attribute name and the actual
+attribute value, and returns the new value typecasted to its correct type.
+If the attribute is a compound item (like that itself is a =dict=), then it
+calls the =typecast_compound_item= function. Else if it is a simple attribute
+it just calls the constructor over the value. If the constructor throws an
+error, the function returns a HTTP 400 error.
+#+NAME: typecast-item
+#+BEGIN_SRC python
+# take a constructor, and attr name and the actual attribute and convert the
+# attribute value to its actual type
+def typecast_item(const, attr, val):
+    if type(val) is dict:
+        new_val = typecast_compound_item(const, attr, val)
+        return new_val
+
+    try:
+        new_val = const(val)
+    except TypeError:
+        abort(400, '%s is not a valid %s' % (val, attr))
+
+    print "new val after const: %s" % new_val
+    return new_val
+#+END_SRC
+
+The function takes in a constructor, the attribute name and the actual
+attribute value, and returns the new value typecasted to its correct type.
+Here the assumption is, that the value that it has been passed is of type
+=dict=, and the =dict= contains an =id= field, which means this value is an
+existing record. Hence, this function calls the =get_by_id= method of the
+constructor (or the type). If there is an error it sends back appropriate HTTP
+error codes.
+#+NAME: typecast-compound-item
+#+BEGIN_SRC python
+# take a constructor, and attr name and the actual attribute and convert the
+# attribute value to its actual type
+def typecast_compound_item(const, attr, val):
+    if 'id' not in val:
+        abort(400, "id attr has to be present in %s:%s" % (attr,
+                                                           val))
+    try:
+        new_val = const.get_by_id(val['id'])
+    except TypeError:
+        abort(400, '%s is not a valid %s' % (val, attr))
+
+    if not new_val:
+        abort(404, 'id %s of %s is not found' % (val['id'], attr))
+    print "new val after const: %s" % new_val
+    return new_val
+
+#+END_SRC
+
+***** Code tangle
+In the below, all the above code blocks are arranged in the order the python
+interpreter expects them to be.
+#+BEGIN_SRC python :tangle src/api.py :eval no :noweb yes
+<<entity-map-types>>
+
+<<delete-record>>
+
+<<typecast-compound-item>>
+
+<<typecast-item>>
+
+<<typecast-data>>
+
+<<update-record>>
+
+<<modify-entity>>
 #+END_SRC
 
 
@@ -2941,7 +3136,7 @@ def typecheck(**typemap):
 *** Technical Design
     Technically, this will be achieved via a decorator. The decorator will
     check if the incoming request is from a white-listed IP address.
-    
+
     Then the required URL endpoints can use the decorator to guard access
     to that endpoint.
 
@@ -3026,13 +3221,21 @@ def configure_cors(app):
 # custom error handlers to return JSON errors with appropiate status codes
 def configure_errorhandlers(app):
 
+    @app.errorhandler(400)
+    def bad_request(err):
+        return make_response(jsonify(error=err.description), 400)
+
     @app.errorhandler(404)
     def not_found(err):
         return make_response(jsonify(error=err.description), 404)
 
-    @app.errorhandler(400)
-    def bad_request(err):
-        return make_response(jsonify(error=err.description), 400)
+    @app.errorhandler(405)
+    def method_not_allowed(err):
+        return make_response(jsonify(error=err.description), 405)
+
+    @app.errorhandler(500)
+    def server_error(err):
+        return make_response(jsonify(error=err.description), 500)
 
 
 def configure_logging(app):
