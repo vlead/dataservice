@@ -308,7 +308,13 @@ class Institute(Entity):
 #+END_SRC
 
 **** Functions that operate on Institute domain
+***** getAll: Nil --> set[Institute]
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @staticmethod
+    def get_all():
+        return [i.to_client() for i in Institute.query.all()]
 
+#+END_SRC
 ***** getName: Institute --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_name(self):
@@ -371,14 +377,6 @@ class Institute(Entity):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_developers(self):
         return self.developers
-
-#+END_SRC
-
-***** getAllInstitutes: Nil --> set[Institute]
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @staticmethod
-    def get_all():
-        return [i in Institute.query.all()]
 
 #+END_SRC
 
@@ -501,11 +499,11 @@ class Discipline(Entity):
 #+END_SRC
 
 **** Functions that operate on Discipline domain
-***** getAllDisciplines: Nil --> set[Discipline]
+***** getAll: Nil --> set[Discipline]
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_all():
-        return [i in Discipline.query.all()]
+        return [i.to_client() for i in Discipline.query.all()]
 
 #+END_SRC
 
@@ -651,15 +649,12 @@ class Developer(Entity):
 #+END_SRC
 
 **** Functions that operate on the Developer domain
-***** to_client
+***** getAll: Nil --> set[Developer]
 #+BEGIN_SRC python :tangle src/db.py :eval no
-    def to_client(self):
-        return {
-            'id': self.id,
-            'email_id': self.email_id,
-            'name': self.name,
-            'institute': self.institute.to_client()
-        }
+    @staticmethod
+    def get_all():
+        return [i.to_client() for i in Developer.query.all()]
+
 #+END_SRC
 ***** getId: Developer --> Id
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -684,14 +679,6 @@ class Developer(Entity):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_email(self):
         return self.email_id
-#+END_SRC
-
-***** getAllDevelopers: Nil --> set[Developer]
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @staticmethod
-    def get_all():
-        return [i.to_client() for i in Developer.query.all()]
-
 #+END_SRC
 
 ***** getLabs: Developer --> set[Lab]
@@ -813,11 +800,11 @@ Technology(name=String
 
 #+END_SRC
 
-***** getAllTechnologies: Nil --> set[Technology]
+***** getAll: Nil --> set[Technology]
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_all():
-        return [i for i in Technology.query.all()]
+        return [i.to_client() for i in Technology.query.all()]
 
 #+END_SRC
 
@@ -1026,6 +1013,13 @@ class Experiment(Entity):
         self.save()
 #+END_SRC
 
+***** getAll: Nil --> set[Experiment]
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @staticmethod
+    def get_all():
+        return [i.to_client() for i in Experiment.query.all()]
+
+#+END_SRC
 ***** getName: Experiment --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_name(self):
@@ -1152,16 +1146,25 @@ a
 #+END_SRC
 
 ***** to_client
+As JSON can't handle circular references, we cannot use =lab.to_client()= here
+as it will fall into infinite recursion. Hence we just include the necessary
+info about the lab.
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def to_client(self):
         return {
             'id': self.id,
             'name': self.name,
             'content_url': self.content_url,
-            'content_on': self.content_on,
+            'content_hosted_on': self.content_hosted_on,
             'simulation_url': self.simulation_url,
-            'simulation_on': self.simulation_on,
-            'lab': self.lab.to_client()
+            'simulation_hosted_on': self.simulation_hosted_on,
+            # as JSON can't handle circular references, we cannot do
+            # lab.to_client() here as it will fall into infinite recursion
+            'lab': {
+                'id': self.lab.id,
+                'lab_id': self.lab.lab_id,
+                'name': self.lab.name
+            }
         }
 
 #+END_SRC
@@ -1650,12 +1653,12 @@ Lab(name=<instance of Name class>,
         return Lab.query.get(id)
 #+END_SRC
 
-***** getAllLabs: Nil --> set[Lab]
+***** getAll: Nil --> set[Lab]
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_all(fields=None):
         # get all labs from db
-        labs = [i in Lab.query.all()]
+        labs = [i.to_client() for i in Lab.query.all()]
         print 'total count of labs'
         print len(labs)
         # print fields
@@ -2476,7 +2479,7 @@ api = Blueprint('APIs', __name__)
 #+BEGIN_SRC python :tangle src/api.py :eval no
 entity_pairs = {
     'labs': {
-        'class': 'Lab',
+        'entity': Lab,
         'attributes': ['id',
                        'name',
                        'lab_id',
@@ -2495,6 +2498,21 @@ entity_pairs = {
                        'status',
                        'is_web_2_compliant_lab',
                        'is_phase_2_lab']
+    },
+    'institutes': {
+        'entity': Institute
+    },
+    'disciplines': {
+        'entity': Discipline
+    },
+    'developers': {
+        'entity': Developer
+    },
+    'technologies': {
+        'entity': Technology
+    },
+    'experiments': {
+        'entity': Experiment
     }
 }
 
@@ -2504,7 +2522,45 @@ entity_pairs = {
 @api.route('/<entity>', methods=['GET'])
 def query_an_entity(entity):
     # (ret_val, entity_class) = validate_entity(entity, request.args.keys())
-    return str(request.args.lists())
+    # return str(request.args.lists())
+    if entity not in entity_pairs:
+        abort(400, 'Entity %s is not valid.' % entity)
+
+    curr_entity = entity_map_types[entity]['entity']
+    return jsonify_list(curr_entity.get_all())
+
+@api.route('/<entity>/<id>', methods=['GET'])
+def get_specific_entity(entity, id):
+    if entity not in entity_pairs:
+        abort(400, 'Entity %s is not valid.' % entity)
+
+    curr_entity = entity_map_types[entity]['entity']
+
+    record = curr_entity.get_by_id(id)
+    if not record:
+        abort(404, "No entry for %s with id: %s found." % (entity, id))
+
+    return jsonify(record.to_client())
+
+@api.route('/<entity>/<id>/<entity2>', methods=['GET'])
+def get_entity_of_a_specific_entity(entity, id, entity2):
+    if entity not in entity_pairs:
+        abort(400, 'Entity %s is not valid.' % entity)
+
+    curr_entity = entity_map_types[entity]['entity']
+
+    record = curr_entity.get_by_id(id)
+    if not record:
+        abort(404, "No entry for %s with id: %s found." % (entity, id))
+
+    # check if the entity2 is an attr of entity
+    if entity2 not in entity_map_types[entity]['types']:
+        abort(400, 'Entity %s is not valid attribute of %s' % (entity2, entity))
+
+    #FIXME: ugly hack, I know! :/. I don't know how to get the attr
+    # otherwise..
+    result = record.__getattribute__('get_'+entity2)()
+    return jsonify_list(result)
 
 #+END_SRC
 ** REST API to create/update/delete data
@@ -2667,6 +2723,7 @@ entity_map_types = {
         'entity': Lab,
         'types': {
             'name': str,
+            'lab_id': str,
             'institute': Institute,
             'discipline': Discipline,
             'integration_level': IntegrationLevel,
@@ -2773,7 +2830,8 @@ def delete_record(entity, id):
             db.session.delete(record)
             db.session.commit()
         except Exception, e:
-            abort(500, e)
+            print e
+            abort(500, str(e))
 
     return jsonify(id=id, status="success")
 #+END_SRC
@@ -2815,7 +2873,8 @@ def update_record(entity_name, entity, id):
         print "Updating record: %s with data: %s" % (record, data)
         record.update(**data)
     except Exception, e:
-        abort(500, e)
+        print e
+        abort(500, str(e))
 
     return jsonify(record.to_client())
 #+END_SRC
@@ -2919,6 +2978,50 @@ interpreter expects them to be.
 <<modify-entity>>
 #+END_SRC
 
+
+**** The API to create new entries
+***** API route definition
+#+NAME: create-entity
+#+BEGIN_SRC python
+@api.route('/<entity>', methods=['POST'])
+def create_entity(entity):
+    if entity not in entity_map_types:
+        abort(400, 'Entity %s is not valid.' % entity)
+
+    curr_entity = entity_map_types[entity]['entity']
+
+    status = create_record(entity, curr_entity)
+    return status
+
+#+END_SRC
+***** Create Record function
+#+NAME: create-record
+#+BEGIN_SRC python
+def create_record(entity_name, entity):
+
+    data = parse_request(request)
+    if not data or type(data) is not dict:
+        abort(400, "The data should be in JSON format")
+
+    data = typecast_data(entity_name, data)
+    print "creating new, typecasted data: %s" % data
+
+    try:
+        print "Creating record: %s with data: %s" % (entity_name, data)
+        new_record = entity(**data)
+    except Exception, e:
+        print e
+        abort(500, str(e))
+
+    return jsonify(new_record.to_client())
+#+END_SRC
+
+
+***** Code tangle
+#+BEGIN_SRC python :tangle src/api.py :eval no :noweb yes
+<<create-record>>
+<<create-entity>>
+#+END_SRC
 
 ** Custom Exceptions
 
