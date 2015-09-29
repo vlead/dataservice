@@ -13,12 +13,14 @@
 
 * Requirements
   1. The model of the data on whose foundation =dataservice= is built
-     is explicitly laid out. <<req1>>
+     is explicitly laid out.(v0.1.0) <<req1>>
   2. Python API is provided as a wrapper to make CRUD operations on
-     the data.
+     the data. (v0.1.0)
   3. REST API is provided for various applications to perform CRUD operations
-     on the data.
+     on the data. (v0.2.0)
   4. A bulk update interface, to update bulk data at once. <<req4>>
+  5. Feedback portal to save data to data service. (v0.2.0)
+  6. A weekly dump of the feedback data to an excel file. (v0.2.0)
 
 * Design & Implementation
 ** Some initialization and boilerplate code
@@ -1155,9 +1157,9 @@ info about the lab.
             'id': self.id,
             'name': self.name,
             'content_url': self.content_url,
-            'content_hosted_on': self.content_hosted_on,
+            'content_hosted_on': self.content_hosted_on.to_client(),
             'simulation_url': self.simulation_url,
-            'simulation_hosted_on': self.simulation_hosted_on,
+            'simulation_hosted_on': self.simulation_hosted_on.to_client(),
             # as JSON can't handle circular references, we cannot do
             # lab.to_client() here as it will fall into infinite recursion
             'lab': {
@@ -2063,8 +2065,8 @@ class Feedback(Entity):
     time = db.Column(db.DateTime, default=datetime.utcnow)
     ip = db.Column(db.String(16))
 
-    data = db.Column(JSONType)
-    faculty = db.Column(db.Boolean)
+    #data = db.Column(JSONType)
+    type_of_user = db.Column(db.String(32))
     experiment_attempted = db.Column(db.Boolean)
     experiment_works = db.Column(db.Boolean)
     if_no_what_issue = db.Column(db.Text)
@@ -2077,14 +2079,21 @@ class Feedback(Entity):
      Signature of the constructor is as follows. Attributes inside [...]  are
      optional. Others are mandatory.
 #+BEGIN_EXAMPLE python
-    feedback = Feedback(lab=<instance of Lab>,
-                        experiment=<instance of Experiment>
-                        data=<dict>
+    feedback = Feedback(lab=<instance of Lab>
+                        [,experiment=<instance of Experiment>]
                         [,user_name=<instance of Name>]
                         [,user_email=<instance of Email>]
                         [,user_institute=<str>]
                         [,user_discipline=<str>]
-                        [,ip=<str>])
+                        [,ip=<str>]
+                        [,type_of_user=<str>]
+                        [,experiment_attempted=<bool>]
+                        [,experiment_works=<bool>]
+                        [,if_no_what_issue=<str>]
+                        [,problem_while_performing_experiment=<str>]
+                        [,most_interesting_things=<str>]
+                        [,why_how_plan_to_use_vlabs=<str>]
+                        [,suggestions=<str>])
 #+END_EXAMPLE
 
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -2092,16 +2101,9 @@ class Feedback(Entity):
         if 'lab' not in kwargs:
             raise AttributeRequired("`lab` attribute is required.")
 
-        if 'data' not in kwargs:
-            raise AttributeRequired("`data` attribute is required.")
-
         if not isinstance(kwargs['lab'], Lab):
             raise TypeError("`lab` should be an instance of class Lab")
         self.lab = kwargs['lab']
-
-        if not isinstance(kwargs['data'], dict):
-            raise TypeError("`data` should be a python `dict`")
-        self.data = kwargs['data']
 
         if 'experiment' in kwargs:
             if not isinstance(kwargs['experiment'], Experiment):
@@ -2109,14 +2111,14 @@ class Feedback(Entity):
             self.experiment = kwargs['experiment']
 
         if 'user_name' in kwargs:
-            if not isinstance(kwargs['user_name'], str):
-                raise TypeError("user_name should be of type str")
-            self.user_name = kwargs['user_name']
+            if not isinstance(kwargs['user_name'], Name):
+                raise TypeError("user_name should be of type Name")
+            self.user_name = kwargs['user_name'].value
 
         if 'user_email' in kwargs:
-            if not isinstance(kwargs['user_email'], str):
-                raise TypeError("user_email should be of type str")
-            self.user_email = kwargs['user_email']
+            if not isinstance(kwargs['user_email'], Email):
+                raise TypeError("user_email should be of type Email")
+            self.user_email = kwargs['user_email'].value
 
         if 'user_institute' in kwargs:
             if not isinstance(kwargs['user_institute'], str):
@@ -2133,7 +2135,89 @@ class Feedback(Entity):
                 raise TypeError("ip should be of type str")
             self.ip = kwargs['ip']
 
+        if 'type_of_user' in kwargs:
+            if not isinstance(kwargs['type_of_user'], str):
+                raise TypeError("type_of_user should be of type str")
+            self.type_of_user = kwargs['type_of_user']
+
+        if 'experiment_attempted' in kwargs:
+            if not isinstance(kwargs['experiment_attempted'], bool):
+                raise TypeError("experiment_attempted should be of type bool")
+            self.experiment_attempted = kwargs['experiment_attempted']
+
+        if 'experiment_works' in kwargs:
+            if not isinstance(kwargs['experiment_works'], bool):
+                raise TypeError("experiment_works should be of type bool")
+            self.experiment_works = kwargs['experiment_works']
+
+        if 'if_no_what_issue' in kwargs:
+            if not isinstance(kwargs['if_no_what_issue'], str):
+                raise TypeError("if_no_what_issue should be of type str")
+            self.if_no_what_issue = kwargs['if_no_what_issue']
+
+        if 'most_interesting_things' in kwargs:
+            if not isinstance(kwargs['most_interesting_things'], str):
+                raise TypeError("most_interesting_things should be of type str")
+            self.most_interesting_things = kwargs['most_interesting_things']
+
+        if 'problem_while_performing_experiment' in kwargs:
+            if not isinstance(kwargs['problem_while_performing_experiment'], str):
+                raise TypeError("problem_while_performing_experiment should be of type str")
+            self.problem_while_performing_experiment = kwargs['problem_while_performing_experiment']
+
+        if 'why_how_plan_to_use_vlabs' in kwargs:
+            if not isinstance(kwargs['why_how_plan_to_use_vlabs'], str):
+                raise TypeError("why_how_plan_to_use_vlabs should be of type str")
+            self.why_how_plan_to_use_vlabs = kwargs['why_how_plan_to_use_vlabs']
+
+        if 'suggestions' in kwargs:
+            if not isinstance(kwargs['suggestions'], str):
+                raise TypeError("suggestions should be of type str")
+            self.suggestions = kwargs['suggestions']
+
+
 #+END_SRC
+**** Functions that operate on the Feedback domain
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @staticmethod
+    def get_all():
+        return Feedback.query.all()
+
+    @staticmethod
+    def get_by_id(id):
+        return Feedback.query.get(id)
+
+    def update(self, **kwargs):
+        raise Exception('Feedback data cannot be updated')
+
+    def to_client(self):
+        return {
+            'id': self.id,
+            'lab': {
+                'id': self.lab.id,
+                'lab_id': self.lab.lab_id,
+                'name': self.lab.name
+            },
+            'experiment': self.experiment.to_client() if self.experiment\
+                else None,
+            'user_name': self.user_name,
+            'user_email': self.user_email,
+            'user_institute': self.user_institute,
+            'user_discipline': self.user_discipline,
+            'ip': self.ip,
+            'time': self.time.isoformat(),
+            'type_of_user': self.type_of_user,
+            'experiment_works': self.experiment_works,
+            'experiment_attempted': self.experiment_attempted,
+            'if_no_what_issue': self.if_no_what_issue,
+            'problem_while_performing_experiment':\
+                self.problem_while_performing_experiment,
+            'most_interesting_things': self.most_interesting_things,
+            'why_how_plan_to_use_vlabs': self.why_how_plan_to_use_vlabs,
+            'suggestions': self.suggestions
+        }
+#+END_SRC
+
 *** COMMENT Functions operating on multiple domains
 
 ***** NOTE: is it necessary? getAllLabs: Nil --> set[Lab]
@@ -2521,6 +2605,9 @@ entity_pairs = {
     },
     'experiments': {
         'entity': Experiment
+    },
+    'feedback': {
+        'entity': Feedback
     }
 }
 
@@ -2535,6 +2622,7 @@ def query_an_entity(entity):
         abort(400, 'Entity %s is not valid.' % entity)
 
     curr_entity = entity_map_types[entity]['entity']
+    print "data: %s" % [i.to_client() for i in curr_entity.get_all()]
     return jsonify_list([i.to_client() for i in curr_entity.get_all()])
 
 @api.route('/<entity>/<id>', methods=['GET'])
@@ -2792,6 +2880,26 @@ entity_map_types = {
             'simulation_hosted_on': HostingPlatform,
             'technologies': Technology
         }
+    },
+    'feedback': {
+        'entity': Feedback,
+        'types': {
+            'lab': Lab,
+            'experiment': Experiment,
+            'user_name': Name,
+            'user_email': Email,
+            'user_institute': str,
+            'user_discipline': str,
+            'ip': str,
+            'type_of_user': str,
+            'experiment_attempted': bool,
+            'experiment_works': bool,
+            'if_no_what_issue': str,
+            'problem_while_performing_experiment': str,
+            'most_interesting_things': str,
+            'why_how_plan_to_use_vlabs': str,
+            'suggestions': str
+        }
     }
 }
 #+END_SRC
@@ -3017,6 +3125,7 @@ def create_record(entity_name, entity):
     try:
         print "Creating record: %s with data: %s" % (entity_name, data)
         new_record = entity(**data)
+        new_record.save()
     except Exception, e:
         print e
         abort(500, str(e))
@@ -3030,6 +3139,90 @@ def create_record(entity_name, entity):
 <<create-record>>
 <<create-entity>>
 #+END_SRC
+
+** Published document for the REST APIs
+All APIs of data service are REST-ful. They use HTTP verbs for
+denoting action on various resources.
+
+|-------------+-------------------------|
+| HTTP Method | Action                  |
+|-------------+-------------------------|
+| GET         | Get or Read resource(s) |
+| POST        | Create a resource       |
+| PUT         | Update a resource       |
+| DELETE      | Delete a resource       |
+|-------------+-------------------------|
+
+All APIs follow the pattern of =/<some-resource>/<identifier>=
+Example:
++ =/labs=
++ =/developers/12=
+
+All responses from data service are in JSON format.
+If the request is success, it will return the result in a JSON format.
+If the request is failure, it will return a JSON with the key as
+=error= and the value of that key as the error description.
+  
+*** Feedback Data
+1. Submit feedback data
+Submit feedback data to the data service.
+=POST /feedback=
+*Parameters*:
+|-------------------------------------+---------+------------------------------------------------------------------------------------------------------------|
+| Name                                | Type    | Description                                                                                                |
+|-------------------------------------+---------+------------------------------------------------------------------------------------------------------------|
+| lab                                 | object  | Lab as a JSON object containing the =id= of the lab                                                        |
+| experiment                          | object  | Experiment as a JSON object containing the =id= of the experiment                                          |
+| user_name                           | string  | Name of the user submitting feedback                                                                       |
+| user_email                          | string  | Email address of the user                                                                                  |
+| user_institute                      | string  | Institute name of the user                                                                                 |
+| user_discipline                     | string  | Discipline of the user                                                                                     |
+| ip                                  | string  | IP address of user from where the request came                                                             |
+| type_of_user                        | string  | Type of the user like student, faculty etc.                                                                |
+| experiment_attempted                | boolean | =true= if experiment attempted else =false=                                                                |
+| experiment_works                    | boolean | =true= if experiment worked else =false=                                                                   |
+| if_no_what_issue                    | string  | field for answer to question: "If no, what is the issue with it?"                                          |
+| problem_while_performing_experiment | string  | field for answer to question: "Specify the problems or difficulties faced while performing the experiment" |
+| most_interesting_things             | string  | field for answer to question: "What are the most interesting things about the experiment"                  |
+| why_how_plan_to_use_vlabs           | string  | field for answer to question: "Why and how often do you plan to use Virtual Labs"                          |
+| suggestions                         | string  | field for answer to question: "What are your suggestions about making them better"                         |
+|-------------------------------------+---------+------------------------------------------------------------------------------------------------------------|
+Where the =lab= parameter is mandatory, all other parameters are
+optional.
+Example:
+#+BEGIN_EXAMPLE
+{
+  "experiment": {"id": 1}, 
+  "experiment_attempted": true, 
+  "experiment_works": false, 
+  "if_no_what_issue": "keuh! kiagkwdba ks, asad.", 
+  "ip": "14.15.16.7", 
+  "lab": {
+    "id": 1, 
+    "lab_id": "CSE02", 
+    "name": "Data Structures"
+  }, 
+  "most_interesting_things": "riasjfufhbckfuygfksfkebf eugfskfem", 
+  "problem_while_performing_experiment": "3uikjklshfeyr#R&YFB fIUGfIBFF", 
+  "suggestions": "rbkrjsfgkkbvkr",
+  "type_of_user": "student", 
+  "user_discipline": "electronics", 
+  "user_email": "joe@smith.com", 
+  "user_institute": "GNIT, Hyderabad", 
+  "user_name": "Joe Smith", 
+  "why_how_plan_to_use_vlabs": "No Plans"
+}
+#+END_EXAMPLE
+
+2. Get all feedback data
+To list all feedback data, make a =GET= request to =/feedback=
+=GET /feedback=
+
+3. Get specific feedback data
+Get a specific feedback data using the identifier =id=.
+Make a =GET= request to =/feedback= with the =id=
+
+=GET /feedback/<id>=
 
 ** Custom Exceptions
 
