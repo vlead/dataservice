@@ -312,7 +312,7 @@ class Institute(Entity):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_all():
-        return [i.to_client() for i in Institute.query.all()]
+        return Institute.query.all()
 
 #+END_SRC
 ***** getName: Institute --> Name
@@ -503,7 +503,7 @@ class Discipline(Entity):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_all():
-        return [i.to_client() for i in Discipline.query.all()]
+        return Discipline.query.all()
 
 #+END_SRC
 
@@ -653,7 +653,7 @@ class Developer(Entity):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_all():
-        return [i.to_client() for i in Developer.query.all()]
+        return Developer.query.all()
 
 #+END_SRC
 ***** getId: Developer --> Id
@@ -804,7 +804,7 @@ Technology(name=String
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_all():
-        return [i.to_client() for i in Technology.query.all()]
+        return Technology.query.all()
 
 #+END_SRC
 
@@ -1017,7 +1017,7 @@ class Experiment(Entity):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_all():
-        return [i.to_client() for i in Experiment.query.all()]
+        return Experiment.query.all()
 
 #+END_SRC
 ***** getName: Experiment --> Name
@@ -1658,7 +1658,7 @@ Lab(name=<instance of Name class>,
     @staticmethod
     def get_all(fields=None):
         # get all labs from db
-        labs = [i.to_client() for i in Lab.query.all()]
+        labs = Lab.query.all()
         print 'total count of labs'
         print len(labs)
         # print fields
@@ -2064,6 +2064,14 @@ class Feedback(Entity):
     ip = db.Column(db.String(16))
 
     data = db.Column(JSONType)
+    faculty = db.Column(db.Boolean)
+    experiment_attempted = db.Column(db.Boolean)
+    experiment_works = db.Column(db.Boolean)
+    if_no_what_issue = db.Column(db.Text)
+    problem_while_performing_experiment = db.Column(db.Text)
+    most_interesting_things = db.Column(db.Text)
+    why_how_plan_to_use_vlabs = db.Column(db.Text)
+    suggestions = db.Column(db.Text)
 #+END_SRC
 **** Constructor
      Signature of the constructor is as follows. Attributes inside [...]  are
@@ -2527,7 +2535,7 @@ def query_an_entity(entity):
         abort(400, 'Entity %s is not valid.' % entity)
 
     curr_entity = entity_map_types[entity]['entity']
-    return jsonify_list(curr_entity.get_all())
+    return jsonify_list([i.to_client() for i in curr_entity.get_all()])
 
 @api.route('/<entity>/<id>', methods=['GET'])
 def get_specific_entity(entity, id):
