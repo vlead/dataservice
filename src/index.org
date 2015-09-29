@@ -95,6 +95,10 @@ class Entity(db.Model):
     #except Exception as e:
     #pass
 
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
 #+END_SRC
 
 ** The Data Model
@@ -2190,6 +2194,9 @@ class Feedback(Entity):
     def update(self, **kwargs):
         raise Exception('Feedback data cannot be updated')
 
+    def delete(self):
+        raise Exception('Feedback data cannot be deleted')
+
     def to_client(self):
         return {
             'id': self.id,
@@ -2943,8 +2950,9 @@ def delete_record(entity, id):
         abort(404, 'No %s with id %s' % (entity, id))
     else:
         try:
-            db.session.delete(record)
-            db.session.commit()
+            record.delete()
+            #db.session.delete(record)
+            #db.session.commit()
         except Exception, e:
             print e
             abort(500, str(e))
