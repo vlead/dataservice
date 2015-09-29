@@ -1161,9 +1161,11 @@ info about the lab.
             'id': self.id,
             'name': self.name,
             'content_url': self.content_url,
-            'content_hosted_on': self.content_hosted_on.to_client(),
+            'content_hosted_on': self.content_hosted_on.to_client() if\
+                self.content_hosted_on else None,
             'simulation_url': self.simulation_url,
-            'simulation_hosted_on': self.simulation_hosted_on.to_client(),
+            'simulation_hosted_on': self.simulation_hosted_on.to_client() if\
+                self.simulation_hosted_on else None,
             # as JSON can't handle circular references, we cannot do
             # lab.to_client() here as it will fall into infinite recursion
             'lab': {
@@ -3170,7 +3172,7 @@ All responses from data service are in JSON format.
 If the request is success, it will return the result in a JSON format.
 If the request is failure, it will return a JSON with the key as
 =error= and the value of that key as the error description.
-  
+
 *** Feedback Data
 1. Submit feedback data
 Submit feedback data to the data service.
@@ -3200,24 +3202,24 @@ optional.
 Example:
 #+BEGIN_EXAMPLE
 {
-  "experiment": {"id": 1}, 
-  "experiment_attempted": true, 
-  "experiment_works": false, 
-  "if_no_what_issue": "keuh! kiagkwdba ks, asad.", 
-  "ip": "14.15.16.7", 
+  "experiment": {"id": 1},
+  "experiment_attempted": true,
+  "experiment_works": false,
+  "if_no_what_issue": "keuh! kiagkwdba ks, asad.",
+  "ip": "14.15.16.7",
   "lab": {
-    "id": 1, 
-    "lab_id": "CSE02", 
+    "id": 1,
+    "lab_id": "CSE02",
     "name": "Data Structures"
-  }, 
-  "most_interesting_things": "riasjfufhbckfuygfksfkebf eugfskfem", 
-  "problem_while_performing_experiment": "3uikjklshfeyr#R&YFB fIUGfIBFF", 
+  },
+  "most_interesting_things": "riasjfufhbckfuygfksfkebf eugfskfem",
+  "problem_while_performing_experiment": "3uikjklshfeyr#R&YFB fIUGfIBFF",
   "suggestions": "rbkrjsfgkkbvkr",
-  "type_of_user": "student", 
-  "user_discipline": "electronics", 
-  "user_email": "joe@smith.com", 
-  "user_institute": "GNIT, Hyderabad", 
-  "user_name": "Joe Smith", 
+  "type_of_user": "student",
+  "user_discipline": "electronics",
+  "user_email": "joe@smith.com",
+  "user_institute": "GNIT, Hyderabad",
+  "user_name": "Joe Smith",
   "why_how_plan_to_use_vlabs": "No Plans"
 }
 #+END_EXAMPLE
@@ -3547,7 +3549,10 @@ def configure_errorhandlers(app):
 
     @app.errorhandler(500)
     def server_error(err):
-        return make_response(jsonify(error=err.description), 500)
+        if 'description' in err:
+            return make_response(jsonify(error=err.description), 500)
+        else:
+            return make_response(jsonify(error=err), 500)
 
 
 def configure_logging(app):
@@ -4668,7 +4673,186 @@ class TestExperiment(TestCase):
 
 #+END_SRC
 
+*** Run the tests
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
+
+if __name__ == '__main__':
+    unittest.main()
+
+#+END_SRC
+
+** Testing the REST API
+*** Imports and initialization of testcases
+
+#+BEGIN_SRC python :tangle tests/test_api.py :eval no
+# -*- coding: utf-8 -*-
+
+import unittest
+from flask.ext.testing import TestCase
+# import json
+
+from src.db import *
+from tests.helper import *
+from src.app import create_app
+from src.ds_exceptions import AttributeRequired
+
+config = {
+    'SQLALCHEMY_DATABASE_URI': ''
+}
+#+END_SRC
+
+*** Tests for Lab
+#+BEGIN_SRC python :tangle tests/test_api.py :eval no
+class TestLab(TestCase):
+
+    TESTING = True
+
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def test_get_all_labs(self):
+        print "test_get_all_labs"
+        lab1 = Lab(name="DS", lab_id="cse01")
+        lab1.save()
+        lab2 = Lab(name="Foo", lab_id="cse23")
+        lab2.save()
+        r = self.client.get('/labs')
+        result = json.loads(r.data)
+        self.assertEquals(len(result), 2)
+
+    def test_get_one_lab(self):
+        print "test_get_one_lab"
+        lab1 = Lab(name="DS", lab_id="cse01")
+        lab1.save()
+        lab2 = Lab(name="Foo", lab_id="cse23")
+        lab2.save()
+        r = self.client.get('/labs/1')
+        result = json.loads(r.data)
+        self.assertEqual(result['name'], "DS")
+
+    def test_update_existing_lab(self):
+        print "test_update_existing_lab"
+        instt = Institute(name="MIT", institute_id="mit")
+        instt.save()
+        print instt.to_client()
+        lab1 = Lab(name="DS", lab_id="cse01")
+        lab1.save()
+        r = self.client.put('/labs/1',
+                            data=json.dumps({'institute': instt.to_client()}))
+        result = json.loads(r.data)
+        self.assertEqual(result['institute']['name'], "MIT")
+
+    def test_create_new_lab(self):
+        print "test_create_new_lab"
+        r = self.client.post('/labs', data={'name': 'DS', 'lab_id': 'ds'})
+        result = json.loads(r.data)
+        self.assertEqual(result['name'], "DS")
+
+    def test_delete_lab(self):
+        print "test_delete_lab"
+        lab1 = Lab(name="DS", lab_id="cse01")
+        lab1.save()
+        lab2 = Lab(name="Foo", lab_id="cse23")
+        lab2.save()
+        r = self.client.delete('/labs/2')
+        r = self.client.get('/labs')
+        result = json.loads(r.data)
+        self.assertEqual(len(result), 1)
+
+#+END_SRC
+
+*** Tests for Experiment
+#+BEGIN_SRC python :tangle tests/test_api.py :eval no
+class TestExperiment(TestCase):
+
+    TESTING = True
+
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def test_get_all_experiments(self):
+        print "test_get_all_experiments"
+        lab1 = Lab(name="DS", lab_id="cse01")
+        lab1.save()
+        exp1 = Experiment(name="Spanning Tree", lab=lab1)
+        exp1.save()
+        exp2 = Experiment(name="Lists", lab=lab1)
+        exp2.save()
+        r = self.client.get('/experiments')
+        result = json.loads(r.data)
+        print result
+        self.assertEquals(len(result), 2)
+
+    def test_get_one_experiment(self):
+        print "test_get_one_experiment"
+        lab1 = Lab(name="DS", lab_id="cse01")
+        lab1.save()
+        exp1 = Experiment(name="Spanning Tree", lab=lab1)
+        exp1.save()
+        exp2 = Experiment(name="Lists", lab=lab1)
+        exp2.save()
+        r = self.client.get('/experiments/1')
+        result = json.loads(r.data)
+        print result
+        self.assertEqual(result['name'], "Spanning Tree")
+
+    def test_update_existing_experiment(self):
+        print "test_update_existing_experiment"
+        lab1 = Lab(name="DS", lab_id="cse01")
+        lab1.save()
+        platform = HostingPlatform(name="Digital Ocean")
+        platform.save()
+        exp1 = Experiment(name="Spanning Tree", lab=lab1)
+        exp1.save()
+        r = self.client.put('/experiments/1',
+                            data=json.dumps({'simulation_hosted_on':
+                                             platform.to_client()}))
+        result = json.loads(r.data)
+        self.assertEqual(result['simulation_hosted_on']['name'], "Digital Ocean")
+
+    def test_create_new_experiment(self):
+        print "test_create_new_experiment"
+        lab1 = Lab(name="DS", lab_id="cse01")
+        lab1.save()
+        r = self.client.post('/experiments',
+                             data=json.dumps({'name': 'Spanning Tree',
+                                              'lab': lab1.to_client()}))
+        result = json.loads(r.data)
+        self.assertEqual(result['name'], "Spanning Tree")
+
+    def test_delete_experiment(self):
+        print "test_delete_experiment"
+        lab1 = Lab(name="DS", lab_id="cse01")
+        lab1.save()
+        exp1 = Experiment(name="Spanning Tree", lab=lab1)
+        exp1.save()
+        exp2 = Experiment(name="Lists", lab=lab1)
+        exp2.save()
+        r = self.client.delete('/experiments/1')
+        r = self.client.get('/experiments')
+        result = json.loads(r.data)
+        self.assertEqual(len(result), 1)
+
+#+END_SRC
+
+*** Run the tests
+#+BEGIN_SRC python :tangle tests/test_api.py :eval no
 
 if __name__ == '__main__':
     unittest.main()
