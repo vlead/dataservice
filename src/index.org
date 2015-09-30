@@ -127,7 +127,7 @@ class Name(object):
 class Email(object):
     def __init__(self, value):
         if not re.search('[^@]+@[^@]+\.[^@]+', value):
-            raise TypeError('%s is not an email_id!' % value)
+            raise TypeError('%s is not an email!' % value)
         self.value = value
 #+END_SRC
 *** URL
@@ -619,7 +619,7 @@ class Developer(Entity):
     id = db.Column(db.Integer, primary_key=True)
 
     name = db.Column(db.String(64), nullable=False)
-    email_id = db.Column(db.String(128), unique=True)
+    email = db.Column(db.String(128), unique=True)
     institute_id = db.Column(db.Integer, db.ForeignKey('institutes.id'))
 
 #+END_SRC
@@ -627,30 +627,30 @@ class Developer(Entity):
       Signature of constructor
 #+BEGIN_EXAMPLE
     developer = Developer(name=<instance of class Name>,
-                          email_id=<instance of Email>,
+                          email=<instance of Email>,
                           institute=<instance of Institute>)
 #+END_EXAMPLE
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def __init__(self, **kwargs):
         if 'name' not in kwargs:
-            raise AttributeRequired("non-nullable attribute name is missing")
+            raise AttributeRequired("mandatory attribute `name` is missing")
         self.set_name(kwargs['name'])
 
-        if 'email_id' not in kwargs:
-            raise AttributeRequired("non-nullable attribute email is missing")
-        self.set_email(kwargs['email_id'])
+        if 'email' not in kwargs:
+            raise AttributeRequired("mandatory attribute `email` is missing")
+        self.set_email(kwargs['email'])
 
         if 'institute' not in kwargs:
-            raise AttributeRequired("non-nullable attribute institute is missing")
+            raise AttributeRequired("mandatory attribute `institute` is missing")
         self.set_institute(kwargs['institute'])
 
     def __str__(self):
         return "Name = %s, e-mail id = %s, institute = %s" % \
-            (self.name, self.email_id, self.institute.name)
+            (self.name, self.email, self.institute.name)
 
     def __repr__(self):
         return "Name = %s, e-mail id = %s, institute = %s" % \
-            (self.name, self.email_id, self.institute.name)
+            (self.name, self.email, self.institute.name)
 
 #+END_SRC
 
@@ -684,7 +684,7 @@ class Developer(Entity):
 ***** getEmail: Developer --> Email
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_email(self):
-        return self.email_id
+        return self.email
 #+END_SRC
 
 ***** getLabs: Developer --> set[Lab]
@@ -710,9 +710,9 @@ class Developer(Entity):
 
 ***** setEmail: Developer, Email --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(email_id=Email)
-    def set_email(self, email_id):
-        self.email_id = email_id.value
+    @typecheck(email=Email)
+    def set_email(self, email):
+        self.email = email.value
         self.save()
 #+END_SRC
 ***** setInstitute: Developer, Institute --> Void
@@ -728,7 +728,7 @@ class Developer(Entity):
     def to_client(self):
         return {
             'id': self.id,
-            'email_id': self.email_id,
+            'email': self.email,
             'name': self.name,
             'institute': self.institute.to_client()
         }
@@ -738,7 +738,7 @@ class Developer(Entity):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def to_csv(self):
         d = OrderedDict()
-        d['email_id'] = self.email_id
+        d['email'] = self.email
         d['name'] = self.name
         d['institute_id'] = self.institute.institute_id
         return d
@@ -2866,7 +2866,7 @@ entity_map_types = {
         'entity': Developer,
         'types': {
             'name': Name,
-            'email_id': Email,
+            'email': Email,
             'institute': Institute
         }
     },
@@ -3549,10 +3549,13 @@ def configure_errorhandlers(app):
 
     @app.errorhandler(500)
     def server_error(err):
-        if 'description' in err:
+        try:
             return make_response(jsonify(error=err.description), 500)
-        else:
-            return make_response(jsonify(error=err), 500)
+        except Exception:
+            try:
+                return make_response(jsonify(error=err.message), 500)
+            except Exception:
+                return make_response(jsonify(error=str(err)), 500)
 
 
 def configure_logging(app):
@@ -3851,9 +3854,9 @@ class TestLab(TestCase):
     def test_lab_get_developers(self):
         print "test_lab_get_developers"
         instt = Institute(name="MIT", institute_id="mit")
-        dev1 = Developer(name=Name("Joe"), email_id=Email("joe@mit.com"),
+        dev1 = Developer(name=Name("Joe"), email=Email("joe@mit.com"),
                          institute=instt)
-        dev2 = Developer(name=Name("Poe"), email_id=Email("poe@mit.com"),
+        dev2 = Developer(name=Name("Poe"), email=Email("poe@mit.com"),
                          institute=instt)
         devs = [dev1, dev2]
         lab = Lab(name="DS", lab_id="ds", developers=devs)
@@ -3948,7 +3951,7 @@ class TestLab(TestCase):
         print "test_lab_add_developer"
         lab = Lab(name="DS", lab_id="ds")
         instt = Institute(name="MIT", institute_id="mit")
-        dev = Developer(name=Name("Joe"), email_id=Email("joe@mit.com"),
+        dev = Developer(name=Name("Joe"), email=Email("joe@mit.com"),
                         institute=instt)
         self.assertEqual(len(lab.get_developers()), 0)
         lab.add_developer(dev)
@@ -3957,7 +3960,7 @@ class TestLab(TestCase):
     def test_lab_remove_developer(self):
         print "test_lab_remove_developer"
         instt = Institute(name="MIT", institute_id="mit")
-        dev = Developer(name=Name("Joe"), email_id=Email("joe@mit.com"),
+        dev = Developer(name=Name("Joe"), email=Email("joe@mit.com"),
                         institute=instt)
         lab = Lab(name="DS", lab_id="ds", developers=[dev])
         self.assertEqual(len(lab.get_developers()), 1)
@@ -4131,8 +4134,8 @@ class TestInstitute(TestCase):
     def test_get_institute_developers(self):
         print "test_get_institute_developers"
         instt = Institute(name="MIT", institute_id="mit")
-        dev1 = Developer(name=Name("Alan"), email_id=Email("alan@example.com"), institute=instt)
-        dev2 = Developer(name=Name("john"), email_id=Email("john@example.com"), institute=instt)
+        dev1 = Developer(name=Name("Alan"), email=Email("alan@example.com"), institute=instt)
+        dev2 = Developer(name=Name("john"), email=Email("john@example.com"), institute=instt)
         devs = [dev1, dev2]
 
         self.assertItemsEqual(instt.get_developers(), devs)
@@ -4165,7 +4168,7 @@ class TestDeveloper(TestCase):
                                      inst)
         print "developer = %s" % developer
         self.assertEqual("Thirumal Ravula", developer.name)
-        self.assertEqual("travula@gmail.com", developer.email_id)
+        self.assertEqual("travula@gmail.com", developer.email)
 
     def test_developer_to_client(self):
         print "test_developer_to_client"
@@ -4176,7 +4179,7 @@ class TestDeveloper(TestCase):
         dev = Developer.get_by_id(1)
         dev_dict = dev.to_client()
         print dev_dict
-        self.assertEqual("travula@gmail.com", dev_dict['email_id'])
+        self.assertEqual("travula@gmail.com", dev_dict['email'])
         self.assertEqual("Thirumal Ravula", dev_dict['name'])
         self.assertEqual("MIT", dev_dict['institute']['name'])
 
@@ -4196,7 +4199,7 @@ class TestDeveloper(TestCase):
         developer.save()
         dev = Developer.get_by_id(1)
         self.assertEqual("Thirumal Ravula", dev.name)
-        self.assertEqual("travula@gmail.com", dev.email_id)
+        self.assertEqual("travula@gmail.com", dev.email)
         self.assertEqual("MIT", dev.institute.name)
         self.assertEqual("mit", dev.institute.institute_id)
 
@@ -4234,13 +4237,13 @@ class TestDeveloper(TestCase):
         dev_list = Developer.get_all()
         for dev in dev_list:
             print dev
-        self.assertEqual("travula@gmail.com", dev_list[0]['email_id'])
+        self.assertEqual("travula@gmail.com", dev_list[0]['email'])
         self.assertEqual("Thirumal Ravula", dev_list[0]['name'])
         self.assertEqual("MIT", dev_list[0]['institute']['name'])
-        self.assertEqual("anon.ray@gmail.com", dev_list[1]['email_id'])
+        self.assertEqual("anon.ray@gmail.com", dev_list[1]['email'])
         self.assertEqual("Anon Ray", dev_list[1]['name'])
         self.assertEqual("MIT", dev_list[1]['institute']['name'])
-        self.assertEqual("ambika@vlabs.ac.in", dev_list[2]['email_id'])
+        self.assertEqual("ambika@vlabs.ac.in", dev_list[2]['email'])
         self.assertEqual("Ambika Kaul", dev_list[2]['name'])
         self.assertEqual("MIT", dev_list[2]['institute']['name'])
 
@@ -4296,7 +4299,7 @@ class TestDeveloper(TestCase):
         developer.set_email(Email("anon.ray@gmail.com"))
         developer.save()
         dev = Developer.get_by_id(1)
-        self.assertEqual("anon.ray@gmail.com", dev.email_id)
+        self.assertEqual("anon.ray@gmail.com", dev.email)
 
     def test_developer_set_institute(self):
         print "test_developer_set_institute"
@@ -4851,6 +4854,395 @@ class TestExperiment(TestCase):
 
 #+END_SRC
 
+*** Tests for Technology
+#+BEGIN_SRC python :tangle tests/test_api.py :eval no
+class TestTechnology(TestCase):
+
+    TESTING = True
+
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def test_get_all_technologies(self):
+        print "test_get_all_technologies"
+        tech1 = Technology(name="php5")
+        tech1.save()
+        tech2 = Technology(name="mysql")
+        tech2.save()
+        r = self.client.get('/technologies')
+        result = json.loads(r.data)
+        print result
+        self.assertEquals(len(result), 2)
+
+    def test_get_one_technology(self):
+        print "test_get_one_technology"
+        tech1 = Technology(name="php5")
+        tech1.save()
+        tech2 = Technology(name="mysql")
+        tech2.save()
+        r = self.client.get('/technologies/1')
+        result = json.loads(r.data)
+        print result
+        self.assertEqual(result['name'], "php5")
+
+    def test_update_existing_technology(self):
+        print "test_update_existing_technology"
+        tech1 = Technology(name="php5")
+        tech1.save()
+        r = self.client.put('/technologies/1',
+                            data=json.dumps({'version': '5.3', 'foss': True}))
+        result = json.loads(r.data)
+        self.assertEqual(result['version'], "5.3")
+
+    def test_create_new_technology(self):
+        print "test_create_new_technology"
+        r = self.client.post('/technologies',
+                             data=json.dumps({'name': 'php5', 'version': '5.2',
+                                              'foss': True}))
+        result = json.loads(r.data)
+        self.assertEqual(result['name'], "php5")
+
+    def test_delete_technology(self):
+        print "test_delete_technology"
+        tech1 = Technology(name="php5")
+        tech1.save()
+        tech2 = Technology(name="mysql")
+        tech2.save()
+        r = self.client.delete('/technologies/1')
+        r = self.client.get('/technologies')
+        result = json.loads(r.data)
+        self.assertEqual(len(result), 1)
+
+#+END_SRC
+
+*** Tests for Developer
+#+BEGIN_SRC python :tangle tests/test_api.py :eval no
+class TestDeveloper(TestCase):
+
+    TESTING = True
+
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def test_get_all_developers(self):
+        print "test_get_all_developers"
+        instt = Institute(name="MIT", institute_id="mit")
+        instt.save()
+        dev1 = Developer(name=Name("Joe Smith"),
+                         email=Email("joe@smith.com"),
+                         institute=instt)
+        dev1.save()
+        dev2 = Developer(name=Name("Will Smith"),
+                         email=Email("will@smith.com"),
+                         institute=instt)
+        dev2.save()
+        r = self.client.get('/developers')
+        result = json.loads(r.data)
+        print result
+        self.assertEquals(len(result), 2)
+
+    def test_get_one_developer(self):
+        print "test_get_one_developer"
+        instt = Institute(name="MIT", institute_id="mit")
+        instt.save()
+        dev1 = Developer(name=Name("Joe Smith"),
+                         email=Email("joe@smith.com"),
+                         institute=instt)
+        dev1.save()
+        dev2 = Developer(name=Name("Will Smith"),
+                         email=Email("will@smith.com"),
+                         institute=instt)
+        dev2.save()
+        r = self.client.get('/developers/1')
+        result = json.loads(r.data)
+        print result
+        self.assertEqual(result['name'], "Joe Smith")
+
+    def test_update_existing_developer(self):
+        print "test_update_existing_developer"
+        instt = Institute(name="MIT", institute_id="mit")
+        instt.save()
+        dev1 = Developer(name=Name("Joe Smith"),
+                         email=Email("joe@smith.com"),
+                         institute=instt)
+        dev1.save()
+        r = self.client.put('/developers/1',
+                            data=json.dumps({'email': 'joe@mit.edu'}))
+        result = json.loads(r.data)
+        self.assertEqual(result['email'], "joe@mit.edu")
+
+    def test_create_new_developer(self):
+        print "test_create_new_developer"
+        instt = Institute(name="MIT", institute_id="mit")
+        instt.save()
+        r = self.client.post('/developers',
+                             data=json.dumps({'name': 'Joe Smith',
+                                              'email': 'joe@mit.edu',
+                                              'institute': instt.to_client()}))
+        result = json.loads(r.data)
+        self.assertEqual(result['name'], "Joe Smith")
+
+    def test_delete_developer(self):
+        print "test_delete_developer"
+        instt = Institute(name="MIT", institute_id="mit")
+        instt.save()
+        dev1 = Developer(name=Name("Joe Smith"),
+                         email=Email("joe@smith.com"),
+                         institute=instt)
+        dev1.save()
+        dev2 = Developer(name=Name("Will Smith"),
+                         email=Email("will@smith.com"),
+                         institute=instt)
+        dev2.save()
+        r = self.client.delete('/developers/1')
+        r = self.client.get('/developers')
+        result = json.loads(r.data)
+        self.assertEqual(len(result), 1)
+
+#+END_SRC
+
+*** Tests for Discipline
+#+BEGIN_SRC python :tangle tests/test_api.py :eval no
+class TestDiscipline(TestCase):
+
+    TESTING = True
+
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def test_get_all_disciplines(self):
+        print "test_get_all_disciplines"
+        disc1 = Discipline(name="Computer Science", discipline_id="cse")
+        disc1.save()
+        disc2 = Discipline(name="Electronics", discipline_id="ece")
+        disc2.save()
+        r = self.client.get('/disciplines')
+        result = json.loads(r.data)
+        print result
+        self.assertEquals(len(result), 2)
+
+    def test_get_one_disciplines(self):
+        print "test_get_one_disciplines"
+        disc1 = Discipline(name="Computer Science", discipline_id="cse")
+        disc1.save()
+        disc2 = Discipline(name="Electronics", discipline_id="ece")
+        disc2.save()
+        r = self.client.get('/disciplines/1')
+        result = json.loads(r.data)
+        print result
+        self.assertEqual(result['name'], "Computer Science")
+
+    def test_update_existing_discipline(self):
+        print "test_update_existing_discipline"
+        disc1 = Discipline(name="Computer Science", discipline_id="cse")
+        disc1.save()
+        disc2 = Discipline(name="Electronics", discipline_id="ece")
+        disc2.save()
+        r = self.client.put('/disciplines/1',
+                            data=json.dumps({'dnc': 'Gerald Sussman'}))
+        result = json.loads(r.data)
+        self.assertEqual(result['dnc'], "Gerald Sussman")
+
+    def test_create_new_discipline(self):
+        print "test_create_new_discipline"
+        r = self.client.post('/disciplines',
+                             data=json.dumps({'name': 'Humanities',
+                                              'discipline_id': 'hmt',
+                                              'dnc': 'Noam Chomsky'}))
+        result = json.loads(r.data)
+        self.assertEqual(result['name'], "Humanities")
+
+    def test_delete_discipline(self):
+        print "test_delete_discipline"
+        disc1 = Discipline(name="Computer Science", discipline_id="cse")
+        disc1.save()
+        disc2 = Discipline(name="Electronics", discipline_id="ece")
+        disc2.save()
+        r = self.client.delete('/disciplines/1')
+        r = self.client.get('/disciplines')
+        result = json.loads(r.data)
+        self.assertEqual(len(result), 1)
+
+#+END_SRC
+
+*** Tests for Institute
+#+BEGIN_SRC python :tangle tests/test_api.py :eval no
+class TestInstitute(TestCase):
+
+    TESTING = True
+
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def test_get_all_institutes(self):
+        print "test_get_all_institutes"
+        instt1 = Institute(name="MIT", institute_id="mit")
+        instt1.save()
+        instt2 = Institute(name="IIT", institute_id="iit")
+        instt2.save()
+        r = self.client.get('/institutes')
+        result = json.loads(r.data)
+        print result
+        self.assertEquals(len(result), 2)
+
+    def test_get_one_institute(self):
+        print "test_get_one_institute"
+        instt1 = Institute(name="MIT", institute_id="mit")
+        instt1.save()
+        instt2 = Institute(name="IIT", institute_id="iit")
+        instt2.save()
+        r = self.client.get('/institutes/1')
+        result = json.loads(r.data)
+        print result
+        self.assertEqual(result['name'], "MIT")
+
+    def test_update_existing_institute(self):
+        print "test_update_existing_institute"
+        instt1 = Institute(name="MIT", institute_id="mit")
+        instt1.save()
+        instt2 = Institute(name="IIT", institute_id="iit")
+        instt2.save()
+        r = self.client.put('/institutes/1',
+                            data=json.dumps({'pic': 'Gerald Sussman'}))
+        result = json.loads(r.data)
+        self.assertEqual(result['pic'], "Gerald Sussman")
+
+    def test_create_new_institute(self):
+        print "test_create_new_institute"
+        r = self.client.post('/institutes',
+                             data=json.dumps({'name': 'Quest University',
+                                              'institute_id': 'quest',
+                                              'pic': 'Noam Chomsky'}))
+        result = json.loads(r.data)
+        self.assertEqual(result['name'], "Quest University")
+
+    def test_delete_institute(self):
+        print "test_delete_institute"
+        instt1 = Institute(name="MIT", institute_id="mit")
+        instt1.save()
+        instt2 = Institute(name="IIT", institute_id="iit")
+        instt2.save()
+        r = self.client.delete('/institutes/1')
+        r = self.client.get('/institutes')
+        result = json.loads(r.data)
+        self.assertEqual(len(result), 1)
+
+#+END_SRC
+
+*** Tests for Feedback
+#+BEGIN_SRC python :tangle tests/test_api.py :eval no
+class TestFeedback(TestCase):
+
+    TESTING = True
+
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def test_get_all_feedbacks(self):
+        print "test_get_all_feedbacks"
+        lab = Lab(name="DS", lab_id="ds")
+        lab.save()
+        f1 = Feedback(lab=lab)
+        f1.save()
+        f2 = Feedback(lab=lab)
+        f2.save()
+        r = self.client.get('/feedback')
+        result = json.loads(r.data)
+        print result
+        self.assertEquals(len(result), 2)
+
+    def test_get_one_feedback(self):
+        print "test_get_one_feedback"
+        lab = Lab(name="DS", lab_id="ds")
+        lab.save()
+        f1 = Feedback(lab=lab)
+        f1.save()
+        f2 = Feedback(lab=lab)
+        f2.save()
+        r = self.client.get('/feedback/1')
+        result = json.loads(r.data)
+        print result
+        self.assertEqual(result['lab']['name'], "DS")
+
+    def test_update_existing_feedback(self):
+        print "test_update_existing_feedback"
+        lab = Lab(name="DS", lab_id="ds")
+        lab.save()
+        f1 = Feedback(lab=lab)
+        f1.save()
+        f2 = Feedback(lab=lab)
+        f2.save()
+        r = self.client.put('/feedback/1',
+                            data=json.dumps({'type_of_user': 'student'}))
+        self.assert_500(r)
+
+    def test_create_new_feedback(self):
+        print "test_create_new_feedback"
+        lab = Lab(name="DS", lab_id="ds")
+        lab.save()
+        r = self.client.post('/feedback',
+                             data=json.dumps({'lab': {'id': 1},
+                                              'user_name': 'john',
+                                              'user_email': 'john@foo.com',
+                                              'ip': '10.2.3.2',
+                                              'type_of_user': 'student',
+                                              'suggestions': 'blah'}))
+        result = json.loads(r.data)
+        self.assertEqual(result['user_name'], "john")
+
+    def test_delete_feedback(self):
+        print "test_delete_feedback"
+        lab = Lab(name="DS", lab_id="ds")
+        lab.save()
+        f1 = Feedback(lab=lab)
+        f1.save()
+        f2 = Feedback(lab=lab)
+        f2.save()
+        r = self.client.delete('/feedback/1')
+        self.assert_500(r)
+
+#+END_SRC
+
 *** Run the tests
 #+BEGIN_SRC python :tangle tests/test_api.py :eval no
 
@@ -4873,8 +5265,8 @@ def create_institute(_name, _institute_id, _pic, _iic):
 
 def create_developer(_name, _email, _inst):
     __name = Name(_name)
-    __email_id = Email(_email)
-    return Developer(name=__name, email_id=__email_id, institute=_inst)
+    __email = Email(_email)
+    return Developer(name=__name, email=__email, institute=_inst)
 
 #+END_SRC
 
