@@ -246,7 +246,9 @@ class TypeOfLab(Entity):
 
      + Name
      + PIC
+     + PIC Email
      + IIC
+     + IIC Email
 
 **** InstituteId assigned to each institute
      |---------------------------------+-------------|
@@ -276,7 +278,9 @@ class Institute(Entity):
     name = db.Column(db.String(128), nullable=False)
     institute_id = db.Column(db.String(16), nullable=False, unique=True)
     pic = db.Column(db.String(128))
+    pic_email = db.Column(db.String(128))
     iic = db.Column(db.String(128))
+    iic_email = db.Column(db.String(128))
 
     labs = db.relationship('Lab', backref='institute')
     developers = db.relationship('Developer', backref='institute')
@@ -290,7 +294,9 @@ class Institute(Entity):
     institute = Institute(name=String,
                           institute_id=String
                           [,pic=<instance of class Name>]
-                          [,iic=<instance of class Name>])
+                          [,pic_email=<instance of class Email>]
+                          [,iic=<instance of class Name>]
+                          [,iic_email=<instance of class Email>])
 #+END_EXAMPLE
 
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -307,8 +313,14 @@ class Institute(Entity):
         if 'pic' in kwargs:
             self.set_pic(kwargs['pic'])
 
+        if 'pic_email' in kwargs:
+            self.set_pic_email(kwargs['pic_email'])
+
         if 'iic' in kwargs:
             self.set_iic(kwargs['iic'])
+
+        if 'iic_email' in kwargs:
+            self.set_iic_email(kwargs['iic_email'])
 
         self.save()
 #+END_SRC
@@ -365,10 +377,25 @@ class Institute(Entity):
 
 #+END_SRC
 
+***** getPICEmail: Institute --> Email
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_pic_email(self):
+        return self.pic_email
+
+#+END_SRC
+
+
 ***** getIIC: Institute --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_iic(self):
         return self.iic
+
+#+END_SRC
+
+***** getIICEmail: Institute --> Email
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_iic_email(self):
+        return self.iic_email
 
 #+END_SRC
 
@@ -393,11 +420,25 @@ class Institute(Entity):
         self.pic = pic.value
 #+END_SRC
 
+***** setPICEmail: Institute, Email --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(pic_email=Email)
+    def set_pic_email(self, pic_email):
+        self.pic_email = pic_email.value
+#+END_SRC
+
 ***** setIIC: Institute, Name --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(iic=Name)
     def set_iic(self, iic):
         self.iic = iic.value
+#+END_SRC
+
+***** setIICEmail: Institute, Email --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(iic_email=Email)
+    def set_iic_email(self, iic_email):
+        self.iic_email = iic_email.value
 #+END_SRC
 
 ***** setName: Institute, Name --> Void
@@ -415,10 +456,13 @@ class Institute(Entity):
             'name': self.name,
             'institute_id': self.institute_id,
             'pic': self.pic,
-            'iic': self.iic
+            'pic_email': self.pic_email,
+            'iic': self.iic,
+            'iic_email': self.iic_email,
         }
 
 #+END_SRC
+
 ***** to_csv
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def to_csv(self):
@@ -426,7 +470,9 @@ class Institute(Entity):
         d['id'] = self.institute_id
         d['name'] = self.name
         d['pic'] = self.pic
+        d['pic_email'] = self.pic_email
         d['iic'] = self.iic
+        d['iic_email'] = self.iic_email
         return d
 #+END_SRC
 *** Discipline
@@ -441,6 +487,7 @@ class Institute(Entity):
 
      + Name
      + DNC
+     + DNC Email
 
 **** DisciplineId assigned to each discipline
      |------------------------------------------+--------------|
@@ -472,6 +519,7 @@ class Discipline(Entity):
     name = db.Column(db.String(128), nullable=False)
     discipline_id = db.Column(db.String(16), nullable=False, unique=True)
     dnc = db.Column(db.String(64))
+    dnc_email = db.Column(db.String(64))
 
     labs = db.relationship('Lab', backref='discipline')
 
@@ -483,7 +531,8 @@ class Discipline(Entity):
 #+BEGIN_EXAMPLE
     discipline = Discipline(name=String,
                             discipline_id=String
-                            [,dnc=<instance of class Name>])
+                            [,dnc=<instance of class Name>]
+                            [,dnc_email=<instance of class Email>])
 #+END_EXAMPLE
 
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -501,6 +550,8 @@ class Discipline(Entity):
         if 'dnc' in kwargs:
             self.set_dnc(kwargs['dnc'])
 
+        if 'dnc_email' in kwargs:
+            self.set_dnc_email(kwargs['dnc_email'])
 
 #+END_SRC
 
@@ -563,6 +614,13 @@ class Discipline(Entity):
 
 #+END_SRC
 
+***** getDNCEmail: Discipline --> Email
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_dnc_email(self):
+        return self.dnc_email
+
+#+END_SRC
+
 ***** setName: Discipline --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(name=str)
@@ -579,6 +637,14 @@ class Discipline(Entity):
         self.save()
 #+END_SRC
 
+***** setDNCEmail: Discipline, Email --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(email=Email)
+    def set_dnc_email(self, email):
+        self.dnc_email = email.value
+        self.save()
+#+END_SRC
+
 ***** to_client
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def to_client(self):
@@ -586,7 +652,8 @@ class Discipline(Entity):
             'id': self.id,
             'name': self.name,
             'discipline_id': self.discipline_id,
-            'dnc': self.dnc
+            'dnc': self.dnc,
+            'dnc_email': self.dnc_email
         }
 
 #+END_SRC
@@ -598,6 +665,7 @@ class Discipline(Entity):
         d['id'] = self.discipline_id
         d['name'] = self.name
         d['dnc'] = self.dnc
+        d['dnc_email'] = self.dnc_email
         return d
 #+END_SRC
 *** Developer
