@@ -113,7 +113,7 @@ class Name(object):
     def __init__(self, value):
         # if the string contains any non-alphabet and non-space character, raise
         # a type error
-        if re.search('[^a-zA-Z ]+', value):
+        if re.search('[^a-zA-Z. ]+', value):
             raise TypeError('%s is not a Name!' % value)
 
         self.value = value
@@ -173,6 +173,10 @@ class IntegrationLevel(Entity):
     def get_by_id(id):
         return IntegrationLevel.query.get(id)
 
+    @staticmethod
+    def get_by_level(level):
+        return IntegrationLevel.query.filter_by(level=level).first()
+
     def to_client(self):
         return {
             'id': self.id,
@@ -196,6 +200,10 @@ class HostingPlatform(Entity):
     @staticmethod
     def get_by_id(id):
         return HostingPlatform.query.get(id)
+
+    @staticmethod
+    def get_by_platform(platform):
+        return HostingPlatform.query.filter_by(name=platform).first()
 
     def to_client(self):
         return {
@@ -223,6 +231,10 @@ class TypeOfLab(Entity):
     @staticmethod
     def get_by_id(id):
         return TypeOfLab.query.get(id)
+
+    @staticmethod
+    def get_by_type(type):
+        return TypeOfLab.query.filter_by(type=type).first()
 
     def to_client(self):
         return {
@@ -257,7 +269,7 @@ class TypeOfLab(Entity):
      | IIIT Hyderabad                  | iiith       |
      | IIT Bombay                      | iitb        |
      | IIT Delhi                       | iitd        |
-     | IIT Roorkee                     | iitrrk      |
+     | IIT Roorkee                     | iitr        |
      | IIT Guwahati                    | iitg        |
      | IIT Kanpur                      | iitk        |
      | IIT Kharagpur                   | iitkgp      |

@@ -3,12 +3,11 @@
 from sqlalchemy import create_engine
 
 from src.app import create_app
-from src.db import Technology, TechnologyUsed, Institute, Discipline,\
-    Developer, Lab, DeveloperEngaged, Experiment
+from src.db import *
 
 from src import config
 
-old_db_uri = 'mysql+oursql://root:root@localhost/new_dump'
+old_db_uri = 'mysql+oursql://root:polarbear@localhost/vlabs_database'
 old_db = create_engine(old_db_uri)
 conn = old_db.connect()
 
@@ -22,7 +21,8 @@ def populate_tech():
     result = conn.execute('select * from technologies')
     for row in result:
         # id = row[0]
-        name = row[1].strip()
+        print "row: %s" % row
+        name = str(row[1].strip())
         if row[2] == "Yes":
             foss = True
         elif row[2] == "No":
@@ -30,7 +30,10 @@ def populate_tech():
         else:
             foss = None
 
-        new_tech = Technology(name=name, foss=foss)
+        if not foss:
+            new_tech = Technology(name=name)
+        else:
+            new_tech = Technology(name=name, foss=foss)
         print new_tech.name, new_tech.foss
         new_tech.save()
     print "Done saving technologies.."
@@ -39,41 +42,111 @@ def populate_tech():
 def populate_instt():
     print "Populating institutes table.."
 
-    result = conn.execute('select * from institutes')
-    for row in result:
-        print 'id', 'name', 'PIC', 'IIC'
-        print row[0], row[1], row[2], row[3]
-        if not row[3]:
-            iic = None
-        else:
-            iic = row[3].strip()
-        instt = Institute(name=row[1].strip(),
-                          PIC=row[2].strip(),
-                          IIC=iic)
+    instts = [
+        ('iiith', 'IIIT Hyderabad', 'Prof. Jayanthi Sivaswamy',
+            'jsivaswamy@iiit.ac.in', 'Prof. Raghu Reddy',
+            'raghu.reddy@iiit.ac.in'),
+        ('iitb', 'IIT Bombay', 'Prof. Anil Kulkarni', 'anil@ee.iitb.ac.in',
+            'Prof. Santosh Norohna', 'noronha@che.iitb.ac.in'),
+        ('iitd', 'IIT Delhi', 'Prof. Ranjan Bose', 'rbose.iitd@gmail.com',
+            'Prof. Suresh Bhalla', 'sbhalla@civil.iitd.ac.in'),
+        ('iitr', 'IIT Roorkee', 'Prof. Vinod Kumar',
+            'gargpfce@iitr.ernet.in', 'Prof Vinod Kumar', 'vinodfee@gmail.com'),
+        ('iitg', 'IIT Guwahati', 'Prof. Ratnajit Bhattacharjee',
+            'ratnajit@iitg.ernet.in', 'Dr. Santosh Biswas',
+            'santosh_biswas@iitg.ernet.in'),
+        ('iitk', 'IIT Kanpur', 'Prof.  Kantesh Balani', 'kbalani@iitk.ac.in',
+            'Prof. Kantesh Balani', 'kbalani@iitk.ac.in'),
+        ('iitkgp', 'IIT Kharagpur', 'Prof. C S Kumar',
+            'kumar@mech.iitkgp.ernet.in', None, None),
+        ('iitm', 'IIT Madras', 'Prof. P Sriram', 'sriram@ae.iitm.ac.in',
+            None, None),
+        ('nitk', 'NIT Surathkal', 'Prof. K V Gangadharan',
+            'kvganga@nitk.ac.in', 'Prof. K V Gangadharan', 'kvganga@nitk.ac.in'),
+        ('amrita', 'Amrita University', 'Prof. Krishnashree Achuthan',
+            'krishna@amrita.edu', 'Prof. Shyam Diwakar', 'shyam.diwakar@gmail.com'),
+        ('coep', 'College of Engineering, Pune', 'Prof. Sudhir Agashe',
+            'sda.instru@coep.ac.in', 'S. U Ghumbre', 'shashi.comp@coep.ac.in'),
+        ('dei', 'Dayalbagh Educational Institute', 'Prof. Soami P Satsangee',
+            'deiusic@gmail.com', 'Rahul Swarup Sharma', 'rahulswarup@rediffmail.com')
+    ]
+
+    for row in instts:
+        args = {}
+        args['institute_id'] = row[0]
+        args['name'] = row[1].strip()
+        args['pic'] = Name(row[2].strip())
+        args['pic_email'] = Email(row[3].strip())
+        if row[4]:
+            args['iic'] = Name(row[4].strip())
+        if row[5]:
+            args['iic_email'] = Email(row[5].strip())
+
+        instt = Institute(**args)
         print instt
-        instt.save()
+        #instt.save()
+
     print "Done saving institutes.."
 
 
 def populate_disc():
     print "Populating disciplines table.."
 
-    result = conn.execute('select * from disciplines')
-    for row in result:
-        print 'id', 'name', 'dnc'
-        print row[0], row[1], row[2]
-        name = row[1].strip()
-        dnc = row[2].strip()
+    discs = [
+        ('aero', 'Aerospace Engineering', None, None),
+        ('biotech', 'Biotechnology and Biomedical Engineering',
+         'Prof. Bipin Nair', 'bipin@amrita.edu'),
+        ('chem-engg', 'Chemical Engineering', 'Prof. Santosh Noronha',
+         'noronha@che.iitb.ac.in'),
+        ('chem', 'Chemical Sciences', 'Prof. Soami P Satsangee',
+         'deiusic@gmail.com'),
+        ('civil', 'Civil Engineering', 'Prof. P K Garg',
+         'gargpfce@iitr.ernet.in'),
+        ('cse', 'Computer Science and Engineering', 'Prof. Suresh Purini',
+         'suresh.purini@iiit.ac.in'),
+        ('ee', 'Electrical Engineering', 'Prof. Ratnajit Bhattacharjee',
+         'ratnajit@iitg.ernet.in'),
+        ('ece', 'Electronics and Communication', 'Prof. Mahesh Abegaonkar',
+         'mpjosh@care.iitd.ernet.in'),
+        ('hmt', 'Humanities', None, None),
+        ('mech', 'Mechanical Engineering', 'Prof. C S Kumar',
+         'kumar@mech.iitkgp.ernet.in'),
+        ('phy-sc', 'Physical Sciences', 'Prof. Anjan Kumar Gupta',
+         'anjankg@iitk.ac.in'),
+        ('tex-engg', 'Textile Engineering', None, None),
+        ('dsgn-engg', 'Design Engineering', None, None),
+        ('mat-sc', 'Material Sciences', None, None)
+    ]
 
-        if dnc == "Unknown":
-            dnc = None
-        disc = Discipline(name=name,
-                          dnc=dnc)
+    for row in discs:
+        args = {}
+        args['discipline_id'] = row[0]
+        args['name'] = row[1].strip()
+        if row[2]:
+            args['dnc'] = Name(row[2].strip())
+        if row[3]:
+            args['dnc_email'] = Email(row[3].strip())
+
+        disc = Discipline(**args)
         print disc
         disc.save()
 
     print "Done saving disciplines.."
 
+instt_map = {
+        'IIIT-H': 'iiith',
+        'IIT-Bombay': 'iitb',
+        'IIT Kharagpur': 'iitkgp',
+        'IIT-Kharagpur': 'iitkgp',
+        'IIT-Madras': 'iitm',
+        'IIT-Delhi': 'iitd',
+        'COEP': 'coep',
+        'Dayalbagh': 'dei',
+        'IIT-Kanpur': 'iitk',
+        'IIT-Guwahati': 'iitg',
+        'IIT-Roorkee': 'iitr',
+        'NIT-K': 'nitk'
+    }
 
 def populate_devs():
     print "Populating developers table.."
@@ -86,15 +159,14 @@ def populate_devs():
         print 'instt', 'name', 'email'
         print row[0], row[1], row[2]
         instt_name = row[0]
-        if row[0] == "IIT Kharagpur":
-            instt_name = "IIT-Kharagpur"
+        instt_id = instt_map[instt_name]
 
-        instt = Institute.query.filter_by(name=instt_name).first()
+        instt = Institute.get_by_institute_id(instt_id)
         print instt
         print instt.id, instt.name
-        dev = Developer(email_id=row[2].strip(),
-                        name=row[1].strip(),
-                        institute_id=instt.id)
+        dev = Developer(email=Email(row[2].strip()),
+                        name=Name(row[1].strip()),
+                        institute=instt)
         print dev
         dev.save()
 
@@ -154,24 +226,23 @@ def populate_labs():
         if lab_id == "Unknown":
             lab_id = None
 
-        name = name.strip()
+        name = str(name.strip())
 
         # sanitize, normalize
         # TODO: review!
+        repo_url = repo_url.strip()
         if repo_url == "Unknown" or repo_url == "Unkown":
             repo_url = None
 
         # sanitize, normalize
         # TODO: review!
+        # add to remarks
         if src_avail == "Yes":
-            src_avail = True
+            pass
         elif src_avail == "No":
-            src_avail = False
+            pass
         elif src_avail == "Partially Available":
-            src_avail = False
             remarks += ' ;sources_available: Partially Available; '
-        else:
-            src_avail = None
 
         # sanitize, normalize
         # TODO: review!
@@ -182,19 +253,21 @@ def populate_labs():
 
         # sanitize, normalize
         # TODO: review!
+        # add to remarks
         lab_deployed = lab_deployed.strip()
         if lab_deployed == "Yes":
-            lab_deployed = True
+            pass
         elif lab_deployed == "Yes, On Amrita":
-            lab_deployed = True
+            pass
             remarks += ' ;is_deployed: On Amrita; '
         elif lab_deployed == "No":
-            lab_deployed = False
+            pass
         else:
-            lab_deployed = None
+            pass
 
         # sanitize, normalize
         # TODO: review!
+        # add to remarks
         content = content.strip()
         if content == "No":
             content = False
@@ -239,25 +312,19 @@ def populate_labs():
         rt_labs = ['Remote Triggered', 'Remote Triggered  Lab (Pilot Phase)',
                    'Remote Triggered Lab', 'Remote Triggered Lab (Pilot phase)']
         if lab_type in simu_labs:
-            lab_type = 'Simulation'
+            lab_type = TypeOfLab.get_by_type('Simulation')
+            #lab_type = 'Simulation'
         elif lab_type in rt_labs:
-            lab_type = 'Remote Triggered'
+            #lab_type = 'Remote Triggered'
+            lab_type = TypeOfLab.get_by_type('Remote Triggered')
         elif lab_type == 'Simulation Lab + Remote Triggered':
-            lab_type = 'Simulation Lab + Remote Triggered'
+            #lab_type = 'Simulation Lab + Remote Triggered'
+            lab_type = TypeOfLab.get_by_type('Simulation and Remote Triggered')
         elif lab_type == 'Unknown' or lab_type == "":
             lab_type = None
         elif lab_type == 'Pilot phase lab' or lab_type == 'pilot phase':
-            lab_type = 'Pilot phase'
-
-        # sanitize, normalize
-        # TODO: review!
-        auto_hostable = auto_hostable.strip()
-        if auto_hostable == "Yes":
-            auto_hostable = True
-        elif auto_hostable == "No":
-            auto_hostable = False
-        else:
-            auto_hostable = None
+            #lab_type = 'Pilot phase'
+            lab_type = TypeOfLab.get_by_type('Pilot Phase')
 
         if phase_2 == 1:
             phase_2 = True
@@ -269,58 +336,89 @@ def populate_labs():
         for row in instt:
             #print row[0], row[1], row[2]
             pass
-        # from the name of the instt, get the id in the new db
-        cur_instt = Institute.query.filter_by(name=row[1]).first()
+        # from the name of the instt, get the instt_id and then get the instt
+        # obj in the new db
+        cur_instt = Institute.get_by_institute_id(instt_map[row[1]])
 
         # from the disc_id get the institute object
         disc = conn.execute('select * from disciplines where id=%s' % disc_id)
         for row in disc:
-            #print row[0], row[1], row[2]
-            pass
+            print "name: %s" % row[1]
+            disc_name = row[1].strip()
+            if disc_name == "Electronics and Communications":
+                disc_name = "Electronics and Communication"
         # from the name of the disc, get the id in the new db
-        cur_disc = Discipline.query.filter_by(name=row[1]).first()
+        cur_disc = Discipline.query.filter_by(name=disc_name).first()
+        print "cur disc"
+        print cur_disc
+
+        # get the integration level obj from the level
+        int_level = IntegrationLevel.get_by_level(int_level)
+
+        # get this lab's developers
+        devels = []
+        devs = conn.execute('select * from developers_engaged where lab_id=%s' %
+                            id)
+        for row in devs:
+            #email id is row[2]
+            dev = Developer.query.filter_by(email=row[2]).first()
+            devels.append(dev)
+
+        # get this lab's technologies
+        techs = []
+        result = conn.execute('select a.lab_id, a.tech_id, b.technology_name '
+                              'from technologies_used a, technologies b where '
+                              'a.tech_id=b.id and lab_id=' + str(id))
+        for row in result:
+            #tech name is row[2]
+            tech = Technology.query.filter_by(name=row[2]).first()
+            techs.append(tech)
 
         print '===='
         print 'id', id
         print 'lab_id', lab_id
         print 'name', name
         print 'repo_url', repo_url
-        print 'src_avail', src_avail
         print 'hosted_url', hosted_url
-        print 'lab_deployed', lab_deployed
-        print 'num_exps', num_exps
-        print 'content', content
-        print 'simu', simu
         print 'web_2_comp', web_2_comp
         print 'type', lab_type
-        print 'auto_hostable', auto_hostable
         print 'remarks', remarks
         print 'int_level', int_level
         print 'status', status
         print 'inst_id', cur_instt.id
         print 'disc_id', cur_disc.id
         print 'phase_2', phase_2
+        print 'developers', devels
+        print 'technologies', techs
         print '===='
         #print raw_input('....')
 
-        lab = Lab(lab_id=lab_id,
-                  name=name,
-                  repo_url=repo_url,
-                  is_src_avail=src_avail,
-                  hosted_url=hosted_url,
-                  is_deployed=lab_deployed,
-                  number_of_experiments=num_exps,
-                  is_content_avail=content,
-                  is_simulation_avail=simu,
-                  is_web_2_compliant=web_2_comp,
-                  type_of_lab=lab_type,
-                  is_auto_hostable=auto_hostable,
-                  remarks=remarks,
-                  integration_level=int_level,
-                  status=status,
-                  institute_id=cur_instt.id,
-                  discipline_id=cur_disc.id,
-                  is_phase_2_lab=phase_2)
+        args = {}
+        args['lab_id'] = lab_id
+        args['name'] = name
+        args['institute'] = cur_instt
+        args['discipline'] = cur_disc
+        args['integration_level'] = int_level
+        if repo_url:
+            args['repo_url'] = URL(repo_url)
+        if hosted_url:
+            args['hosted_url'] = URL(hosted_url)
+        if lab_type:
+            args['type_of_lab'] = lab_type
+        if remarks:
+            args['remarks'] = str(remarks)
+        if status:
+            args['status'] = str(status)
+        if web_2_comp:
+            args['is_web_2_compliant_lab'] = web_2_comp
+        if phase_2:
+            args['is_phase_2_lab'] = phase_2
+        if len(devels):
+            args['developers'] = devels
+        if len(techs):
+            args['technologies'] = techs
+
+        lab = Lab(**args)
         print lab
         try:
             lab.save()
@@ -425,13 +523,13 @@ def populate_exps():
     print "Done saving experiments.."
 
 
-populate_tech()
-populate_instt()
-populate_disc()
-populate_devs()
+#populate_tech()
+#populate_instt()
+#populate_disc()
+#populate_devs()
 populate_labs()
-populate_tech_used()
-populate_dev_engaged()
-populate_exps()
+#populate_tech_used()
+#populate_dev_engaged()
+#populate_exps()
 
 conn.close()
