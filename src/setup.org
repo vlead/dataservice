@@ -74,12 +74,12 @@ def create_institute():
 
 def create_developer():
     dev = Developer(name=Name('Linus Tarvolds'),
-                    email_id=Email('linus@linux.org'),
+                    email=Email('linus@linux.org'),
                     institute=Institute.get_by_id(1))
     dev.save()
 
     dev = Developer(name=Name('Claude Shannon'),
-                    email_id=Email('shannon@bell-labs.org'),
+                    email=Email('shannon@bell-labs.org'),
                     institute=Institute.get_by_id(2))
     dev.save()
 
