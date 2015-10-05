@@ -2550,7 +2550,7 @@ from flask import Blueprint, request, jsonify, abort, current_app, redirect,\
 
 from db import *
 from utils import parse_request, jsonify_list
-
+from maps import entity_pairs
 api = Blueprint('APIs', __name__)
 
 
@@ -2657,62 +2657,171 @@ api = Blueprint('APIs', __name__)
    data service has to be written down somewhere and published.
 
 *** Implementation
-#+BEGIN_SRC python :tangle src/api.py :eval no
+
+#+BEGIN_SRC python :tangle src/maps.py :eval no
+
+lab = {'entity_class': 'Lab',
+       'attributes': [
+           {'name': 'id',
+            'class': 'None',
+            'relationship': 'one'},
+           {'name': 'name',
+            'class': 'None',
+            'relationship': 'one'},
+           {'name': 'lab_id',
+            'class': 'None',
+            'relationship': 'one'},
+           {'name': 'institute',
+            'class': 'Institute',
+            'relationship': 'one'},
+           {'name': 'discipline',
+            'class': 'Discipline',
+            'relationship': 'one'},
+           {'name': 'integration_level',
+            'class': 'IntegrationLevel',
+            'relationship': 'one'},
+           {'name': 'developers',
+            'class': 'Developer',
+            'relationship': 'many'},
+           {'name': 'experiments',
+            'class': 'Experiment',
+            'relationship': 'many'},
+           {'name': 'technologies',
+            'class': 'Technology',
+            'relationship': 'many'},
+           {'name': 'repo_url',
+            'class': 'None',
+            'relationship': 'one'},
+           {'name': 'hosted_url',
+            'class': 'None',
+            'relationship': 'one'},
+           {'name': 'hosted_on',
+            'class': 'HostingPlatform',
+            'relationship': 'one'},
+           {'name': 'type_of_lab',
+            'class': 'TypeOfLab',
+            'relationship': 'one'},
+           {'name': 'remarks',
+            'class': 'None',
+            'relationship': 'one'},
+           {'name': 'status',
+            'class': 'None',
+            'relationship': 'one'},
+           {'name': 'is_web_2_compliant_lab',
+            'class': 'None',
+            'relationship': 'one'},
+           {'name': 'is_phase_2_lab',
+            'class': 'None',
+            'relationship': 'one'}
+       ]}
+
+labs = lab
+
+institute = {'entity_class': 'Institute',
+             'attributes': [
+                 {'name': 'id',
+                  'class': 'None',
+                  'relationship': 'one'},
+                 {'name': 'name',
+                  'class': 'None',
+                  'relationship': 'one'},
+                 {'name': 'institute_id',
+                  'class': 'None',
+                  'relationship': 'one'},
+                 {'name': 'pic',
+                  'class': 'None',
+                  'relationship': 'one'},
+                 {'name': 'iic',
+                  'class': 'None',
+                  'relationship': 'one'},
+                 {'name': 'labs',
+                  'class': 'Lab',
+                  'relationship': 'many'},
+                 {'name': 'developers',
+                  'class': 'Developer',
+                  'relationship': 'many'}
+             ]}
+
 entity_pairs = {
-    'labs': {
-        'entity': Lab,
-        'attributes': ['id',
-                       'name',
-                       'lab_id',
-                       'institute_id',
-                       'discipline_id',
-                       'integration_level_id',
-                       'developers',
-                       'number_of_experiments',
-                       'experiments',
-                       'technologies',
-                       'repo_url',
-                       'hosted_url',
-                       'hosted_on_id',
-                       'type_of_lab_id',
-                       'remarks',
-                       'status',
-                       'is_web_2_compliant_lab',
-                       'is_phase_2_lab']
-    },
-    'institutes': {
-        'entity': Institute
-    },
-    'disciplines': {
-        'entity': Discipline
-    },
-    'developers': {
-        'entity': Developer
-    },
-    'technologies': {
-        'entity': Technology
-    },
-    'experiments': {
-        'entity': Experiment
-    },
-    'feedback': {
-        'entity': Feedback
-    }
+    'labs': lab,
+    'institutes': institute
 }
 
+#+END_SRC
 
+#+BEGIN_SRC python :tangle src/api.py :eval no
 # query an entity
 # =/<:entity>s?query_param1=val1&query_param2=val2&..query_paramn=valn=
 @api.route('/<entity>', methods=['GET'])
 def query_an_entity(entity):
-    # (ret_val, entity_class) = validate_entity(entity, request.args.keys())
-    # return str(request.args.lists())
+    db_module = __import__('db')
     if entity not in entity_pairs:
         abort(400, 'Entity %s is not valid.' % entity)
 
-    curr_entity = entity_map_types[entity]['entity']
-    print "data: %s" % [i.to_client() for i in curr_entity.get_all()]
-    return jsonify_list([i.to_client() for i in curr_entity.get_all()])
+    curr_entity = getattr(db_module, entity_pairs[entity]['entity_class'])
+    print "=========curr_entity = %s from route===========" % curr_entity
+    arg_tuple_list = request.args.lists()
+    if not arg_tuple_list:
+        print "data: %s" % [i.to_client() for i in curr_entity.get_all()]
+        return jsonify_list([i.to_client() for i in curr_entity.get_all()])
+    else:
+        query = curr_entity.query
+        filters = []
+        for arg_tuple in arg_tuple_list:
+            args = arg_tuple[0].split('.')
+            values = arg_tuple[1][0].split(',')
+            print "=========route function============"
+            print "args: %s" % args
+            print "values: %s" % values
+            #    return str(arg_tuple_list)
+            filters.append(create_filters(entity_pairs[entity],
+                                          curr_entity,
+                                          args,
+                                          values))
+        print "===FILTERS===="
+        print filters
+        for filter in filters:
+            print "filter = %s" % filter
+
+            query = query.filter(filter)
+            print query
+        entities = query.all()
+        print entities
+        print "data: %s" % [ent.to_client() for ent in entities]
+        return jsonify_list([ent.to_client() for ent in entities])
+
+
+def create_filters(entity_map, curr_entity, args, values):
+    print "===============create_filters===================="
+    print "args = %s" % args
+    print "entity_map = %s" % entity_map
+    print "curr_entity = %s" % curr_entity
+    maps_module = __import__('maps')
+    db_module = __import__('db')
+    if len(args) == 1:
+        print getattr(curr_entity, args[0]).in_(values)
+        return getattr(curr_entity, args[0]).in_(values)
+    else:
+        result = filter(lambda item: item['name'] == args[0],
+                        entity_map['attributes'])
+        print "result = %s" % result
+        if not result:
+            raise AttributeError("attribute %s not found" % args[0])
+
+        entity_map = getattr(maps_module, args[0])
+        if result[0]['relationship'] == 'one':
+            return getattr(curr_entity, args[0]).has(
+                create_filters(entity_map,
+                               getattr(db_module, result[0]['class']),
+                               args[-1:],
+                               values))
+        else:
+            return getattr(curr_entity, args[0]).any(
+                create_filters(entity_map,
+                               getattr(db_module, result[0]['class']),
+                               args[-1:],
+                               values))
+
 
 @api.route('/<entity>/<id>', methods=['GET'])
 def get_specific_entity(entity, id):
@@ -2746,6 +2855,7 @@ def get_entity_of_a_specific_entity(entity, id, entity2):
     # otherwise..
     result = record.__getattribute__('get_'+entity2)()
     return jsonify_list(result)
+
 
 #+END_SRC
 ** REST API to create/update/delete data
@@ -3679,7 +3789,7 @@ Below is the configuration for the application
 # postgresql+psycopg2://scott:tiger@localhost/mydatabase
 SQLALCHEMY_DATABASE_URI = 'mysql+oursql://<userid>:<password>@<servername>/<db_name>'
 # example
-# SQLALCHEMY_DATABASE_URI = 'mysql+oursql://root:mysql>@localhost/dataservice'
+#SQLALCHEMY_DATABASE_URI = 'mysql+oursql://root:mysql@localhost/dataservice'
 
 # Debug from SQLAlchemy
 # Turn this to False on production

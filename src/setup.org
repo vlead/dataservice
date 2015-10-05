@@ -62,13 +62,18 @@ def create_institute():
     inst = Institute(name='IIIT Hyderabad',
                      institute_id='IIITH',
                      pic=Name('Venkatesh Chopella'),
-                     iic=Name('Raghu Reddy'))
+                     iic=Name('Raghu Reddy'),
+                     pic_email=Email('venkatesh@gmail.com'),
+                     iic_email=Email('raghu@gmail.com'))
     inst.save()
 
     inst = Institute(name='IIT Bombay',
                      institute_id='IITB',
                      pic=Name('Narendra Dhabolkar'),
-                     iic=Name('Govind Pansare'))
+                     iic=Name('Govind Pansare'),
+                     pic_email=Email('dhabolkar@gmail.com'),
+                     iic_email=Email('pansare@gmail.com'))
+
     inst.save()
 
 
@@ -87,12 +92,14 @@ def create_developer():
 def create_discipline():
     disc = Discipline(name='Computer Science',
                       discipline_id='CSE',
-                      dnc=Name('Suresh Purini'))
+                      dnc=Name('Suresh Purini'),
+                      dnc_email=Email('purini@gmail.com'))
     disc.save()
 
     disc = Discipline(name='Electronics and Communiations Engineering',
                       discipline_id='ECE',
-                      dnc=Name('Jayanthi Natarajan'))
+                      dnc=Name('Jayanthi Natarajan'),
+                      dnc_email=Email('nataragan@gmail.com'))
     disc.save()
 
 
