@@ -2854,7 +2854,7 @@ def get_entity_of_a_specific_entity(entity, id, entity2):
     #FIXME: ugly hack, I know! :/. I don't know how to get the attr
     # otherwise..
     result = record.__getattribute__('get_'+entity2)()
-    return jsonify_list(result)
+    return jsonify_list([i.to_client() for i in result])
 
 
 #+END_SRC
