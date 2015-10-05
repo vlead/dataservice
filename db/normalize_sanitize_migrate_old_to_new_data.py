@@ -145,7 +145,8 @@ instt_map = {
         'IIT-Kanpur': 'iitk',
         'IIT-Guwahati': 'iitg',
         'IIT-Roorkee': 'iitr',
-        'NIT-K': 'nitk'
+        'NIT-K': 'nitk',
+        'Amrita University': 'amrita'
     }
 
 def populate_devs():
@@ -175,6 +176,8 @@ def populate_devs():
 
 def populate_labs():
     print "Populating labs table.."
+
+    no_lab_id_ctr = 1
 
     result = conn.execute('select * from labs')
     for row in result:
@@ -224,7 +227,9 @@ def populate_labs():
 
         lab_id = lab_id.strip()
         if lab_id == "Unknown":
-            lab_id = None
+            #lab_id = None
+            lab_id = 'no_lab_id' + str(no_lab_id_ctr)
+            no_lab_id_ctr += 1
 
         name = str(name.strip())
 
@@ -250,6 +255,9 @@ def populate_labs():
         if hosted_url.find('http') < 0:
             remarks += ' ;hosted_url: %s; ' % hosted_url
             hosted_url = None
+        if hosted_url == "Link is redirecting to http://vlab.co.in/institute_detail.php?ins=003 , Unable to view the lab":
+            hosted_url = "http://vlab.co.in/institute_detail.php?ins=003"
+            remarks += " ;hosted_url: Link is redirecting to http://vlab.co.in/institute_detail.php?ins=003 , Unable to view the lab"
 
         # sanitize, normalize
         # TODO: review!
@@ -308,7 +316,8 @@ def populate_labs():
         # sanitize, normalize
         # TODO: review!
         lab_type = lab_type.strip()
-        simu_labs = ['Simulation Lab', 'Simuation Lab', 'Simulation']
+        simu_labs = ['Simulation Lab', 'Simuation Lab', 'Simulation',
+                     'simulation lab']
         rt_labs = ['Remote Triggered', 'Remote Triggered  Lab (Pilot Phase)',
                    'Remote Triggered Lab', 'Remote Triggered Lab (Pilot phase)']
         if lab_type in simu_labs:
@@ -347,8 +356,13 @@ def populate_labs():
             disc_name = row[1].strip()
             if disc_name == "Electronics and Communications":
                 disc_name = "Electronics and Communication"
-        # from the name of the disc, get the id in the new db
-        cur_disc = Discipline.query.filter_by(name=disc_name).first()
+
+        if disc_name == "Unknown":
+            cur_disc = None
+        else:
+            # from the name of the disc, get the id in the new db
+            cur_disc = Discipline.query.filter_by(name=disc_name).first()
+
         print "cur disc"
         print cur_disc
 
@@ -386,7 +400,7 @@ def populate_labs():
         print 'int_level', int_level
         print 'status', status
         print 'inst_id', cur_instt.id
-        print 'disc_id', cur_disc.id
+        print 'disc_id', cur_disc.id if cur_disc else None,
         print 'phase_2', phase_2
         print 'developers', devels
         print 'technologies', techs
@@ -397,7 +411,8 @@ def populate_labs():
         args['lab_id'] = lab_id
         args['name'] = name
         args['institute'] = cur_instt
-        args['discipline'] = cur_disc
+        if cur_disc:
+            args['discipline'] = cur_disc
         args['integration_level'] = int_level
         if repo_url:
             args['repo_url'] = URL(repo_url)
@@ -429,6 +444,123 @@ def populate_labs():
     print "Done saving labs.."
 
 
+def populate_exps():
+    print "Populating experiments table.."
+
+    result = conn.execute('select * from experiments')
+    for row in result:
+        print 'lab_id', 'id', 'name', 'content_url', 'simulation_url'
+        print row[0], row[1], row[2], row[3], row[4]
+
+        lab = conn.execute('select * from labs where id=%s' % row[0])
+        for nrow in lab:
+            #print nrow[0], nrow[1], nrow[2], nrow[3]
+            pass
+        #print nrow[2]
+        cur_lab = Lab.query.filter_by(name=nrow[2].strip()).first()
+        print cur_lab
+        print cur_lab.name, cur_lab.lab_id
+
+        exp_name = row[2].strip()
+        iso885915_utf_map = {
+                u"\u2019":  u"'",
+                u"\u2018":  u"'",
+                u"\u201c":  u'"',
+                u"\u201d":  u'"'
+        }
+        utf_map = dict([(ord(k), ord(v)) for k,v in iso885915_utf_map.items()])
+        exp_name = exp_name.translate(utf_map).encode('iso-8859-15')
+        # for the particular exp with id 1553 in the old database, change the
+        # name
+        if row[1] == 1553 and "\xa0" in exp_name:
+            exp_name = "Relationship between guide ?g and ?a"
+        exp_name = str(exp_name)
+        print exp_name
+
+        content_url = row[3].strip()
+        # formatting errors in URL
+        if content_url == "cp.freehostia.com/login/":
+            content_url = "http://cp.freehostia.com/login/"
+        if content_url == "iitkgp.vlab.co.in/?sub=37&brch=110&sim=243&cnt=512":
+            content_url = "http://iitkgp.vlab.co.in/?sub=37&brch=110&sim=243&cnt=512"
+        if content_url == "iitkgp.vlab.co.in/?sub=79&brch=262&sim=1299&cnt=1":
+            content_url = "http://iitkgp.vlab.co.in/?sub=79&brch=262&sim=1299&cnt=1"
+
+        # WRONG content URLs in the old database!!!!!!!!!!!!!
+        # I had to manually find out the correct ones, and hard code them here!!
+        if content_url == "http://amrita.vlab.co.in/?sub=3&brch=187&sim=878&cnt=1"\
+                and exp_name == "Isolation of Mitochondria":
+            content_url = "http://vlab.amrita.edu/?sub=3&brch=187&sim=327&cnt=2"
+        if content_url == "http://iitkgp.vlab.co.in/?sub=37&brch=110&sim=252&cnt=7"\
+                and exp_name == "Thickness Measurement Using Ellipsometer":
+            content_url = "http://iitkgp.vlab.co.in/?sub=37&brch=110&sim=253&cnt=7"
+        if content_url == "http://iitkgp.vlab.co.in/?sub=37&brch=110&sim=253&cnt=7"\
+                and exp_name == "MOSFET SPICE Parameter Extraction":
+            content_url = "http://iitkgp.vlab.co.in/?sub=37&brch=110&sim=254&cnt=7"
+        if content_url == "http://iitkgp.vlab.co.in/?sub=37&brch=110&sim=255&cnt=7"\
+                and exp_name == "Determination of Vth of a MOSFET":
+            content_url = "http://iitkgp.vlab.co.in/?sub=37&brch=110&sim=256&cnt=7"
+        if content_url == "http://iitkgp.vlab.co.in/?sub=37&brch=110&sim=255&cnt=7"\
+                and exp_name == "JFET Characterization":
+            content_url = "http://iitkgp.vlab.co.in/?sub=37&brch=110&sim=257&cnt=7"
+        if content_url == "http://vls1.iitkgp.ernet.in/vls_web/experiments/experiment.php?expId=234"\
+                and exp_name == "Position Analysis of a 4 Bar RRRR Non Grashofian D":
+            content_url = "http://vls1.iitkgp.ernet.in/vls_web/experiments/experiment.php?expId=235"
+
+        if content_url.find('No content') >= 0 or\
+                content_url.find('deploy.v') >= 0:
+            content_url = None
+
+        simu_url = row[4].strip()
+        if simu_url == "http://iitkgp.vlab.co.in/?sub=39&brch=125&sim=637&cnt=4"\
+                and exp_name == "DF-Part6: Interrupt driven data transfer from ADC":
+            simu_url = "http://iitkgp.vlab.co.in/?sub=39&brch=125&sim=1228&cnt=4"
+        if simu_url == "http://vls1.iitkgp.ernet.in/vls_web/experiments/experiment.php?expId=234#"\
+                and exp_name == "Position Analysis of a 4 Bar RRRR Non Grashofian D":
+            simu_url = "http://vls1.iitkgp.ernet.in/vls_web/experiments/experiment.php?expId=235#"
+        if simu_url == "http://iitd.vlab.co.in/?sub=67&brch=185&sim=470&cnt=4"\
+                and exp_name == "DC Motor Speed Control":
+            simu_url = "http://iitd.vlab.co.in/?sub=67&brch=185&sim=473&cnt=4"
+        if simu_url == "http://iitd.vlab.co.in/?sub=67&brch=185&sim=473&cnt=4"\
+                and exp_name == "Induction Motor Starting and Braking":
+            simu_url = "http://iitd.vlab.co.in/?sub=67&brch=185&sim=1014&cnt=4"
+        if simu_url == "http://iitd.vlab.co.in/?sub=67&brch=185&sim=1014&cnt=4"\
+                and exp_name == "V/F Control Of VSI Fed Three-Phase Induction Motor":
+            simu_url = "http://iitd.vlab.co.in/?sub=67&brch=185&sim=1046&cnt=4"
+        if simu_url == "http://iitd.vlab.co.in/?sub=65&brch=180&sim=294&cnt=1478"\
+                and exp_name == "Experiment of Microwave Cavity":
+            simu_url = "http://iitd.vlab.co.in/?sub=65&brch=180&sim=295&cnt=1481"
+
+        if simu_url.find('No simulation') >= 0 or\
+                simu_url.find('Link not found') >= 0 or\
+                simu_url.find('deploy.v') >= 0:
+            simu_url = None
+
+        args = {}
+        args['lab'] = cur_lab
+        args['name'] = exp_name
+        if content_url:
+            args['content_url'] = URL(content_url)
+        if simu_url:
+            args['simulation_url'] = URL(simu_url)
+
+        exp = Experiment(**args)
+        print exp
+        #exp.save()
+
+    print "Done saving experiments.."
+
+
+#populate_tech()
+#populate_instt()
+#populate_disc()
+#populate_devs()
+#populate_labs()
+populate_exps()
+
+conn.close()
+
+"""
 def populate_tech_used():
     print "Populating technologies_used table.."
 
@@ -492,44 +624,4 @@ def populate_dev_engaged():
         dev_engaged.save()
 
     print "Done saving developers_engaged.."
-
-
-def populate_exps():
-    print "Populating experiments table.."
-
-    result = conn.execute('select * from experiments')
-    for row in result:
-        print 'lab_id', 'id', 'name', 'content_url', 'simulation_url'
-        print row[0], row[1], row[2], row[3], row[4]
-
-        lab = conn.execute('select * from labs where id=%s' % row[0])
-        for nrow in lab:
-            #print nrow[0], nrow[1], nrow[2], nrow[3]
-            pass
-        #print nrow[2]
-        cur_lab = Lab.query.filter_by(name=nrow[2].strip()).first()
-
-        simu_url = row[4].strip()
-        if simu_url.find('No') >= 0:
-            simu_url = None
-
-        exp = Experiment(lab_id=cur_lab.id,
-                         name=row[2].strip(),
-                         content_url=row[3].strip(),
-                         simulation_url=simu_url)
-        print exp
-        exp.save()
-
-    print "Done saving experiments.."
-
-
-#populate_tech()
-#populate_instt()
-#populate_disc()
-#populate_devs()
-populate_labs()
-#populate_tech_used()
-#populate_dev_engaged()
-#populate_exps()
-
-conn.close()
+"""
