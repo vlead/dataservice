@@ -7,12 +7,22 @@ from src.db import *
 
 from src import config
 
-old_db_uri = 'mysql+oursql://root:polarbear@localhost/vlabs_database'
-old_db = create_engine(old_db_uri)
-conn = old_db.connect()
 
-
-app = create_app(config)
+instt_map = {
+    'IIIT-H': 'iiith',
+    'IIT-Bombay': 'iitb',
+    'IIT Kharagpur': 'iitkgp',
+    'IIT-Kharagpur': 'iitkgp',
+    'IIT-Madras': 'iitm',
+    'IIT-Delhi': 'iitd',
+    'COEP': 'coep',
+    'Dayalbagh': 'dei',
+    'IIT-Kanpur': 'iitk',
+    'IIT-Guwahati': 'iitg',
+    'IIT-Roorkee': 'iitr',
+    'NIT-K': 'nitk',
+    'Amrita University': 'amrita'
+}
 
 
 def populate_tech():
@@ -133,21 +143,6 @@ def populate_disc():
 
     print "Done saving disciplines.."
 
-instt_map = {
-        'IIIT-H': 'iiith',
-        'IIT-Bombay': 'iitb',
-        'IIT Kharagpur': 'iitkgp',
-        'IIT-Kharagpur': 'iitkgp',
-        'IIT-Madras': 'iitm',
-        'IIT-Delhi': 'iitd',
-        'COEP': 'coep',
-        'Dayalbagh': 'dei',
-        'IIT-Kanpur': 'iitk',
-        'IIT-Guwahati': 'iitg',
-        'IIT-Roorkee': 'iitr',
-        'NIT-K': 'nitk',
-        'Amrita University': 'amrita'
-    }
 
 def populate_devs():
     print "Populating developers table.."
@@ -485,6 +480,10 @@ def populate_exps():
             content_url = "http://iitkgp.vlab.co.in/?sub=37&brch=110&sim=243&cnt=512"
         if content_url == "iitkgp.vlab.co.in/?sub=79&brch=262&sim=1299&cnt=1":
             content_url = "http://iitkgp.vlab.co.in/?sub=79&brch=262&sim=1299&cnt=1"
+        if content_url == "Under Construction, http://iitg.vlab.co.in/?sub=59&brch=164&sim=1398&cnt=2931":
+            content_url = "http://iitg.vlab.co.in/?sub=59&brch=164&sim=1398&cnt=2931"
+        if content_url == "Under Construction, http://iitg.vlab.co.in/?sub=59&brch=164&sim=1399&cnt=2950":
+            content_url = "http://iitg.vlab.co.in/?sub=59&brch=164&sim=1399&cnt=2950"
 
         # WRONG content URLs in the old database!!!!!!!!!!!!!
         # I had to manually find out the correct ones, and hard code them here!!
@@ -506,12 +505,25 @@ def populate_exps():
         if content_url == "http://vls1.iitkgp.ernet.in/vls_web/experiments/experiment.php?expId=234"\
                 and exp_name == "Position Analysis of a 4 Bar RRRR Non Grashofian D":
             content_url = "http://vls1.iitkgp.ernet.in/vls_web/experiments/experiment.php?expId=235"
+        if content_url == "http://103.37.201.113/vlab/view.php?expid=exp1369311990&cnid=0"\
+                and exp_name == "ECG Feature Extraction And Analysis":
+            content_url = "http://103.37.201.113/vlab/view.php?expid=exp1367664540&cnid=0"
+        if content_url == "http://iitb.vlab.co.in/index.php?sub=8&brch=117&sim=1069&cnt=2005"\
+                and exp_name == "Frequency response":
+            content_url = "http://iitb.vlab.co.in/index.php?sub=8&brch=117&sim=1070&cnt=2008"
+        if content_url == "http://www.aero.iitb.ac.in/pratham/virtuallaboratory/experiment/experiment.php"\
+                and exp_name == "Polar Orbit":
+            content_url = "http://www.aero.iitb.ac.in/pratham/virtuallaboratory/experiment/polar1.php"
 
         if content_url.find('No content') >= 0 or\
                 content_url.find('deploy.v') >= 0:
             content_url = None
 
         simu_url = row[4].strip()
+        if simu_url == "Under Construction, http://iitg.vlab.co.in/?sub=59&brch=164&sim=1398&cnt=4":
+            simu_url = "http://iitg.vlab.co.in/?sub=59&brch=164&sim=1398&cnt=4"
+        if simu_url == "under Construction, http://iitg.vlab.co.in/?sub=59&brch=164&sim=1399&cnt=4":
+            simu_url = "http://iitg.vlab.co.in/?sub=59&brch=164&sim=1399&cnt=4"
         if simu_url == "http://iitkgp.vlab.co.in/?sub=39&brch=125&sim=637&cnt=4"\
                 and exp_name == "DF-Part6: Interrupt driven data transfer from ADC":
             simu_url = "http://iitkgp.vlab.co.in/?sub=39&brch=125&sim=1228&cnt=4"
@@ -530,8 +542,11 @@ def populate_exps():
         if simu_url == "http://iitd.vlab.co.in/?sub=65&brch=180&sim=294&cnt=1478"\
                 and exp_name == "Experiment of Microwave Cavity":
             simu_url = "http://iitd.vlab.co.in/?sub=65&brch=180&sim=295&cnt=1481"
+        if simu_url == "http://sage.virtual-labs.ac.in/home/pub/21/" and\
+                exp_name == "SQL 3":
+            simu_url = "http://sage.virtual-labs.ac.in/home/pub/22/"
 
-        if simu_url.find('No simulation') >= 0 or\
+        if simu_url.lower().find('no simulation') >= 0 or\
                 simu_url.find('Link not found') >= 0 or\
                 simu_url.find('deploy.v') >= 0:
             simu_url = None
@@ -551,77 +566,28 @@ def populate_exps():
     print "Done saving experiments.."
 
 
-#populate_tech()
-#populate_instt()
-#populate_disc()
-#populate_devs()
-#populate_labs()
-populate_exps()
+if __name__ == "__main__":
 
-conn.close()
+    # DB URI of the older database: from which we are migrating..
+    # NOTE: the new DB URI: to which we are migrating is mentioned in the
+    # config.py file under src/
+    old_db_uri = 'mysql+oursql://root:vlabs123@localhost/vlabs_database'
+    # old_db_uri = 'mysql+oursql://<username>:<password>@localhost/<db-name>'
 
-"""
-def populate_tech_used():
-    print "Populating technologies_used table.."
+    # instantiate a engine
+    old_db = create_engine(old_db_uri)
+    # get a connection
+    conn = old_db.connect()
 
-    result = conn.execute('select * from technologies_used')
-    for row in result:
-        print 'id', 'lab_id', 'tech_id', 'server_side', 'client_side'
-        print row[0], row[1], row[2], row[3], row[4]
+    # create the Flask-SQLAlchemy app
+    app = create_app(config)
 
-        lab = conn.execute('select * from labs where id=%s' % row[1])
-        for nrow in lab:
-            #print nrow[0], nrow[1], nrow[2], nrow[3]
-            pass
-        #print nrow[2]
-        cur_lab = Lab.query.filter_by(name=nrow[2].strip()).first()
+    # populate some data..
+    populate_tech()
+    populate_instt()
+    populate_disc()
+    populate_devs()
+    populate_labs()
+    populate_exps()
 
-        tech = conn.execute('select * from technologies where id=%s' % row[2])
-        for nrow in tech:
-            #print nrow[0], nrow[1], nrow[2]
-            pass
-        #print nrow[1]
-        cur_tech = Technology.query.filter_by(name=nrow[1].strip()).first()
-
-        print cur_lab.id, cur_lab.name
-        print cur_tech.id, cur_tech.name
-
-        tech_used = TechnologyUsed(lab_id=cur_lab.id,
-                                   tech_id=cur_tech.id,
-                                   server_side=row[3],
-                                   client_side=row[4])
-
-        print tech_used.lab_id, tech_used.tech_id, tech_used.server_side
-        #raw_input('..')
-        # not working fails on some cur_lab.id
-        tech_used.save()
-
-    print "Done saving technologies_used.."
-
-
-def populate_dev_engaged():
-    print "Populating developers_engaged table.."
-    result = conn.execute('select * from developers_engaged')
-    for row in result:
-        print 'id', 'lab id', 'dev email'
-        print row[0], row[1], row[2]
-
-        lab = conn.execute('select * from labs where id=%s' % row[1])
-        for nrow in lab:
-            #print nrow[0], nrow[1], nrow[2], nrow[3]
-            pass
-        #print nrow[2]
-        cur_lab = Lab.query.filter_by(name=nrow[2].strip()).first()
-
-        cur_dev = Developer.query.filter_by(email_id=row[2].strip()).first()
-
-        print cur_lab.id, cur_lab.name
-        print cur_dev.id, cur_dev.email_id
-
-        dev_engaged = DeveloperEngaged(lab_id=cur_lab.id,
-                                       developer_id=cur_dev.id)
-        print dev_engaged
-        dev_engaged.save()
-
-    print "Done saving developers_engaged.."
-"""
+    conn.close()

@@ -1006,13 +1006,13 @@ class Experiment(Entity):
 
     lab_id = db.Column(db.Integer, db.ForeignKey('labs.id'))
 
-    content_url = db.Column(db.String(256), unique=True)
+    content_url = db.Column(db.String(256))
     # content_on = db.Column(db.Enum('CPE', 'ELSE', 'NA'))
     content_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
     content_hosted_on = db.relationship('HostingPlatform',
                                  foreign_keys=[content_on_id])
 
-    simulation_url = db.Column(db.String(256), unique=True)
+    simulation_url = db.Column(db.String(256))
     # simulation_on = db.Column(db.Enum('CPE', 'ELSE', 'NA'))
     simulation_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
     simulation_hosted_on = db.relationship('HostingPlatform',
