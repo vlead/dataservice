@@ -1018,13 +1018,13 @@ class Experiment(Entity):
 
     lab_id = db.Column(db.Integer, db.ForeignKey('labs.id'))
 
-    content_url = db.Column(db.String(256), unique=True)
+    content_url = db.Column(db.String(256))
     # content_on = db.Column(db.Enum('CPE', 'ELSE', 'NA'))
     content_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
     content_hosted_on = db.relationship('HostingPlatform',
                                  foreign_keys=[content_on_id])
 
-    simulation_url = db.Column(db.String(256), unique=True)
+    simulation_url = db.Column(db.String(256))
     # simulation_on = db.Column(db.Enum('CPE', 'ELSE', 'NA'))
     simulation_on_id = db.Column(db.ForeignKey('hosting_platforms.id'))
     simulation_hosted_on = db.relationship('HostingPlatform',
@@ -3016,7 +3016,7 @@ def get_entity_of_a_specific_entity(top_entity, id, lower_entity):
     #FIXME: ugly hack, I know! :/. I don't know how to get the attr
     # otherwise..
     result = record.__getattribute__('get_'+entity2)()
-    return jsonify_list(result)
+    return jsonify_list([i.to_client() for i in result])
 
 
 #+END_SRC
