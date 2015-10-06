@@ -18,7 +18,8 @@
      the data. (v0.1.0)
   3. REST API is provided for various applications to perform CRUD operations
      on the data. (v0.2.0)
-  4. A bulk update interface, to update bulk data at once. <<req4>>
+  4. A bulk update interface, to update bulk data at once. <<req4>>. This
+     requirement was deemed not necessary as [[https://issues.vlabs.ac.in/issues/133#note-4][#133]].
   5. Feedback portal to save data to data service. (v0.2.0)
   6. A weekly dump of the feedback data to an excel file. (v0.2.0)
 
@@ -2321,7 +2322,7 @@ class Feedback(Entity):
   #+NAME:   entity
   [[https://drive.google.com/open?id%3D0B6LLRcwXMzt8N3RzZGVkb0NpUDA][ER-Diagram]]
 
-** The Bulk Update interface
+** COMMENT The Bulk Update interface
 *** Requirement
    One of the requirements in the application is the bulk update
    interface. <<req4>>

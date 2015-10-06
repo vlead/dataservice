@@ -177,12 +177,12 @@ if __name__ == "__main__":
     create_integration_levels()
     create_hosting_platforms()
     create_type_of_labs()
-    create_institute()
-    create_developer()
-    create_discipline()
-    create_technology()
-    create_lab()
-    create_experiment()
+    #create_institute()
+    #create_developer()
+    #create_discipline()
+    #create_technology()
+    #create_lab()
+    #create_experiment()
 
 #+END_SRC
 ** Set up both DB and Python dependencies
