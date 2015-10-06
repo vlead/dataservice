@@ -172,6 +172,17 @@ def create_experiment():
     exp.save()
 
 
+def insert_data():
+    create_integration_levels()
+    create_hosting_platforms()
+    create_type_of_labs()
+    create_institute()
+    create_developer()
+    create_discipline()
+    create_technology()
+    create_lab()
+    create_experiment()
+
 if __name__ == "__main__":
     db.create_all(app=create_app(config))
     create_integration_levels()
