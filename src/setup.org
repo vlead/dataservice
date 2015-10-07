@@ -7,10 +7,13 @@
 
 * Introduction
 
-* Set up the environment
+* Installing and setting up the environment
   Environment for running dataservice is set up.
-** Set up python dependencies 
-#+BEGIN_SRC python :tangle setup.py :eval=no
+** Install dependendent python packages
+Here we use the =setuptools= module from the standard lib, to make a
+=setup.py= file, which will install all the python library dependencies.
+
+#+BEGIN_SRC python :tangle setup.py :eval no
 from setuptools import setup
 
 requires = [
@@ -29,8 +32,14 @@ setup(
 )
 
 #+END_SRC
-** set up DB
-#+BEGIN_SRC python :tangle dbsetup.py :eval=no
+** Setup the database
+We need to create a database and import our schema to it.
+The following SQLAlchemy script does that.
+
+Along with that, it also prepopulates some of the data that is fixed and
+decided before-hand.
+
+#+BEGIN_SRC python :tangle dbsetup.py :eval no
 from src.app import create_app
 from src.db import *
 import src.config as config
@@ -196,36 +205,89 @@ if __name__ == "__main__":
     #create_experiment()
 
 #+END_SRC
-** Set up both DB and Python dependencies
-#+BEGIN_SRC sh :tangle setup.sh :eval=no
+** Install all dependencies and setup the software
+Install all dependencies, including the OS related packages, Python packages,
+setup the database, configure the webserver, and finally deploy the
+application.
+
+#+BEGIN_SRC sh :tangle setup.sh :eval no
 #!/bin/bash
 # Shell script to install deb package dependencies as well as python package
 # dependencies for dataservice.
+
+# if any proxy server
+PROXY=""
+# file to store the generated password
+DB_PASS_FILE="db_pass.txt"
 
 if [[ `id -u` -ne 0 ]]; then
   echo "You have to execute this script as super user!"
   exit 1;
 fi
+
 # Update the packages
-echo "Installing pre-requisite dependencies.."
-apt-get update
-apt-get install mysql-server python-dev libmysqld-dev
-echo "Installing dependencies.."
-# Installing dependencies
-python setup.py install
+echo "Updating package cache.."
+apt-get -y update
 if [[ $? -ne 0 ]]; then
-  echo "Installation failed!"
+  echo "Updating package cache failed!"
   exit 1;
 fi
+
+echo "Installing MySQL database.."
+# generate a random password for the database and store it in the $DB_PASS_FILE
+# file
+DBPASS=$(date +%s | sha256sum | head -c 32)
+echo $DBPASS > $DB_PASS_FILE
+
+# Install MySQL Server in a Non-Interactive mode.
+echo "mysql-server mysql-server/root_password password $DBPASS" | sudo debconf-set-selections
+echo "mysql-server mysql-server/root_password_again password $DBPASS" | sudo debconf-set-selections
+apt-get install -y mysql-server
+if [[ $? -ne 0 ]]; then
+  echo "FATAL: MySQL installation failed!"
+  exit 1;
+fi
+
+# Install pre-requsite dependencies: python-dev, mysqld-dev, setuptools,
+# apache, mod_wsgi etc.
+echo "Installing pre-requisite dependencies.."
+apt-get install -y python-dev libmysqld-dev python-setuptools apache2 libapache2-mod-wsgi
+if [[ $? -ne 0 ]]; then
+  echo "FATAL: Installing pre-requisite dependencies failed!"
+  exit 1;
+fi
+
+echo "Enabling the mod WSGI on apache"
+a2enmod mod-wsgi
+if [[ $? -ne 0 ]]; then
+  echo "FATAL: Unable to enable mod wsgi!"
+  exit 1;
+fi
+
+# Installing python dependencies
+echo "Installing dependencies.."
+export http_proxy=$PROXY
+export https_proxy=$PROXY
+python setup.py install
+if [[ $? -ne 0 ]]; then
+  echo "FATAL: Installation failed!"
+  exit 1;
+fi
+
 exit 0
 
 #+END_SRC
 
+* Configuring the application and its deployment
+#+BEGIN_SRC sh :tangle configure.sh :eval no
+#!/bin/bash
+#+END_SRC
+
 * Run Test Cases
-#+BEGIN_SRC sh :tangle run_tests.sh :eval=no
+#+BEGIN_SRC sh :tangle run_tests.sh :eval no
 #!/bin/bash
 # Run the tests
 python -m tests.test_db
-# python -m tests.test_api
+python -m tests.test_api
 
 #+END_SRC

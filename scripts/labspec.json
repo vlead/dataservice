@@ -1,127 +1,110 @@
 {
 	"lab": {
 		"description": {
-			"name": "OVPL",
-			"id": "ovpl",
-			"status": "under development",
+			"name": "Data Service",
+			"id": "data",
+			"status": "Work in Progress",
 			"discipline": [],
-			"type": "Simulation",
+			"type": "",
 			"server-side": true,
-			"integration_level": 0,
-			"developer": [
-			{
-				"name": "Devi Prasad",
-				"title": "",
-				"role": "Software Architect",
-				"organization": "VLEAD",
-				"institute": "IIIT Hyderabad",
-				"web": "",
-				"department": "Software Engg Research Lab (SERL)",
-				"contact": {
-					"email": "dp@vlabs.ac.in",
-					"alternate_email": "dprasadm@gmail.com",
-					"mobile_number": "",
-					"office_number": ""
-				}
-			},
-			{
-				"name": "Chandan Kumar",
-				"title": "",
-				"role": "Technical Manager",
-				"organization": "VLEAD",
-				"institute": "IIIT Hyderabad",
-				"web": "",
-				"department": "Software Engg Research Lab (SERL)",
-				"contact": {
-					"email": "chandan@vlabs.ac.in",
-					"alternate_email": "chandan.gupta@gmail.com",
-					"mobile_number": "",
-					"office_number": ""
-				}
-			},
-			{
-				"name": "Avinash Sajjanshetty",
-				"title": "",
-				"role": "Software Engineer",
-				"organization": "VLEAD",
-				"institute": "IIIT Hyderabad",
-				"web": "",
-				"department": "Software Engg Research Lab (SERL)",
-				"contact": {
-					"email": "a@vlabs.ac.in",
-					"alternate_email": "avinashsajjanshetty@gmail.com",
-					"mobile_number": "",
-					"office_number": ""
-				}
-			},
-			{
-				"name": "Suraj Ketan Samal",
-				"title": "",
-				"role": "Senior Software Engineer",
-				"organization": "VLEAD",
-				"institute": "IIIT Hyderabad",
-				"web": "",
-				"department": "Software Engg Research Lab (SERL)",
-				"contact": {
-					"email": "suraj@vlabs.ac.in",
-					"alternate_email": "sksamal@gmail.com",
-					"mobile_number": "",
-					"office_number": ""
-				}
-			}
-			]
+			"integration_level": 6,
+      "developer": [
+        {
+          "name": "Anon Ray",
+          "title": "",
+          "role": "Software Engineer",
+          "organization": "VLEAD",
+          "institute": "IIIT Hyderabad",
+          "web": "",
+          "department": "Software Engg Research Lab (SERL)",
+          "contact": {
+            "email": "anon@vlabs.ac.in",
+            "alternate_email": "",
+            "mobile_number": "",
+            "office_number": ""
+          }
+        },
+        {
+          "name": "Thirumal Ravula",
+          "title": "",
+          "role": "Software Engineer",
+          "organization": "VLEAD",
+          "institute": "IIIT Hyderabad",
+          "web": "",
+          "department": "Software Engg Research Lab (SERL)",
+          "contact": {
+            "email": "chandan@vlabs.ac.in",
+            "alternate_email": "",
+            "mobile_number": "",
+            "office_number": ""
+          }
+        },
+        {
+          "name": "Ambika Kaul",
+          "title": "",
+          "role": "Software Engineer",
+          "organization": "VLEAD",
+          "institute": "IIIT Hyderabad",
+          "web": "",
+          "department": "Software Engg Research Lab (SERL)",
+          "contact": {
+            "email": "ambika@vlabs.ac.in",
+            "alternate_email": "",
+            "mobile_number": "",
+            "office_number": ""
+          }
+        }
+      ]
 		},
-
 		"build_requirements": {
 			"platform": {
-				"os": "ubuntu", 
+				"os": "ubuntu",
 				"osVersion": "12",
-				"arch": "i386",
+				"arch": "x64",
 				"service_pack": "",
 				"installer": [
 					],
 				"build_steps": {
 					"configure": [],
 					"pre_build": [],
-					"build": [],
+					"build": [
+            "make -f ../makefile"
+          ],
 					"post_build": [],
 					"status": []
 				}
 			}
 		},
-
 		"runtime_requirements": {
 			"platform": {
-				"os": "ubuntu", 
+				"os": "ubuntu",
 				"osVersion": "12",
-				"arch": "i386",
+				"arch": "x64",
 				"servicepack": "",
 				"hosting": "dedicated",
 				"memory": {
-					"max_required": null,
-					"min_required": null
+					"max_required": "4gb",
+					"min_required": "2gb"
 				},
 				"storage": {
 					"min_required": "10gb"
 				},
 				"installer": [
-					"sudo chmod 777 ../setup.sh",
-					"bash ../setup.sh"
-					],
+					"bash ../build/code/setup.sh",
+          "bash ../build/code/configure.sh"
+				],
 				"lab_actions": {
-					"init":     [],
+					"init"    : [],
 					"shutdown": [],
-					"pause":    [],
-					"resume":   [],
-					"start":    [
-					"python ../src/app.py &"
-						],
-					"stop":     [],
-					"backup":   [],
-					"restore":  [],
-					"clean":    [],
-					"stats":    [],
-					"publish":  []
+					"pause"   : [],
+					"resume"  : [],
+					"start"   : ["./start"],
+					"stop"    : ["./stop"],
+					"backup"  : ["./backup"],
+					"restore" : ["./restore"],
+					"clean"   : [],
+					"stats"   : [],
+					"publish" : []
 				}
 			}
 		}
