@@ -2897,6 +2897,9 @@ experiment = {'entity_class': Experiment,
                    'relationship': 'one'},
               ]}
 
+feedback = {'entity_class': Feedback,
+            'attributes': []}
+
 labs = lab
 hosted_on = hosting_platform
 content_hosted_on = hosting_platform
@@ -2914,7 +2917,8 @@ entity_pairs = {
     'type-of-labs': type_of_lab,
     'developers': developer,
     'technologies': technology,
-    'experiments': experiment
+    'experiments': experiment,
+    'feedback': feedback
 }
 
 
