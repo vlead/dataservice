@@ -2569,8 +2569,7 @@ from flask import Blueprint, request, jsonify, abort, current_app, redirect,\
 
 from db import *
 from utils import parse_request, jsonify_list
-from maps import entity_pairs
-from maps import resource_map
+from maps import *
 api = Blueprint('APIs', __name__)
 
 
@@ -2682,218 +2681,219 @@ api = Blueprint('APIs', __name__)
      and the attribute is captured to facilitate run time creation of queries. 
      
 #+BEGIN_SRC python :tangle src/maps.py :eval no
+from db import *
 
-integration_level = {'entity_class': 'IntegrationLevel',
+integration_level = {'entity_class': IntegrationLevel,
                      'attributes': [
                          {'name': 'id',
-                          'class': 'None',
+                          'class': None,
                           'relationship': 'one'},
                          {'name': 'level',
-                          'class': 'None',
+                          'class': None,
                           'relationship': 'one'},
                          {'name': 'labs',
-                          'class': 'Lab',
+                          'class': Lab,
                           'relationship': 'many'},
                      ]}
 
 
-hosting_platform = {'entity_class': 'HostingPlatform',
+hosting_platform = {'entity_class': HostingPlatform,
                     'attributes': [
                         {'name': 'id',
-                         'class': 'None',
+                         'class': None,
                          'relationship': 'one'},
                         {'name': 'name',
-                         'class': 'None',
+                         'class': None,
                          'relationship': 'one'},
                         {'name': 'labs',
-                         'class': 'Lab',
+                         'class': Lab,
                          'relationship': 'many'},
                     ]}
 
-type_of_lab = {'entity_class': 'TypeOfLab',
+type_of_lab = {'entity_class': TypeOfLab,
                'attributes': [
                    {'name': 'id',
-                    'class': 'None',
+                    'class': None,
                     'relationship': 'one'},
                    {'name': 'type',
-                    'class': 'None',
+                    'class': None,
                     'relationshipn': 'one'},
                    {'name': 'labs',
-                    'class': 'Lab',
+                    'class': Lab,
                     'relationship': 'many'}
                ]}
 
-institute = {'entity_class': 'Institute',
+institute = {'entity_class': Institute,
              'attributes': [
                  {'name': 'id',
-                  'class': 'None',
+                  'class': None,
                   'relationship': 'one'},
                  {'name': 'name',
-                  'class': 'None',
+                  'class': None,
                   'relationship': 'one'},
                  {'name': 'institute_id',
-                  'class': 'None',
+                  'class': None,
                   'relationship': 'one'},
                  {'name': 'pic',
-                  'class': 'None',
+                  'class': None,
                   'relationship': 'one'},
                  {'name': 'pic_email',
-                  'class': 'None',
+                  'class': None,
                   'relationship': 'one'},
                  {'name': 'iic',
-                  'class': 'None',
+                  'class': None,
                   'relationship': 'one'},
                  {'name': 'iic_email',
-                  'class': 'None',
+                  'class': None,
                   'relationship': 'one'},
                  {'name': 'labs',
-                  'class': 'Lab',
+                  'class': Lab,
                   'relationship': 'many'},
                  {'name': 'developers',
-                  'class': 'Developer',
+                  'class': Developer,
                   'relationship': 'many'}
              ]}
 
 
-discipline = {'entity_class': 'Discipline',
+discipline = {'entity_class': Discipline,
               'attributes': [
                   {'name': 'id',
-                   'class': 'None',
+                   'class': None,
                    'relationship': 'one'},
                   {'name': 'name',
-                   'class': 'None',
+                   'class': None,
                    'relationship': 'one'},
                   {'name': 'discipline_id',
-                   'class': 'None',
+                   'class': None,
                    'relationship': 'one'},
                   {'name': 'dnc',
-                   'class': 'None',
+                   'class': None,
                    'relationship': 'one'},
                   {'name': 'dnc_email',
-                   'class': 'None',
+                   'class': None,
                    'relationship': 'one'},
                   {'name': 'labs',
-                   'class': 'Lab',
+                   'class': Lab,
                    'relationship': 'many'},
               ]}
 
 
-developer = {'entity_class': 'Developer',
+developer = {'entity_class': Developer,
              'attributes': [
                  {'name': 'id',
-                  'class': 'None',
+                  'class': None,
                   'relationship': 'one'},
                  {'name': 'name',
-                  'class': 'None',
+                  'class': None,
                   'relationshipn': 'one'},
                  {'name': 'email',
-                  'class': 'None',
+                  'class': None,
                   'relationship': 'one'},
                  {'name': 'institute',
-                  'class': 'Institute',
+                  'class': Institute,
                   'relationship': 'one'}
              ]}
 
-lab = {'entity_class': 'Lab',
+lab = {'entity_class': Lab,
        'attributes': [
            {'name': 'id',
-            'class': 'None',
+            'class': None,
             'relationship': 'one'},
            {'name': 'name',
-            'class': 'None',
+            'class': None,
             'relationship': 'one'},
            {'name': 'lab_id',
-            'class': 'None',
+            'class': None,
             'relationship': 'one'},
            {'name': 'institute',
-            'class': 'Institute',
+            'class': Institute,
             'relationship': 'one'},
            {'name': 'discipline',
-            'class': 'Discipline',
+            'class': Discipline,
             'relationship': 'one'},
            {'name': 'integration_level',
-            'class': 'IntegrationLevel',
+            'class': IntegrationLevel,
             'relationship': 'one'},
            {'name': 'developers',
-            'class': 'Developer',
+            'class': Developer,
             'relationship': 'many'},
            {'name': 'experiments',
-            'class': 'Experiment',
+            'class': Experiment,
             'relationship': 'many'},
            {'name': 'technologies',
-            'class': 'Technology',
+            'class': Technology,
             'relationship': 'many'},
            {'name': 'repo_url',
-            'class': 'None',
+            'class': None,
             'relationship': 'one'},
            {'name': 'hosted_url',
-            'class': 'None',
+            'class': None,
             'relationship': 'one'},
            {'name': 'hosted_on',
-            'class': 'HostingPlatform',
+            'class': HostingPlatform,
             'relationship': 'one'},
            {'name': 'type_of_lab',
-            'class': 'TypeOfLab',
+            'class': TypeOfLab,
             'relationship': 'one'},
            {'name': 'remarks',
-            'class': 'None',
+            'class': None,
             'relationship': 'one'},
            {'name': 'status',
-            'class': 'None',
+            'class': None,
             'relationship': 'one'},
            {'name': 'is_web_2_compliant_lab',
-            'class': 'None',
+            'class': None,
             'relationship': 'one'},
            {'name': 'is_phase_2_lab',
-            'class': 'None',
+            'class': None,
             'relationship': 'one'}
        ]}
 
 
-technology = {'entity_class': 'Technology',
+technology = {'entity_class': Technology,
               'attributes': [
                   {'name': 'id',
-                   'class': 'None',
+                   'class': None,
                    'relationship': 'one'},
                   {'name': 'name',
-                   'class': 'None',
+                   'class': None,
                    'relationshipn': 'one'},
                   {'name': 'version',
-                   'class': 'None',
+                   'class': None,
                    'relationship': 'one'},
                   {'name': 'labs',
-                   'class': 'Lab',
+                   'class': Lab,
                    'relationship': 'many'},
                   {'name': 'experiments',
-                   'class': 'Experiment',
+                   'class': Experiment,
                    'relationship': 'many'}
               ]}
 
-experiment = {'entity_class': 'Experiment',
+experiment = {'entity_class': Experiment,
               'attributes': [
                   {'name': 'id',
-                   'class': 'None',
+                   'class': None,
                    'relationship': 'one'},
                   {'name': 'name',
-                   'class': 'None',
+                   'class': None,
                    'relationshipn': 'one'},
                   {'name': 'content_url',
-                   'class': 'None',
+                   'class': None,
                    'relationship': 'one'},
                   {'name': 'content_hosted_on',
-                   'class': 'HostingPlatform',
+                   'class': HostingPlatform,
                    'relationship': 'one'},
                   {'name': 'simulation_url',
-                   'class': 'None',
+                   'class': None,
                    'relationship': 'one'},
                   {'name': 'simulation_hosted_on',
-                   'class': 'HostingPlatform',
+                   'class': HostingPlatform,
                    'relationship': 'one'},
                   {'name': 'technologies',
-                   'class': 'Technology',
+                   'class': Technology,
                    'relationship': 'many'},
                   {'name': 'lab',
-                   'class': 'Lab',
+                   'class': Lab,
                    'relationship': 'one'},
               ]}
 
@@ -2934,11 +2934,10 @@ resource_map = {'experiments': [{'labs': 'lab'},
 # =/<:entity>s?query_param1=val1&query_param2=val2&..query_paramn=valn=
 @api.route('/<entity>', methods=['GET'])
 def query_an_entity(entity):
-    db_module = __import__('db')
     if entity not in entity_pairs:
         abort(400, 'Entity %s is not valid.' % entity)
 
-    curr_entity = getattr(db_module, entity_pairs[entity]['entity_class'])
+    curr_entity = entity_pairs[entity]['entity_class']
     arg_tuple_list = request.args.lists()
     if not arg_tuple_list:
         print "data: %s" % [i.to_client() for i in curr_entity.get_all()]
@@ -2961,8 +2960,6 @@ def query_an_entity(entity):
 
 
 def create_filters(entity_map, curr_entity, args, values):
-    maps_module = __import__('maps')
-    db_module = __import__('db')
     if len(args) == 1:
         return getattr(curr_entity, args[0]).in_(values)
     else:
@@ -2971,17 +2968,17 @@ def create_filters(entity_map, curr_entity, args, values):
         if not result:
             raise AttributeError("attribute %s not found" % args[0])
 
-        entity_map = getattr(maps_module, args[0])
+        entity_map = args[0]
         if result[0]['relationship'] == 'one':
             return getattr(curr_entity, args[0]).has(
                 create_filters(entity_map,
-                               getattr(db_module, result[0]['class']),
+                               result[0]['class'],
                                args[1:],
                                values))
         else:
             return getattr(curr_entity, args[0]).any(
                 create_filters(entity_map,
-                               getattr(db_module, result[0]['class']),
+                               result[0]['class'],
                                args[1:],
                                values))
 
@@ -2990,9 +2987,7 @@ def create_filters(entity_map, curr_entity, args, values):
 def get_specific_entity(entity, id):
     if entity not in entity_pairs:
         abort(400, 'Entity %s is not valid.' % entity)
-    db_module = __import__('db')
-    curr_entity = getattr(db_module,
-                          entity_pairs[entity]['entity_class'])
+    curr_entity = entity_pairs[entity]['entity_class']
     record = curr_entity.get_by_id(id)
     if not record:
         abort(404, "No entry for %s with id: %s found." % (entity, id))
@@ -3008,9 +3003,7 @@ def get_entity_of_a_specific_entity(top_entity, id, lower_entity):
     if lower_entity not in entity_pairs:
         abort(400, 'Entity %s is not valid.' % entity)
 
-    db_module = __import__('db')
-    curr_entity = getattr(db_module,
-                          entity_pairs[lower_entity]['entity_class'])
+    curr_entity = entity_pairs[lower_entity]['entity_class']
 
     arg_tuple_list = build_arg_list(request.args.lists(),
                                     top_entity,
