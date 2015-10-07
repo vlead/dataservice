@@ -1249,6 +1249,12 @@ as it will fall into infinite recursion. Hence we just include the necessary
 info about the lab.
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def to_client(self):
+        tech_dict_list = []
+        for tech in self.technologies:
+            tech_dict_list.append(dict([('id', tech.id),
+                                        ('name', tech.name),
+                                        ('foss', tech.foss)]))
+                                        
         return {
             'id': self.id,
             'name': self.name,
@@ -1264,7 +1270,8 @@ info about the lab.
                 'id': self.lab.id,
                 'lab_id': self.lab.lab_id,
                 'name': self.lab.name
-            }
+            },
+            'technologies': tech_dict_list
         }
 
 #+END_SRC
@@ -2563,6 +2570,7 @@ from flask import Blueprint, request, jsonify, abort, current_app, redirect,\
 from db import *
 from utils import parse_request, jsonify_list
 from maps import entity_pairs
+from maps import resource_map
 api = Blueprint('APIs', __name__)
 
 
@@ -2909,6 +2917,16 @@ entity_pairs = {
     'experiments': experiment
 }
 
+
+resource_map = {'experiments': [{'labs': 'lab'},
+                                {'technologies': 'technologies'}],
+                'labs': [{'institutes': 'institute'},
+                         {'disciplines': 'discipline'},
+                         {'technologies': 'technologies'}],
+                'developers': [{'institutes': 'institute'}],
+                'technologies': [{'labs': 'labs'},
+                                 {'experiments': 'experiments'}]}
+
 #+END_SRC
 **** GET APIS
 #+BEGIN_SRC python :tangle src/api.py :eval no
@@ -2921,7 +2939,6 @@ def query_an_entity(entity):
         abort(400, 'Entity %s is not valid.' % entity)
 
     curr_entity = getattr(db_module, entity_pairs[entity]['entity_class'])
-    print "=========curr_entity = %s from route===========" % curr_entity
     arg_tuple_list = request.args.lists()
     if not arg_tuple_list:
         print "data: %s" % [i.to_client() for i in curr_entity.get_all()]
@@ -2932,41 +2949,25 @@ def query_an_entity(entity):
         for arg_tuple in arg_tuple_list:
             args = arg_tuple[0].split('.')
             values = arg_tuple[1][0].split(',')
-            print "=========route function============"
-            print "args: %s" % args
-            print "values: %s" % values
-            #    return str(arg_tuple_list)
             filters.append(create_filters(entity_pairs[entity],
                                           curr_entity,
                                           args,
                                           values))
-        print "===FILTERS===="
-        print filters
         for filter in filters:
-            print "filter = %s" % filter
-
             query = query.filter(filter)
-            print query
         entities = query.all()
-        print entities
         print "data: %s" % [ent.to_client() for ent in entities]
         return jsonify_list([ent.to_client() for ent in entities])
 
 
 def create_filters(entity_map, curr_entity, args, values):
-    print "===============create_filters===================="
-    print "args = %s" % args
-    print "entity_map = %s" % entity_map
-    print "curr_entity = %s" % curr_entity
     maps_module = __import__('maps')
     db_module = __import__('db')
     if len(args) == 1:
-        print getattr(curr_entity, args[0]).in_(values)
         return getattr(curr_entity, args[0]).in_(values)
     else:
         result = filter(lambda item: item['name'] == args[0],
                         entity_map['attributes'])
-        print "result = %s" % result
         if not result:
             raise AttributeError("attribute %s not found" % args[0])
 
@@ -2990,34 +2991,63 @@ def get_specific_entity(entity, id):
     if entity not in entity_pairs:
         abort(400, 'Entity %s is not valid.' % entity)
     db_module = __import__('db')
-    curr_entity = getattr(db_module, entity_pairs[entity]['entity_class'])
+    curr_entity = getattr(db_module,
+                          entity_pairs[entity]['entity_class'])
     record = curr_entity.get_by_id(id)
     if not record:
         abort(404, "No entry for %s with id: %s found." % (entity, id))
 
     return jsonify(record.to_client())
 
+
 @api.route('/<top_entity>/<id>/<lower_entity>', methods=['GET'])
 def get_entity_of_a_specific_entity(top_entity, id, lower_entity):
-    if entity not in entity_pairs:
+    if top_entity not in entity_pairs:
+        abort(400, 'Entity %s is not valid.' % entity)
+
+    if lower_entity not in entity_pairs:
         abort(400, 'Entity %s is not valid.' % entity)
 
     db_module = __import__('db')
-    curr_entity = getattr(db_module, entity_pairs[lower_entity]['entity_class'])
+    curr_entity = getattr(db_module,
+                          entity_pairs[lower_entity]['entity_class'])
 
-    record = curr_entity.get_by_id(id)
-    if not record:
-        abort(404, "No entry for %s with id: %s found." % (entity, id))
+    arg_tuple_list = build_arg_list(request.args.lists(),
+                                    top_entity,
+                                    id,
+                                    lower_entity)
+    query = curr_entity.query
+    filters = []
 
-    # check if the entity2 is an attr of entity
-    if entity2 not in entity_map_types[entity]['types']:
-        abort(400, 'Entity %s is not valid attribute of %s' % (entity2, entity))
+    for arg_tuple in arg_tuple_list:
+        args = arg_tuple[0].split('.')
+        values = arg_tuple[1][0].split(',')
+        filters.append(create_filters(entity_pairs[lower_entity],
+                                      curr_entity,
+                                      args,
+                                      values))
 
-    #FIXME: ugly hack, I know! :/. I don't know how to get the attr
-    # otherwise..
-    result = record.__getattribute__('get_'+entity2)()
-    return jsonify_list([i.to_client() for i in result])
+    for filter in filters:
+        query = query.filter(filter)
 
+    entities = query.all()
+    print "data: %s" % [ent.to_client() for ent in entities]
+    return jsonify_list([ent.to_client() for ent in entities])
+
+
+def build_arg_list(arg_tuple_list, top_entity, id, lower_entity):
+    if arg_tuple_list is None:
+        arg_tuple_list = []
+
+    result = filter(lambda item: item.keys()[0] == top_entity,
+                    resource_map[lower_entity])
+
+    if not result:
+        raise AttributeError("attribute %s not found" % lower_entity)
+
+    top_entity_tuple = ("%s.id" % result[0][top_entity], [id])
+    arg_tuple_list.append(top_entity_tuple)
+    return arg_tuple_list
 
 #+END_SRC
 
