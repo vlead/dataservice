@@ -5,7 +5,7 @@ if [[ `id -u` -ne 0 ]]; then
   exit 1;
 fi
 
-apt-get install build-essential
+apt-get install -y build-essential
 apt-get build-dep emacs24
 wget http://ftp.gnu.org/gnu/emacs/emacs-24.4.tar.gz
 tar -xzvf emacs-24.4.tar.gz
