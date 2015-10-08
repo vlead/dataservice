@@ -14,7 +14,7 @@ rm emacs-24.4.tar.gz
 cd emacs-24.4
 ./configure --prefix=/opt/emacs
 make
-sudo make install
+make install
 export PATH=/opt/emacs/bin:$PATH
 echo "export PATH=/opt/emacs/bin:\$PATH" >> ~/.bashrc
 mkdir -p ~/emacs/lisp
