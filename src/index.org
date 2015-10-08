@@ -3993,7 +3993,7 @@ ALLOWED_ORIGINS = ["*.vlabs.ac.in", "*.virtual-labs.ac.in"]
 WHITELIST_IPS = ["127.0.0.1"]
 
 # Configure your log paths
-LOG_FILE = 'logs/dataservice.log'
+LOG_FILE = 'dataservice.log'
 
 # Log level for the application
 LOG_LEVEL = 'DEBUG'
@@ -4003,6 +4003,24 @@ UPLOAD_FOLDER = 'src/static/temp'
 
 # allowed file extensions that can be uploaded
 ALLOWED_EXTENSIONS = set(['csv'])
+
+#+END_SRC
+
+** Deploying the application
+   For deploying the application, we use WSGI standard for Python
+   applications.
+   For that we need to write a WSGI script as follows.
+#+BEGIN_SRC python :tangle dataservice.wsgi :eval no
+import sys, os
+
+BASE_DIR = os.path.join(os.path.dirname(__file__))
+
+sys.path.insert(0, BASE_DIR)
+
+from src.app import create_app
+from src import config
+
+application = create_app(config)
 
 #+END_SRC
 

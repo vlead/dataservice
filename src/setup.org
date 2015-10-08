@@ -7,9 +7,7 @@
 
 * Introduction
 
-* Installing and setting up the environment
-  Environment for running dataservice is set up.
-** Install dependendent python packages
+* Install dependendent python packages
 Here we use the =setuptools= module from the standard lib, to make a
 =setup.py= file, which will install all the python library dependencies.
 
@@ -32,7 +30,8 @@ setup(
 )
 
 #+END_SRC
-** Setup the database
+
+* Program to setup the database
 We need to create a database and import our schema to it.
 The following SQLAlchemy script does that.
 
@@ -205,7 +204,8 @@ if __name__ == "__main__":
     #create_experiment()
 
 #+END_SRC
-** Install all dependencies and setup the software
+
+* Install all dependencies and setup the software
 Install all dependencies, including the OS related packages, Python packages,
 setup the database, configure the webserver, and finally deploy the
 application.
@@ -258,7 +258,7 @@ if [[ $? -ne 0 ]]; then
 fi
 
 echo "Enabling the mod WSGI on apache"
-a2enmod mod-wsgi
+a2enmod wsgi
 if [[ $? -ne 0 ]]; then
   echo "FATAL: Unable to enable mod wsgi!"
   exit 1;
@@ -279,8 +279,104 @@ exit 0
 #+END_SRC
 
 * Configuring the application and its deployment
+  The following program configures the application, configures the web server
+  to use WSGI and use the application scripts, and finally calls the database
+  setup scripts to actually setup the database with tables.
 #+BEGIN_SRC sh :tangle configure.sh :eval no
 #!/bin/bash
+# Configure the application in the deployment environment
+# 1. Update the config.py file with appropriate values
+# 2. Update the apache config to server via WSGI
+# 3. Run the database setup scripts to setup the database
+
+if [[ `id -u` -ne 0 ]]; then
+  echo "You have to execute this script as super user!"
+  exit 1;
+fi
+
+update_app_config () {
+  CONFIG_FILE="src/config.py"
+  DB_USER="root"
+  DB_PASS=$(cat db_pass.txt)
+  DB_NAME="dataservice"
+  DB_SERVER="localhost"
+
+  # the list of white-listed IPs for POST/PUT requests to data service
+  WHITELIST_IPS="['127.0.0.1']"
+
+  # the list of allowed domains for CORS
+  ALLOWED_ORIGINS="['*.vlabs.ac.in', '*.virtual-labs.ac.in']"
+
+  echo "Updating config.py.."
+  # Update parts of the DB URI
+  sed -i "s/<userid>/$DB_USER/" $CONFIG_FILE
+  sed -i "s/<password>/$DB_PASS/" $CONFIG_FILE
+  sed -i "s/<servername>/$DB_SERVER/" $CONFIG_FILE
+  sed -i "s/<db_name>/$DB_NAME/" $CONFIG_FILE
+  # update SQLALCHEMY_ECHO
+  sed -i "s/^SQLALCHEMY_ECHO.*$/SQLALCHEMY_ECHO = False/" $CONFIG_FILE
+  # update WHITELIST_IPS
+  #sed -i "s/^WHITELIST_IPS.*$/WHITELIST_IPS = $WHITELIST_IPS/" $CONFIG_FILE
+  # update ALLOWED_ORIGINS
+  #sed -i "s/^ALLOWED_ORIGINS.*$/ALLOWED_ORIGINS = $ALLOWED_ORIGINS/" $CONFIG_FILE
+
+  mkdir logs
+  chmod -R a+w logs
+}
+
+update_apache_config() {
+  PROC_NAME="dataservice"
+  WSGI_SCRIPT="dataservice.wsgi"
+  APACHE_VHOST_FILE="/etc/apache2/sites-available/default"
+  ABS_PATH_DS=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+  sed -i "/<\/VirtualHost>/i \
+    WSGIScriptAlias / $ABS_PATH_DS/$WSGI_SCRIPT
+  " $APACHE_VHOST_FILE
+
+  #sed -i '/<\/VirtualHost>/i \
+  #  WSGIDaemonProcess $PROC_NAME user=www-data group=www-data threads=5
+  #  WSGIScriptAlias / $ABS_PATH_DS/$WSGI_SCRIPT
+
+  #  <Directory $ABS_PATH_DS>
+  #    WSGIProcessGroup $PROC_NAME
+  #    WSGIApplicationGroup %{GLOBAL}
+  #    Order deny,allow
+  #    Allow from all
+  #  </Directory>
+  #' $APACHE_VHOST_FILE
+
+}
+
+setup_db() {
+  echo "Creating database: $DB_NAME"
+  mysql -u $DB_USER -p$DB_PASS -Bse "create database $DB_NAME;"
+  if [[ $? -ne 0 ]]; then
+    echo "Failed to create database $DB_NAME"
+    exit 1;
+  fi
+  python dbsetup.py
+  if [[ $? -ne 0 ]]; then
+    echo "Failed to create tables in database $DB_NAME"
+    exit 1;
+  fi
+}
+
+update_app_config
+if [[ $? -ne 0 ]]; then
+  echo "FATAL: Failed to update application config.py"
+  exit 1;
+fi
+update_apache_config
+if [[ $? -ne 0 ]]; then
+  echo "FATAL: Failed to update apache config"
+  exit 1;
+fi
+
+service apache2 restart
+
+setup_db
+exit 0;
 #+END_SRC
 
 * Run Test Cases
