@@ -67,6 +67,8 @@
 				"build_steps": {
 					"configure": [],
 					"pre_build": [
+            "echo \"export http_proxy='http://proxy.iiit.ac.in:8080'\" >> /etc/environment ",
+            "echo \"export https_proxy='http://proxy.iiit.ac.in:8080'\" >> /etc/environment ",
             "bash ./install_emacs24.sh"
           ],
 					"build": [
