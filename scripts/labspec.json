@@ -67,10 +67,10 @@
 				"build_steps": {
 					"configure": [],
 					"pre_build": [
-            "echo \"export http_proxy='http://proxy.iiit.ac.in:8080'\" >> /etc/environment ",
-            "echo \"export https_proxy='http://proxy.iiit.ac.in:8080'\" >> /etc/environment ",
-            "echo \"export HTTP_PROXY='http://proxy.iiit.ac.in:8080'\" >> /etc/environment ",
-            "echo \"export HTTPS_PROXY='http://proxy.iiit.ac.in:8080'\" >> /etc/environment ",
+            "echo \"export http_proxy='http://proxy.iiit.ac.in:8080'\" >> /etc/profile",
+            "echo \"export https_proxy='http://proxy.iiit.ac.in:8080'\" >> /etc/profile",
+            "echo \"export HTTP_PROXY='http://proxy.iiit.ac.in:8080'\" >> /etc/profile",
+            "echo \"export HTTPS_PROXY='http://proxy.iiit.ac.in:8080'\" >> /etc/profile",
             "bash ./install_emacs24.sh"
           ],
 					"build": [
