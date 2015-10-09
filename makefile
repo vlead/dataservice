@@ -36,8 +36,6 @@ ifeq ($(wildcard elisp),)
 	mv ${LITERATE_DIR}/${ORG_DIR} .
 	mv ${LITERATE_DIR}/${STYLE_DIR} .
 	rm -rf ${LITERATE_DIR}
-	ln -s ${PWD}/${ORG_DIR}/ ${PWD}/src/${ORG_DIR}
-	ln -s ${PWD}/${STYLE_DIR}/ ${PWD}/src/${STYLE_DIR}
 else
 	@echo "Literate support code already present"
 endif

@@ -70,7 +70,7 @@
             "bash ./install_emacs24.sh"
           ],
 					"build": [
-            "make -f ../makefile"
+            "cd ../;make build"
           ],
 					"post_build": [],
 					"status": []

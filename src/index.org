@@ -3,7 +3,7 @@
 #+Date: [2015-08-13 Thu]
 #+PROPERTY: results output
 #+PROPERTY: exports code
-#+SETUPFILE: org-templates/level-0.org
+#+SETUPFILE: ../org-templates/level-0.org
 
 * Introduction
   Data Service or =dataservice= acts as a central repository of information in
