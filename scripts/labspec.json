@@ -76,7 +76,10 @@
 					"build": [
             "cd ../;make build"
           ],
-					"post_build": [],
+					"post_build": [
+            "cp -R ../build/code/* /var/www/",
+            "chmod -R a+r /var/www"
+          ],
 					"status": []
 				}
 			}
@@ -96,8 +99,8 @@
 					"min_required": "10gb"
 				},
 				"installer": [
-					"bash ../build/code/setup.sh",
-          "bash ../build/code/configure.sh"
+					"bash /var/www/setup.sh",
+          "bash /var/www/configure.sh"
 				],
 				"lab_actions": {
 					"init"    : [],
