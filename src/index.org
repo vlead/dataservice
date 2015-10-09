@@ -1324,6 +1324,17 @@ info about the lab.
 
 **** LabId assigned for each lab
 
+     Rules for assigning a LabId to a Lab
+     1. LabId = discipline Id + number
+     2. All the legacy lab ids will remain the same
+     3. For a new lab, the number that is concatenated to the discipline Id is
+        derived in the following way:
+        - Fetch the labs in that particular discipline
+        - Get the highest number 
+        - Increment it by one
+        
+    
+
      |-----------+--------------------------------------------------------------------------------------|
      | LabId     | Name                                                                                 |
      |-----------+--------------------------------------------------------------------------------------|
