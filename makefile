@@ -29,6 +29,8 @@ pull-literate-tools:
 	@echo "pulling literate support code"
 	echo ${PWD}
 ifeq ($(wildcard elisp),)
+	@echo "proxy is..."
+	echo $$http_proxy
 	git clone ${LITERATE_TOOLS}
 	mv ${LITERATE_DIR}/${ELISP_DIR} .
 	mv ${LITERATE_DIR}/${ORG_DIR} .
