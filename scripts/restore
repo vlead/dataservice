@@ -1,0 +1,45 @@
+#!/bin/bash
+
+DB_NAME="dataservice"
+DB_PASS=$(cat db_pass.txt)
+VERSION="v0.2.0"
+
+BACKUP_FILE=$1
+
+# Absolute path to the scripts directory
+SCRIPTS_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+usage() {
+  echo "Usage:"
+  echo "$0 <path/to/the/backup/file.tar>"
+}
+
+if [ -z $BACKUP_FILE ]; then
+  echo "Error: No arguments were passed!!"
+  echo "Error: The path to the backup file must be passed."
+  usage
+  exit 1;
+fi
+
+# untar the $BACKUP_FILE file
+tar xfvz $BACKUP_FILE
+if [ $? -ne 0 ]; then
+  echo "Error: Something went wrong while untaring."
+  echo "Aborting restore."
+  exit 1;
+fi
+
+# stop the services before restoring..
+$SCRIPTS_DIR/stop
+# restore from the dump folder
+mysql -u root -p$DB_PASS $DB_NAME < $DB_NAME.sql
+if [ $? -ne 0 ]; then
+  echo "Error: Something went wrong while restoring db dump."
+  echo "Aborting restore."
+  exit 1;
+fi
+# start back the services
+$SCRIPTS_DIR/start
+
+echo "Restore successful."
+exit 0;
