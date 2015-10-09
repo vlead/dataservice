@@ -2966,26 +2966,36 @@ def query_an_entity(entity):
 
 def create_filters(entity_map, curr_entity, args, values):
     if len(args) == 1:
-        return getattr(curr_entity, args[0]).in_(values)
+        try:
+            return getattr(curr_entity, args[0]).in_(values)
+        except Exception, e:
+            abort(400, 'error is %s' % (str(e)))
     else:
         result = filter(lambda item: item['name'] == args[0],
                         entity_map['attributes'])
         if not result:
-            raise AttributeError("attribute %s not found" % args[0])
+            abort(400, '%s is not attribute of %s' %
+                  (args[0], str(entity_map['entity_class'])))
 
         entity_map = args[0]
         if result[0]['relationship'] == 'one':
-            return getattr(curr_entity, args[0]).has(
-                create_filters(entity_map,
-                               result[0]['class'],
-                               args[1:],
-                               values))
+            try:
+                return getattr(curr_entity, args[0]).has(
+                    create_filters(entity_map,
+                                   result[0]['class'],
+                                   args[1:],
+                                   values))
+            except Exception, e:
+                abort(400, 'error is %s' % (str(e)))
         else:
-            return getattr(curr_entity, args[0]).any(
-                create_filters(entity_map,
-                               result[0]['class'],
-                               args[1:],
-                               values))
+            try:
+                return getattr(curr_entity, args[0]).any(
+                    create_filters(entity_map,
+                                   result[0]['class'],
+                                   args[1:],
+                                   values))
+            except Exception, e:
+                abort(400, 'error is %s' % (str(e)))
 
 
 @api.route('/<entity>/<id>', methods=['GET'])
@@ -3003,10 +3013,10 @@ def get_specific_entity(entity, id):
 @api.route('/<top_entity>/<id>/<lower_entity>', methods=['GET'])
 def get_entity_of_a_specific_entity(top_entity, id, lower_entity):
     if top_entity not in entity_pairs:
-        abort(400, 'Entity %s is not valid.' % entity)
+        abort(400, 'Entity %s is not valid.' % top_entity)
 
     if lower_entity not in entity_pairs:
-        abort(400, 'Entity %s is not valid.' % entity)
+        abort(400, 'Entity %s is not valid.' % lower_entity)
 
     curr_entity = entity_pairs[lower_entity]['entity_class']
 
@@ -3041,7 +3051,8 @@ def build_arg_list(arg_tuple_list, top_entity, id, lower_entity):
                     resource_map[lower_entity])
 
     if not result:
-        raise AttributeError("attribute %s not found" % lower_entity)
+        abort(400, '%s does not belong to %s' %
+              (lower_entity, top_entity))
 
     top_entity_tuple = ("%s.id" % result[0][top_entity], [id])
     arg_tuple_list.append(top_entity_tuple)
@@ -5134,9 +5145,9 @@ class TestLab(TestCase):
     def test_get_labs_of_an_institute(self):
         print "test_get_labs_of_an_institute"
         insert_data()
-        r = self.client.get('/labs')
+        r = self.client.get('/labs/institute.id=1')
         result = json.loads(r.data)
-        self.assertEquals(len(result), 2)
+        self.assertEquals(len(result), 1)
 
     def test_get_one_lab(self):
         print "test_get_one_lab"
