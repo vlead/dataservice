@@ -358,7 +358,7 @@ setup_db() {
     echo "Failed to create database $DB_NAME"
     exit 1;
   fi
-  python dbsetup.py
+  python $ABS_PATH_DS/dbsetup.py
   if [[ $? -ne 0 ]]; then
     echo "Failed to create tables in database $DB_NAME"
     exit 1;
