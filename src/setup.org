@@ -325,8 +325,11 @@ update_app_config () {
   # update ALLOWED_ORIGINS
   #sed -i "s/^ALLOWED_ORIGINS.*$/ALLOWED_ORIGINS = $ALLOWED_ORIGINS/" $CONFIG_FILE
 
-  mkdir logs
-  chmod -R a+w logs
+  # NOTE: this is hardcoded now..somehow the log file when dynamically created
+  # is owned by root. then the app fails to run.. hence the following is
+  # necessary
+  touch /var/www/dataservice.log
+  chmod a+w /var/www/dataservice.log
 }
 
 update_apache_config() {
