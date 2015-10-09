@@ -216,7 +216,7 @@ application.
 # dependencies for dataservice.
 
 # if any proxy server
-PROXY=""
+#PROXY=""
 # file to store the generated password
 DB_PASS_FILE="db_pass.txt"
 
@@ -266,8 +266,8 @@ fi
 
 # Installing python dependencies
 echo "Installing dependencies.."
-export http_proxy=$PROXY
-export https_proxy=$PROXY
+#export http_proxy=$PROXY
+#export https_proxy=$PROXY
 python setup.py install
 if [[ $? -ne 0 ]]; then
   echo "FATAL: Installation failed!"
