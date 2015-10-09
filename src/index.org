@@ -6,10 +6,10 @@
 #+SETUPFILE: org-templates/level-0.org
 
 * Introduction
-  =dataservice= is a micro service that allows persistence of data by
-  other micro services over HTTP using REST API.  =dataservice= hides
-  the implementation details of the data store that is required for
-  data persistence.
+  Data Service or =dataservice= acts as a central repository of information in
+  the Virtual Labs ecosystem. It is a service that abstracts storing,
+  retrieving and querying data over HTTP for the Central Platform of Virtual
+  Labs.
 
 * Requirements
   1. The model of the data on whose foundation =dataservice= is built
@@ -21,7 +21,6 @@
   4. A bulk update interface, to update bulk data at once. <<req4>>. This
      requirement was deemed not necessary as [[https://issues.vlabs.ac.in/issues/133#note-4][#133]].
   5. Feedback portal to save data to data service. (v0.2.0)
-  6. A weekly dump of the feedback data to an excel file. (v0.2.0)
 
 * Design & Implementation
 ** Some initialization and boilerplate code
@@ -1255,7 +1254,7 @@ info about the lab.
             tech_dict_list.append(dict([('id', tech.id),
                                         ('name', tech.name),
                                         ('foss', tech.foss)]))
-                                        
+
         return {
             'id': self.id,
             'name': self.name,
@@ -2679,8 +2678,8 @@ api = Blueprint('APIs', __name__)
 *** Implementation
 **** Attributes of an entity and their relationship
      All the attributes of an entity and the relationship between the entity
-     and the attribute is captured to facilitate run time creation of queries. 
-     
+     and the attribute is captured to facilitate run time creation of queries.
+
 #+BEGIN_SRC python :tangle src/maps.py :eval no
 from db import *
 
