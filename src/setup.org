@@ -310,7 +310,7 @@ update_app_config () {
   WHITELIST_IPS="['127.0.0.1']"
 
   # the list of allowed domains for CORS
-  ALLOWED_ORIGINS="['*.vlabs.ac.in', '*.virtual-labs.ac.in']"
+  ALLOWED_ORIGINS="['*']"
 
   echo "Updating config.py.."
   # Update parts of the DB URI
