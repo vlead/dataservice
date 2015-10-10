@@ -988,18 +988,18 @@ if __name__ == "__main__":
 #!/bin/bash
 
 ABS_PATH_DS=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-DB_PASS=$(cat $ABS_PATH_DS/scripts/db_pass.txt)
+DB_PASS=$(cat db_pass.txt)
 MIG_SCRIPT="normalize_sanitize_migrate_old_to_new_data.py"
 
 # dump the older database..
-mysql -u root -p$DB_PASS vlabs_database < $ABS_PATH_DS/db/vlabs_database.sql
+mysql -u root -p$DB_PASS -Bse "create database vlabs_database;"
+mysql -u root -p$DB_PASS vlabs_database < ../db/vlabs_database.sql
 
 # change the migration script to have the password
 sed -i "s/<password>/$DB_PASS/" $ABS_PATH_DS/$MIG_SCRIPT
 
 # run the migration script
 python $ABS_PATH_DS/$MIG_SCRIPT
-
 #+END_SRC
 * Run Test Cases
 #+BEGIN_SRC sh :tangle run_tests.sh :eval no
