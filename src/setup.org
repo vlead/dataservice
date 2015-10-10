@@ -962,8 +962,7 @@ if __name__ == "__main__":
     # DB URI of the older database: from which we are migrating..
     # NOTE: the new DB URI: to which we are migrating is mentioned in the
     # config.py file under src/
-    old_db_uri = 'mysql+oursql://root:vlabs123@localhost/vlabs_database'
-    # old_db_uri = 'mysql+oursql://<username>:<password>@localhost/<db-name>'
+    old_db_uri = 'mysql+oursql://root:<password>@localhost/vlabs_database'
 
     # instantiate a engine
     old_db = create_engine(old_db_uri)
