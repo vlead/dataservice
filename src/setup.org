@@ -836,7 +836,10 @@ def populate_exps():
     result = conn.execute('select * from experiments')
     for row in result:
         print 'lab_id', 'id', 'name', 'content_url', 'simulation_url'
-        print row[0], row[1], row[2], row[3], row[4]
+        try:
+            print row[0], row[1], row[2], row[3], row[4]
+        except:
+            pass
 
         lab = conn.execute('select * from labs where id=%s' % row[0])
         for nrow in lab:
