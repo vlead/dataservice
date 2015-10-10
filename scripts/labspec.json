@@ -100,7 +100,8 @@
 				},
 				"installer": [
 					"bash /var/www/setup.sh",
-          "bash /var/www/configure.sh"
+          "bash /var/www/configure.sh",
+          "bash /var/www/migrate.sh"
 				],
 				"lab_actions": {
 					"init"    : [],
