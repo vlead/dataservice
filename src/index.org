@@ -1331,6 +1331,10 @@ info about the lab.
         - Fetch the labs in that particular discipline
         - Get the highest number 
         - Increment it by one 
+
+*Note* - The legacy lab ids are not changed even if the given lab id
+ does not match the discipline.
+
 |-------------+--------------------------------------------------------------------------------------|
 | lab_id      | Name                                                                                 |
 |-------------+--------------------------------------------------------------------------------------|
