@@ -1458,11 +1458,11 @@ info about the lab.
 | ece32       | Technology CAD (TCAD) Laboratory                                                     |
 | tex-engg02  | Single Board Heater System                                                           |
 | tex-engg01  | Power Systems Lab                                                                    |
-| biotech10   | Bioinformatics Virtual Lab I                                                         |
+| biotech08   | Bioinformatics Virtual Lab I                                                         |
 | phy-sc20    | Virtual Optics Lab                                                                   |
 | phy-sc21    | Solid State Physics Virtual Lab                                                      |
 | biotech09   | Bioinformatics Virtual Lab II                                                        |
-| biotech08   | Bioinformatics Virtual Lab III                                                       |
+| biotech10   | Bioinformatics Virtual Lab III                                                       |
 | biotech07   | Systems Biology Virtual Lab                                                          |
 | biotech06   | Computer-Aided Drug Design Virtual Lab                                               |
 | biotech05   | Ecology Virtual Lab                                                                  |
