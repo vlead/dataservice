@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Sep 30, 2015 at 04:54 AM
+-- Generation Time: Oct 12, 2015 at 02:31 AM
 -- Server version: 5.5.38
 -- PHP Version: 5.3.10-1ubuntu3.13
 
@@ -26,7 +26,6 @@ SET time_zone = "+00:00";
 -- Table structure for table `developers`
 --
 
-DROP TABLE IF EXISTS `developers`;
 CREATE TABLE IF NOT EXISTS `developers` (
   `institute_name` varchar(45) DEFAULT NULL,
   `developer_name` varchar(100) DEFAULT NULL,
@@ -136,7 +135,6 @@ INSERT INTO `developers` (`institute_name`, `developer_name`, `email_id`) VALUES
 -- Table structure for table `developers_engaged`
 --
 
-DROP TABLE IF EXISTS `developers_engaged`;
 CREATE TABLE IF NOT EXISTS `developers_engaged` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `lab_id` int(11) DEFAULT NULL,
@@ -238,7 +236,6 @@ INSERT INTO `developers_engaged` (`id`, `lab_id`, `developer_id`) VALUES
 -- Table structure for table `disciplines`
 --
 
-DROP TABLE IF EXISTS `disciplines`;
 CREATE TABLE IF NOT EXISTS `disciplines` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `discipline_name` varchar(100) NOT NULL,
@@ -274,7 +271,6 @@ INSERT INTO `disciplines` (`id`, `discipline_name`, `dnc`) VALUES
 -- Table structure for table `experiments`
 --
 
-DROP TABLE IF EXISTS `experiments`;
 CREATE TABLE IF NOT EXISTS `experiments` (
   `id` int(11) DEFAULT NULL,
   `exp_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1817,7 +1813,6 @@ INSERT INTO `experiments` (`id`, `exp_id`, `exp_name`, `content_url`, `simulatio
 -- Table structure for table `institutes`
 --
 
-DROP TABLE IF EXISTS `institutes`;
 CREATE TABLE IF NOT EXISTS `institutes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `institute_name` varchar(45) NOT NULL,
@@ -1851,7 +1846,6 @@ INSERT INTO `institutes` (`id`, `institute_name`, `institute_coordinators`, `ins
 -- Table structure for table `labs`
 --
 
-DROP TABLE IF EXISTS `labs`;
 CREATE TABLE IF NOT EXISTS `labs` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '	',
   `lab_id` varchar(45) DEFAULT NULL,
@@ -1966,89 +1960,89 @@ INSERT INTO `labs` (`id`, `lab_id`, `lab_name`, `developer`, `repo_url`, `source
 (177, 'ece23', 'Digital Electronics', 'pramgfee@iitr.ernet.in', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 0, 'Unknown', 'Unknown', 'Unknown ', 'Remote Triggered Lab', 'Unknown', 'Sources not available, This lab is not listed on vlab.co.in.', 0, 'Not Hosted', 11, 8, 0),
 (178, 'eee01', 'Power Electronics', 'pramgfee@iitr.ernet.in', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 0, 'Unknown', 'Unknown', 'Unknown', 'Remote Triggered Lab', 'Unknown', 'Sources not available, Will again check links after some time to get latest information.', 0, 'Not Hosted', 11, 7, 0),
 (181, 'eerc05', 'Geotechnical Engineering Lab', 'not available', 'https://bitbucket.org/virtuallabs/eerc05-mevl', 'Yes', 'http://virtual-labs.ac.in/labs/eerc05', 'Yes', 9, 'Yes', 'Yes', 'No', 'Simulation Lab', 'Yes', 'Java view of experiments not working properly', 4, 'Hosted', 4, 5, 0),
-(188, 'Unknown', 'Remote Triggered Fiber Optics Communication Lab', 'not available', 'Unknown', 'No', 'http://iitg.vlab.co.in/?sub=59&brch=269', 'Yes', 6, 'Yes', 'Yes', 'Unknown', 'Remote Triggered', 'Unknown', 'lab id and sources not available', 0, 'Hosted', 7, 8, 0),
-(191, 'Unknown', 'Electro Mechanical Conversion', 'not available', 'Unknown', 'No', 'http://iitg.vlab.co.in/?sub=61&brch=293', 'Yes', 3, 'Yes, On Amrita', 'Yes', 'Unknown', 'Remote Triggered', 'Unknown', 'lab id and sources not available', 0, 'Hosted', 7, 7, 0),
-(193, 'Unknown', 'Technology CAD (TCAD) Laboratory', 'not available', 'Unknown', 'No', 'http://iitkgp.vlab.co.in/?sub=37&brch=113', 'Yes', 0, 'No', 'No', 'Unknown', 'Unknown', 'Unknown', 'lab id and sources are not available . Also content is not available on hosted url', 0, 'Hosted', 9, 8, 0),
-(195, 'Unknown', 'Fading Channels and Mobile Communications', 'not available', 'Unknown', 'No', 'http://iitkgp.vlab.co.in/?sub=37&brch=115', 'Yes', 0, 'No', 'No', 'Unknown', 'Unknown', 'Unknown', 'lab id and sources are not available. Also content is not available on hosted url', 0, 'Hosted', 9, 8, 0),
-(196, 'Unknown', 'Soft Computing Tools in Engineering', 'not available', 'Unknown', 'No', 'http://iitkgp.vlab.co.in/?sub=36&brch=108', 'Yes', 0, 'No', 'No', 'Unknown', 'Unknown', 'Unknown', 'Lab id and sources are not available. Also content is not available on hosted url', 0, 'Hosted', 9, 5, 0),
-(197, 'Unknown', 'Analog Signals, Network and Measurement Laboratory', 'not available', 'Unknown', 'No', 'http://iitkgp.vlab.co.in/?sub=39&brch=124', 'Yes', 28, 'Yes', 'Yes', 'Unknown', 'Simulation Lab', 'Unknown', 'lab id and sources are not available', 0, 'Hosted', 9, 7, 0),
-(198, 'Unknown', 'Real Time Embedded Systems Laboratory', 'not available', 'Unknown', 'No', 'http://iitkgp.vlab.co.in/?sub=39&brch=125', 'Yes', 16, 'Yes', 'Yes', 'Unknown', 'Simulation Lab', 'Unknown', 'lab id and sources are not available', 0, 'Hosted', 9, 7, 0),
-(199, 'Unknown', 'Kinematics and Dynamics of Mechanisms', 'pkjana81@gmail.com', 'Unknown', 'No', 'http://vls1.iitkgp.ernet.in/vls_web/', 'Yes', 28, 'Yes', 'Yes', 'Unknown', 'Simulation Lab', 'Unknown', 'Lab id and sources are not available. JAVA applets hosted on webserver and some applets sending images to server that manage by tomcat web server. MySQL required for feedback collection and users regi', 0, 'Hosted', 9, 10, 0),
-(200, 'Unknown', 'Model Based Fault Detection Lab', 'not available', 'Unknown', 'No', 'Unknown', 'Unknown', 0, 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Redirects to the same page, lab id and sources are not available', 0, 'Not Hosted', 9, 10, 0),
-(201, 'Unknown', 'Robotics Simulation Lab', 'not available', 'Unknown', 'No', 'http://iitkgp.vlab.co.in/?sub=40&brch=129', 'Unknown', 0, 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'lab id and sources are not available', 0, 'Not Hosted', 9, 10, 0),
-(202, 'Unknown', 'Virtual Lab for Multiphase Flow', 'not available', 'Unknown', 'No', 'Unknown', 'No', 0, 'No', 'No', 'Unknown', 'Unknown', 'Unknown', 'Redirects to the same page, lab id and sources are not available', 0, 'Not Hosted', 9, 15, 0),
-(203, 'Unknown', 'Condition Monitoring and Fault Simulation Lab', 'not available', 'Unknown', 'No', 'Unknown', 'No', 0, 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Redirects to the same page, lab id and sources are not available', 0, 'Not Hosted', 9, 15, 0),
-(204, 'Unknown', 'Mechanical Systems and Signal Processing', 'not available', 'Unknown', 'No', 'Unknown', 'Unknown', 0, 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Redirects to the same page, lab id and sources are not available', 0, 'Not Hosted', 9, 15, 0),
-(205, 'Unknown', 'Mine Automation and Virtual Reality', 'not available', 'Unknown', 'No', 'http://iitkgp.vlab.co.in/?sub=40&brch=137', 'Yes', 10, 'Yes', 'Yes', 'Unknown', 'Simulation Lab', 'Unknown', 'lab id and sources are not available', 0, 'Hosted', 9, 10, 0),
-(206, 'Unknown', 'Chemical Process Dynamics', 'not available', 'Unknown', 'No', 'http://iitkgp.vlab.co.in/?sub=35&brch=107', 'No', 7, 'Yes', 'Yes', 'Unknown', 'Simulation Lab', 'Unknown', 'lab_d and sources are not available', 0, 'Hosted', 9, 3, 0),
-(207, 'Unknown', 'Virtual High Voltage Lab', 'not available', 'Unknown', 'No', 'http://vlab-ee1.iitkgp.ernet.in/reg.jsp', 'Yes', 0, 'Yes', 'Yes', 'Unknown', 'Simulation Lab', 'Unknown', 'Login Required, lab id and sources are not available', 0, 'Hosted', 9, 15, 0),
-(208, 'Unknown', 'Basic Electrical and Electronics Lab', 'not available', 'Unknown', 'No', 'http://basicelectronics.iitkgp.ernet.in/', 'Yes', 15, 'Yes', 'Yes', 'Unknown', 'Pilot phase lab', 'Unknown', 'Lab id and sources are not available', 0, 'Hosted', 9, 7, 0),
-(209, 'Unknown', 'Microelectronics and VLSI Engineering', 'not available', 'Unknown', 'No', 'http://iitkgp.vlab.co.in/?sub=37&brch=110', 'Yes', 15, 'Yes', 'Yes', 'Unknown', 'Pilot phase lab', 'Unknown', 'lab id and sources are not available', 0, 'Hosted', 9, 8, 0),
-(210, 'Unknown', 'Mechanisms and Robotics Lab', 'not available', 'Unknown', 'No', 'http://vlabs.iitkgp.ernet.in/', 'Yes', 0, 'Unknown', 'Unknown', 'Unknown', 'Pilot phase lab', 'Unknown', 'Link not working, lab id and sources are not available', 0, 'Hosted', 9, 10, 0),
-(211, 'Unknown', 'Machinery Health Assessment Lab', 'not available', 'Unknown', 'No', 'Unknown', 'No', 0, 'Unknown', 'Unknown', 'Unknown', 'Pilot phase lab', 'Unknown', 'Redirects to the same page, lab id and sources are not available', 0, 'Not Hosted', 9, 15, 0),
-(213, 'Unknown', 'Virtual Lab for Mechanical Vibrations', 'rtiwari@iitg.ernet.in', 'Unknown', 'No', 'http://iitg.vlab.co.in/?sub=62&brch=175', 'Yes', 10, 'Yes', 'Yes', 'Unknown', 'simulation lab', 'Unknown', 'Inside this lab link, two more remote triggered labs (Experience in Fluid and Thermal Sciences and Robotics Lab) containing 13 and 8 experiments respectively were found,  all hosted on Amrita ', 0, 'Hosted', 7, 10, 0),
-(214, 'Unknown', 'Virtual Robotics Lab', 'not available', 'Unknown', 'No', 'http://iitg.vlab.co.in/?sub=62&brch=271', 'Yes', 8, 'Yes', 'Yes', 'Unknown', 'Remote Triggered Lab', 'Unknown', 'Needs .SWF files for experiments, lab id and sources are not available', 0, 'Hosted', 7, 10, 0),
-(215, 'Unknown', 'Hydrodynamics and Transport phenomena in Packed Bed and Heat Exchangers', 'not available', 'Unknown', 'No', 'Link given on vlab.co.in is redirecting to same index page for this lab', 'No', 0, 'Unknown', 'Unable to view the simulation (Lab''s link redirecting to same page only)', 'Unknown', 'Unknown', 'Unknown', 'No information received regarding this lab from institute, lab id and sources are not available', 0, 'Not Hosted', 7, 3, 0),
-(216, 'Unknown', 'Structural Engineering Lab', 'not available', 'Unknown', 'No', 'Unknown', 'No', 0, 'No', 'No', 'Unknown', 'Unknown', 'No', 'Lab is redirecting to the same page', 0, 'Not Hosted', 10, 5, 0),
-(217, 'Unknown', 'Electrical Machines, Power Electronics and Drives, Power Systems and Instrumentation', 'not available', 'Unknown', 'No', 'Unknown', 'No', 0, 'No', 'No', 'Unknown', 'Unknown', 'No', 'Lab is redirecting to the same page', 0, 'Not Hosted', 10, 7, 0),
-(218, 'Unknown', 'Virtual Circuits Laboratory', 'not available', 'Unknown', 'No', 'Unknown', 'No', 0, 'No', 'No', 'Unknown', 'Unknown', 'No', 'Lab is redirecting to same index page', 0, 'Not Hosted', 10, 8, 0),
-(220, 'Unknown', 'Virtual and Remote Robotic and Mechatronic Laboratory', 'not available', 'Unknown', 'No', 'Unknown', 'No', 0, 'No', 'No', 'Unknown', 'Pilot phase lab', 'No', 'Lab is redirecting to same index page', 0, 'Not Hosted', 10, 10, 0),
-(221, 'Unknown', 'VLSI Design and Verification', 'madhav@ee.iitb.ac.in', 'Unknown', 'No', 'Link is redirecting to http://vlab.co.in/institute_detail.php?ins=003 , Unable to view the lab', 'No', 0, 'No', 'No', 'Unknown', 'Unknown', 'Unknown', 'DNC indicates incomplete, lab id and sources are not available', 0, 'Not Hosted', 5, 12, 0),
-(222, 'Unknown', 'Virtual Proteomics Laboratory', 'not available', 'Unknown', 'No', 'http://iitb.vlab.co.in/?sub=41&brch=118', 'Yes', 12, 'Yes', 'Yes', 'Unknown', 'Remote Triggered', 'Unknown', 'Flash based, Needs to be ported to PHP or HTML5. lab id and sources are not available', 0, 'Hosted', 5, 12, 0),
-(223, 'Unknown', 'Single Board Heater System', 'not available', 'Unknown', 'No', 'http://vlabs.iitb.ac.in/sbhs/', 'Yes', 0, 'Unknown', 'Unknown', 'Unknown', 'pilot phase', 'Unknown', 'Login not working, lab id and sources are not available', 0, 'Hosted', 5, 12, 0),
-(224, 'Unknown', 'Power Systems Lab', 'not available', 'Unknown', 'No', 'Link is not working', 'No', 0, 'Unknown', 'Unknown', 'Unknown', 'pilot phase', 'No', 'lab id and sources are not available', 0, 'Not Hosted', 5, 12, 0),
-(225, 'Unknown', 'Bioinformatics Virtual Lab I', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/index.php?sub=3&brch=273', 'Yes', 8, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Sources not available', 1, 'Hosted', 1, 2, 0),
-(226, 'Unknown', 'Virtual Optics Lab', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=1&brch=281', 'Yes', 7, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Completed, sources not available', 0, 'Hosted', 1, 11, 0),
-(227, 'Unknown', 'Solid State Physics Virtual Lab', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=1&brch=282', 'Yes', 8, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'None', 0, 'Hosted', 1, 11, 0),
-(228, 'Unknown', 'Bioinformatics Virtual Lab II', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/index.php?sub=3&brch=275', 'Yes', 9, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'None', 0, 'Hosted', 1, 2, 0),
-(229, 'Unknown', 'Bioinformatics Virtual Lab III', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/index.php?sub=3&brch=275', 'Yes', 10, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Completed', 0, 'Hosted', 1, 2, 0),
-(230, 'Unknown', 'Systems Biology Virtual Lab', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/index.php?sub=3&brch=276', 'Yes', 8, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Completed', 0, 'Hosted', 1, 2, 0),
-(231, 'Unknown', 'Computer-Aided Drug Design Virtual Lab', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/index.php?sub=3&brch=277', 'Yes', 8, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Completed', 0, 'Hosted', 1, 2, 0),
-(232, 'Unknown', 'Ecology Virtual Lab', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/index.php?sub=3&brch=272', 'Yes', 9, 'Yes', 'Yes', 'Unknown', '', 'Unknown', 'Completed', 0, 'Hosted', 1, 2, 0),
-(233, 'Unknown', 'Biological Image processing Virtual Lab', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/index.php?sub=3&brch=278', 'Yes', 10, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Completed', 0, 'Hosted', 1, 2, 0),
-(234, 'Unknown', 'Bio-inspired Robotics Virtual Lab (Remote Triggered)', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/index.php?sub=3&brch=257', 'Yes', 7, 'Yes', 'No', 'Unknown', 'Remote Triggered', 'Unknown', 'sources not available', 0, 'Hosted', 1, 2, 0),
-(235, 'Unknown', 'Virtual Biophysics Lab (Remote Triggered)', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/index.php?sub=3&brch=258', 'Yes', 7, 'Yes', 'Yes', 'Unknown', 'Remote Triggered', 'Unknown', 'sources not available', 0, 'Hosted', 1, 2, 0),
-(236, 'Unknown', 'Neurophysiology (pilot)', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=3&brch=43', 'Yes', 10, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'sources not available', 0, 'Hosted', 1, 2, 0),
-(237, 'Unknown', 'Neuron Simulation Lab (pilot)', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=3&brch=212', 'Yes', 10, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Completed', 0, 'Hosted', 1, 2, 0),
-(238, 'Unknown', 'Biochemistry Virtual Lab I', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=3&brch=63', 'Yes', 10, 'Yes', 'No', 'Unknown', 'Unknown', 'Unknown', 'sources not available', 0, 'Hosted', 1, 2, 0),
-(239, 'Unknown', 'Biochemistry Virtual Lab II', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=3&brch=64', 'Yes', 10, 'Yes', 'No', 'Unknown', 'Unknown', 'Unknown', 'sources not available', 0, 'Hosted', 1, 2, 0),
-(240, 'Unknown', 'Population Ecology Virtual Lab I', 'not available', 'https://github.com/Virtual-Labs/population-ecology-virtual-lab-i-au', 'Yes', 'http://pev-au.vlabs.ac.in/', 'Yes', 6, 'Yes', 'Yes', 'Unknown', 'Simulation', 'Yes', 'Completed', 6, 'Hosted', 1, 2, 1),
-(241, 'Unknown', 'Population Ecology Virtual Lab II', 'not available', 'https://github.com/Virtual-Labs/population-ecology-virtual-lab-ii-au', 'Yes', 'http://pevii-au.vlabs.ac.in/', 'Yes', 3, 'Yes', 'Yes', 'Unknown', 'Simulation', 'Yes', '', 6, 'Hosted', 1, 2, 1),
-(242, 'Unknown', 'Immunology Virtual Lab I', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=3&brch=69', 'Yes', 10, 'Yes', 'No', 'Unknown', 'Unknown', 'Unknown', 'Simulations not available, sources not available', 0, 'Hosted', 1, 2, 0),
-(243, 'Unknown', 'Immunology Virtual Lab II', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=3&brch=70', 'Yes', 10, 'Yes', 'No', 'Unknown', 'Unknown', 'Unknown', 'sources not available', 0, 'Hosted', 1, 2, 0),
-(244, 'Unknown', 'Microbiology Virtual Lab I', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=3&brch=73', 'Yes', 12, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Simulations available only for 4 experiments, sources not available', 0, 'Hosted', 1, 2, 0),
-(245, 'Unknown', 'Microbiology Virtual Lab II', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=3&brch=73', 'Yes', 10, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Simulation available only for 1 experiment, sources not available', 0, 'Hosted', 1, 2, 0),
-(246, 'Unknown', 'Molecular biology Virtual Lab I', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=3&brch=73', 'Yes', 10, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Simulation available only for 2 experiments, sources not available', 0, 'Hosted', 1, 2, 0),
-(247, 'Unknown', 'Molecular biology Virtual Lab II', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=3&brch=76', 'Yes', 10, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Simulation available only for 4 experiments, sources not available', 0, 'Hosted', 1, 2, 0),
-(248, 'Unknown', 'Cell biology Virtual Lab I', 'not available', 'Unknown', 'Unknown', 'http://amrita.vlab.co.in/?sub=3&brch=187', 'Yes', 10, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Simulation available for 4 experiments, sources not available', 0, 'Hosted', 1, 2, 0),
-(249, 'Unknown', 'Cell biology Virtual Lab II', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=3&brch=188', 'Yes', 10, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Simulation available only for 3 experiments, sources not available', 0, 'Hosted', 1, 2, 0),
-(250, 'Unknown', 'Virtual Mechanics Lab/Nonlinear Dynamics', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=1&brch=68', 'Yes', 0, 'No', 'No', 'Unknown', 'Unknown', 'Unknown', 'No content present on the site, sources not available', 0, 'Hosted', 1, 11, 0),
-(251, 'Unknown', 'Virtual Advanced Mechanics Lab', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=1&brch=74', 'Yes', 8, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'None', 0, 'Hosted', 1, 11, 0),
-(253, 'Unknown', 'Laser Optics Virtual Lab', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=1&brch=189', 'Yes', 5, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'None', 0, 'Hosted', 1, 11, 0),
-(254, 'Unknown', 'Virtual Electricity and Magnetism Lab', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=1&brch=192', 'Yes', 8, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Hosted on Amrita', 0, 'Hosted', 1, 11, 0),
-(255, 'Unknown', 'Virtual Heat and Thermodynamics Lab', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=1&brch=194', 'Yes', 8, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'None', 0, 'Hosted', 1, 11, 0),
-(256, 'Unknown', 'Virtual Modern Physics Lab', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=1&brch=195', 'Yes', 9, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'None', 0, 'Hosted', 1, 11, 0),
-(257, 'Unknown', 'Virtual Harmonic Motion and Waves Lab', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=1&brch=201', 'Yes', 4, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'None', 0, 'Hosted', 1, 11, 0),
-(258, 'Unknown', 'Virtual Physical Energy and Materials Science Lab', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=1&brch=202', 'Yes', 0, 'No', 'No', 'Unknown', 'Unknown', 'Unknown', 'sources not available, content not there on hosted url', 0, 'Not Hosted', 1, 11, 0),
-(259, 'Unknown', 'Physical Chemistry(Amrita)', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=2&brch=190', 'Yes', 10, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Completed', 0, 'Hosted', 1, 4, 0),
-(260, 'Unknown', 'Organic Chemistry', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=2&brch=191', 'Yes', 9, 'Yes', 'Yes', 'Unknown', 'Simulation Lab', 'Unknown', 'simulation available only for 3 labs', 0, 'Hosted', 1, 4, 0),
-(261, 'Unknown', 'Inorganic Chemistry', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=2&brch=193', 'Yes', 10, 'Yes', 'Yes', 'Unknown', 'Simulation Lab', 'Unknown', 'Simulation available only for 5 experiments', 0, 'Hosted', 1, 4, 0),
-(262, 'Unknown', 'Electrochemistry', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=2&brch=200', 'No', 0, 'No', 'No', 'Unknown', 'Unknown', 'Unknown', 'sources not available, content not there on hosted url', 0, 'Not Hosted', 1, 4, 0),
-(263, 'Unknown', 'Virtual Wireless and Security', 'not available', 'Unknown', 'No', 'http://vlab.co.in/institute_detail.php?ins=009', 'No', 0, 'No', 'No', 'Unknown', 'Unknown', 'Unknown', 'link redirecting to same page', 0, 'Not Hosted', 1, 6, 0),
-(265, 'Unknown', 'Advanced Geotechnical Lab', 'not available', 'Unknown', 'No', 'Unknown', 'No', 0, 'No', 'No', 'Unknown', 'Unknown', 'Unknown', 'lab id and sources not available', 0, 'Not Hosted', 8, 5, 0),
-(266, 'Unknown', 'Acoustics Virtual Lab', 'not available', 'Unknown', 'No', 'Unknown', 'No', 0, 'No', 'No', 'Unknown', 'Unknown', 'Unknown', 'lab id and sources not available', 0, 'Not Hosted', 8, 10, 0),
-(267, 'Unknown', 'General Purpose Production Shop Simulation Lab', 'not available', 'Unknown', 'No', 'http://gssl.iitk.ac.in/pssl/', 'Yes', 4, 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'lab id and sources not available', 0, 'Hosted', 8, 10, 0),
-(268, 'Unknown', 'Mechatronics Lab', 'not available', 'Unknown', 'No', 'Unknown', 'Unknown', 0, 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'lab id and sources not available', 0, 'Not Hosted', 8, 10, 0),
-(269, 'Unknown', 'Nanocomposite, Fabrication, Biomaterials and Signal Processing Laboratory', 'not available', 'Unknown', 'No', 'http://www.iitk.ac.in/biomaterialslab/virtuallab.html', 'Yes', 3, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Unable to access experiments, lab id and sources are also not available', 0, 'Hosted', 8, 10, 0),
-(270, 'Unknown', 'Virtual Combustion and Automation Laboratory', 'mishra@iitk.ac.in', 'https://github.com/Virtual-Labs/virtual-combustion-and-automization-lab-iitk', 'Yes', 'http://vcal-iitk.vlabs.ac.in/', 'Yes', 0, 'Unknown', 'Unknown', 'Unknown', 'Simulation Lab', 'Yes', 'Link redirecting to the same index page, lab id  and sources not available', 6, 'Not Hosted', 8, 12, 1),
-(271, 'Unknown', 'Manufacturing Laboratory', 'not available', 'Unkown', 'No', 'Unknown', 'No', 0, 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'lab id and sources not available', 0, 'Not Hosted', 8, 10, 0),
-(272, 'Unknown', 'In-flight Particle History Lab', 'kbalani@iitk.ac.in', 'Unknown', 'No', 'Unknown', 'No', 0, 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'lab id and sources not available', 0, 'Not Hosted', 8, 1, 0),
-(273, 'Unknown', 'Aerospace Virtual laboratory', 'not available', 'https://github.com/Virtual-Labs/virtual-lab-aerospace-engg-iitk', 'No', 'http://vlae-iitk.vlabs.ac.in/', 'No', 0, 'Unknown', 'Unknown', 'Unknown', 'Simulation Lab', 'Yes', 'lab id and sources not available', 6, 'Not Hosted', 8, 1, 1),
-(274, 'Unknown', 'Optical Device Characterizations', 'not available', 'Unknown', 'No', 'http://iitk.vlab.co.in/?sub=27&brch=80', 'Yes', 4, 'Yes', 'Yes', 'Unknown', 'Unknown', 'No', 'lab id and sources not available', 0, 'Hosted', 8, 11, 0),
-(275, 'Unknown', 'Low Temp Electrical Transport and Property Measurements', 'not available', 'Unknown', 'No', 'http://home.iitk.ac.in/~anjankg/virtual-lab/phy-ltl/Exp-1.htm', 'Yes', 1, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'lab id  and sources not available', 0, 'Hosted', 8, 11, 0),
-(276, 'Unknown', 'Mechanical Sciences - Liquid Crystal', 'not available', 'Unknown', 'No', 'Unknown', 'No', 0, 'Unknown', 'Unknown', 'Unknown', 'Remote Triggered', 'Unknown', 'URL from vlab.co.in is not working for this lab, lab id and sources not available', 0, 'Not Hosted', 8, 10, 0),
-(277, 'Unknown', 'Thermal Processing and Microstructural Characterization', 'not available', 'Unknown', 'No', 'http://home.iitk.ac.in/~sangals/virtualLab/mechanicalTesting.html', 'Yes', 3, 'No', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'lab id and sources not available', 0, 'Hosted', 8, 14, 0),
-(308, 'Unknown', 'Binary Distillation', 'not available', 'Unknown', 'No', 'http://iitg.vlab.co.in/?sub=58&brch=160&sim=777&cnt=1                                       ', 'Yes', 0, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', '.exe files provided as downloads to run experiments.', 0, 'Hosted', 7, 3, 0),
+(188, 'ece29', 'Remote Triggered Fiber Optics Communication Lab', 'not available', 'Unknown', 'No', 'http://iitg.vlab.co.in/?sub=59&brch=269', 'Yes', 6, 'Yes', 'Yes', 'Unknown', 'Remote Triggered', 'Unknown', 'lab id and sources not available', 0, 'Hosted', 7, 8, 0),
+(191, 'ee27', 'Electro Mechanical Conversion', 'not available', 'Unknown', 'No', 'http://iitg.vlab.co.in/?sub=61&brch=293', 'Yes', 3, 'Yes, On Amrita', 'Yes', 'Unknown', 'Remote Triggered', 'Unknown', 'lab id and sources not available', 0, 'Hosted', 7, 7, 0),
+(193, 'ece32', 'Technology CAD (TCAD) Laboratory', 'not available', 'Unknown', 'No', 'http://iitkgp.vlab.co.in/?sub=37&brch=113', 'Yes', 0, 'No', 'No', 'Unknown', 'Unknown', 'Unknown', 'lab id and sources are not available . Also content is not available on hosted url', 0, 'Hosted', 9, 8, 0),
+(195, 'ece33', 'Fading Channels and Mobile Communications', 'not available', 'Unknown', 'No', 'http://iitkgp.vlab.co.in/?sub=37&brch=115', 'Yes', 0, 'No', 'No', 'Unknown', 'Unknown', 'Unknown', 'lab id and sources are not available. Also content is not available on hosted url', 0, 'Hosted', 9, 8, 0),
+(196, 'civil18', 'Soft Computing Tools in Engineering', 'not available', 'Unknown', 'No', 'http://iitkgp.vlab.co.in/?sub=36&brch=108', 'Yes', 0, 'No', 'No', 'Unknown', 'Unknown', 'Unknown', 'Lab id and sources are not available. Also content is not available on hosted url', 0, 'Hosted', 9, 5, 0),
+(197, 'ee31', 'Analog Signals, Network and Measurement Laboratory', 'not available', 'Unknown', 'No', 'http://iitkgp.vlab.co.in/?sub=39&brch=124', 'Yes', 28, 'Yes', 'Yes', 'Unknown', 'Simulation Lab', 'Unknown', 'lab id and sources are not available', 0, 'Hosted', 9, 7, 0),
+(198, 'ee29', 'Real Time Embedded Systems Laboratory', 'not available', 'Unknown', 'No', 'http://iitkgp.vlab.co.in/?sub=39&brch=125', 'Yes', 16, 'Yes', 'Yes', 'Unknown', 'Simulation Lab', 'Unknown', 'lab id and sources are not available', 0, 'Hosted', 9, 7, 0),
+(199, 'mech42', 'Kinematics and Dynamics of Mechanisms', 'pkjana81@gmail.com', 'Unknown', 'No', 'http://vls1.iitkgp.ernet.in/vls_web/', 'Yes', 28, 'Yes', 'Yes', 'Unknown', 'Simulation Lab', 'Unknown', 'Lab id and sources are not available. JAVA applets hosted on webserver and some applets sending images to server that manage by tomcat web server. MySQL required for feedback collection and users regi', 0, 'Hosted', 9, 10, 0),
+(200, 'mech47', 'Model Based Fault Detection Lab', 'not available', 'Unknown', 'No', 'Unknown', 'Unknown', 0, 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Redirects to the same page, lab id and sources are not available', 0, 'Not Hosted', 9, 10, 0),
+(201, 'mech28', 'Robotics Simulation Lab', 'not available', 'Unknown', 'No', 'http://iitkgp.vlab.co.in/?sub=40&brch=129', 'Unknown', 0, 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'lab id and sources are not available', 0, 'Not Hosted', 9, 10, 0),
+(202, 'mech32', 'Virtual Lab for Multiphase Flow', 'not available', 'Unknown', 'No', 'Unknown', 'No', 0, 'No', 'No', 'Unknown', 'Unknown', 'Unknown', 'Redirects to the same page, lab id and sources are not available', 0, 'Not Hosted', 9, 15, 0),
+(203, 'mech31', 'Condition Monitoring and Fault Simulation Lab', 'not available', 'Unknown', 'No', 'Unknown', 'No', 0, 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Redirects to the same page, lab id and sources are not available', 0, 'Not Hosted', 9, 15, 0),
+(204, 'mech30', 'Mechanical Systems and Signal Processing', 'not available', 'Unknown', 'No', 'Unknown', 'Unknown', 0, 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Redirects to the same page, lab id and sources are not available', 0, 'Not Hosted', 9, 15, 0),
+(205, 'mech27', 'Mine Automation and Virtual Reality', 'not available', 'Unknown', 'No', 'http://iitkgp.vlab.co.in/?sub=40&brch=137', 'Yes', 10, 'Yes', 'Yes', 'Unknown', 'Simulation Lab', 'Unknown', 'lab id and sources are not available', 0, 'Hosted', 9, 10, 0),
+(206, 'chem-engg01', 'Chemical Process Dynamics', 'not available', 'Unknown', 'No', 'http://iitkgp.vlab.co.in/?sub=35&brch=107', 'No', 7, 'Yes', 'Yes', 'Unknown', 'Simulation Lab', 'Unknown', 'lab_d and sources are not available', 0, 'Hosted', 9, 3, 0),
+(207, 'ee26', 'Virtual High Voltage Lab', 'not available', 'Unknown', 'No', 'http://vlab-ee1.iitkgp.ernet.in/reg.jsp', 'Yes', 0, 'Yes', 'Yes', 'Unknown', 'Simulation Lab', 'Unknown', 'Login Required, lab id and sources are not available', 0, 'Hosted', 9, 15, 0),
+(208, 'ee25', 'Basic Electrical and Electronics Lab', 'not available', 'Unknown', 'No', 'http://basicelectronics.iitkgp.ernet.in/', 'Yes', 15, 'Yes', 'Yes', 'Unknown', 'Pilot phase lab', 'Unknown', 'Lab id and sources are not available', 0, 'Hosted', 9, 7, 0),
+(209, 'ece30', 'Microelectronics and VLSI Engineering', 'not available', 'Unknown', 'No', 'http://iitkgp.vlab.co.in/?sub=37&brch=110', 'Yes', 15, 'Yes', 'Yes', 'Unknown', 'Pilot phase lab', 'Unknown', 'lab id and sources are not available', 0, 'Hosted', 9, 8, 0),
+(210, 'mech29', 'Mechanisms and Robotics Lab', 'not available', 'Unknown', 'No', 'http://vlabs.iitkgp.ernet.in/', 'Yes', 0, 'Unknown', 'Unknown', 'Unknown', 'Pilot phase lab', 'Unknown', 'Link not working, lab id and sources are not available', 0, 'Hosted', 9, 10, 0),
+(211, 'mech34', 'Machinery Health Assessment Lab', 'not available', 'Unknown', 'No', 'Unknown', 'No', 0, 'Unknown', 'Unknown', 'Unknown', 'Pilot phase lab', 'Unknown', 'Redirects to the same page, lab id and sources are not available', 0, 'Not Hosted', 9, 15, 0),
+(213, 'mech33', 'Virtual Lab for Mechanical Vibrations', 'rtiwari@iitg.ernet.in', 'Unknown', 'No', 'http://iitg.vlab.co.in/?sub=62&brch=175', 'Yes', 10, 'Yes', 'Yes', 'Unknown', 'simulation lab', 'Unknown', 'Inside this lab link, two more remote triggered labs (Experience in Fluid and Thermal Sciences and Robotics Lab) containing 13 and 8 experiments respectively were found,  all hosted on Amrita ', 0, 'Hosted', 7, 10, 0),
+(214, 'mech35', 'Virtual Robotics Lab', 'not available', 'Unknown', 'No', 'http://iitg.vlab.co.in/?sub=62&brch=271', 'Yes', 8, 'Yes', 'Yes', 'Unknown', 'Remote Triggered Lab', 'Unknown', 'Needs .SWF files for experiments, lab id and sources are not available', 0, 'Hosted', 7, 10, 0),
+(215, 'chem-engg02', 'Hydrodynamics and Transport phenomena in Packed Bed and Heat Exchangers', 'not available', 'Unknown', 'No', 'Link given on vlab.co.in is redirecting to same index page for this lab', 'No', 0, 'Unknown', 'Unable to view the simulation (Lab''s link redirecting to same page only)', 'Unknown', 'Unknown', 'Unknown', 'No information received regarding this lab from institute, lab id and sources are not available', 0, 'Not Hosted', 7, 3, 0),
+(216, 'civil17', 'Structural Engineering Lab', 'not available', 'Unknown', 'No', 'Unknown', 'No', 0, 'No', 'No', 'Unknown', 'Unknown', 'No', 'Lab is redirecting to the same page', 0, 'Not Hosted', 10, 5, 0),
+(217, 'ee28', 'Electrical Machines, Power Electronics and Drives, Power Systems and Instrumentation', 'not available', 'Unknown', 'No', 'Unknown', 'No', 0, 'No', 'No', 'Unknown', 'Unknown', 'No', 'Lab is redirecting to the same page', 0, 'Not Hosted', 10, 7, 0),
+(218, 'ece31', 'Virtual Circuits Laboratory', 'not available', 'Unknown', 'No', 'Unknown', 'No', 0, 'No', 'No', 'Unknown', 'Unknown', 'No', 'Lab is redirecting to same index page', 0, 'Not Hosted', 10, 8, 0),
+(220, 'mech36', 'Virtual and Remote Robotic and Mechatronic Laboratory', 'not available', 'Unknown', 'No', 'Unknown', 'No', 0, 'No', 'No', 'Unknown', 'Pilot phase lab', 'No', 'Lab is redirecting to same index page', 0, 'Not Hosted', 10, 10, 0),
+(221, 'ece39', 'VLSI Design and Verification', 'madhav@ee.iitb.ac.in', 'Unknown', 'No', 'Link is redirecting to http://vlab.co.in/institute_detail.php?ins=003 , Unable to view the lab', 'No', 0, 'No', 'No', 'Unknown', 'Unknown', 'Unknown', 'DNC indicates incomplete, lab id and sources are not available', 0, 'Not Hosted', 5, 8, 0),
+(222, 'biotech25', 'Virtual Proteomics Laboratory', 'not available', 'Unknown', 'No', 'http://iitb.vlab.co.in/?sub=41&brch=118', 'Yes', 12, 'Yes', 'Yes', 'Unknown', 'Remote Triggered', 'Unknown', 'Flash based, Needs to be ported to PHP or HTML5. lab id and sources are not available', 0, 'Hosted', 5, 2, 0),
+(223, 'ee32', 'Single Board Heater System', 'not available', 'Unknown', 'No', 'http://vlabs.iitb.ac.in/sbhs/', 'Yes', 0, 'Unknown', 'Unknown', 'Unknown', 'pilot phase', 'Unknown', 'Login not working, lab id and sources are not available', 0, 'Hosted', 5, 7, 0),
+(224, 'ee33', 'Power Systems Lab', 'not available', 'Unknown', 'No', 'Link is not working', 'No', 0, 'Unknown', 'Unknown', 'Unknown', 'pilot phase', 'No', 'lab id and sources are not available', 0, 'Not Hosted', 5, 7, 0),
+(225, 'biotech08', 'Bioinformatics Virtual Lab I', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/index.php?sub=3&brch=273', 'Yes', 8, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Sources not available', 1, 'Hosted', 1, 2, 0),
+(226, 'phy-sc20', 'Virtual Optics Lab', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=1&brch=281', 'Yes', 7, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Completed, sources not available', 0, 'Hosted', 1, 11, 0),
+(227, 'phy-sc21', 'Solid State Physics Virtual Lab', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=1&brch=282', 'Yes', 8, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'None', 0, 'Hosted', 1, 11, 0),
+(228, 'biotech09', 'Bioinformatics Virtual Lab II', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/index.php?sub=3&brch=275', 'Yes', 9, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'None', 0, 'Hosted', 1, 2, 0),
+(229, 'biotech10', 'Bioinformatics Virtual Lab III', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/index.php?sub=3&brch=275', 'Yes', 10, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Completed', 0, 'Hosted', 1, 2, 0),
+(230, 'biotech07', 'Systems Biology Virtual Lab', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/index.php?sub=3&brch=276', 'Yes', 8, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Completed', 0, 'Hosted', 1, 2, 0),
+(231, 'biotech06', 'Computer-Aided Drug Design Virtual Lab', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/index.php?sub=3&brch=277', 'Yes', 8, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Completed', 0, 'Hosted', 1, 2, 0),
+(232, 'biotech05', 'Ecology Virtual Lab', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/index.php?sub=3&brch=272', 'Yes', 9, 'Yes', 'Yes', 'Unknown', '', 'Unknown', 'Completed', 0, 'Hosted', 1, 2, 0),
+(233, 'biotech04', 'Biological Image processing Virtual Lab', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/index.php?sub=3&brch=278', 'Yes', 10, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Completed', 0, 'Hosted', 1, 2, 0),
+(234, 'biotech11', 'Bio-inspired Robotics Virtual Lab (Remote Triggered)', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/index.php?sub=3&brch=257', 'Yes', 7, 'Yes', 'No', 'Unknown', 'Remote Triggered', 'Unknown', 'sources not available', 0, 'Hosted', 1, 2, 0),
+(235, 'biotech12', 'Virtual Biophysics Lab (Remote Triggered)', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/index.php?sub=3&brch=258', 'Yes', 7, 'Yes', 'Yes', 'Unknown', 'Remote Triggered', 'Unknown', 'sources not available', 0, 'Hosted', 1, 2, 0),
+(236, 'biotech20', 'Neurophysiology (pilot)', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=3&brch=43', 'Yes', 10, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'sources not available', 0, 'Hosted', 1, 2, 0),
+(237, 'biotech19', 'Neuron Simulation Lab (pilot)', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=3&brch=212', 'Yes', 10, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Completed', 0, 'Hosted', 1, 2, 0),
+(238, 'biotech01', 'Biochemistry Virtual Lab I', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=3&brch=63', 'Yes', 10, 'Yes', 'No', 'Unknown', 'Unknown', 'Unknown', 'sources not available', 0, 'Hosted', 1, 2, 0),
+(239, 'biotech02', 'Biochemistry Virtual Lab II', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=3&brch=64', 'Yes', 10, 'Yes', 'No', 'Unknown', 'Unknown', 'Unknown', 'sources not available', 0, 'Hosted', 1, 2, 0),
+(240, 'biotech18', 'Population Ecology Virtual Lab I', 'not available', 'https://github.com/Virtual-Labs/population-ecology-virtual-lab-i-au', 'Yes', 'http://pev-au.vlabs.ac.in/', 'Yes', 6, 'Yes', 'Yes', 'Unknown', 'Simulation', 'Yes', 'Completed', 6, 'Hosted', 1, 2, 1),
+(241, 'biotech17', 'Population Ecology Virtual Lab II', 'not available', 'https://github.com/Virtual-Labs/population-ecology-virtual-lab-ii-au', 'Yes', 'http://pevii-au.vlabs.ac.in/', 'Yes', 3, 'Yes', 'Yes', 'Unknown', 'Simulation', 'Yes', '', 6, 'Hosted', 1, 2, 1),
+(242, 'biotech16', 'Immunology Virtual Lab I', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=3&brch=69', 'Yes', 10, 'Yes', 'No', 'Unknown', 'Unknown', 'Unknown', 'Simulations not available, sources not available', 0, 'Hosted', 1, 2, 0),
+(243, 'biotech15', 'Immunology Virtual Lab II', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=3&brch=70', 'Yes', 10, 'Yes', 'No', 'Unknown', 'Unknown', 'Unknown', 'sources not available', 0, 'Hosted', 1, 2, 0),
+(244, 'biotech14', 'Microbiology Virtual Lab I', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=3&brch=73', 'Yes', 12, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Simulations available only for 4 experiments, sources not available', 0, 'Hosted', 1, 2, 0),
+(245, 'biotech13', 'Microbiology Virtual Lab II', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=3&brch=73', 'Yes', 10, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Simulation available only for 1 experiment, sources not available', 0, 'Hosted', 1, 2, 0),
+(246, 'biotech03', 'Molecular biology Virtual Lab I', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=3&brch=73', 'Yes', 10, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Simulation available only for 2 experiments, sources not available', 0, 'Hosted', 1, 2, 0),
+(247, 'biotech21', 'Molecular biology Virtual Lab II', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=3&brch=76', 'Yes', 10, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Simulation available only for 4 experiments, sources not available', 0, 'Hosted', 1, 2, 0),
+(248, 'biotech22', 'Cell biology Virtual Lab I', 'not available', 'Unknown', 'Unknown', 'http://amrita.vlab.co.in/?sub=3&brch=187', 'Yes', 10, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Simulation available for 4 experiments, sources not available', 0, 'Hosted', 1, 2, 0),
+(249, 'biotech23', 'Cell biology Virtual Lab II', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=3&brch=188', 'Yes', 10, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Simulation available only for 3 experiments, sources not available', 0, 'Hosted', 1, 2, 0),
+(250, 'phy-sc22', 'Virtual Mechanics Lab/Nonlinear Dynamics', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=1&brch=68', 'Yes', 0, 'No', 'No', 'Unknown', 'Unknown', 'Unknown', 'No content present on the site, sources not available', 0, 'Hosted', 1, 11, 0),
+(251, 'phy-sc23', 'Virtual Advanced Mechanics Lab', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=1&brch=74', 'Yes', 8, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'None', 0, 'Hosted', 1, 11, 0),
+(253, 'phy-sc24', 'Laser Optics Virtual Lab', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=1&brch=189', 'Yes', 5, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'None', 0, 'Hosted', 1, 11, 0),
+(254, 'phy-sc25', 'Virtual Electricity and Magnetism Lab', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=1&brch=192', 'Yes', 8, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Hosted on Amrita', 0, 'Hosted', 1, 11, 0),
+(255, 'phy-sc26', 'Virtual Heat and Thermodynamics Lab', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=1&brch=194', 'Yes', 8, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'None', 0, 'Hosted', 1, 11, 0),
+(256, 'phy-sc27', 'Virtual Modern Physics Lab', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=1&brch=195', 'Yes', 9, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'None', 0, 'Hosted', 1, 11, 0),
+(257, 'phy-sc28', 'Virtual Harmonic Motion and Waves Lab', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=1&brch=201', 'Yes', 4, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'None', 0, 'Hosted', 1, 11, 0),
+(258, 'phy-sc29', 'Virtual Physical Energy and Materials Science Lab', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=1&brch=202', 'Yes', 0, 'No', 'No', 'Unknown', 'Unknown', 'Unknown', 'sources not available, content not there on hosted url', 0, 'Not Hosted', 1, 11, 0),
+(259, 'chem06', 'Physical Chemistry(Amrita)', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=2&brch=190', 'Yes', 10, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Completed', 0, 'Hosted', 1, 4, 0),
+(260, 'chem07', 'Organic Chemistry', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=2&brch=191', 'Yes', 9, 'Yes', 'Yes', 'Unknown', 'Simulation Lab', 'Unknown', 'simulation available only for 3 labs', 0, 'Hosted', 1, 4, 0),
+(261, 'chem09', 'Inorganic Chemistry', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=2&brch=193', 'Yes', 10, 'Yes', 'Yes', 'Unknown', 'Simulation Lab', 'Unknown', 'Simulation available only for 5 experiments', 0, 'Hosted', 1, 4, 0),
+(262, 'chem08', 'Electrochemistry', 'not available', 'Unknown', 'No', 'http://amrita.vlab.co.in/?sub=2&brch=200', 'No', 0, 'No', 'No', 'Unknown', 'Unknown', 'Unknown', 'sources not available, content not there on hosted url', 0, 'Not Hosted', 1, 4, 0),
+(263, 'cse31', 'Virtual Wireless and Security', 'not available', 'Unknown', 'No', 'http://vlab.co.in/institute_detail.php?ins=009', 'No', 0, 'No', 'No', 'Unknown', 'Unknown', 'Unknown', 'link redirecting to same page', 0, 'Not Hosted', 1, 6, 0),
+(265, 'civil19', 'Advanced Geotechnical Lab', 'not available', 'Unknown', 'No', 'Unknown', 'No', 0, 'No', 'No', 'Unknown', 'Unknown', 'Unknown', 'lab id and sources not available', 0, 'Not Hosted', 8, 5, 0),
+(266, 'mech37', 'Acoustics Virtual Lab', 'not available', 'Unknown', 'No', 'Unknown', 'No', 0, 'No', 'No', 'Unknown', 'Unknown', 'Unknown', 'lab id and sources not available', 0, 'Not Hosted', 8, 10, 0),
+(267, 'mech38', 'General Purpose Production Shop Simulation Lab', 'not available', 'Unknown', 'No', 'http://gssl.iitk.ac.in/pssl/', 'Yes', 4, 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'lab id and sources not available', 0, 'Hosted', 8, 10, 0),
+(268, 'mech39', 'Mechatronics Lab', 'not available', 'Unknown', 'No', 'Unknown', 'Unknown', 0, 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'lab id and sources not available', 0, 'Not Hosted', 8, 10, 0),
+(269, 'mech40', 'Nanocomposite, Fabrication, Biomaterials and Signal Processing Laboratory', 'not available', 'Unknown', 'No', 'http://www.iitk.ac.in/biomaterialslab/virtuallab.html', 'Yes', 3, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Unable to access experiments, lab id and sources are also not available', 0, 'Hosted', 8, 10, 0),
+(270, 'mech48', 'Virtual Combustion and Atomization Laboratory', 'mishra@iitk.ac.in', 'https://github.com/Virtual-Labs/virtual-combustion-and-automization-lab-iitk', 'Yes', 'http://vcal-iitk.vlabs.ac.in/', 'Yes', 0, 'Unknown', 'Unknown', 'Unknown', 'Simulation Lab', 'Yes', 'Link redirecting to the same index page, lab id  and sources not available', 6, 'Not Hosted', 8, 10, 1),
+(271, 'mech41', 'Manufacturing Laboratory', 'not available', 'Unkown', 'No', 'Unknown', 'No', 0, 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'lab id and sources not available', 0, 'Not Hosted', 8, 10, 0),
+(272, 'aero02', 'In-flight Particle History Lab', 'kbalani@iitk.ac.in', 'Unknown', 'No', 'Unknown', 'No', 0, 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'lab id and sources not available', 0, 'Not Hosted', 8, 1, 0),
+(273, 'aero03', 'Aerospace Virtual laboratory', 'not available', 'https://github.com/Virtual-Labs/virtual-lab-aerospace-engg-iitk', 'No', 'http://vlae-iitk.vlabs.ac.in/', 'No', 0, 'Unknown', 'Unknown', 'Unknown', 'Simulation Lab', 'Yes', 'lab id and sources not available', 6, 'Not Hosted', 8, 1, 1),
+(274, 'phy-sc30', 'Optical Device Characterizations', 'not available', 'Unknown', 'No', 'http://iitk.vlab.co.in/?sub=27&brch=80', 'Yes', 4, 'Yes', 'Yes', 'Unknown', 'Unknown', 'No', 'lab id and sources not available', 0, 'Hosted', 8, 11, 0),
+(275, 'phy-sc31', 'Low Temp Electrical Transport and Property Measurements', 'not available', 'Unknown', 'No', 'http://home.iitk.ac.in/~anjankg/virtual-lab/phy-ltl/Exp-1.htm', 'Yes', 1, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'lab id  and sources not available', 0, 'Hosted', 8, 11, 0),
+(276, 'mech43', 'Mechanical Sciences - Liquid Crystal', 'not available', 'Unknown', 'No', 'Unknown', 'No', 0, 'Unknown', 'Unknown', 'Unknown', 'Remote Triggered', 'Unknown', 'URL from vlab.co.in is not working for this lab, lab id and sources not available', 0, 'Not Hosted', 8, 10, 0),
+(277, 'mat-sc01', 'Thermal Processing and Microstructural Characterization', 'not available', 'Unknown', 'No', 'http://home.iitk.ac.in/~sangals/virtualLab/mechanicalTesting.html', 'Yes', 3, 'No', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'lab id and sources not available', 0, 'Hosted', 8, 14, 0),
+(308, 'chem-engg03', 'Binary Distillation', 'not available', 'Unknown', 'No', 'http://iitg.vlab.co.in/?sub=58&brch=160&sim=777&cnt=1                                       ', 'Yes', 0, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', '.exe files provided as downloads to run experiments.', 0, 'Hosted', 7, 3, 0),
 (309, 'bio15', 'Bio-reactor Modeling and Simulation Lab', 'ashokks@dbeb.iitd.ac.in', 'https://bitbucket.org/virtual-labs/bio15-bio15', 'Yes', 'http://iitd.vlab.co.in/?sub=63&brch=177', 'Yes', 21, 'No', 'Yes', 'No', 'Simulation Lab', 'Yes', 'None', 3, 'Hosted', 6, 12, 0),
 (310, 'ece02', 'Electro Magnetic Transmission (Virtual MEMS Lab)', 'not available', 'https://bitbucket.org/virtual-labs/ece02-new1', 'Yes', 'Unknown', 'No', 0, 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Seems to have been dropped', 1, 'Not Hosted', 6, 8, 0),
 (311, 'cse08', 'Software Engineering', 'dsamanta@sit.iitkgp.ernet.in', 'https://bitbucket.org/virtual-labs/cse08-cse08', 'Yes', 'http://virtual-labs.ac.in/cse08/', 'Yes', 10, 'Yes', 'Yes', 'No', 'Simulation Lab', 'Yes', 'Sources are not versioned and structured, dependencies are not provided', 0, 'Hosted', 9, 6, 0),
@@ -2061,35 +2055,35 @@ INSERT INTO `labs` (`id`, `lab_id`, `lab_name`, `developer`, `repo_url`, `source
 (318, 'cse21', 'Optical Remote Sensing', 'rajan@iiit.ac.in', 'https://bitbucket.org/virtual-labs/cse21-cse21_repo/src', 'Yes', 'http://deploy.virtual-labs.ac.in/labs/cse21/', 'Yes', 7, 'Yes', 'Yes', 'Unknown', 'Simulation Lab', 'No', 'None', 4, 'Hosted', 4, 6, 0),
 (319, 'cse25', 'Wireless Sensor Networks', 'not available', 'Unknown', 'No', 'Unknown', 'No', 0, 'No', 'No', 'Unknown', 'Unknown', 'No', 'No information received', 0, 'Not Hosted', 4, 6, 0),
 (320, 'cse26', 'Network Security', 'not available', 'Unknown', 'No', 'Unknown', 'No', 0, 'No', 'No', 'Unknown', 'Unknown', 'No', 'No information received', 0, 'Not Hosted', 4, 6, 0),
-(321, 'Unknown', 'Laser Based Flow Diagnostics Laboratory', 'not available', 'Unknown', 'No', 'Unknown', 'Unknown', 0, 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'URL from vlab.co.in is not working for this lab, lab id and sources not available', 0, 'Not Hosted', 8, 10, 0),
-(322, 'Unknown', 'Advanced Communication', 'not available', 'Unknown', 'No', 'http://solve.nitk.ac.in/', 'Yes', 0, 'No', 'No', 'Unknown', 'Unknown', 'Unknown', 'No link found for experiments, Hosted on vlab.co.in', 0, 'Hosted', 12, 8, 0);
+(321, 'mech44', 'Laser Based Flow Diagnostics Laboratory', 'not available', 'Unknown', 'No', 'Unknown', 'Unknown', 0, 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'URL from vlab.co.in is not working for this lab, lab id and sources not available', 0, 'Not Hosted', 8, 10, 0),
+(322, 'ece34', 'Advanced Communication', 'not available', 'Unknown', 'No', 'http://solve.nitk.ac.in/', 'Yes', 0, 'No', 'No', 'Unknown', 'Unknown', 'Unknown', 'No link found for experiments, Hosted on vlab.co.in', 0, 'Hosted', 12, 8, 0);
 INSERT INTO `labs` (`id`, `lab_id`, `lab_name`, `developer`, `repo_url`, `sources_available`, `hosted_url`, `lab_deployed`, `number_of_experiments`, `content`, `simulation`, `web2.0_compliance`, `type_of_lab`, `auto_hostable`, `remarks`, `integration_level`, `status`, `institute_id`, `discipline_id`, `phase_2_lab`) VALUES
 (323, 'eee06', 'Virtual Power Laboratory', 'not available', 'https://github.com/Virtual-Labs/virtual-power-lab-dei', 'Yes', '', 'Yes', 9, 'Yes', 'Yes', 'Unknown', 'Simulation Lab', 'Yes', 'javascript videos not working and not hosted on IIIT server', 0, 'Hosted', 3, 7, 1),
 (324, 'mech26', 'Metal Forming and Solid Mechanics', 'not available', 'https://bitbucket.org/virtual-labs/mech26-mech26/src', 'Yes', 'http://14.139.245.214/mfvlab/', 'Yes', 7, 'Yes', 'Yes', 'Unknown', 'Simulation Lab', 'Unknown', 'branching issues', 0, 'Hosted', 3, 10, 0),
 (325, 'chs12', 'Virtual Chemistry Lab', 'not available', 'https://github.com/Virtual-Labs/virtual-chemistry-lab-dei', 'Yes', '', 'Yes', 0, 'No', 'No', 'Unknown', 'Simulation Lab', 'Yes', 'Link not working, Not hosted on IIIT server', 6, 'Hosted', 3, 3, 1),
 (326, 'civil15', 'Surveying Lab ', 'gargpfce@iitr.ernet.in', 'https://github.com/Virtual-Labs/surveying-lab-iitr', 'Yes', 'http://www.vlabcivil-iitr.co.in/', 'Yes', 11, 'Yes, http://www.vlabcivil-iitr.co.in/', 'Yes, http://www.vlabcivil-iitr.co.in/autolevel_mid.php', 'Unknown', 'Simulation Lab', 'Yes', 'Sent mail, no info received, uses flash, hosted on vlab.co.in', 0, 'Hosted', 11, 5, 1),
-(327, 'eee23', 'Biomedical Signal and Image Processing ', 'vinodfee@iitr.ernet.in', 'https://github.com/Virtual-Labs/bio-medical-signal-and-image-processing-lab-iitr', 'Yes', 'http://bmsip-iitr.vlabs.ac.in/', 'Yes', 3, 'Yes', 'Yes', 'Unknown', 'Simulation', 'Yes', '', 6, 'Hosted', 11, 7, 1),
-(328, 'eee24 ', 'Machine Lab ', 'vinodfee@iitr.ernet.in', 'https://github.com/Virtual-Labs/electrical-machines-lab-iitr', 'Yes', '', 'Yes', 8, 'Yes', 'Yes', 'Unknown', 'Simulation Lab', 'Yes', 'Labview Lab, Sent mail, Info not received.', 6, 'Hosted', 11, 7, 1),
+(327, 'eee23', 'Medical Signal and Image Processing ', 'vinodfee@iitr.ernet.in', 'https://github.com/Virtual-Labs/bio-medical-signal-and-image-processing-lab-iitr', 'Yes', 'http://bmsip-iitr.vlabs.ac.in/', 'Yes', 3, 'Yes', 'Yes', 'Unknown', 'Simulation', 'Yes', '', 6, 'Hosted', 11, 2, 1),
+(328, 'eee24 ', 'Machine Lab ', 'vinodfee@iitr.ernet.in', 'https://github.com/Virtual-Labs/electrical-machines-lab-iitr', 'Yes', '', 'Yes', 8, 'Yes', 'Yes', 'Unknown', 'Simulation Lab', 'Yes', 'Labview Lab, Sent mail, Info not received.', 6, 'Hosted', 11, 10, 1),
 (329, 'cse03', 'Programming and Data Structure', 'not available', 'Unknown', 'No', 'iitkgp.vlab.co.in/index.php?sub=38&brch=119', 'Yes', 1, 'No', 'No', 'Unknown', 'Simulation Lab', 'Unknown', 'No information received', 0, 'Hosted', 9, 6, 0),
 (330, 'ece06', 'Digital Signal Processing Lab', 'not available', 'https://bitbucket.org/virtual-labs/ece06-dspvlab-latest/src/', 'Yes', 'http://iitkgp.vlab.co.in/?sub=37&brch=114', 'Yes', 5, 'Yes', 'No', 'Unknown', 'Simulation Lab', 'Unknown', 'not hosted properly ', 0, 'Hosted', 9, 8, 0),
 (331, 'ece07', 'Digital Electronics Circuit Lab', 'not available', 'Unknown', 'No', 'iitkgp.vlab.co.in/?sub=37&brch=112', 'Yes', 5, 'Yes', 'No', 'Unknown', 'Simulation Lab', 'Unknown', 'No information received regarding simulations', 0, 'Hosted', 9, 8, 0),
 (335, 'ece04', 'Electronic design using DSP, FPGA, CPLD and Micro Controllers', 'not available', 'https://bitbucket.org/virtual-labs/ece04-fpga-lab/src', 'Unknown', 'http://59.181.142.81/ ', 'Yes', 50, 'Yes, on http://59.181.142.81', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'Unversioned, sources partially available.', 0, 'Hosted', 5, 8, 0),
-(336, 'Unknown', 'Internet Based Virtual CNC Lab ', 'not available', 'Unknown', 'Unknown', 'Unknown ', 'No', 0, 'Unknown', 'Unknown', 'Unknown', 'Remote Triggered  Lab (Pilot Phase)', 'Unknown', 'RT Lab under pilot phase ', 0, 'Not Hosted', 5, 10, 0),
-(337, 'Unknown', 'Control Systems/Magnetic Levitation System', 'not available', 'Unknown', 'Unknown', 'http://iitb.vlab.co.in/?sub=8&brch=117&sim=959&cnt=2016', 'Yes, On Amrita', 10, 'Yes, http://iitb.vlab.co.in/?sub=8&brch=117&sim=959&cnt=2016', 'Yes, On Amrita', 'Unknown', 'Unknown', 'Unknown', 'lab id and sources are not available and hosted on amrita', 0, 'Hosted', 5, 3, 0),
-(339, 'Unknown', 'Mechanical Engineering Lab', 'not available', 'Unknown', 'Unknown', 'Link is not working', 'Unknown', 0, 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'No information received, Link not working ', 0, 'Not Hosted', 5, 10, 0),
-(340, 'Unknown', 'Microelectronics Lab', 'not available', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 0, 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'No information received, Link redirecting to the same index page.', 0, 'Not Hosted', 5, 8, 0),
-(341, 'Unknown', 'Virtual Pulse, Switching and Analogue Circuits', 'not available', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 0, 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'No information received, Link redirecting to the same index page.', 0, 'Not Hosted', 5, 8, 0),
+(336, 'mech45', 'Internet Based Virtual CNC Lab ', 'not available', 'Unknown', 'Unknown', 'Unknown ', 'No', 0, 'Unknown', 'Unknown', 'Unknown', 'Remote Triggered  Lab (Pilot Phase)', 'Unknown', 'RT Lab under pilot phase ', 0, 'Not Hosted', 5, 10, 0),
+(337, 'chem-engg04', 'Control Systems/Magnetic Levitation System', 'not available', 'Unknown', 'Unknown', 'http://iitb.vlab.co.in/?sub=8&brch=117&sim=959&cnt=2016', 'Yes, On Amrita', 10, 'Yes, http://iitb.vlab.co.in/?sub=8&brch=117&sim=959&cnt=2016', 'Yes, On Amrita', 'Unknown', 'Unknown', 'Unknown', 'lab id and sources are not available and hosted on amrita', 0, 'Hosted', 5, 3, 0),
+(339, 'mech46', 'Mechanical Engineering Lab', 'not available', 'Unknown', 'Unknown', 'Link is not working', 'Unknown', 0, 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'No information received, Link not working ', 0, 'Not Hosted', 5, 10, 0),
+(340, 'ece35', 'Microelectronics Lab', 'not available', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 0, 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'No information received, Link redirecting to the same index page.', 0, 'Not Hosted', 5, 8, 0),
+(341, 'ece36', 'Virtual Pulse, Switching and Analogue Circuits', 'not available', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 0, 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'No information received, Link redirecting to the same index page.', 0, 'Not Hosted', 5, 8, 0),
 (342, 'txtl02', 'Electrical Conductivity', 'not available', 'https://bitbucket.org/virtual-labs/txtl02-txtl02/src', 'Yes', 'Unknown', 'No', 0, 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Mail sent, no reply ', 0, 'Not Hosted', 6, 12, 0),
 (343, 'txtl03', 'SEM Central Facility ', 'not available', 'https://bitbucket.org/virtual-labs/txtl03-txtl03/src', 'Yes', 'Unknown', 'No', 0, 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'No information received', 0, 'Not Hosted', 6, 12, 0),
-(348, 'Unknown', 'Biomedical Instrumentation Lab', 'vinodfee@iitr.ernet.in', 'https://github.com/Virtual-Labs/bio-medical-instrumentation-lab-iitr', 'Yes', 'http://bmi-iitr.vlabs.ac.in/', 'Yes', 8, 'Yes', 'Yes', 'Unknown', 'Simulation', 'Yes', '', 6, 'Hosted', 11, 12, 1),
-(353, 'Unknown', 'Virtual Interactive Lab', 'liza@iitg.ernet.in', 'Unknown', 'No', 'http://iitg.vlab.co.in/?sub=72&brch=169', 'Yes', 8, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'lab id and sources are not available', 1, 'Hosted', 7, 9, 0),
-(354, 'Unknown', 'Ergonomics Lab for Assessing Physical Aspects of Design', 'dc@iitg.ernet.in', 'https://github.com/Virtual-Labs/ergonomics-iitg', 'Yes', 'http://ergonomics-iitg.vlabs.ac.in/', 'Yes', 10, 'Yes', 'Yes', 'Unknown', 'Simulation Lab', 'Yes', 'lab id and sources are not available', 6, 'Hosted', 7, 13, 1),
-(356, 'Unknown', 'Substation Automation Lab', 'vittal_nitk@yahoo.com', 'Unknown', 'No', 'http://solve.nitk.ac.in/index.php?option=com_content&view=category&id=44:substationautomation&Itemid=102&layout=default', 'Yes', 11, 'Yes', 'Yes', 'Unknown', 'Simulation Lab', 'Unknown', 'lab id and sources are not available', 0, 'Hosted', 12, 7, 0),
-(359, 'Unknown', 'Advanced Pulse and Switching Lab', 'smisra@sit.iitkgp.ernet.in', 'Unknown', 'No', 'http://basicelectronics.iitkgp.ernet.in/experiments.php?id=advanced', 'Yes', 3, 'Yes', 'Yes', 'Unknown', 'Simulation Lab', 'Unknown', 'lab id and sources are not available', 0, 'Hosted', 9, 8, 0),
-(361, 'Unknown', 'Information System Analysis and Design virtual Lab', 'not available', 'Unknown', 'No', 'http://iitkgp.vlab.co.in/?sub=38&brch=122', 'Yes', 2, 'Yes', 'No', 'Unknown', 'Simulation Lab', 'Unknown', 'Not complete', 0, 'Hosted', 9, 6, 0),
-(362, 'Unknown', 'Semiconductor Devices Laboratory', 'not available', 'Unknown', 'No', 'http://iitkgp.vlab.co.in/?sub=37&brch=259', 'Yes', 0, 'No', 'No', 'Unknown', 'Unknown', 'Unknown', 'No experiments listed in the lab', 0, 'Hosted', 9, 8, 0),
-(363, 'Unknown', 'Plant Metabolic Pathways Virtual Laboratory', 'not available', 'Unknown', 'No', 'http://iitkgp.vlab.co.in/?sub=79&brch=262', 'Yes', 4, 'Yes', 'Yes', 'Unknown', 'Simulation Lab', 'Unknown', 'Developer not known', 0, 'Hosted', 9, 2, 0),
-(364, 'Unknown', 'Satellite Modelling and Simulation', 'not available', 'Unknown', 'Unknown', 'http://www.aero.iitb.ac.in/pratham/virtuallaboratory/index.php', 'Yes', 2, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'lab id and sources are not available', 0, 'Hosted', 5, 1, 0);
+(348, 'biotech26', 'Biomedical Instrumentation Lab', 'vinodfee@iitr.ernet.in', 'https://github.com/Virtual-Labs/bio-medical-instrumentation-lab-iitr', 'Yes', 'http://bmi-iitr.vlabs.ac.in/', 'Yes', 8, 'Yes', 'Yes', 'Unknown', 'Simulation', 'Yes', '', 6, 'Hosted', 11, 2, 1),
+(353, 'ee34', 'Virtual Interactive Lab', 'liza@iitg.ernet.in', 'Unknown', 'No', 'http://iitg.vlab.co.in/?sub=72&brch=169', 'Yes', 8, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'lab id and sources are not available', 1, 'Hosted', 7, 7, 0),
+(354, 'dsgn-engg04', 'Ergonomics Lab for Assessing Physical Aspects of Design', 'dc@iitg.ernet.in', 'https://github.com/Virtual-Labs/ergonomics-iitg', 'Yes', 'http://ergonomics-iitg.vlabs.ac.in/', 'Yes', 10, 'Yes', 'Yes', 'Unknown', 'Simulation Lab', 'Yes', 'lab id and sources are not available', 6, 'Hosted', 7, 13, 1),
+(356, 'ee30', 'Substation Automation Lab', 'vittal_nitk@yahoo.com', 'Unknown', 'No', 'http://solve.nitk.ac.in/index.php?option=com_content&view=category&id=44:substationautomation&Itemid=102&layout=default', 'Yes', 11, 'Yes', 'Yes', 'Unknown', 'Simulation Lab', 'Unknown', 'lab id and sources are not available', 0, 'Hosted', 12, 7, 0),
+(359, 'ece37', 'Advanced Pulse and Switching Lab', 'smisra@sit.iitkgp.ernet.in', 'Unknown', 'No', 'http://basicelectronics.iitkgp.ernet.in/experiments.php?id=advanced', 'Yes', 3, 'Yes', 'Yes', 'Unknown', 'Simulation Lab', 'Unknown', 'lab id and sources are not available', 0, 'Hosted', 9, 8, 0),
+(361, 'cse32', 'Information System Analysis and Design virtual Lab', 'not available', 'Unknown', 'No', 'http://iitkgp.vlab.co.in/?sub=38&brch=122', 'Yes', 2, 'Yes', 'No', 'Unknown', 'Simulation Lab', 'Unknown', 'Not complete', 0, 'Hosted', 9, 6, 0),
+(362, 'ece38', 'Semiconductor Devices Laboratory', 'not available', 'Unknown', 'No', 'http://iitkgp.vlab.co.in/?sub=37&brch=259', 'Yes', 0, 'No', 'No', 'Unknown', 'Unknown', 'Unknown', 'No experiments listed in the lab', 0, 'Hosted', 9, 8, 0),
+(363, 'biotech24', 'Plant Metabolic Pathways Virtual Laboratory', 'not available', 'Unknown', 'No', 'http://iitkgp.vlab.co.in/?sub=79&brch=262', 'Yes', 4, 'Yes', 'Yes', 'Unknown', 'Simulation Lab', 'Unknown', 'Developer not known', 0, 'Hosted', 9, 2, 0),
+(364, 'aero04', 'Satellite Modelling and Simulation', 'not available', 'Unknown', 'Unknown', 'http://www.aero.iitb.ac.in/pratham/virtuallaboratory/index.php', 'Yes', 2, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'lab id and sources are not available', 0, 'Hosted', 5, 1, 0);
 
 -- --------------------------------------------------------
 
@@ -2097,7 +2091,6 @@ INSERT INTO `labs` (`id`, `lab_id`, `lab_name`, `developer`, `repo_url`, `source
 -- Table structure for table `lab_system_info`
 --
 
-DROP TABLE IF EXISTS `lab_system_info`;
 CREATE TABLE IF NOT EXISTS `lab_system_info` (
   `id` int(25) NOT NULL AUTO_INCREMENT,
   `storage` varchar(256) DEFAULT NULL,
@@ -2125,7 +2118,6 @@ INSERT INTO `lab_system_info` (`id`, `storage`, `memory`, `os`, `os_version`, `a
 -- Table structure for table `Sheet1`
 --
 
-DROP TABLE IF EXISTS `Sheet1`;
 CREATE TABLE IF NOT EXISTS `Sheet1` (
   `A` varchar(7) DEFAULT NULL,
   `B` varchar(148) DEFAULT NULL,
@@ -2840,7 +2832,6 @@ INSERT INTO `Sheet1` (`A`, `B`, `C`) VALUES
 -- Table structure for table `technologies`
 --
 
-DROP TABLE IF EXISTS `technologies`;
 CREATE TABLE IF NOT EXISTS `technologies` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `technology_name` varchar(45) DEFAULT NULL,
@@ -2910,7 +2901,6 @@ INSERT INTO `technologies` (`id`, `technology_name`, `foss`) VALUES
 -- Table structure for table `technologies_used`
 --
 
-DROP TABLE IF EXISTS `technologies_used`;
 CREATE TABLE IF NOT EXISTS `technologies_used` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `lab_id` int(11) DEFAULT NULL,
