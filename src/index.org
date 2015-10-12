@@ -525,7 +525,7 @@ class Institute(Entity):
      | Computer Science and Engineering         | cse          |
      | Electrical Engineering                   | ee           |
      | Electronics and Communication            | ece          |
-     | Humanities                               | human        |
+     | Humanities                               | hmt          |
      | Mechanical Engineering                   | mech         |
      | Physical Sciences                        | phy-sc       |
      | Textile Engineering                      | tex-engg     |
@@ -1453,11 +1453,11 @@ info about the lab.
 | ee28        | Electrical Machines, Power Electronics and Drives, Power Systems and Instrumentation |
 | ece31       | Virtual Circuits Laboratory                                                          |
 | mech36      | Virtual and Remote Robotic and Mechatronic Laboratory                                |
-| tex-engg04  | VLSI Design and Verification                                                         |
-| tex-engg03  | Virtual Proteomics Laboratory                                                        |
+| ece39       | VLSI Design and Verification                                                         |
+| biotech25   | Virtual Proteomics Laboratory                                                        |
 | ece32       | Technology CAD (TCAD) Laboratory                                                     |
-| tex-engg02  | Single Board Heater System                                                           |
-| tex-engg01  | Power Systems Lab                                                                    |
+| ee32        | Single Board Heater System                                                           |
+| ee33        | Power Systems Lab                                                                    |
 | biotech08   | Bioinformatics Virtual Lab I                                                         |
 | phy-sc20    | Virtual Optics Lab                                                                   |
 | phy-sc21    | Solid State Physics Virtual Lab                                                      |
@@ -1505,7 +1505,7 @@ info about the lab.
 | mech38      | General Purpose Production Shop Simulation Lab                                       |
 | mech39      | Mechatronics Lab                                                                     |
 | mech40      | Nanocomposite, Fabrication, Biomaterials and Signal Processing Laboratory            |
-| tex-engg05  | Virtual Combustion and Automation Laboratory                                         |
+| mech48      | Virtual Combustion and Atomization Laboratory                                        |
 | mech41      | Manufacturing Laboratory                                                             |
 | aero02      | In-flight Particle History Lab                                                       |
 | aero03      | Aerospace Virtual laboratory                                                         |
@@ -1523,8 +1523,8 @@ info about the lab.
 | ece35       | Microelectronics Lab                                                                 |
 | mech47      | Model Based Fault Detection Lab                                                      |
 | ece36       | Virtual Pulse, Switching and Analogue Circuits                                       |
-| tex-engg06  | Biomedical Instrumentation Lab                                                       |
-| human       | Virtual Interactive Lab                                                              |
+| biotech26   | Biomedical Instrumentation Lab                                                       |
+| ee34        | Virtual Interactive Lab                                                              |
 | dsgn-engg04 | Ergonomics Lab for Assessing Physical Aspects of Design                              |
 | ee30        | Substation Automation Lab                                                            |
 | ece37       | Advanced Pulse and Switching Lab                                                     |
