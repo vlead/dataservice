@@ -444,8 +444,8 @@ def populate_instt():
     print "Populating institutes table.."
 
     instts = [
-        ('iiith', 'IIIT Hyderabad', 'Prof. Jayanthi Sivaswamy',
-            'jsivaswamy@iiit.ac.in', 'Prof. Raghu Reddy',
+        ('iiith', 'IIIT Hyderabad', 'Prof. Venkatesh Choppella',
+            'venkatesh.choppella@iiit.ac.in', 'Prof. Raghu Reddy',
             'raghu.reddy@iiit.ac.in'),
         ('iitb', 'IIT Bombay', 'Prof. Anil Kulkarni', 'anil@ee.iitb.ac.in',
             'Prof. Santosh Norohna', 'noronha@che.iitb.ac.in'),
