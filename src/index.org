@@ -1543,6 +1543,7 @@ info about the lab.
 | txtl01      | Carpet Analysis                                                                      |
 | txtl02      | Electrical Conductivity                                                              |
 | txtl03      | SEM Central Facility                                                                 |
+| ece40       | Electronics Devices and Circuits                                                                                      |
 |-------------+--------------------------------------------------------------------------------------|
 
 
