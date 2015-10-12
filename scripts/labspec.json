@@ -19,22 +19,7 @@
           "department": "Software Engg Research Lab (SERL)",
           "contact": {
             "email": "anon@vlabs.ac.in",
-            "alternate_email": "",
-            "mobile_number": "",
-            "office_number": ""
-          }
-        },
-        {
-          "name": "Thirumal Ravula",
-          "title": "",
-          "role": "Software Engineer",
-          "organization": "VLEAD",
-          "institute": "IIIT Hyderabad",
-          "web": "",
-          "department": "Software Engg Research Lab (SERL)",
-          "contact": {
-            "email": "chandan@vlabs.ac.in",
-            "alternate_email": "",
+            "alternate_email": "rayanon004@gmail.com",
             "mobile_number": "",
             "office_number": ""
           }
@@ -49,6 +34,21 @@
           "department": "Software Engg Research Lab (SERL)",
           "contact": {
             "email": "ambika@vlabs.ac.in",
+            "alternate_email": "",
+            "mobile_number": "",
+            "office_number": ""
+          }
+        },
+        {
+          "name": "Thirumal Ravula",
+          "title": "",
+          "role": "Software Engineer",
+          "organization": "VLEAD",
+          "institute": "IIIT Hyderabad",
+          "web": "",
+          "department": "Software Engg Research Lab (SERL)",
+          "contact": {
+            "email": "travula@vlabs.ac.in",
             "alternate_email": "",
             "mobile_number": "",
             "office_number": ""
