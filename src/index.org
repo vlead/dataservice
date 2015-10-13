@@ -1354,7 +1354,7 @@ info about the lab.
 | chs12       | Virtual Chemistry Lab                                                                |
 | chs13       | Ultrafast Laser Spectroscopy                                                         |
 | chs14       | Analytical Lab                                                                       |
-| civil07     | Strength of Materials and Fluid Mechanics                                            |
+| civil07     | Strength of Materials Lab                                                            |
 | civil09     | Traffic Engineering                                                                  |
 | civil11     | Virtual Satellite Image Processing and Analysis                                      |
 | civil13     | Urban Transportation Systems Planning                                                |
@@ -1543,7 +1543,8 @@ info about the lab.
 | txtl01      | Carpet Analysis                                                                      |
 | txtl02      | Electrical Conductivity                                                              |
 | txtl03      | SEM Central Facility                                                                 |
-| ece40       | Electronics Devices and Circuits                                                                                      |
+| ece40       | Electronics Devices and Circuits                                                     |
+| civil20     | Fluid Mechanics lab                                                                                      |
 |-------------+--------------------------------------------------------------------------------------|
 
 
