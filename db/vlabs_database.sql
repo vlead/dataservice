@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Oct 13, 2015 at 07:33 AM
+-- Generation Time: Oct 13, 2015 at 07:51 AM
 -- Server version: 5.5.38
 -- PHP Version: 5.3.10-1ubuntu3.13
 
@@ -2085,7 +2085,7 @@ INSERT INTO `labs` (`id`, `lab_id`, `lab_name`, `developer`, `repo_url`, `source
 (363, 'biotech24', 'Plant Metabolic Pathways Virtual Laboratory', 'not available', 'Unknown', 'No', 'http://iitkgp.vlab.co.in/?sub=79&brch=262', 'Yes', 4, 'Yes', 'Yes', 'Unknown', 'Simulation Lab', 'Unknown', 'Developer not known', 0, 'Hosted', 9, 2, 0),
 (364, 'aero04', 'Satellite Modelling and Simulation', 'not available', 'Unknown', 'Unknown', 'http://www.aero.iitb.ac.in/pratham/virtuallaboratory/index.php', 'Yes', 2, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'lab id and sources are not available', 0, 'Hosted', 5, 1, 0),
 (366, 'ece40', 'Electronics Devices and Circuits', 'madhav@ee.iitb.ac.in', 'https://github.com/Virtual-Labs/electrical-engg-iitb', 'Yes', 'http://ee-iitb.vlabs.ac.in', 'Yes', 11, 'Yes', 'Yes', 'No', 'Simulation', 'Yes', 'Lab Name inconsistent with repo name.', 5, 'Hosted', 5, 8, 0),
-(367, 'civil20', 'Fluid Mechanics lab', 'pruthviu@gmail.com', NULL, NULL, 'http://fm-nitk.vlabs.ac.in/', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 12, 5, 0);
+(367, 'civil20', 'Fluid Mechanics lab', 'pruthviu@gmail.com', 'https://github.com/Virtual-Labs/fluid-mechanics-nitk', 'Yes', 'http://fm-nitk.vlabs.ac.in/', 'Yes', 1, 'Yes', 'Yes', 'No', 'Simulation', 'Yes', NULL, 5, 'Hosted', 12, 5, 0);
 
 -- --------------------------------------------------------
 
