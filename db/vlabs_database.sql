@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Oct 13, 2015 at 06:20 AM
+-- Generation Time: Oct 13, 2015 at 06:34 AM
 -- Server version: 5.5.38
 -- PHP Version: 5.3.10-1ubuntu3.13
 
@@ -1335,9 +1335,9 @@ INSERT INTO `experiments` (`id`, `exp_id`, `exp_name`, `content_url`, `simulatio
 (348, 1954, 'Electromyography (EMG) Toolbox', 'http://103.37.201.113/vlab/view.php?expid=1369331668&cnid=0', 'http://103.37.201.113/vlab/view.php?expid=1369331668&cnid=0'),
 (348, 1955, 'To Study HRV Analysis In Time and Frequency Domain', 'http://103.37.201.113/vlab/view.php?expid=exp1316607313&cnid=0', 'http://103.37.201.113/vlab/view.php?expid=exp1316607313&cnid=0'),
 (348, 1956, 'EEG Power Spectral Density', 'http://103.37.201.113/vlab/view.php?expid=exp1367664845&cnid=0', 'http://103.37.201.113/vlab/view.php?expid=exp1367664845&cnid=3'),
-(327, 1957, 'To Study Biomedical Signal Processing Tools', 'http://103.37.201.113/vlab/view.php?expid=exp1296583185&cnid=0', 'http://103.37.201.113/vlab/view.php?expid=exp1296583185&cnid=3'),
-(327, 1958, 'Digital Signal Processing Tools', 'http://103.37.201.113/vlab/view.php?expid=exp1295625001&cnid=0', 'http://103.37.201.113/vlab/view.php?expid=exp1295625001&cnid=3'),
-(327, 1959, 'To Study Various Image Processing Tools', 'http://103.37.201.113/vlab/view.php?expid=exp1317420487&cnid=0', 'http://103.37.201.113/vlab/view.php?expid=exp1317420487&cnid=3'),
+(327, 1957, 'Bio-Medical Signal Processing Toolkit', 'http://bmsip-iitr.vlabs.ac.in/exp2/Theory.html?domain=Biotechnology&lab=Bio-Medical%20Signal%20and%20Image%20Processing%20Lab', 'http://bmsip-iitr.vlabs.ac.in/exp2/Experiment.html?domain=Biotechnology&lab=Bio-Medical%20Signal%20and%20Image%20Processing%20Lab'),
+(327, 1958, 'Digital Signal Processing Toolkit', 'http://bmsip-iitr.vlabs.ac.in/exp1/Theory.html?domain=Biotechnology&lab=Bio-Medical%20Signal%20and%20Image%20Processing%20Lab', 'http://bmsip-iitr.vlabs.ac.in/exp1/Experiment.html?domain=Biotechnology&lab=Bio-Medical%20Signal%20and%20Image%20Processing'),
+(327, 1959, 'Image Processing Toolkit', 'http://bmsip-iitr.vlabs.ac.in/exp3/Theory.html?domain=Biotechnology&lab=Bio-Medical%20Signal%20and%20Image%20Processing%20Lab', 'http://bmsip-iitr.vlabs.ac.in/exp3/Experiment.html?domain=Biotechnology&lab=Bio-Medical%20Signal%20and%20Image%20Processing%20Lab'),
 (328, 1960, 'Speed Control of DC motor by varying armature and field resistance.', 'http://103.37.201.114/view.php?expid=exp1316684808&cnid=0', 'http://103.37.201.114/view.php?expid=exp1316684808&cnid=3'),
 (328, 1961, 'To perform speed control of DC motor by using Ward- Leonard Method of speed control', 'http://103.37.201.114/view.php?expid=exp1303305217&cnid=0', 'http://103.37.201.114/view.php?expid=exp1303305217&cnid=3'),
 (328, 1962, 'To study the Load Characteristics of DC shunt generator.', 'http://103.37.201.114/view.php?expid=exp1307549355&cnid=0', 'http://103.37.201.114/view.php?expid=exp1307549355&cnid=3'),
@@ -1477,10 +1477,10 @@ INSERT INTO `experiments` (`id`, `exp_id`, `exp_name`, `content_url`, `simulatio
 (121, 2104, 'Sampling and signal reconstruction', 'http://iitg.vlab.co.in/?sub=59&brch=166&sim=820&cnt=1597', 'http://iitg.vlab.co.in/?sub=59&brch=166&sim=820&cnt=4'),
 (121, 2105, 'Analysis of LTI system response', 'http://iitg.vlab.co.in/?sub=59&brch=166&sim=877&cnt=1610', 'http://iitg.vlab.co.in/?sub=59&brch=166&sim=877&cnt=4'),
 (122, 2106, 'Magnetic Field Behaviour in single coil', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=1050&cnt=1918', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=1050&cnt=1926'),
-(122, 2107, 'Rotating Magnetic Field Behaviour in two coils', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=1051&cnt=1922', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=1051&cnt=1924'),
-(122, 2108, 'Rotating Magnetic Field Behaviour in three coils', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=1054&cnt=1931', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=1054&cnt=1932'),
-(122, 2109, 'The DC Test for Stator Resistance', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=912&cnt=1681', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=912&cnt=1684');
+(122, 2107, 'Rotating Magnetic Field Behaviour in two coils', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=1051&cnt=1922', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=1051&cnt=1924');
 INSERT INTO `experiments` (`id`, `exp_id`, `exp_name`, `content_url`, `simulation_url`) VALUES
+(122, 2108, 'Rotating Magnetic Field Behaviour in three coils', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=1054&cnt=1931', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=1054&cnt=1932'),
+(122, 2109, 'The DC Test for Stator Resistance', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=912&cnt=1681', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=912&cnt=1684'),
 (122, 2110, 'No-Load Test', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=913&cnt=1696', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=913&cnt=1698'),
 (122, 2111, 'Blocked-Rotor Test', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=916&cnt=1712', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=916&cnt=1725'),
 (122, 2112, 'Stator Resistance Starter', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=938&cnt=1740', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=938&cnt=1741'),
@@ -1750,12 +1750,12 @@ INSERT INTO `experiments` (`id`, `exp_id`, `exp_name`, `content_url`, `simulatio
 (335, 2378, 'Additive Synthesis of Musical Tone: Procedure | Scilab Code | Interactive Tutorial', 'http://59.181.142.81/signal_processing/signals_and_systems/experiments/sound_synthesis/', 'No simulation'),
 (335, 2379, 'Discrete Time Convolution: Theory | Pre-lab work | Procedure | Scilab Simulation | Post-lab exercises | Interactive Tutorial', 'http://59.181.142.81/signal_processing/signals_and_systems/experiments/convolution/about/', 'No simulation'),
 (335, 2380, 'Autocorrelation: Procedure | Scilab Code', 'http://59.181.142.81/signal_processing/signals_and_systems/experiments/Autocorrelation/Autocorrelation.pdf', 'No simulation'),
-(335, 2381, 'Circular Convolution: Procedure | Scilab Code', 'http://59.181.142.81/signal_processing/signals_and_systems/experiments/Circular%20Convolution/Circular%20convolution.pdf', 'No simulation'),
+(335, 2381, 'Circular Convolution: Procedure | Scilab Code', 'http://59.181.142.81/signal_processing/signals_and_systems/experiments/Circular%20Convolution/Circular%20convolution.pdf', 'No simulation');
+INSERT INTO `experiments` (`id`, `exp_id`, `exp_name`, `content_url`, `simulation_url`) VALUES
 (335, 2382, 'Discrete Fourier Transform: Procedure | Scilab Code', 'http://59.181.142.81/signal_processing/signals_and_systems/experiments/DFT/DFT.pdf', 'No simulation'),
 (335, 2383, 'PIC', 'http://59.181.142.81/uc/pic/index.php', 'No simulation'),
 (335, 2384, 'Pt-51', 'http://59.181.142.81/uc/8051/index.php', 'No simulation'),
-(335, 2385, 'CPLD', 'http://59.181.142.81/modern_digital_design/cpld/', 'No simulation');
-INSERT INTO `experiments` (`id`, `exp_id`, `exp_name`, `content_url`, `simulation_url`) VALUES
+(335, 2385, 'CPLD', 'http://59.181.142.81/modern_digital_design/cpld/', 'No simulation'),
 (335, 2386, 'FPGA', 'http://59.181.142.81/modern_digital_design/fpga/', 'No simulation'),
 (170, 2387, 'Study of field pattern of various modes inside a rectangular waveguide.', 'http://www.iitk.ac.in/mimt_lab/vlab/index.php?pg=waveguide/aim&usr=&enc=', 'No simulation'),
 (170, 2388, 'Study of field pattern of various modes inside a rectangular waveguide cavity.', 'http://www.iitk.ac.in/mimt_lab/vlab/index.php?pg=rwcavity/aim&usr=&enc=', 'No simulation'),
