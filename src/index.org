@@ -1329,8 +1329,8 @@ info about the lab.
      3. For a new lab, the number that is concatenated to the discipline Id is
         derived in the following way:
         - Fetch the labs in that particular discipline
-        - Get the highest number 
-        - Increment it by one 
+        - Get the highest number
+        - Increment it by one
 
 *Note* - The legacy lab ids are not changed even if the given lab id
  does not match the discipline.
@@ -2152,13 +2152,14 @@ function.
 *** Feedback data
 **** Immutable data
      + Id
-     + time
+     + Time
      + IP address
      + User Name
      + User Email
      + User Institute
-     + User Discipline
-     + Feedback data
+     + Lab
+     + Experiment
+     + Feedback Data
 **** Mutable data
 None of the feedback data is mutable. Once entered into the system, it
 can only be read.
@@ -2180,120 +2181,110 @@ class Feedback(Entity):
     user_email = db.Column(db.String(64))
 
     user_institute = db.Column(db.String(64))
-    user_discipline = db.Column(db.String(64))
 
     time = db.Column(db.DateTime, default=datetime.utcnow)
     ip = db.Column(db.String(16))
 
-    #data = db.Column(JSONType)
     type_of_user = db.Column(db.String(32))
-    experiment_attempted = db.Column(db.Boolean)
-    experiment_works = db.Column(db.Boolean)
-    if_no_what_issue = db.Column(db.Text)
-    problem_while_performing_experiment = db.Column(db.Text)
-    most_interesting_things = db.Column(db.Text)
-    why_how_plan_to_use_vlabs = db.Column(db.Text)
-    suggestions = db.Column(db.Text)
+    how_useful_are_labs = db.Column(db.Text)
+    suggestions_in_general = db.Column(db.Text)
+    feedback_about_experiment = db.Column(db.Text)
+    suggestions_about_experiment = db.Column(db.Text)
+    feedback_about_lab = db.Column(db.Text)
+    suggestions_about_lab = db.Column(db.Text)
 #+END_SRC
+
 **** Constructor
      Signature of the constructor is as follows. Attributes inside [...]  are
      optional. Others are mandatory.
 #+BEGIN_EXAMPLE python
-    feedback = Feedback(lab=<instance of Lab>
-                        [,experiment=<instance of Experiment>]
-                        [,user_name=<instance of Name>]
-                        [,user_email=<instance of Email>]
-                        [,user_institute=<str>]
-                        [,user_discipline=<str>]
-                        [,ip=<str>]
+    feedback = Feedback(user_name=<instance of Name>,
+                        user_email=<instance of Email>,
+                        ip=<str>
                         [,type_of_user=<str>]
-                        [,experiment_attempted=<bool>]
-                        [,experiment_works=<bool>]
-                        [,if_no_what_issue=<str>]
-                        [,problem_while_performing_experiment=<str>]
-                        [,most_interesting_things=<str>]
-                        [,why_how_plan_to_use_vlabs=<str>]
-                        [,suggestions=<str>])
+                        [,user_institute=<str>]
+                        [,lab=<instance of Lab>]
+                        [,experiment=<instance of Experiment>]
+                        [,how_useful_are_labs=<str>]
+                        [,suggestions_in_general=<str>]
+                        [,feedback_about_experiment=<str>]
+                        [,suggestions_about_experiment=<str>]
+                        [,feedback_about_lab=<str>]
+                        [,suggestions_about_lab=<str>])
 #+END_EXAMPLE
 
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def __init__(self, **kwargs):
-        if 'lab' not in kwargs:
-            raise AttributeRequired("`lab` attribute is required.")
+        if 'user_name' not in kwargs:
+            raise AttributeRequired("`user_name` attribute is required.")
 
-        if not isinstance(kwargs['lab'], Lab):
-            raise TypeError("`lab` should be an instance of class Lab")
-        self.lab = kwargs['lab']
+        if not isinstance(kwargs['user_name'], Name):
+            raise TypeError("`user_name` should be of type Name")
+        self.user_name = kwargs['user_name'].value
+
+        if 'user_email' not in kwargs:
+            raise AttributeRequired("`user_email` attribute is required.")
+
+        if not isinstance(kwargs['user_email'], Email):
+            raise TypeError("`user_email` should be of type Email")
+        self.user_email = kwargs['user_email'].value
+
+        if 'ip' not in kwargs:
+            raise AttributeRequired("`ip` attribute is required.")
+
+        if not isinstance(kwargs['ip'], str):
+            raise TypeError("ip should be of type str")
+        self.ip = kwargs['ip']
 
         if 'experiment' in kwargs:
             if not isinstance(kwargs['experiment'], Experiment):
                 raise TypeError("`experiment` should be an instance of class Experiment")
             self.experiment = kwargs['experiment']
 
-        if 'user_name' in kwargs:
-            if not isinstance(kwargs['user_name'], Name):
-                raise TypeError("user_name should be of type Name")
-            self.user_name = kwargs['user_name'].value
-
-        if 'user_email' in kwargs:
-            if not isinstance(kwargs['user_email'], Email):
-                raise TypeError("user_email should be of type Email")
-            self.user_email = kwargs['user_email'].value
+        if 'lab' in kwargs:
+            if not isinstance(kwargs['lab'], Lab):
+                raise TypeError("`lab` should be an instance of class Lab")
+            self.lab = kwargs['lab']
 
         if 'user_institute' in kwargs:
             if not isinstance(kwargs['user_institute'], str):
                 raise TypeError("user_institute should be of type str")
             self.user_institute = kwargs['user_institute']
 
-        if 'user_discipline' in kwargs:
-            if not isinstance(kwargs['user_discipline'], str):
-                raise TypeError("user_discipline should be of type str")
-            self.user_discipline = kwargs['user_discipline']
-
-        if 'ip' in kwargs:
-            if not isinstance(kwargs['ip'], str):
-                raise TypeError("ip should be of type str")
-            self.ip = kwargs['ip']
-
         if 'type_of_user' in kwargs:
             if not isinstance(kwargs['type_of_user'], str):
                 raise TypeError("type_of_user should be of type str")
             self.type_of_user = kwargs['type_of_user']
 
-        if 'experiment_attempted' in kwargs:
-            if not isinstance(kwargs['experiment_attempted'], bool):
-                raise TypeError("experiment_attempted should be of type bool")
-            self.experiment_attempted = kwargs['experiment_attempted']
+        if 'how_useful_are_labs' in kwargs:
+            if not isinstance(kwargs['how_useful_are_labs'], str):
+                raise TypeError("how_useful_are_labs should be of type str")
+            self.how_useful_are_labs = kwargs['how_useful_are_labs']
 
-        if 'experiment_works' in kwargs:
-            if not isinstance(kwargs['experiment_works'], bool):
-                raise TypeError("experiment_works should be of type bool")
-            self.experiment_works = kwargs['experiment_works']
+        if 'suggestions_in_general' in kwargs:
+            if not isinstance(kwargs['suggestions_in_general'], str):
+                raise TypeError("suggestions_in_general should be of type str")
+            self.suggestions_in_general = kwargs['suggestions_in_general']
 
-        if 'if_no_what_issue' in kwargs:
-            if not isinstance(kwargs['if_no_what_issue'], str):
-                raise TypeError("if_no_what_issue should be of type str")
-            self.if_no_what_issue = kwargs['if_no_what_issue']
+        if 'feedback_about_experiment' in kwargs:
+            if not isinstance(kwargs['feedback_about_experiment'], str):
+                raise TypeError("feedback_about_experiment should be of type str")
+            self.feedback_about_experiment = kwargs['feedback_about_experiment']
 
-        if 'most_interesting_things' in kwargs:
-            if not isinstance(kwargs['most_interesting_things'], str):
-                raise TypeError("most_interesting_things should be of type str")
-            self.most_interesting_things = kwargs['most_interesting_things']
+        if 'suggestions_about_experiment' in kwargs:
+            if not isinstance(kwargs['suggestions_about_experiment'], str):
+                raise TypeError("suggestions_about_experiment should be of type str")
+            self.suggestions_about_experiment = kwargs['suggestions_about_experiment']
 
-        if 'problem_while_performing_experiment' in kwargs:
-            if not isinstance(kwargs['problem_while_performing_experiment'], str):
-                raise TypeError("problem_while_performing_experiment should be of type str")
-            self.problem_while_performing_experiment = kwargs['problem_while_performing_experiment']
+        if 'feedback_about_lab' in kwargs:
+            if not isinstance(kwargs['feedback_about_lab'], str):
+                raise TypeError("feedback_about_lab should be of type str")
+            self.feedback_about_lab = kwargs['feedback_about_lab']
 
-        if 'why_how_plan_to_use_vlabs' in kwargs:
-            if not isinstance(kwargs['why_how_plan_to_use_vlabs'], str):
-                raise TypeError("why_how_plan_to_use_vlabs should be of type str")
-            self.why_how_plan_to_use_vlabs = kwargs['why_how_plan_to_use_vlabs']
-
-        if 'suggestions' in kwargs:
-            if not isinstance(kwargs['suggestions'], str):
-                raise TypeError("suggestions should be of type str")
-            self.suggestions = kwargs['suggestions']
+        if 'suggestions_about_lab' in kwargs:
+            if not isinstance(kwargs['suggestions_about_lab'], str):
+                raise TypeError("suggestions_about_lab should be of type str")
+            self.suggestions_about_lab = kwargs['suggestions_about_lab']
 
 
 #+END_SRC
@@ -2320,24 +2311,21 @@ class Feedback(Entity):
                 'id': self.lab.id,
                 'lab_id': self.lab.lab_id,
                 'name': self.lab.name
-            },
+            } if self.lab else None,
             'experiment': self.experiment.to_client() if self.experiment\
                 else None,
             'user_name': self.user_name,
             'user_email': self.user_email,
             'user_institute': self.user_institute,
-            'user_discipline': self.user_discipline,
             'ip': self.ip,
             'time': self.time.isoformat(),
             'type_of_user': self.type_of_user,
-            'experiment_works': self.experiment_works,
-            'experiment_attempted': self.experiment_attempted,
-            'if_no_what_issue': self.if_no_what_issue,
-            'problem_while_performing_experiment':\
-                self.problem_while_performing_experiment,
-            'most_interesting_things': self.most_interesting_things,
-            'why_how_plan_to_use_vlabs': self.why_how_plan_to_use_vlabs,
-            'suggestions': self.suggestions
+            'how_useful_are_labs': self.how_useful_are_labs,
+            'suggestions_in_general': self.suggestions_in_general,
+            'feedback_about_experiment': self.feedback_about_experiment,
+            'suggestions_about_experiment': self.suggestions_about_experiment,
+            'feedback_about_lab': self.feedback_about_lab,
+            'suggestions_about_lab': self.suggestions_about_lab
         }
 #+END_SRC
 
@@ -3304,16 +3292,14 @@ entity_map_types = {
             'user_name': Name,
             'user_email': Email,
             'user_institute': str,
-            'user_discipline': str,
             'ip': str,
             'type_of_user': str,
-            'experiment_attempted': bool,
-            'experiment_works': bool,
-            'if_no_what_issue': str,
-            'problem_while_performing_experiment': str,
-            'most_interesting_things': str,
-            'why_how_plan_to_use_vlabs': str,
-            'suggestions': str
+            'how_useful_are_labs': str,
+            'suggestions_in_general': str,
+            'feedback_about_experiment': str,
+            'suggestions_about_experiment': str,
+            'feedback_about_lab': str,
+            'suggestions_about_lab': str
         }
     }
 }
@@ -5196,6 +5182,63 @@ class TestExperiment(TestCase):
 
 #+END_SRC
 
+*** Tests for Feedback
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+class TestFeedback(TestCase):
+    TESTING = True
+
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def test_feedback_constructor(self):
+        print "test_feedback_constructor"
+        feedback = Feedback(user_name=Name("Joe"),
+                            user_email=Email("joe@smith.com"),
+                            ip="172.11.44.55",
+                            how_useful_are_labs="very much")
+        self.assertEqual(isinstance(feedback, Feedback), True)
+        self.assertEqual(feedback.user_name, "Joe")
+        self.assertEqual(feedback.how_useful_are_labs, "very much")
+
+        # Calling the feedback constructor without any arguments should
+        # raise AttributeRequired exception
+        self.assertRaises(AttributeRequired, Feedback)
+
+        # Calling the experiment constructor without user_name argument
+        # should raise AttributeRequired exception
+        self.assertRaises(AttributeRequired, Feedback,
+                          **{'user_email': Email("joe@smith.com"),
+                             'ip': "172.11.33.44"})
+
+        # Calling the experiment constructor without user_email argument
+        # should raise AttributeRequired exception
+        self.assertRaises(AttributeRequired, Feedback,
+                          **{'user_name': Name("Joe"),
+                             'ip': "172.11.33.44"})
+
+        # Calling the experiment constructor without ip argument
+        # should raise AttributeRequired exception
+        self.assertRaises(AttributeRequired, Feedback,
+                          **{'user_email': Email("joe@smith.com"),
+                             'user_name': Name("Joe")})
+
+        # Calling the experiment constructor with wrong type of
+        # arguments should raise TypeError
+        self.assertRaises(TypeError, Feedback,
+                          **{'user_name': 'Joe',
+                             'user_email': Email('joe@smith.com'),
+                            })
+
+#+END_SRC
+
 *** Run the tests
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
 
@@ -5708,12 +5751,15 @@ class TestFeedback(TestCase):
 
     def test_get_all_feedbacks(self):
         print "test_get_all_feedbacks"
-        lab = Lab(name="DS", lab_id="ds")
-        lab.save()
-        f1 = Feedback(lab=lab)
+        f1 = Feedback(user_name=Name("Joe"),
+                      user_email=Email("joe@smith.com"),
+                      ip="14.56.78.98")
         f1.save()
-        f2 = Feedback(lab=lab)
+        f2 = Feedback(user_name=Name("Foe"),
+                      user_email=Email("foe@schopp.com"),
+                      ip="54.76.123.6")
         f2.save()
+
         r = self.client.get('/feedback')
         result = json.loads(r.data)
         print result
@@ -5721,24 +5767,28 @@ class TestFeedback(TestCase):
 
     def test_get_one_feedback(self):
         print "test_get_one_feedback"
-        lab = Lab(name="DS", lab_id="ds")
-        lab.save()
-        f1 = Feedback(lab=lab)
+        f1 = Feedback(user_name=Name("Joe"),
+                      user_email=Email("joe@smith.com"),
+                      ip="14.56.78.98")
         f1.save()
-        f2 = Feedback(lab=lab)
+        f2 = Feedback(user_name=Name("Foe"),
+                      user_email=Email("foe@schopp.com"),
+                      ip="54.76.123.6")
         f2.save()
         r = self.client.get('/feedback/1')
         result = json.loads(r.data)
         print result
-        self.assertEqual(result['lab']['name'], "DS")
+        self.assertEqual(result['user_name'], "Joe")
 
     def test_update_existing_feedback(self):
         print "test_update_existing_feedback"
-        lab = Lab(name="DS", lab_id="ds")
-        lab.save()
-        f1 = Feedback(lab=lab)
+        f1 = Feedback(user_name=Name("Joe"),
+                      user_email=Email("joe@smith.com"),
+                      ip="14.56.78.98")
         f1.save()
-        f2 = Feedback(lab=lab)
+        f2 = Feedback(user_name=Name("Foe"),
+                      user_email=Email("foe@schopp.com"),
+                      ip="54.76.123.6")
         f2.save()
         r = self.client.put('/feedback/1',
                             data=json.dumps({'type_of_user': 'student'}))
@@ -5754,17 +5804,19 @@ class TestFeedback(TestCase):
                                               'user_email': 'john@foo.com',
                                               'ip': '10.2.3.2',
                                               'type_of_user': 'student',
-                                              'suggestions': 'blah'}))
+                                              'suggestions_about_lab': 'blah'}))
         result = json.loads(r.data)
         self.assertEqual(result['user_name'], "john")
 
     def test_delete_feedback(self):
         print "test_delete_feedback"
-        lab = Lab(name="DS", lab_id="ds")
-        lab.save()
-        f1 = Feedback(lab=lab)
+        f1 = Feedback(user_name=Name("Joe"),
+                      user_email=Email("joe@smith.com"),
+                      ip="14.56.78.98")
         f1.save()
-        f2 = Feedback(lab=lab)
+        f2 = Feedback(user_name=Name("Foe"),
+                      user_email=Email("foe@schopp.com"),
+                      ip="54.76.123.6")
         f2.save()
         r = self.client.delete('/feedback/1')
         self.assert_500(r)

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Oct 12, 2015 at 02:31 AM
+-- Generation Time: Oct 13, 2015 at 06:20 AM
 -- Server version: 5.5.38
 -- PHP Version: 5.3.10-1ubuntu3.13
 
@@ -948,15 +948,15 @@ INSERT INTO `experiments` (`id`, `exp_id`, `exp_name`, `content_url`, `simulatio
 (315, 1565, 'Antenna Gain measurement', 'http://iitd.vlab.co.in/?sub=65&brch=180&sim=307&cnt=1', 'http://iitd.vlab.co.in/?sub=65&brch=180&sim=307&cnt=1518'),
 (315, 1566, 'Propagation Loss', 'http://iitd.vlab.co.in/?sub=65&brch=180&sim=309&cnt=1', 'http://iitd.vlab.co.in/?sub=65&brch=180&sim=309&cnt=1474'),
 (315, 1567, 'Bending Loss', 'http://iitd.vlab.co.in/?sub=65&brch=180&sim=310&cnt=1', 'http://iitd.vlab.co.in/?sub=65&brch=180&sim=310&cnt=1520'),
-(1, 1568, 'Number Systems', 'http://deploy.virtual-labs.ac.in/labs/cse01/exp1/index.php', 'http://deploy.virtual-labs.ac.in/labs/cse01/exp1/index.php?section=Simulation#'),
-(1, 1569, 'Expression Evaluation using Stacks', 'http://deploy.virtual-labs.ac.in/labs/cse01/exp2/index.php', 'http://deploy.virtual-labs.ac.in/labs/cse01/exp2/calc3.html'),
-(1, 1570, 'Sorting using Arrays', 'http://deploy.virtual-labs.ac.in/labs/cse01/exp3/index.php', 'http://deploy.virtual-labs.ac.in/labs/cse01/exp3/index.php?section=Simulation'),
-(1, 1571, 'Ploynomials via Linked Lists', 'http://deploy.virtual-labs.ac.in/labs/cse01/exp4/index.php', 'http://deploy.virtual-labs.ac.in/labs/cse01/exp4/polynomial.html'),
-(1, 1572, 'Expression Trees', 'http://deploy.virtual-labs.ac.in/labs/cse01/exp6/index.php', 'http://deploy.virtual-labs.ac.in/labs/cse01/exp6/exptree.html'),
-(1, 1573, 'Search Trees', 'http://deploy.virtual-labs.ac.in/labs/cse01/exp5/index.php', 'http://deploy.virtual-labs.ac.in/labs/cse01/exp5/binarySearchTree.html'),
-(1, 1574, 'Graph Traversals', 'http://deploy.virtual-labs.ac.in/labs/cse01/exp7/index.php', 'http://deploy.virtual-labs.ac.in/labs/cse01/exp7/DFS_BFS.html'),
-(1, 1575, 'Shortest Paths in Graphs', 'http://deploy.virtual-labs.ac.in/labs/cse01/exp8/index.php', 'http://deploy.virtual-labs.ac.in/labs/cse01/exp8/Dijkstra.html'),
-(1, 1576, 'Minimum Spanning Trees', 'http://deploy.virtual-labs.ac.in/labs/cse01/exp9/index.php', 'http://deploy.virtual-labs.ac.in/labs/cse01/exp9/MinimumSpanningTree.html'),
+(1, 1568, 'Number Systems', 'http://cse01-iiith.vlabs.ac.in/exp1/Introduction.html?domain=Computer%20Science&lab=Data%20Structures', 'http://cse01-iiith.vlabs.ac.in/exp1/Simulation.html?domain=Computer%20Science&lab=Data%20Structures'),
+(1, 1569, 'Expression Evaluation using Stacks', 'http://cse01-iiith.vlabs.ac.in/exp2/Introduction.html?domain=Computer%20Science&lab=Data%20Structures', 'http://cse01-iiith.vlabs.ac.in/exp2/Simulation.html?domain=Computer%20Science&lab=Data%20Structures'),
+(1, 1570, 'Sorting using Arrays', 'http://cse01-iiith.vlabs.ac.in/exp3/Introduction.html?domain=Computer%20Science&lab=Data%20Structures', 'http://cse01-iiith.vlabs.ac.in/exp3/Simulation.html?domain=Computer%20Science&lab=Data%20Structures'),
+(1, 1571, 'Ploynomials via Linked Lists', 'http://cse01-iiith.vlabs.ac.in/exp4/Introduction.html?domain=Computer%20Science&lab=Data%20Structures', 'http://cse01-iiith.vlabs.ac.in/exp4/Simulation.html?domain=Computer%20Science&lab=Data%20Structures'),
+(1, 1572, 'Expression Trees', 'http://cse01-iiith.vlabs.ac.in/exp6/Introduction.html?domain=Computer%20Science&lab=Data%20Structures', 'http://cse01-iiith.vlabs.ac.in/exp6/Simulation.html?domain=Computer%20Science&lab=Data%20Structures'),
+(1, 1573, 'Search Trees', 'http://cse01-iiith.vlabs.ac.in/exp5/Introduction.html?domain=Computer%20Science&lab=Data%20Structures', 'http://cse01-iiith.vlabs.ac.in/exp5/Simulation.html?domain=Computer%20Science&lab=Data%20Structures'),
+(1, 1574, 'Graph Traversals', 'http://cse01-iiith.vlabs.ac.in/exp7/Introduction.html?domain=Computer%20Science&lab=Data%20Structures', 'http://cse01-iiith.vlabs.ac.in/exp7/Simulation.html?domain=Computer%20Science&lab=Data%20Structures'),
+(1, 1575, 'Shortest Paths in Graphs', 'http://cse01-iiith.vlabs.ac.in/exp8/Introduction.html?domain=Computer%20Science&lab=Data%20Structures', 'http://cse01-iiith.vlabs.ac.in/exp8/Simulation.html?domain=Computer%20Science&lab=Data%20Structures'),
+(1, 1576, 'Minimum Spanning Trees', 'http://cse01-iiith.vlabs.ac.in/exp9/Introduction.html?domain=Computer%20Science&lab=Data%20Structures', 'http://cse01-iiith.vlabs.ac.in/exp9/Simulation.html?domain=Computer%20Science&lab=Data%20Structures'),
 (2, 1577, 'Expression Evaluation', 'http://deploy.virtual-labs.ac.in/labs/cse02/exp1/index.php', 'http://deploy.virtual-labs.ac.in/labs/cse02/exp1/arithmatic/operator.php'),
 (2, 1578, 'Basic Control Flow', 'http://deploy.virtual-labs.ac.in/labs/cse02/exp2/index.php', 'http://deploy.virtual-labs.ac.in/labs/cse02/exp2/lab/if_else.php'),
 (2, 1579, 'Advanced Control Flow', 'http://deploy.virtual-labs.ac.in/labs/cse02/exp3/index.php', 'http://deploy.virtual-labs.ac.in/labs/cse02/exp3/lab/loops.html'),
@@ -1197,12 +1197,12 @@ INSERT INTO `experiments` (`id`, `exp_id`, `exp_name`, `content_url`, `simulatio
 (45, 1814, 'Plates Experiment', 'http://deploy.virtual-labs.ac.in/labs/eerc04/exp6/index.php', 'http://deploy.virtual-labs.ac.in/labs/eerc04/exp6/index.php?section=Experiment'),
 (45, 1815, 'Rijid Joints Experiment', 'http://deploy.virtual-labs.ac.in/labs/eerc04/exp1/index.php', 'http://deploy.virtual-labs.ac.in/labs/eerc04/exp1/index.php?section=Experiment'),
 (45, 1816, 'Arches Experiment', 'http://deploy.virtual-labs.ac.in/labs/eerc04/exp7/index.php', 'http://deploy.virtual-labs.ac.in/labs/eerc04/exp7/index.php?section=Experiment'),
-(45, 1817, 'Trusses Experiment', 'http://deploy.virtual-labs.ac.in/labs/eerc04/exp8/index.php', 'http://deploy.virtual-labs.ac.in/labs/eerc04/exp8/index.php?section=Experiment'),
+(45, 1817, 'Trusses Experiment', 'http://deploy.virtual-labs.ac.in/labs/eerc04/exp8/index.php', 'http://deploy.virtual-labs.ac.in/labs/eerc04/exp8/index.php?section=Experiment');
+INSERT INTO `experiments` (`id`, `exp_id`, `exp_name`, `content_url`, `simulation_url`) VALUES
 (45, 1818, 'Retaining Walls Experiment', 'http://deploy.virtual-labs.ac.in/labs/eerc04/exp9/index.php', 'http://deploy.virtual-labs.ac.in/labs/eerc04/exp9/index.php?section=Experiment'),
 (45, 1819, 'Plastic Hinge Experiment', 'http://deploy.virtual-labs.ac.in/labs/eerc04/exp10/index.php', 'http://deploy.virtual-labs.ac.in/labs/eerc04/exp10/index.php?section=Experiment'),
 (86, 1820, 'Introduction to the fluorescence spectroscopy principle', 'http://deploy.virtual-labs.ac.in/labs/ccnsb01/exp1/index.html', 'http://deploy.virtual-labs.ac.in/labs/ccnsb01/?q=experiments'),
-(86, 1821, 'Familiarization with the fluorescence instrumentation', 'http://deploy.virtual-labs.ac.in/labs/ccnsb01/?q=experiments', 'http://deploy.virtual-labs.ac.in/labs/ccnsb01/?q=experiments');
-INSERT INTO `experiments` (`id`, `exp_id`, `exp_name`, `content_url`, `simulation_url`) VALUES
+(86, 1821, 'Familiarization with the fluorescence instrumentation', 'http://deploy.virtual-labs.ac.in/labs/ccnsb01/?q=experiments', 'http://deploy.virtual-labs.ac.in/labs/ccnsb01/?q=experiments'),
 (86, 1822, 'Familiarization with excitation and emission spectra, Mirror Image relation and Stokes Shift', 'http://deploy.virtual-labs.ac.in/labs/ccnsb01/exp3/index.html', 'http://deploy.virtual-labs.ac.in/labs/ccnsb01/?q=experiments'),
 (86, 1823, 'Demonstration of solvent effects on fluorescence spectra', 'http://deploy.virtual-labs.ac.in/labs/ccnsb01/exp4/index.html', 'http://deploy.virtual-labs.ac.in/labs/ccnsb01/?q=experiments'),
 (86, 1824, 'Demonstration of pH effects on fluorescence spectra', 'http://deploy.virtual-labs.ac.in/labs/ccnsb01/exp5/index.html', 'http://deploy.virtual-labs.ac.in/labs/ccnsb01/?q=experiments'),
@@ -1479,12 +1479,12 @@ INSERT INTO `experiments` (`id`, `exp_id`, `exp_name`, `content_url`, `simulatio
 (122, 2106, 'Magnetic Field Behaviour in single coil', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=1050&cnt=1918', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=1050&cnt=1926'),
 (122, 2107, 'Rotating Magnetic Field Behaviour in two coils', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=1051&cnt=1922', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=1051&cnt=1924'),
 (122, 2108, 'Rotating Magnetic Field Behaviour in three coils', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=1054&cnt=1931', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=1054&cnt=1932'),
-(122, 2109, 'The DC Test for Stator Resistance', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=912&cnt=1681', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=912&cnt=1684'),
+(122, 2109, 'The DC Test for Stator Resistance', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=912&cnt=1681', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=912&cnt=1684');
+INSERT INTO `experiments` (`id`, `exp_id`, `exp_name`, `content_url`, `simulation_url`) VALUES
 (122, 2110, 'No-Load Test', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=913&cnt=1696', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=913&cnt=1698'),
 (122, 2111, 'Blocked-Rotor Test', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=916&cnt=1712', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=916&cnt=1725'),
 (122, 2112, 'Stator Resistance Starter', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=938&cnt=1740', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=938&cnt=1741'),
-(122, 2113, 'Auto Transformer Starting', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=941&cnt=1734', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=941&cnt=1735');
-INSERT INTO `experiments` (`id`, `exp_id`, `exp_name`, `content_url`, `simulation_url`) VALUES
+(122, 2113, 'Auto Transformer Starting', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=941&cnt=1734', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=941&cnt=1735'),
 (122, 2114, 'Star-Delta  Starting', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=939&cnt=1737', 'http://iitg.vlab.co.in/index.php?sub=61&brch=168&sim=939&cnt=1739'),
 (122, 2115, 'The Missionaries Archive', 'http://iitg.vlab.co.in/?sub=72&brch=169&sim=1031&cnt=1869', 'http://iitg.vlab.co.in/?pg=topMenu&id=5'),
 (122, 2116, 'Ethnographic Reports', 'http://iitg.vlab.co.in/?sub=72&brch=169&sim=1029&cnt=1875', 'http://iitg.vlab.co.in/?pg=topMenu&id=5'),
@@ -1754,12 +1754,12 @@ INSERT INTO `experiments` (`id`, `exp_id`, `exp_name`, `content_url`, `simulatio
 (335, 2382, 'Discrete Fourier Transform: Procedure | Scilab Code', 'http://59.181.142.81/signal_processing/signals_and_systems/experiments/DFT/DFT.pdf', 'No simulation'),
 (335, 2383, 'PIC', 'http://59.181.142.81/uc/pic/index.php', 'No simulation'),
 (335, 2384, 'Pt-51', 'http://59.181.142.81/uc/8051/index.php', 'No simulation'),
-(335, 2385, 'CPLD', 'http://59.181.142.81/modern_digital_design/cpld/', 'No simulation'),
+(335, 2385, 'CPLD', 'http://59.181.142.81/modern_digital_design/cpld/', 'No simulation');
+INSERT INTO `experiments` (`id`, `exp_id`, `exp_name`, `content_url`, `simulation_url`) VALUES
 (335, 2386, 'FPGA', 'http://59.181.142.81/modern_digital_design/fpga/', 'No simulation'),
 (170, 2387, 'Study of field pattern of various modes inside a rectangular waveguide.', 'http://www.iitk.ac.in/mimt_lab/vlab/index.php?pg=waveguide/aim&usr=&enc=', 'No simulation'),
 (170, 2388, 'Study of field pattern of various modes inside a rectangular waveguide cavity.', 'http://www.iitk.ac.in/mimt_lab/vlab/index.php?pg=rwcavity/aim&usr=&enc=', 'No simulation'),
-(170, 2389, 'Measurement of the dielectric constant and loss tangent of materials in microwave frequency band using a rectangular waveguide cavity.', 'http://www.iitk.ac.in/mimt_lab/vlab/index.php?pg=cavity/aim&usr=&enc=', 'No simulation');
-INSERT INTO `experiments` (`id`, `exp_id`, `exp_name`, `content_url`, `simulation_url`) VALUES
+(170, 2389, 'Measurement of the dielectric constant and loss tangent of materials in microwave frequency band using a rectangular waveguide cavity.', 'http://www.iitk.ac.in/mimt_lab/vlab/index.php?pg=cavity/aim&usr=&enc=', 'No simulation'),
 (170, 2390, 'Observe the transient phenomenon of terminated coaxial transmission lines in order to study their time domain behaviour.', 'http://www.iitk.ac.in/mimt_lab/vlab/index.php?pg=tl/aim&usr=&enc=', 'No simulation'),
 (170, 2391, 'Study the behavior of terminated coaxial transmission lines in frequency domain.', 'http://www.iitk.ac.in/mimt_lab/vlab/index.php?pg=txl_fd/aim&usr=&enc=', 'No simulation'),
 (170, 2392, 'Introduction to Smith chart and its application for the unknown impedance measurement.', 'http://www.iitk.ac.in/mimt_lab/vlab/index.php?pg=smith/aim&usr=&enc=', 'No simulation'),
@@ -1871,14 +1871,14 @@ CREATE TABLE IF NOT EXISTS `labs` (
   KEY `fk_labs_3_idx` (`developer`),
   KEY `fk_inst_id` (`institute_id`),
   KEY `fk_disc_id` (`discipline_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=365 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=368 ;
 
 --
 -- Dumping data for table `labs`
 --
 
 INSERT INTO `labs` (`id`, `lab_id`, `lab_name`, `developer`, `repo_url`, `sources_available`, `hosted_url`, `lab_deployed`, `number_of_experiments`, `content`, `simulation`, `web2.0_compliance`, `type_of_lab`, `auto_hostable`, `remarks`, `integration_level`, `status`, `institute_id`, `discipline_id`, `phase_2_lab`) VALUES
-(1, 'cse01', 'Data Structures ', 'kkishore@iiit.ac.in', 'https://bitbucket.org/virtual-labs/cse01-ds_new', 'Yes', 'http://virtual-labs.ac.in/labs/cse01/', 'Yes', 9, 'Yes', 'Yes', 'No', 'Simulation Lab', 'Yes', 'Completed ', 5, 'Hosted', 4, 6, 1),
+(1, 'cse01', 'Data Structures ', 'kkishore@iiit.ac.in', 'https://github.com/Virtual-Labs/data-structures-iiith', 'Yes', 'http://cse01-iiith.vlabs.ac.in/', 'Yes', 9, 'Yes', 'Yes', 'No', 'Simulation Lab', 'Yes', 'Completed ', 5, 'Hosted', 4, 6, 1),
 (2, 'cse02', 'Computer Programming  ', 'jawahar@iiit.ac.in', 'https://bitbucket.org/virtual-labs/cse02-programming', 'Yes', 'http://virtual-labs.ac.in/labs/cse02/', 'Yes', 10, 'Yes', 'Yes', 'No', 'Simulation Lab', 'Yes', 'Completed ', 5, 'Hosted', 4, 6, 1),
 (3, 'cse04', 'Problem Solving', 'jawahar@iiit.ac.in', 'https://bitbucket.org/virtual-labs/cse04-problem_solving', 'Yes', 'http://virtual-labs.ac.in/labs/cse04/', 'Yes', 10, 'Yes', 'Yes', 'No', 'Simuation Lab', 'Yes', 'Completed ', 5, 'Hosted', 4, 6, 1),
 (4, 'cse05', 'Principles of Programming Languages', 'venkatesh.choppella@iiit.ac.in', 'https://bitbucket.org/virtual-labs/cse05-popl-vlab', 'Yes', 'http://virtual-labs.ac.in/labs/cse05/', 'Yes', 9, 'Yes', 'Yes', 'No', 'Simulation Lab', 'No', 'Test and deploy url should be verify from lab developer.', 3, 'Hosted', 4, 6, 0),
@@ -1940,7 +1940,7 @@ INSERT INTO `labs` (`id`, `lab_id`, `lab_name`, `developer`, `repo_url`, `source
 (157, 'ece28', 'FPGA and Digital Design', 'mpjosh@care.iitd.ernet.in', 'https://bitbucket.org/virtual-labs/ece28-ece28', 'Yes', 'http://iitd.vlab.co.in/index.php?sub=66&brch=184', 'Yes', 8, 'Yes', 'Yes', 'No', 'Remote Triggered Lab (Pilot phase)', 'No', 'Link not working but hosted on vlab.co.in.\n\nsources partially available', 0, 'Hosted', 6, 8, 0),
 (158, 'txtl01', 'Carpet Analysis', 'kushal@textile.iitd.ernet.in', 'https://bitbucket.org/virtual-labs/txtl01-txtl01/src', 'Yes', 'Unknown', 'Unknown', 0, 'Unknown', 'Unknown', 'Unknown', 'Remote Triggered Lab', 'Unknown', 'Lab not hosted', 0, 'Not Hosted', 6, 12, 0),
 (159, 'chem05', 'Unit Operations, Reaction Engineering and Process Control', 'vidyaks95@nitk.ac.in', 'https://bitbucket.org/virtual-labs/chem05-nitk', 'Yes', 'http://solve.nitk.ac.in/index.php?option=com_content&view=category&id=61&Itemid=98', 'Yes', 9, 'Yes', 'Yes', 'No', 'Simulation Lab', 'Yes', 'Completed', 5, 'Hosted', 12, 4, 0),
-(160, 'civil07', 'Strength of Materials and Fluid Mechanics', 'pruthviu@gmail.com', 'https://bitbucket.org/virtual-labs/chem05-nitk', 'Yes', 'http://solve.nitk.ac.in/index.php?option=com_content&view=section&id=14&Itemid=77', 'Yes', 5, 'Yes', 'Yes', 'No', 'Simulation Lab', 'Yes', 'Completed', 5, 'Hosted', 12, 5, 0),
+(160, 'civil07', 'Strength of Materials Lab', 'pruthviu@gmail.com', 'https://bitbucket.org/virtual-labs/chem05-nitk', 'Yes', 'http://sm-nitk.vlabs.ac.in/', 'Yes', 5, 'Yes', 'Yes', 'No', 'Simulation Lab', 'Yes', 'Completed', 5, 'Hosted', 12, 5, 0),
 (161, 'eee08', 'Industrial Electric Drives and Application of PLC', 'vittal_nitk@yahoo.com', 'https://bitbucket.org/virtual-labs/chem05-nitk', 'Yes', 'http://solve.nitk.ac.in/index.php?option=com_content&view=category&id=63:industrial-electric-drives&Itemid=103&layout=default', 'Yes', 5, 'Yes', 'Yes', 'No', 'Simulation Lab', 'Yes', 'None', 1, 'Hosted', 12, 7, 0),
 (162, 'mech05', 'Mechanics of Machine', 'kvganga@nitk.ac.in', 'https://bitbucket.org/virtual-labs/chem05-nitk', 'Yes', 'http://solve.nitk.ac.in/index.php?option=com_content&view=article&id=150&Itemid=97', 'Yes', 16, 'Yes', 'Yes', 'No', 'Simulation Lab', 'Yes', 'Completed', 5, 'Hosted', 12, 10, 0),
 (163, 'mech21', 'Machine Dynamics and Mechanical Vibrations', 'not available', 'https://bitbucket.org/virtual-labs/chem05-nitk', 'Yes', 'http://solve.nitk.ac.in/index.php?option=com_content&view=article&id=149&Itemid=96', 'Yes', 8, 'Yes', 'Yes', 'No', 'Simulation Lab', 'Yes', 'Completed', 5, 'Hosted', 12, 10, 0),
@@ -2083,7 +2083,9 @@ INSERT INTO `labs` (`id`, `lab_id`, `lab_name`, `developer`, `repo_url`, `source
 (361, 'cse32', 'Information System Analysis and Design virtual Lab', 'not available', 'Unknown', 'No', 'http://iitkgp.vlab.co.in/?sub=38&brch=122', 'Yes', 2, 'Yes', 'No', 'Unknown', 'Simulation Lab', 'Unknown', 'Not complete', 0, 'Hosted', 9, 6, 0),
 (362, 'ece38', 'Semiconductor Devices Laboratory', 'not available', 'Unknown', 'No', 'http://iitkgp.vlab.co.in/?sub=37&brch=259', 'Yes', 0, 'No', 'No', 'Unknown', 'Unknown', 'Unknown', 'No experiments listed in the lab', 0, 'Hosted', 9, 8, 0),
 (363, 'biotech24', 'Plant Metabolic Pathways Virtual Laboratory', 'not available', 'Unknown', 'No', 'http://iitkgp.vlab.co.in/?sub=79&brch=262', 'Yes', 4, 'Yes', 'Yes', 'Unknown', 'Simulation Lab', 'Unknown', 'Developer not known', 0, 'Hosted', 9, 2, 0),
-(364, 'aero04', 'Satellite Modelling and Simulation', 'not available', 'Unknown', 'Unknown', 'http://www.aero.iitb.ac.in/pratham/virtuallaboratory/index.php', 'Yes', 2, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'lab id and sources are not available', 0, 'Hosted', 5, 1, 0);
+(364, 'aero04', 'Satellite Modelling and Simulation', 'not available', 'Unknown', 'Unknown', 'http://www.aero.iitb.ac.in/pratham/virtuallaboratory/index.php', 'Yes', 2, 'Yes', 'Yes', 'Unknown', 'Unknown', 'Unknown', 'lab id and sources are not available', 0, 'Hosted', 5, 1, 0),
+(366, 'ece40', 'Electronics Devices and Circuits', 'madhav@ee.iitb.ac.in', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5, 8, 0),
+(367, 'civil20', 'Fluid Mechanics lab', 'pruthviu@gmail.com', NULL, NULL, 'http://fm-nitk.vlabs.ac.in/', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 12, 5, 0);
 
 -- --------------------------------------------------------
 
