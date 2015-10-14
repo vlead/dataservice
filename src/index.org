@@ -52,21 +52,6 @@ from utils import typecheck
 db = SQLAlchemy()
 
 
-class JSONType(types.TypeDecorator):
-    impl = types.UnicodeText
-
-    def process_bind_param(self, value, engine):
-        if value:
-            return json.dumps(value)
-
-    def process_result_value(self, value, engine):
-        if value:
-            return json.loads(value)
-        else:
-            # default can also be a list
-            return {}
-
-
 # Abstract class to hold common methods
 class Entity(db.Model):
 
@@ -346,7 +331,6 @@ class Institute(Entity):
         if 'iic_email' in kwargs:
             self.set_iic_email(kwargs['iic_email'])
 
-        self.save()
 #+END_SRC
 
 **** Functions that operate on Institute domain
@@ -650,7 +634,6 @@ class Discipline(Entity):
     @typecheck(name=str)
     def set_name(self, name):
         self.name = name
-        self.save()
 #+END_SRC
 
 ***** setDNC: Discipline, Name --> Void
@@ -658,7 +641,6 @@ class Discipline(Entity):
     @typecheck(name=Name)
     def set_dnc(self, name):
         self.dnc = name.value
-        self.save()
 #+END_SRC
 
 ***** setDNCEmail: Discipline, Email --> Void
@@ -666,7 +648,6 @@ class Discipline(Entity):
     @typecheck(email=Email)
     def set_dnc_email(self, email):
         self.dnc_email = email.value
-        self.save()
 #+END_SRC
 
 ***** to_client
@@ -797,7 +778,6 @@ class Developer(Entity):
     @typecheck(name=Name)
     def set_name(self, name):
         self.name = name.value
-
 #+END_SRC
 
 ***** setEmail: Developer, Email --> Void
@@ -805,14 +785,12 @@ class Developer(Entity):
     @typecheck(email=Email)
     def set_email(self, email):
         self.email = email.value
-        self.save()
 #+END_SRC
 ***** setInstitute: Developer, Institute --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(institute=Institute)
     def set_institute(self, institute):
         self.institute = institute
-        self.save()
 #+END_SRC
 
 ***** to_client
@@ -940,14 +918,12 @@ Technology(name=String
     @typecheck(name=str)
     def set_name(self, name):
         self.name = name
-        self.save()
 #+END_SRC
 ***** setVersion: Technology, Version --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(version=str)
     def set_version(self, version):
         self.version = version
-        self.save()
 #+END_SRC
 
 ***** setFOSS: Technology, Boolean --> Void
@@ -955,7 +931,6 @@ Technology(name=String
     @typecheck(foss=bool)
     def set_foss(self, foss):
         self.foss = foss
-        self.save()
 #+END_SRC
 
 ***** to_client: Technology --> Dictionary
@@ -1187,7 +1162,6 @@ a
     @typecheck(name=str)
     def set_name(self, name):
         self.name = name
-        self.save()
 #+END_SRC
 
 ***** setContentURL: Experiment, URL --> Void
@@ -1195,7 +1169,6 @@ a
     @typecheck(url=URL)
     def set_content_url(self, url):
         self.content_url = url.value
-        self.save()
 
 #+END_SRC
 
@@ -1204,7 +1177,6 @@ a
     @typecheck(url=URL)
     def set_simulation_url(self, url):
         self.simulation_url = url.value
-        self.save()
 
 #+END_SRC
 
@@ -1213,7 +1185,6 @@ a
     @typecheck(platform=HostingPlatform)
     def set_content_hosted_on(self, platform):
         self.content_hosted_on = platform
-        self.save()
 
 #+END_SRC
 
@@ -1222,7 +1193,6 @@ a
     @typecheck(platform=HostingPlatform)
     def set_simulation_hosted_on(self, platform):
         self.simulation_hosted_on = platform
-        self.save()
 
 #+END_SRC
 
@@ -1231,7 +1201,6 @@ a
     @typecheck(technology=Technology)
     def add_technology(self, technology):
         self.technologies.append(technology)
-        self.save()
 #+END_SRC
 
 ***** removeTechnology: Lab, Technology --> Void
@@ -1240,7 +1209,6 @@ a
     def remove_technology(self, technology):
         if technology in self.technologies:
             self.technologies.remove(technology)
-            self.save()
 #+END_SRC
 
 ***** to_client
@@ -1938,7 +1906,6 @@ function.
     @typecheck(name=str)
     def set_name(self, name):
         self.name = name
-        self.save()
 #+END_SRC
 
 ***** setInstitute: Lab, Institute --> Void
@@ -1946,7 +1913,6 @@ function.
     @typecheck(institute=Institute)
     def set_institute(self, institute):
         self.institute = institute
-        self.save()
 #+END_SRC
 
 ***** setDiscipline: Lab, Discipline --> Void
@@ -1954,7 +1920,6 @@ function.
     @typecheck(discipline=Discipline)
     def set_discipline(self, discipline):
         self.discipline = discipline
-        self.save()
 #+END_SRC
 
 ***** setIntegrationLevel: Lab, Level --> Void
@@ -1962,7 +1927,6 @@ function.
     @typecheck(level=IntegrationLevel)
     def set_integration_level(self, level):
         self.integration_level = level
-        self.save()
 #+END_SRC
 
 ***** setHostedURL: Lab, URL --> Void
@@ -1970,7 +1934,6 @@ function.
     @typecheck(url=URL)
     def set_hosted_url(self, url):
         self.hosted_url = url.value
-        self.save()
 #+END_SRC
 
 ***** setRepoURL: Lab, URL --> Void
@@ -1978,7 +1941,6 @@ function.
     @typecheck(url=URL)
     def set_repo_url(self, url):
         self.repo_url = url.value
-        self.save()
 #+END_SRC
 
 ***** setTypeOfLab: Lab, TypeOfLab --> Void
@@ -1986,7 +1948,6 @@ function.
     @typecheck(type=TypeOfLab)
     def set_type_of_lab(self, type):
         self.type_of_lab = type
-        self.save()
 #+END_SRC
 
 ***** setHostedOn: Lab, HostingPlatform --> Void
@@ -1994,7 +1955,6 @@ function.
     @typecheck(platform=HostingPlatform)
     def set_hosted_on(self, platform):
         self.hosted_on = platform
-        self.save()
 #+END_SRC
 
 ***** setWeb2Compliant: Lab, Boolean --> Void
@@ -2002,7 +1962,6 @@ function.
     @typecheck(compliant=bool)
     def set_is_web_2_compliant_lab(self, compliant):
         self.is_web_2_compliant_lab = compliant
-        self.save()
 #+END_SRC
 
 ***** setIsPhase2: Lab, Boolean --> Void
@@ -2010,21 +1969,18 @@ function.
     @typecheck(phase2=bool)
     def set_is_phase_2_lab(self, phase2):
         self.is_phase_2_lab = phase2
-        self.save()
 #+END_SRC
 ***** setRemarks: Lab, String --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(remarks=str)
     def set_remarks(self, remarks):
         self.remarks = remarks
-        self.save()
 #+END_SRC
 ***** setStatus: Lab, String --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(status=str)
     def set_status(self, status):
         self.status = status
-        self.save()
 #+END_SRC
 
 
@@ -2033,7 +1989,6 @@ function.
     @typecheck(developer=Developer)
     def add_developer(self, developer):
         self.developers.append(developer)
-        self.save()
 #+END_SRC
 
 ***** removeDeveloper: Lab, Developer --> Void
@@ -2042,7 +1997,6 @@ function.
     def remove_developer(self, developer):
         if developer in self.developers:
             self.developers.remove(developer)
-            self.save()
 #+END_SRC
 
 ***** addTechnology: Lab, Technology --> Void
@@ -2050,7 +2004,6 @@ function.
     @typecheck(technology=Technology)
     def add_technology(self, technology):
         self.technologies.append(technology)
-        self.save()
 #+END_SRC
 
 ***** removeTechnology: Lab, Technology --> Void
@@ -2059,7 +2012,6 @@ function.
     def remove_technology(self, technology):
         if technology in self.technologies:
             self.technologies.remove(technology)
-            self.save()
 #+END_SRC
 
 ***** addExperiment: Lab, Experiment --> Void
@@ -2067,7 +2019,6 @@ function.
     @typecheck(experiment=Experiment)
     def add_experiment(self, experiment):
         self.experiments.append(experiment)
-        self.save()
 #+END_SRC
 
 ***** removeExperiment: Lab, Experiment --> Void
@@ -2076,7 +2027,6 @@ function.
     def remove_experiment(self, experiment):
         if experiment in self.experiments:
             self.experiments.remove(experiment)
-            self.save()
 #+END_SRC
 
 ***** formatLabsByFields
