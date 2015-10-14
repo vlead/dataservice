@@ -6,7 +6,7 @@ if [[ `id -u` -ne 0 ]]; then
 fi
 
 apt-get update
-apt-get install -y build-essential libncurses-dev
+apt-get install -y build-essential libncurses-dev git
 apt-get build-dep emacs24
 wget http://ftp.gnu.org/gnu/emacs/emacs-24.4.tar.gz
 tar -xzvf emacs-24.4.tar.gz
