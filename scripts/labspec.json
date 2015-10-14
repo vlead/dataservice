@@ -1,13 +1,13 @@
 {
-	"lab": {
-		"description": {
-			"name": "Data Service",
-			"id": "data",
-			"status": "Work in Progress",
-			"discipline": [],
-			"type": "",
-			"server-side": true,
-			"integration_level": 6,
+  "lab": {
+    "description": {
+      "name": "Data Service",
+      "id": "data",
+      "status": "Work in Progress",
+      "discipline": [],
+      "type": "",
+      "server-side": true,
+      "integration_level": 6,
       "developer": [
         {
           "name": "Anon Ray",
@@ -55,65 +55,65 @@
           }
         }
       ]
-		},
-		"build_requirements": {
-			"platform": {
-				"os": "ubuntu",
-				"osVersion": "12",
-				"arch": "x64",
-				"service_pack": "",
-				"installer": [
-					],
-				"build_steps": {
-					"configure": [],
-					"pre_build": [
+    },
+    "build_requirements": {
+      "platform": {
+        "os": "ubuntu",
+        "osVersion": "12",
+        "arch": "x64",
+        "service_pack": "",
+        "installer": [
+        ],
+        "build_steps": {
+          "configure": [],
+          "pre_build": [
             "bash ./install_emacs24.sh"
           ],
-					"build": [
+          "build": [
             "cd ../;make build"
           ],
-					"post_build": [
+          "post_build": [
             "cp -R ../build/code/* /var/www/",
             "chmod -R a+r /var/www"
           ],
-					"status": []
-				}
-			}
-		},
-		"runtime_requirements": {
-			"platform": {
-				"os": "ubuntu",
-				"osVersion": "12",
-				"arch": "x64",
-				"servicepack": "",
-				"hosting": "dedicated",
-				"memory": {
-					"max_required": "4gb",
-					"min_required": "2gb"
-				},
-				"storage": {
-					"min_required": "10gb"
-				},
-				"installer": [
-					"bash /var/www/setup.sh",
+          "status": []
+        }
+      }
+    },
+    "runtime_requirements": {
+      "platform": {
+        "os": "ubuntu",
+        "osVersion": "12",
+        "arch": "x64",
+        "servicepack": "",
+        "hosting": "dedicated",
+        "memory": {
+          "max_required": "4gb",
+          "min_required": "2gb"
+        },
+        "storage": {
+          "min_required": "10gb"
+        },
+        "installer": [
+          "bash /var/www/setup.sh",
           "bash /var/www/configure.sh",
           "bash /var/www/migrate.sh"
-				],
-				"lab_actions": {
-					"init"    : [],
-					"shutdown": [],
-					"pause"   : [],
-					"resume"  : [],
-					"start"   : ["./start"],
-					"stop"    : ["./stop"],
-					"backup"  : ["./backup"],
-					"restore" : ["./restore"],
-					"clean"   : [],
-					"stats"   : [],
-					"publish" : []
-				}
-			}
-		}
-	},
-	"template": "1.0"
+        ],
+        "lab_actions": {
+          "init"    : [],
+          "shutdown": [],
+          "pause"   : [],
+          "resume"  : [],
+          "start"   : ["./start"],
+          "stop"    : ["./stop"],
+          "backup"  : ["./backup"],
+          "restore" : ["./restore"],
+          "clean"   : [],
+          "stats"   : [],
+          "publish" : []
+        }
+      }
+    }
+  },
+  "template": "1.0"
 }
