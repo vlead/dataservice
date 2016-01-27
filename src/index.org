@@ -87,8 +87,8 @@ class Entity(db.Model):
 #+END_SRC
 
 ** The Data Model
-   TODO: More description of the data model.
-
+*** ER Diagram
+    [[./diagrams/model-diagram.jpg][schema diagram]] 
 *** Name
 
      Name is an alphabetical string.
@@ -1062,7 +1062,6 @@ class Experiment(Entity):
 #+END_SRC
 
 **** Functions that operate on the Experiment domain
-
 ***** update: Experiment --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     # update the object, and commit to the database
@@ -1514,7 +1513,6 @@ info about the lab.
 | ece40       | Electronics Devices and Circuits                                                     |
 | civil20     | Fluid Mechanics lab                                                                                      |
 |-------------+--------------------------------------------------------------------------------------|
-
 
 
 **** Association
@@ -2288,7 +2286,6 @@ class Feedback(Entity):
 
 ***** NOTE: is it necessary? getAllExperiments: Nil --> set[Experiment]
 
-
 *** COMMENT Relationship between different entities
   #+CAPTION: Entity Diagram
   #+NAME:   entity
@@ -2341,7 +2338,6 @@ class Feedback(Entity):
      user. For this we need to implement a user login. Which is the same way
      as it is done in
      ADS.
-
 
 *** Technical Design
     To download the data the Python API has to return a CSV of the
@@ -3014,7 +3010,6 @@ def build_arg_list(arg_tuple_list, top_entity, id, lower_entity):
 #+END_SRC
 
 ** REST API to create/update/delete data
-
 *** Design
    These REST of APIs include APIs to perform create, update and
    delete operations.
@@ -5801,10 +5796,11 @@ def create_developer(_name, _email, _inst):
 
 #+END_SRC
 
+* API's
+  [[./api_doc.org][API Documentation]]
 * Provisioning
   [[./setup.org][Set up the environment]]
 * Design discussions
-
 * Releases
 
 
