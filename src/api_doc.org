@@ -285,7 +285,7 @@ known", "technologies": null, "developers": null, "integration_level": {"id":
 }
     #+END_SRC
 
-**** TODO /labs/<int:id>/<param> 
+**** COMMENT /labs/<int:id>/<param> 
 
 - Parameters
  |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -341,7 +341,7 @@ known", "technologies": null, "developers": null, "integration_level": {"id":
 }
    #+END_SRC
 
-**** TODO /labs/disciplines/<disc_id>
+**** COMMENT /labs/disciplines/<disc_id>
 - Parameters
  |-------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
  | Name                    | Description                                                                                                                                             |
@@ -409,7 +409,7 @@ false, "lab_id": "ece04", "name": "electronics",
 "status": "Hosted", "type_of_lab": ""}]
  #+END_SRC
 
-**** TODO /labs/institutes/<inst_id>
+**** COMMENT /labs/institutes/<inst_id>
 - Parameters
  |-------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
  | Name                    | Description                                                                                                                                             |
@@ -468,7 +468,7 @@ false, "lab_id": "ece04", "name": "electronics",
 "status": "Hosted", "type_of_lab": ""}]
   #+END_SRC
 
-**** TODO /labs/institutes/<inst_id>/disciplines/<disc_id>
+**** COMMENT /labs/institutes/<inst_id>/disciplines/<disc_id>
 - Parameters
  |-------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
  | Name                    | Description                                                                                                                                             |
@@ -1143,7 +1143,7 @@ Engineering, Pune", "pic": "Prof. Sudhir Agashe", "iic_email":
 }
     #+END_SRC
 
-**** TODO /experiments
+**** COMMENT /experiments
 - Parameters
 |------------------+-----------------------------------------------------------------------------------------------------------------------------------------|
 | Name             | Description                                                                                                                             |
@@ -1182,7 +1182,7 @@ Engineering, Pune", "pic": "Prof. Sudhir Agashe", "iic_email":
   #+BEGIN_SRC
   #+END_SRC
 
-**** TODO /experiments/<int:id>
+**** COMMENT /experiments/<int:id>
 - Parameters
 |------------------+-----------------------------------------------------------------------------------------------------------------------------------------|
 | Name             | Description                                                                                                                             |
