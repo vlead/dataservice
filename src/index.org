@@ -2567,7 +2567,7 @@ api = Blueprint('APIs', __name__)
       1. Get only few details the Data Structures lab (where the lab
          id is known before):
          #+BEGIN_EXAMPLE
-	 GET /labs/cse02?fields=name,institute,hosted_url
+	 GET /labs/1?fields=name,institute,hosted_url
 	 #+END_EXAMPLE
       2. Get all the details of particular developer (presuming the id
          is known beforehand):
@@ -2582,11 +2582,11 @@ api = Blueprint('APIs', __name__)
       example:
       1. Get all technologies of a lab which are non FOSS:
          #+BEGIN_EXAMPLE
-	 GET /labs/cse02/technologies?foss=false
+	 GET /labs/1/technologies?foss=false
 	 #+END_EXAMPLE
       2. Get all experiments of a lab which uses Java3D and Flash:
          #+BEGIN_EXAMPLE
-	 GET /labs/cse02/experiments?technologies=java3d,flash
+	 GET /labs/1/experiments?technologies=java3d,flash
 	 #+END_EXAMPLE
 
 
@@ -2600,7 +2600,7 @@ api = Blueprint('APIs', __name__)
    substituted by '+'. Example: To get all experiments of a lab which
    uses Java3D OR Flash:
    #+BEGIN_EXAMPLE
-   GET /labs/cse02/experiments?technologies=java3d+flash
+   GET /labs/1/experiments?technologies=java3d+flash
    #+END_EXAMPLE
 
    In the above, a valid =<:entity>s= can be any of the keywords
@@ -2618,13 +2618,13 @@ api = Blueprint('APIs', __name__)
       'experiments': Experiment,
       'disciplines': Discipline,
       'developers': Developer,
-      'technologies': Technology
+      'technologies': Technology,
+      'integration_levels': IntegrationLevel,
+      'hosting_platforms': HostingPlatform,
+      'type_of_labs': TypeOfLab,
+      'feedback_data': Feedback
   }
 #+END_SRC
-
-   **TODO**: usage documentation of all REST APIs for the consumers of
-   data service has to be written down somewhere and published.
-
 *** Implementation
 **** Attributes of an entity and their relationship
      All the attributes of an entity and the relationship between the entity
@@ -2848,7 +2848,53 @@ experiment = {'entity_class': Experiment,
               ]}
 
 feedback = {'entity_class': Feedback,
-            'attributes': []}
+            'attributes': [
+                {'name': 'id',
+                   'class': None,
+                   'relationship': 'one'},
+                  {'name': 'lab_id',
+                   'class': Lab,
+                   'relationshipn': 'one'},
+                  {'name': 'experiment_id',
+                   'class': Experiment,
+                   'relationship': 'one'},
+                  {'name': 'user_name',
+                   'class': None,
+                   'relationship': 'one'},
+                  {'name': 'user_email',
+                   'class': None,
+                   'relationship': 'one'},
+                  {'name': 'user_institute',
+                   'class': None,
+                   'relationship': 'one'},
+                  {'name': 'time',
+                   'class': None,
+                   'relationship': 'one'},
+                  {'name': 'ip',
+                   'class': None,
+                   'relationship': 'one'},
+                  {'name': 'type_of_user',
+                   'class': None,
+                   'relationship': 'one'},
+                  {'name': 'how_useful_are_labs',
+                   'class': None,
+                   'relationship': 'one'},
+                  {'name': 'suggestions_in_general',
+                   'class': None,
+                   'relationship': 'many'},
+                  {'name': 'feedback_about_experiment',
+                   'class': None,
+                   'relationship': 'one'},
+                  {'name': 'suggestions_about_experiment',
+                   'class': None,
+                   'relationship': 'many'},
+                  {'name': 'feedback_about_lab',
+                   'class': None,
+                   'relationship': 'one'},
+                  {'name': 'suggestions_about_lab',
+                   'class': None,
+                   'relationship': 'one'}
+            ]}
 
 labs = lab
 hosted_on = hosting_platform
@@ -2857,14 +2903,16 @@ simulation_hosted_on = hosting_platform
 developers = developer
 experiments = experiment
 technologies = technology
+feedback = feedback
+integration_levels = integration_level
 
 entity_pairs = {
     'labs': lab,
     'institutes': institute,
     'disciplines': discipline,
-    'hosting-platforms': hosting_platform,
-    'integration-levels': integration_level,
-    'type-of-labs': type_of_lab,
+    'hosting_platforms': hosting_platform,
+    'integration_levels': integration_level,
+    'type_of_labs': type_of_lab,
     'developers': developer,
     'technologies': technology,
     'experiments': experiment,
@@ -3199,7 +3247,8 @@ entity_map_types = {
         'types': {
             'name': str,
             'discipline_id': str,
-            'dnc': Name
+            'dnc': Name,
+            'dnc_email': str
         }
     },
     'developers': {
@@ -3216,6 +3265,12 @@ entity_map_types = {
             'name': str,
             'version': str,
             'foss': bool
+        }
+    },
+    'integration_levels': {
+        'entity': IntegrationLevel,
+        'types': {
+            'level': int
         }
     },
     'experiments': {
