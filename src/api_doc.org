@@ -17,7 +17,6 @@
 - To use the API layer, your application will make an HTTP request and parse the response. 
 - The response format is JSON.
 - Your methods will be the standard HTTP methods like GET, PUT and POST.
-
 - Appropriate *HTTP verbs* for each action are listed below:
 |--------+----------------------------------------------|
 | *Verb* | *Description*                                |
@@ -34,23 +33,31 @@ Following is the list of current REST APIs provided by dataservice:
 #+BEGIN_SRC 
 - /labs [GET, POST]
 - /labs/<int:id> [GET, PUT, DELETE]
-- /labs/<int:id>/<param> [GET]  
-- /labs/disciplines/<disc_id> [GET]
-- /labs/institutes/<inst_id> [GET]
-- /labs/institutes/<inst_id>/disciplines/<disc_id> [GET]
-- /labs/<int:id>/experiments [GET]
+- /labs/<:id>/experiments [GET]
+- /labs/<:id>/technologies [GET]
+- /labs/<:id>/technologies?query_param1=val1&query_param2=val2 [GET]
+- /labs/<:id>/experiments?query_param1=val1&query_param2=val2 [GET]
+- /labs?query_param1=val1&query_param2=val2&..query_paramn=valn [GET]
 - /institutes [GET, POST]
 - /institutes/<int:id> [GET, PUT, DELETE]
-- /institutes/<inst_id>/developers [GET]
+- /institutes/<inst_id>/labs [GET] 
+- /institutes/<inst_id>/developers [GET] 
+- /institutes/<:id>/labs?query_param1=val1&query_param2=val2 [GET] 
+- /institutes/<:id>/developers?query_param1=val1&query_param2=val2 [GET] 
+- /institutes?query_param1=val1&query_param2=val2&..query_paramn=valn [GET] 
 - /disciplines [GET, POST]
 - /disciplines/<int:id> [PUT]
+- /disciplines/<disc_id>/labs [GET]
+- /disciplines/<:id>/labs?query_param1=val1&query_param2=val2 [GET]
+- /disciplines?query_param1=val1&query_param2=val2&..query_paramn=valn [GET]
 - /technologies [GET, POST]
 - /technologies/<int:id> [PUT]
+- /technologies/<tech_id>/labs [GET]
+- /technologies/<:id>/labs?query_param1=val1&query_param2=val2 [GET]
+- /technologies?query_param1=val1&query_param2=val2&..query_paramn=valn [GET]
 - /developers [GET, POST]
 - /developers/<int:id> [PUT]
-- /experiments [GET, POST]
-- /experiments/<int:id> [PUT]
-- /search [GET]
+- /developers?query_param1=val1&query_param2=val2&..query_paramn=valn [GET]
 #+END_SRC
 
 **** /labs
@@ -180,43 +187,6 @@ known", "technologies": null, "developers": null, "integration_level": {"id":
  #+END_SRC
 
 **** /labs/<int:id>
-- Parameters
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | Name                     | Description                                                                                                                                             |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *id*                     | Indicates the unique id of the lab. *Example Value:* 1                                                                                                  |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *name*                   | Specifies the name of lab. *Example Value:*  Computer Programming                                                                                       |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *lab_id*                 | This parameter lists the lab id, not necessarily unique. *Example Value:* cse02                                                                         |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *institute_id*           | Indicates the id of the institute. *Example Value:*  1                                                                                                  |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *discipline_id*          | Indicates the id of the discipline. *Example Value:* 1                                                                                                  |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *integration_level_id*   | Indicates the id of the integration_level. *Example Value:* 1                                                                                           |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *number_of_experiments*  | Returns the count of total experiments in a lab. *Example Value:* 9                                                                                     |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *repo_url*               | Returns the url of the repository, in which the sources of lab are present. *Example Value:* https://github.com/Virtual-Labs/computer-programming-iiith |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *hosted_url*             | Specifies the url, where lab is hosted. *Example Value:* http://virtual-labs.ac.in/labs/cse01/                                                          |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *hosted_on_id*           | Indicates the id of the hosted platform. *Example Value:* 1                                                                                             |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *type_of_lab_id*         | Specifies the lab type in form of a string. *Example Value:* Simulation Lab, Remote Triggered Lab                                                       |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *remarks*                | Specifies any comments added by the lab developer in the form of strings. *Example Value:* 1                                                            |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *status*                 | Returns the string specifying if the lab is hosted or not. *Example Value:* Hosted                                                                     |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *is_web_2_compliant_lab* | When set to either true or false, this parameter indicates if the lab is web 2.0 compliant or not. *Example Value:* false                               |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *is_auto_hostable*       | This parameter, when set to true or false, indicates if the lab is auto hostable. *Example Value:* true                                                                   |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *is_phase_2_lab*         | This boolean parameter enhances the fact if the lab is selected for Phase 2 process. *Example Value:* true                                                                |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
-
 - *GET* - 
  + Example Request
   #+BEGIN_EXAMPLE
@@ -285,287 +255,107 @@ known", "technologies": null, "developers": null, "integration_level": {"id":
 }
     #+END_SRC
 
-**** COMMENT /labs/<int:id>/<param> 
-
-- Parameters
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | Name                     | Description                                                                                                                                             |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *id*                     | Indicates the unique id of the lab. *Example Value:* 1                                                                                                  |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *name*                   | Specifies the name of lab. *Example Value:*  Computer Programming                                                                                       |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *lab_id*                 | This parameter lists the lab id, not necessarily unique. *Example Value:* cse02                                                                         |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *institute_id*           | Indicates the id of the institute. *Example Value:*  1                                                                                                  |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *discipline_id*          | Indicates the id of the discipline. *Example Value:* 1                                                                                                  |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *integration_level_id*   | Indicates the id of the integration_level. *Example Value:* 1                                                                                           |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *number_of_experiments*  | Returns the count of total experiments in a lab. *Example Value:* 9                                                                                     |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *repo_url*               | Returns the url of the repository, in which the sources of lab are present. *Example Value:* https://github.com/Virtual-Labs/computer-programming-iiith |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *hosted_url*             | Specifies the url, where lab is hosted. *Example Value:* http://virtual-labs.ac.in/labs/cse01/                                                          |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *hosted_on_id*           | Indicates the id of the hosted platform. *Example Value:* 1                                                                                             |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *type_of_lab_id*         | Specifies the lab type in form of a string. *Example Value:* Simulation Lab, Remote Triggered Lab                                                       |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *remarks*                | Specifies any comments added by the lab developer in the form of strings. *Example Value:* 1                                                            |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *status*                 | Returns the string specifying if the lab is hosted or not. *Example Value:* Hosted                                                                     |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *is_web_2_compliant_lab* | When set to either true or false, this parameter indicates if the lab is web 2.0 compliant or not. *Example Value:* false                               |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *is_auto_hostable*       | This parameter, when set to true or false, indicates if the lab is auto hostable. *Example Value:* true                                                                   |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *is_phase_2_lab*         | This boolean parameter enhances the fact if the lab is selected for Phase 2 process. *Example Value:* true                                                                |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
-
-- *GET* -
+**** /labs/<:id>/experiments
+- *GET* - 
  + Example Request
-   #+BEGIN_SRC
-   /labs/1/discipline
-   #+END_SRC
- 
- + Example Result
-   #+BEGIN_SRC
-{
-  "discipline": {
-    "dnc": null,
-    "id": 1,
-    "name": "cse"
-  }
-}
-   #+END_SRC
-
-**** COMMENT /labs/disciplines/<disc_id>
-- Parameters
-
-- *GET*
- + Example Request
-   #+BEGIN_SRC
-    /labs/disciplines/2
-   #+END_SRC
-
- + Example Result
-   #+BEGIN_SRC
-[{"discipline": {"dnc": null, "id": 2, "name": "ece"}, "hosted_url":
-"http://virtual-labs.ac.in/labs/cse01/", "id": 2, "institute":
-{"coordinator": null, "id": 2, "integration_coordinator": null,
-"name": "IIT-D"}, "integration_level": 5, "is_auto_hostable": true,
-"is_content_avail": true, "is_deployed": true, "is_phase_2_lab": true,
-"is_simulation": true, "is_src_avail": true, "is_web_2_compliant":
-false, "lab_id": "ece04", "name": "electronics",
-"number_of_experiments": 9, "remarks": "Completed", "repo_url":
-"https://bitbucket.org/virtual-labs/cse01-ds_new", "slug": "ec",
-"status": "Hosted", "type_of_lab": ""}, {"discipline": {"dnc": null,
-"id": 2, "name": "ece"}, "hosted_url":
-"http://virtual-labs.ac.in/labs/cse01/", "id": 3, "institute":
-{"coordinator": null, "id": 3, "integration_coordinator": null,
-"name": "IIT-R"}, "integration_level": 5, "is_auto_hostable": true,
-"is_content_avail": true, "is_deployed": true, "is_phase_2_lab": true,
-"is_simulation": true, "is_src_avail": true, "is_web_2_compliant":
-false, "lab_id": "ece04", "name": "electronics",
-"number_of_experiments": 9, "remarks": "Completed", "repo_url":
-"https://bitbucket.org/virtual-labs/cse01-ds_new", "slug": "ec",
-"status": "Hosted", "type_of_lab": ""}]
- #+END_SRC
-
-**** COMMENT /labs/institutes/<inst_id>
-- Parameters
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | Name                     | Description                                                                                                                                             |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *id*                     | Indicates the unique id of the lab. *Example Value:* 1                                                                                                  |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *name*                   | Specifies the name of lab. *Example Value:*  Computer Programming                                                                                       |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *lab_id*                 | This parameter lists the lab id, not necessarily unique. *Example Value:* cse02                                                                         |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *institute_id*           | Indicates the id of the institute. *Example Value:*  1                                                                                                  |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *discipline_id*          | Indicates the id of the discipline. *Example Value:* 1                                                                                                  |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *integration_level_id*   | Indicates the id of the integration_level. *Example Value:* 1                                                                                           |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *number_of_experiments*  | Returns the count of total experiments in a lab. *Example Value:* 9                                                                                     |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *repo_url*               | Returns the url of the repository, in which the sources of lab are present. *Example Value:* https://github.com/Virtual-Labs/computer-programming-iiith |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *hosted_url*             | Specifies the url, where lab is hosted. *Example Value:* http://virtual-labs.ac.in/labs/cse01/                                                          |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *hosted_on_id*           | Indicates the id of the hosted platform. *Example Value:* 1                                                                                             |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *type_of_lab_id*         | Specifies the lab type in form of a string. *Example Value:* Simulation Lab, Remote Triggered Lab                                                       |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *remarks*                | Specifies any comments added by the lab developer in the form of strings. *Example Value:* 1                                                            |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *status*                 | Returns the string specifying if the lab is hosted or not. *Example Value:* Hosted                                                                     |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *is_web_2_compliant_lab* | When set to either true or false, this parameter indicates if the lab is web 2.0 compliant or not. *Example Value:* false                               |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *is_auto_hostable*       | This parameter, when set to true or false, indicates if the lab is auto hostable. *Example Value:* true                                                                   |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *is_phase_2_lab*         | This boolean parameter enhances the fact if the lab is selected for Phase 2 process. *Example Value:* true                                                                |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
-  
-
-- *GET*
- + Example Request
-  
-   #+BEGIN_SRC
-   /labs/institutes/1
-   #+END_SRC
+  #+BEGIN_EXAMPLE
+  /labs/1/experiments
+   #+END_EXAMPLE
 
  + Example Result
   #+BEGIN_SRC
-[{"discipline": {"dnc": null, "id": 1, "name": "cse"}, "hosted_url":
-"http://virtual-labs.ac.in/labs/cse01/", "id": 1, "institute":
-{"coordinator": null, "id": 1, "integration_coordinator": null,
-"name": "IIIT-H"}, "integration_level": 5, "is_auto_hostable": true,
-"is_content_avail": true, "is_deployed": true, "is_phase_2_lab": true,
-"is_simulation": true, "is_src_avail": true, "is_web_2_compliant":
-false, "lab_id": "ece04", "name": "electronics",
-"number_of_experiments": 9, "remarks": "Completed", "repo_url":
-"https://bitbucket.org/virtual-labs/cse01-ds_new", "slug": "ec",
-"status": "Hosted", "type_of_lab": ""}]
+[{"lab": {"lab_id": "cse01", "id": 1, "name": "DS"}, "name": "Number Systems",
+"content_hosted_on": null, "technologies": [], "simulation_hosted_on": null,
+"id": 661, "content_url": null, "simulation_url": null}, ....... {"lab":
+{"lab_id": "cse01", "id": 1, "name": "DS"}, "name": "Minimum Spanning Trees",
+"content_hosted_on": null, "technologies": [], "simulation_hosted_on": null,
+"id": 669, "content_url": null, "simulation_url": null}]
   #+END_SRC
-
-**** COMMENT /labs/institutes/<inst_id>/disciplines/<disc_id>
-- Parameters
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | Name                     | Description                                                                                                                                             |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *id*                     | Indicates the unique id of the lab. *Example Value:* 1                                                                                                  |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *name*                   | Specifies the name of lab. *Example Value:*  Computer Programming                                                                                       |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *lab_id*                 | This parameter lists the lab id, not necessarily unique. *Example Value:* cse02                                                                         |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *institute_id*           | Indicates the id of the institute. *Example Value:*  1                                                                                                  |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *discipline_id*          | Indicates the id of the discipline. *Example Value:* 1                                                                                                  |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *integration_level_id*   | Indicates the id of the integration_level. *Example Value:* 1                                                                                           |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *number_of_experiments*  | Returns the count of total experiments in a lab. *Example Value:* 9                                                                                     |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *repo_url*               | Returns the url of the repository, in which the sources of lab are present. *Example Value:* https://github.com/Virtual-Labs/computer-programming-iiith |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *hosted_url*             | Specifies the url, where lab is hosted. *Example Value:* http://virtual-labs.ac.in/labs/cse01/                                                          |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *hosted_on_id*           | Indicates the id of the hosted platform. *Example Value:* 1                                                                                             |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *type_of_lab_id*         | Specifies the lab type in form of a string. *Example Value:* Simulation Lab, Remote Triggered Lab                                                       |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *remarks*                | Specifies any comments added by the lab developer in the form of strings. *Example Value:* 1                                                            |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *status*                 | Returns the string specifying if the lab is hosted or not. *Example Value:* Hosted                                                                     |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *is_web_2_compliant_lab* | When set to either true or false, this parameter indicates if the lab is web 2.0 compliant or not. *Example Value:* false                               |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *is_auto_hostable*       | This parameter, when set to true or false, indicates if the lab is auto hostable. *Example Value:* true                                                                   |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *is_phase_2_lab*         | This boolean parameter enhances the fact if the lab is selected for Phase 2 process. *Example Value:* true                                                                |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
-
-- *GET*
+**** /labs/<:id>/technologies
+- *GET* - 
  + Example Request
-   #+BEGIN_SRC
-   /labs/institutes/1/disciplines/cse
-   #+END_SRC
+  #+BEGIN_EXAMPLE
+  /labs/1/technologies
+   #+END_EXAMPLE
 
  + Example Result
-   #+BEGIN_SRC
-[{"discipline": {"dnc": null, "id": 1, "name": "cse"}, "hosted_url":
-"http://virtual-labs.ac.in/labs/cse01/", "id": 1, "institute":
-{"coordinator": null, "id": 1, "integration_coordinator": null,
-"name": "IIIT-H"}, "integration_level": 5, "is_auto_hostable": true,
-"is_content_avail": true, "is_deployed": true, "is_phase_2_lab": true,
-"is_simulation": true, "is_src_avail": true, "is_web_2_compliant":
-false, "lab_id": "ece04", "name": "electronics",
-"number_of_experiments": 9, "remarks": "Completed", "repo_url":
-"https://bitbucket.org/virtual-labs/cse01-ds_new", "slug": "ec",
-"status": "Hosted", "type_of_lab": ""}]
+  #+BEGIN_SRC
+[{"version": null, "foss": true, "id": 1, "name": "php5"}, {"version": null,
+"foss": true, "id": 2, "name": "apache2"}, {"version": null, "foss": null,
+"id": 37, "name": "flash plugin"}]
   #+END_SRC
+**** /labs/<:id>/technologies?query_param1=val1&query_param2=val2
 
-**** /labs/<int:id>/experiments
-- Parameters
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | Name                     | Description                                                                                                                                             |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *id*                     | Indicates the unique id of the lab. *Example Value:* 1                                                                                                  |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *name*                   | Specifies the name of lab. *Example Value:*  Computer Programming                                                                                       |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *lab_id*                 | This parameter lists the lab id, not necessarily unique. *Example Value:* cse02                                                                         |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *institute_id*           | Indicates the id of the institute. *Example Value:*  1                                                                                                  |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *discipline_id*          | Indicates the id of the discipline. *Example Value:* 1                                                                                                  |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *integration_level_id*   | Indicates the id of the integration_level. *Example Value:* 1                                                                                           |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *number_of_experiments*  | Returns the count of total experiments in a lab. *Example Value:* 9                                                                                     |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *repo_url*               | Returns the url of the repository, in which the sources of lab are present. *Example Value:* https://github.com/Virtual-Labs/computer-programming-iiith |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *hosted_url*             | Specifies the url, where lab is hosted. *Example Value:* http://virtual-labs.ac.in/labs/cse01/                                                          |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *hosted_on_id*           | Indicates the id of the hosted platform. *Example Value:* 1                                                                                             |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *type_of_lab_id*         | Specifies the lab type in form of a string. *Example Value:* Simulation Lab, Remote Triggered Lab                                                       |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *remarks*                | Specifies any comments added by the lab developer in the form of strings. *Example Value:* 1                                                            |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *status*                 | Returns the string specifying if the lab is hosted or not. *Example Value:* Hosted                                                                     |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *is_web_2_compliant_lab* | When set to either true or false, this parameter indicates if the lab is web 2.0 compliant or not. *Example Value:* false                               |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *is_auto_hostable*       | This parameter, when set to true or false, indicates if the lab is auto hostable. *Example Value:* true                                                                   |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
- | *is_phase_2_lab*         | This boolean parameter enhances the fact if the lab is selected for Phase 2 process. *Example Value:* true                                                                |
- |--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
-
-- *GET*
+- *GET* - 
  + Example Request
-   #+BEGIN_SRC
-   /labs/1/experiments
-   #+END_SRC
+  #+BEGIN_EXAMPLE
+  /labs/1/technologies?name=php5
+   #+END_EXAMPLE
 
  + Example Result
-   #+BEGIN_SRC
- [{"lab": {"lab_id": "cse01", "id": 1, "name": "DS"}, "name": "Number Systems",
- "content_hosted_on": null, "technologies": [], "simulation_hosted_on": null,
- "id": 661, "content_url": null, "simulation_url": null}, {"lab": {"lab_id":
- "cse01", "id": 1, "name": "DS"}, "name": "Expression Evaluation using Stacks",
- "content_hosted_on": null, "technologies": [], "simulation_hosted_on": null,
- "id": 662, "content_url": null, "simulation_url": null}, {"lab": {"lab_id":
- "cse01", "id": 1, "name": "DS"}, "name": "Sorting using Arrays",
- "content_hosted_on": null, "technologies": [], "simulation_hosted_on": null,
- "id": 663, "content_url": null, "simulation_url": null}, {"lab": {"lab_id":
- "cse01", "id": 1, "name": "DS"}, "name": "Ploynomials via Linked Lists",
- "content_hosted_on": null, "technologies": [], "simulation_hosted_on": null,
- "id": 664, "content_url": null, "simulation_url": null}, {"lab": {"lab_id":
- "cse01", "id": 1, "name": "DS"}, "name": "Expression Trees",
- "content_hosted_on": null, "technologies": [], "simulation_hosted_on": null,
- "id": 665, "content_url": null, "simulation_url": null}, {"lab": {"lab_id":
- "cse01", "id": 1, "name": "DS"}, "name": "Search Trees", "content_hosted_on":
- null, "technologies": [], "simulation_hosted_on": null, "id": 666,
- "content_url": null, "simulation_url": null}, {"lab": {"lab_id": "cse01",
- "id": 1, "name": "DS"}, "name": "Graph Traversals", "content_hosted_on": null,
- "technologies": [], "simulation_hosted_on": null, "id": 667, "content_url":
- null, "simulation_url": null}, {"lab": {"lab_id": "cse01", "id": 1, "name":
- "DS"}, "name": "Shortest Paths in Graphs", "content_hosted_on": null,
- "technologies": [], "simulation_hosted_on": null, "id": 668, "content_url":
- null, "simulation_url": null}, {"lab": {"lab_id": "cse01", "id": 1, "name":
- "DS"}, "name": "Minimum Spanning Trees", "content_hosted_on": null,
- "technologies": [], "simulation_hosted_on": null, "id": 669, "content_url":
- null, "simulation_url": null}]
-   #+END_SRC
+  #+BEGIN_SRC
+[{"version": null, "foss": true, "id": 1, "name": "php5"}]
+  #+END_SRC
+
+**** /labs/<:id>/experiments?query_param1=val1&query_param2=val2
+- *GET* - 
+ + Example Request
+  #+BEGIN_EXAMPLE
+  /labs/1/experiments?name=Number Systems
+   #+END_EXAMPLE
+
+ + Example Result
+  #+BEGIN_SRC
+[{"lab": {"lab_id": "cse01", "id": 1, "name": "DS"}, "name": "Number Systems",
+"content_hosted_on": null, "technologies": [], "simulation_hosted_on": null,
+"id": 661, "content_url": null, "simulation_url": null}]
+  #+END_SRC
+
+**** /labs?query_param1=val1&query_param2=val2&..query_paramn=valn
+- *GET* - 
+ + Example Request
+  #+BEGIN_EXAMPLE
+  /labs?name=Computer Programming&status=Hosted
+   #+END_EXAMPLE
+
+ + Example Result
+  #+BEGIN_SRC
+[{"discipline": {"dnc_email": "suresh.purini@iiit.ac.in", "discipline_id":
+"cse", "id": 6, "dnc": "Prof. Suresh Purini", "name": "Computer Science and
+Engineering"}, "lab_id": "cse02", "name": "Computer Programming", "hosted_on":
+null, "type_of_lab": {"type": "Simulation", "id": 1}, "institute":
+{"pic_email": "venkatesh.choppella@iiit.ac.in", "name": "IIIT Hyderabad",
+"pic": "Prof. Venkatesh Choppella", "iic_email": "raghu.reddy@iiit.ac.in",
+"iic": "Prof. Raghu Reddy", "id": 1, "institute_id": "iiith"},
+"is_web_2_compliant": null, "experiments": [{"lab": {"lab_id": "cse02", "id":
+2, "name": "Computer Programming"}, "name": "Expression Evaluation",
+"content_hosted_on": null, "technologies": [], "simulation_hosted_on": null,
+"id": 670, "content_url": null, "simulation_url": null}, {"lab": {"lab_id":
+"cse02", "id": 2, "name": "Computer Programming"}, "name": "Basic Control
+Flow", "content_hosted_on": null, "technologies": [], "simulation_hosted_on":
+null, "id": 671, "content_url": null, "simulation_url": null}, {"lab":
+{"lab_id": "cse02", "id": 2, "name": "Computer Programming"}, "name": "Advanced
+Control Flow", "content_hosted_on": null, "technologies": [],
+"simulation_hosted_on": null, "id": 672, "content_url": null, "simulation_url":
+null}, {"lab": {"lab_id": "cse02", "id": 2, "name": "Computer Programming"},
+"name": "Arrays", "content_hosted_on": null, "technologies": [],
+"simulation_hosted_on": null, "id": 673, "content_url": null, "simulation_url":
+null}, ........{"lab": {"lab_id": "cse02", "id": 2, "name": "Computer
+Programming"}, "name": "Numerical Approximation", "content_hosted_on": null,
+"technologies": [], "simulation_hosted_on": null, "id": 679, "content_url":
+null, "simulation_url": null}], "status": "Hosted", "repo_url":
+"https://bitbucket.org/virtual-labs/cse02-programming", "is_phase_2_lab": true,
+"remarks": "Completed ", "technologies": [{"version": null, "foss": true, "id":
+1, "name": "php5"}, {"version": null, "foss": true, "id": 2, "name":
+"apache2"}, {"version": null, "foss": true, "id": 3, "name": "java"},
+{"version": null, "foss": true, "id": 38, "name": "icedtea plugin"}],
+"developers": [{"institute": {"pic_email": "venkatesh.choppella@iiit.ac.in",
+"name": "IIIT Hyderabad", "pic": "Prof. Venkatesh Choppella", "iic_email":
+"raghu.reddy@iiit.ac.in", "iic": "Prof. Raghu Reddy", "id": 1, "institute_id":
+"iiith"}, "id": 28, "name": "C.V. Jawahar", "email": "jawahar@iiit.ac.in"}],
+"integration_level": {"id": 6, "level": 5}, "id": 2, "hosted_url":
+"http://virtual-labs.ac.in/labs/cse02/"}]
+  #+END_SRC
 
 **** /institutes
 - Parameters
@@ -653,25 +443,6 @@ Ghumbre", "id": 11, "institute_id": "coep"}, {"pic_email": "deiusic@gmail.com",
   #+END_SRC
 
 **** /institutes/<int:id>
-- Parameters
-|----------------+---------------------------------------------------------------------------------|
-| Name           | Description                                                                     |
-|----------------+---------------------------------------------------------------------------------|
-| *id*           | Indicates the unique id of the institute. *Example Value:* 1                    |
-|----------------+---------------------------------------------------------------------------------|
-| *name*         | Specifies the name of institute. *Example Value:*  IIIT Hyderabad               |
-|----------------+---------------------------------------------------------------------------------|
-| *institute_id* | Indicates the id of the institute. *Example Value:*  iiith                      |
-|----------------+---------------------------------------------------------------------------------|
-| *pic*          | Indicates the name of the PIC. *Example Value:* Prof. Venkatesh Choppella       |
-|----------------+---------------------------------------------------------------------------------|
-| *pic_email*    | Indicates the email of the PIC. *Example Value:* venkatesh.choppella@iiit.ac.in |
-|----------------+---------------------------------------------------------------------------------|
-| *iic*          | Indicates the name of the IIC. *Example Value:* Prof. Raghu Reddy               |
-|----------------+---------------------------------------------------------------------------------|
-| *iic_email*    | Indicates the email of the IIC. *Example Value:* raghu.reddy@iiit.ac.in         |
-|----------------+---------------------------------------------------------------------------------|
-
 - *GET* - 
  + Example Request
   #+BEGIN_EXAMPLE
@@ -719,26 +490,45 @@ Ghumbre", "id": 11, "institute_id": "coep"}, {"pic_email": "deiusic@gmail.com",
 }
     #+END_SRC
 
-**** /institutes/<inst_id>/developers
-- Parameters
-|----------------+---------------------------------------------------------------------------------|
-| Name           | Description                                                                     |
-|----------------+---------------------------------------------------------------------------------|
-| *id*           | Indicates the unique id of the institute. *Example Value:* 1                    |
-|----------------+---------------------------------------------------------------------------------|
-| *name*         | Specifies the name of institute. *Example Value:*  IIIT Hyderabad               |
-|----------------+---------------------------------------------------------------------------------|
-| *institute_id* | Indicates the id of the institute. *Example Value:*  iiith                      |
-|----------------+---------------------------------------------------------------------------------|
-| *pic*          | Indicates the name of the PIC. *Example Value:* Prof. Venkatesh Choppella       |
-|----------------+---------------------------------------------------------------------------------|
-| *pic_email*    | Indicates the email of the PIC. *Example Value:* venkatesh.choppella@iiit.ac.in |
-|----------------+---------------------------------------------------------------------------------|
-| *iic*          | Indicates the name of the IIC. *Example Value:* Prof. Raghu Reddy               |
-|----------------+---------------------------------------------------------------------------------|
-| *iic_email*    | Indicates the email of the IIC. *Example Value:* raghu.reddy@iiit.ac.in         |
-|----------------+---------------------------------------------------------------------------------|
+**** /institutes/<inst_id>/labs
+- *GET*
+ + Example Request
+  
+   #+BEGIN_SRC
+   /institutes/8/labs
+   #+END_SRC
 
+ + Example Result
+  #+BEGIN_SRC
+[{"discipline": {"dnc_email": "gargpfce@iitr.ernet.in", "discipline_id":
+"civil", "id": 5, "dnc": "Prof. P K Garg", "name": "Civil Engineering"},
+"lab_id": "civil17", "name": "Structural Engineering Lab", "hosted_on": null,
+"type_of_lab": null, "institute": {"pic_email": "sriram@ae.iitm.ac.in", "name":
+"IIT Madras", "pic": "Prof. P Sriram", "iic_email": null, "iic": null, "id": 8,
+"institute_id": "iitm"}, "is_web_2_compliant": null, "experiments": null,
+"status": "Not Hosted", "repo_url": null, "is_phase_2_lab": null, "remarks":
+"Lab is redirecting to the same page ;hosted_url: Unknown; ", "technologies":
+null, "developers": null, "integration_level": {"id": 1, "level": 0}, "id":
+106, "hosted_url": null}, ............, {"discipline": {"dnc_email": null,
+"discipline_id": "aero", "id": 1, "dnc": null, "name": "Aerospace
+Engineering"}, "lab_id": "ae01", "name": "Aerospace Structures Lab",
+"hosted_on": null, "type_of_lab": null, "institute": {"pic_email":
+"sriram@ae.iitm.ac.in", "name": "IIT Madras", "pic": "Prof. P Sriram",
+"iic_email": null, "iic": null, "id": 8, "institute_id": "iitm"},
+"is_web_2_compliant": null, "experiments": null, "status": "Not Hosted",
+"repo_url": "https://bitbucket.org/virtual-labs/ae01-aero", "is_phase_2_lab":
+null, "remarks": "Lab redirecting to same Index page. Test url is available:
+http://test.virtual-labs.ac.in/labs/ae01/ ;hosted_url: Unknown; ",
+"technologies": [{"version": null, "foss": null, "id": 22, "name": "flash"},
+{"version": null, "foss": null, "id": 37, "name": "flash plugin"}],
+"developers": [{"institute": {"pic_email": "sriram@ae.iitm.ac.in", "name": "IIT
+Madras", "pic": "Prof. P Sriram", "iic_email": null, "iic": null, "id": 8,
+"institute_id": "iitm"}, "id": 80, "name": "T.S.Natarajan", "email":
+"vai.muna@gmail.com"}], "integration_level": {"id": 5, "level": 4}, "id": 171,
+"hosted_url": null}]
+  #+END_SRC
+
+**** /institutes/<inst_id>/developers
 - *GET*
  + Example Request
    #+BEGIN_SRC
@@ -760,6 +550,67 @@ Vinod Kumar", "id": 4, "institute_id": "iitr"}, "id": 25, "name": "P. K. Garg",
 "institute_id": "iitr"}, "id": 86, "name": "Vinod Kumar", "email":
 "vinodfee@iitr.ernet.in"}]
    #+END_SRC
+
+**** /institutes/<:id>/labs?query_param1=val1&query_param2=val2
+- *GET* - 
+ + Example Request
+  #+BEGIN_EXAMPLE
+  /institutes/1/labs?lab_id=cse02&name=Computer Programming
+   #+END_EXAMPLE
+
+ + Example Result
+  #+BEGIN_SRC
+[{"discipline": {"dnc_email": "suresh.purini@iiit.ac.in", "discipline_id":
+"cse", "id": 6, "dnc": "Prof. Suresh Purini", "name": "Computer Science and
+Engineering"}, "lab_id": "cse02", "name": "Computer Programming", "hosted_on":
+null, "type_of_lab": {"type": "Simulation", "id": 1}, "institute":
+{"pic_email": "venkatesh.choppella@iiit.ac.in", "name": "IIIT Hyderabad",
+"pic": "Prof. Venkatesh Choppella", "iic_email": "raghu.reddy@iiit.ac.in",
+"iic": "Prof. Raghu Reddy", "id": 1, "institute_id": "iiith"},
+"is_web_2_compliant": null, "experiments": [{"lab": {"lab_id": "cse02", "id":
+2, "name": "Computer Programming"}, "name": "Expression Evaluation",
+"content_hosted_on": null, "technologies": [], "simulation_hosted_on": null,
+"id": 670, "content_url": null, "simulation_url": null}, ......., "status":
+"Hosted", "repo_url": "https://bitbucket.org/virtual-labs/cse02-programming",
+"is_phase_2_lab": true, "remarks": "Completed ", "technologies": [{"version":
+null, "foss": true, "id": 1, "name": "php5"}, {"version": null, "foss": true,
+"id": 2, "name": "apache2"}, {"version": null, "foss": true, "id": 3, "name":
+"java"}, {"version": null, "foss": true, "id": 38, "name": "icedtea plugin"}],
+"developers": [{"institute": {"pic_email": "venkatesh.choppella@iiit.ac.in",
+"name": "IIIT Hyderabad", "pic": "Prof. Venkatesh Choppella", "iic_email":
+"raghu.reddy@iiit.ac.in", "iic": "Prof. Raghu Reddy", "id": 1, "institute_id":
+"iiith"}, "id": 28, "name": "C.V. Jawahar", "email": "jawahar@iiit.ac.in"}],
+"integration_level": {"id": 6, "level": 5}, "id": 2, "hosted_url":
+"http://virtual-labs.ac.in/labs/cse02/"}]
+  #+END_SRC
+
+**** /institutes/<:id>/developers?query_param1=val1&query_param2=val2
+- *GET* - 
+ + Example Request
+  #+BEGIN_EXAMPLE
+  /institutes/1/developers?name=Abhijit Mitra&email=abi_chem@iiit.ac.in
+   #+END_EXAMPLE
+ + Example Result
+  #+BEGIN_SRC
+[{"institute": {"pic_email": "venkatesh.choppella@iiit.ac.in", "name": "IIIT
+Hyderabad", "pic": "Prof. Venkatesh Choppella", "iic_email":
+"raghu.reddy@iiit.ac.in", "iic": "Prof. Raghu Reddy", "id": 1, "institute_id":
+"iiith"}, "id": 1, "name": "Abhijit Mitra", "email": "abi_chem@iiit.ac.in"}]
+  #+END_SRC
+   
+**** /institutes?query_param1=val1&query_param2=val2&..query_paramn=valn
+- *GET* - 
+ + Example Request
+  #+BEGIN_EXAMPLE
+  /institutes?name=IIIT Hyderabad&iic=Prof. Raghu Reddy
+   #+END_EXAMPLE
+
+ + Example Result
+  #+BEGIN_SRC
+[{"pic_email": "venkatesh.choppella@iiit.ac.in", "name": "IIIT Hyderabad",
+"pic": "Prof. Venkatesh Choppella", "iic_email": "raghu.reddy@iiit.ac.in",
+"iic": "Prof. Raghu Reddy", "id": 1, "institute_id": "iiith"}]
+  #+END_SRC
 
 **** /disciplines
 - Parameters
@@ -811,20 +662,6 @@ json = {"discipline_id": "space", "name": "space Engineering"}
   #+END_SRC
 
 **** /disciplines/<int:id>
-- Parameters
-|-----------------+---------------------------------------------------------------------------------|
-| Name            | Description                                                                     |
-|-----------------+---------------------------------------------------------------------------------|
-| *id*            | Indicates the unique id of the discipline. *Example Value:* 1                   |
-|-----------------+---------------------------------------------------------------------------------|
-| *name*          | Specifies the name of discipline. *Example Value:* Aerospace Engineering        |
-|-----------------+---------------------------------------------------------------------------------|
-| *discipline_id* | Indicates the id of the discipline. *Example Value:*  iiith                     |
-|-----------------+---------------------------------------------------------------------------------|
-| *dnc*           | Indicates the name of the DNC. *Example Value:* Prof. Venkatesh Choppella       |
-|-----------------+---------------------------------------------------------------------------------|
-| *dnc_email*     | Indicates the email of the DNC. *Example Value:* venkatesh.choppella@iiit.ac.in |
-|-----------------+---------------------------------------------------------------------------------|
 
 - *GET* - 
  + Example Request
@@ -869,6 +706,77 @@ json = {"discipline_id": "space", "name": "space Engineering"}
   "status": "success"
 }
     #+END_SRC
+
+**** /disciplines/<disc_id>/labs
+
+- *GET*
+ + Example Request
+   #+BEGIN_SRC
+   /disciplines/1/labs
+   #+END_SRC
+
+ + Example Result
+   #+BEGIN_SRC
+[{"discipline": {"dnc_email": null, "discipline_id": "aero", "id": 1, "dnc":
+null, "name": "Aerospace Engineering"}, "lab_id": "aero02", "name": "In-flight
+Particle History Lab", "hosted_on": null, "type_of_lab": null, "institute":
+{"pic_email": "kbalani@iitk.ac.in", "name": "IIT Kanpur", "pic": "Prof.
+Kantesh Balani", "iic_email": "kbalani@iitk.ac.in", "iic": "Prof. Kantesh
+Balani", "id": 6, "institute_id": "iitk"}, "is_web_2_compliant": null,
+"experiments": null, "status": "Not Hosted", "repo_url": null,
+"is_phase_2_lab": null, "remarks": "lab id and sources not available
+;hosted_url: Unknown; ", "technologies": null, "developers": null,
+"integration_level": {"id": 1, "level": 0}, "id": 159, "hosted_url": null},
+..........  {"discipline": {"dnc_email": null, "discipline_id": "aero", "id":
+1, "dnc": null, "name": "Aerospace Engineering"}, "lab_id": "ae01", "name":
+"Aerospace Structures Lab", "hosted_on": null, "type_of_lab": null,
+"institute": {"pic_email": "sriram@ae.iitm.ac.in", "name": "IIT Madras", "pic":
+"Prof. P Sriram", "iic_email": null, "iic": null, "id": 8, "institute_id":
+"iitm"}, "is_web_2_compliant": null, "experiments": null, "status": "Not
+Hosted", "repo_url": "https://bitbucket.org/virtual-labs/ae01-aero",
+"is_phase_2_lab": null, "remarks": "Lab redirecting to same Index page. Test
+url is available: http://test.virtual-labs.ac.in/labs/ae01/ ;hosted_url:
+Unknown; ", "technologies": [{"version": null, "foss": null, "id": 22, "name":
+"flash"}, {"version": null, "foss": null, "id": 37, "name": "flash plugin"}],
+"developers": [{"institute": {"pic_email": "sriram@ae.iitm.ac.in", "name": "IIT
+Madras", "pic": "Prof. P Sriram", "iic_email": null, "iic": null, "id": 8,
+"institute_id": "iitm"}, "id": 80, "name": "T.S.Natarajan", "email":
+"vai.muna@gmail.com"}], "integration_level": {"id": 5, "level": 4}, "id": 171,
+"hosted_url": null}]
+  #+END_SRC
+
+**** /disciplines/<:id>/labs?query_param1=val1&query_param2=val2
+- *GET* - 
+ + Example Request
+  #+BEGIN_EXAMPLE
+  /disciplines/1/labs?lab_id=aero02
+   #+END_EXAMPLE
+ + Example Result
+  #+BEGIN_SRC
+ [{"discipline": {"dnc_email": null, "discipline_id": "aero", "id": 1, "dnc":
+ null, "name": "Aerospace Engineering"}, "lab_id": "aero02", "name": "In-flight
+ Particle History Lab", "hosted_on": null, "type_of_lab": null, "institute":
+ {"pic_email": "kbalani@iitk.ac.in", "name": "IIT Kanpur", "pic": "Prof.
+ Kantesh Balani", "iic_email": "kbalani@iitk.ac.in", "iic": "Prof. Kantesh
+ Balani", "id": 6, "institute_id": "iitk"}, "is_web_2_compliant": null,
+ "experiments": null, "status": "Not Hosted", "repo_url": null,
+ "is_phase_2_lab": null, "remarks": "lab id and sources not available
+ ;hosted_url: Unknown; ", "technologies": null, "developers": null,
+ "integration_level": {"id": 1, "level": 0}, "id": 159, "hosted_url": null}]
+  #+END_SRC
+
+**** /disciplines?query_param1=val1&query_param2=val2&..query_paramn=valn
+- *GET* - 
+ + Example Request
+  #+BEGIN_EXAMPLE
+/disciplines?dnc_email=suresh.purini@iiit.ac.in&dnc=Prof. Suresh Purini
+   #+END_EXAMPLE
+
+ + Example Result
+  #+BEGIN_SRC
+[{"dnc_email": "suresh.purini@iiit.ac.in", "discipline_id": "cse", "id": 6,
+"dnc": "Prof. Suresh Purini", "name": "Computer Science and Engineering"}]
+  #+END_SRC
 
 **** /technologies
 - Parameters
@@ -919,18 +827,6 @@ json = {
   #+END_SRC
 
 **** /technologies/<int:id> 
-- Parameters
-|-----------+-------------------------------------------------------------------------------|
-| Name      | Description                                                                   |
-|-----------+-------------------------------------------------------------------------------|
-| *id*      | Indicates the unique id of the technology. *Example Value:* 1                 |
-|-----------+-------------------------------------------------------------------------------|
-| *name*    | Indicates the name of technology being used by the lab. *Example Value:* Java |
-|-----------+-------------------------------------------------------------------------------|
-| *version* | Indicates the name of technology. *Example Value:* java 1.7                   |
-|-----------+-------------------------------------------------------------------------------|
-| *foss*    | Indicates if technology is free and open source. *Example Value:* false       |
-|-----------+-------------------------------------------------------------------------------|
 
 - *GET* - 
  + Example Request
@@ -972,6 +868,83 @@ json = {
   "status": "success"
 }
     #+END_SRC
+
+**** /technologies/<tech_id>/labs
+
+- *GET*
+ + Example Request
+   #+BEGIN_SRC
+   /technologies/1/labs
+   #+END_SRC
+
+ + Example Result
+  #+BEGIN_EXAMPLE
+[{"discipline": {"dnc_email": "suresh.purini@iiit.ac.in", "discipline_id":
+"cse", "id": 6, "dnc": "Prof. Suresh Purini", "name": "Computer Science and
+Engineering"}, "lab_id": "cse01", "name": "DS", "hosted_on": null,
+"type_of_lab": {"type": "Simulation", "id": 1}, "institute": {"pic_email":
+"venkatesh.choppella@iiit.ac.in", "name": "IIIT Hyderabad", "pic":
+"Prof. Venkatesh Choppella", "iic_email": "raghu.reddy@iiit.ac.in", "iic":
+"Prof. Raghu Reddy", "id": 1, "institute_id": "iiith"}, "is_web_2_compliant":
+null, "experiments": [{"lab": {"lab_id": "cse01", "id": 1, "name": "DS"},
+"name": "Number Systems", "content_hosted_on": null, "technologies": [],
+"simulation_hosted_on": null, "id": 661, "content_url": null, "simulation_url":
+null}, ........"id": 169, "name": "Computer Architecture and Organization"},
+"name": "CPU Design", "content_hosted_on": null, "technologies": [],
+"simulation_hosted_on": null, "id": 1406, "content_url":
+"http://virtual-labs.ac.in/labs/cse10/comp.html", "simulation_url":
+"http://virtual-labs.ac.in/labs/cse10/comp.html"}], "status": "Hosted",
+"repo_url": "https://bitbucket.org/virtual-labs/cse10-cse10", "is_phase_2_lab":
+null, "remarks": "Completed", "technologies": [{"version": null, "foss": true,
+"id": 1, "name": "php5"}, {"version": null, "foss": true, "id": 2, "name":
+"apache2"}, "hosted_url": "http://deploy.virtual-labs.ac.in/labs/cse10/"}]
+  
+  #+END_EXAMPLE
+**** /technologies/<:id>/labs?query_param1=val1&query_param2=val2
+- *GET* - 
+ + Example Request
+  #+BEGIN_EXAMPLE
+  /technologies/1/labs?lab_id=cse01
+   #+END_EXAMPLE
+ + Example Result
+  #+BEGIN_SRC
+[{"discipline": {"dnc_email": "suresh.purini@iiit.ac.in", "discipline_id":
+"cse", "id": 6, "dnc": "Prof. Suresh Purini", "name": "Computer Science and
+Engineering"}, "lab_id": "cse01", "name": "DS", "hosted_on": null,
+"type_of_lab": {"type": "Simulation", "id": 1}, "institute": {"pic_email":
+"venkatesh.choppella@iiit.ac.in", "name": "IIIT Hyderabad", "pic":
+"Prof. Venkatesh Choppella", "iic_email": "raghu.reddy@iiit.ac.in", "iic":
+"Prof. Raghu Reddy", "id": 1, "institute_id": "iiith"}, "is_web_2_compliant":
+null, "experiments": [{"lab": {"lab_id": "cse01", "id": 1, "name": "DS"},
+"name": "Number Systems", "content_hosted_on": null, "technologies": [],
+"simulation_hosted_on": null, "id": 661, "content_url": null, "simulation_url":
+null}, ........ {"lab": {"lab_id": "cse01", "id": 1, "name": "DS"}, "name":
+"Minimum Spanning Trees", "content_hosted_on": null, "technologies": [],
+"simulation_hosted_on": null, "id": 669, "content_url": null, "simulation_url":
+null}], "status": "Hosted", "repo_url":
+"https://bitbucket.org/virtual-labs/cse01-ds_new", "is_phase_2_lab": true,
+"remarks": "Completed ", "technologies": [{"version": null, "foss": true, "id":
+1, "name": "php5"}, {"version": null, "foss": true, "id": 2, "name":
+"apache2"}, {"version": null, "foss": null, "id": 37, "name": "flash plugin"}],
+"developers": [{"institute": {"pic_email": "venkatesh.choppella@iiit.ac.in",
+"name": "IIIT Hyderabad", "pic": "Prof. Venkatesh Choppella", "iic_email":
+"raghu.reddy@iiit.ac.in", "iic": "Prof. Raghu Reddy", "id": 1, "institute_id":
+"iiith"}, "id": 31, "name": "Kishore Kothapalli", "email":
+"kkishore@iiit.ac.in"}], "integration_level": {"id": 6, "level": 5}, "id": 1,
+"hosted_url": "http://virtual-labs.ac.in/labs/cse01/"}]
+  #+END_SRC
+
+**** /technologies?query_param1=val1&query_param2=val2&..query_paramn=valn
+- *GET* - 
+ + Example Request
+  #+BEGIN_EXAMPLE
+  /technologies?name=java
+   #+END_EXAMPLE
+
+ + Example Result
+  #+BEGIN_SRC
+[{"version": null, "foss": true, "id": 3, "name": "java"}]
+  #+END_SRC
 
 **** /developers 
 - Parameters
@@ -1038,18 +1011,6 @@ Engineering, Pune", "pic": "Prof. Sudhir Agashe", "iic_email":
    #+END_SRC
 
 **** /developers/<int:id> 
-- Parameters
-|--------------+------------------------------------------------------------------------|
-| Name         | Description                                                            |
-|--------------+------------------------------------------------------------------------|
-| id           | Indicates the unique id of developer *Example Value:* 1                |
-|--------------+------------------------------------------------------------------------|
-| name         | Indicates name of the lab developer *Example Value:* B. Yegnanarayana  |
-|--------------+------------------------------------------------------------------------|
-| email        | Indicates email of the lab developer *Example Value:* yegna@iiit.ac.in |
-|--------------+------------------------------------------------------------------------|
-| institute_id | Indicates the id of the institute. *Example Value:*  1                 |
-|--------------+------------------------------------------------------------------------|
 
 - *GET* - 
  + Example Request
@@ -1108,6 +1069,21 @@ Engineering, Pune", "pic": "Prof. Sudhir Agashe", "iic_email":
 }
     #+END_SRC
 
+**** /developers?query_param1=val1&query_param2=val2&..query_paramn=valn
+- *GET* - 
+ + Example Request
+  #+BEGIN_EXAMPLE
+/developers?name=Abhijit Mitra&email=abi_chem@iiit.ac.in
+   #+END_EXAMPLE
+
+ + Example Result
+  #+BEGIN_SRC
+[{"institute": {"pic_email": "venkatesh.choppella@iiit.ac.in", "name": "IIIT
+Hyderabad", "pic": "Prof. Venkatesh Choppella", "iic_email":
+"raghu.reddy@iiit.ac.in", "iic": "Prof. Raghu Reddy", "id": 1, "institute_id":
+"iiith"}, "id": 1, "name": "Abhijit Mitra", "email": "abi_chem@iiit.ac.in"}]
+  #+END_SRC
+
 **** COMMENT /experiments
 - Parameters
 |------------------+-----------------------------------------------------------------------------------------------------------------------------------------|
@@ -1148,24 +1124,6 @@ Engineering, Pune", "pic": "Prof. Sudhir Agashe", "iic_email":
   #+END_SRC
 
 **** COMMENT /experiments/<int:id>
-- Parameters
-|------------------+-----------------------------------------------------------------------------------------------------------------------------------------|
-| Name             | Description                                                                                                                             |
-|------------------+-----------------------------------------------------------------------------------------------------------------------------------------|
-| id               | Indicates the unique id of experiment *Example Value:* 1                                                                                |
-|------------------+-----------------------------------------------------------------------------------------------------------------------------------------|
-| lab_id           | Indicates id of the lab to which experiment belongs *Example Value:* 1                                                                  |
-|------------------+-----------------------------------------------------------------------------------------------------------------------------------------|
-| name             | Returns name of the experiment *Example Value:* Astronomical distances using Cepheid variables                                                                                        |
-|------------------+-----------------------------------------------------------------------------------------------------------------------------------------|
-| content_url      | Retrieves the url, where one can find the content of experiment *Example Value:* http://iitk.vlab.co.in/?sub=27&brch=83&sim=1218&cnt=1  |
-|------------------+-----------------------------------------------------------------------------------------------------------------------------------------|
-| simulation_url   | Retrieves the url, where simulation of the experiment is present *Example Value:* http://iitk.vlab.co.in/?sub=27&brch=83&sim=1218&cnt=4 |
-|------------------+-----------------------------------------------------------------------------------------------------------------------------------------|
-| content_on_id    | id of the hosting platform on which the content is hosted *Example Value:* 1                                                            |
-|------------------+-----------------------------------------------------------------------------------------------------------------------------------------|
-| simulation_on_id | id of the hosting platform on which the simulation is hosted *Example Value:* 1                                                         |
-|------------------+-----------------------------------------------------------------------------------------------------------------------------------------|
 
 - *GET* - 
  + Example Request
@@ -1187,3 +1145,92 @@ Engineering, Pune", "pic": "Prof. Sudhir Agashe", "iic_email":
   #+BEGIN_SRC
 
   #+END_SRC
+**** COMMENT /integration_levels
+- Parameters
+|-----------------+---------------------------------------------------------------------------------|
+| Name            | Description                                                                     |
+|-----------------+---------------------------------------------------------------------------------|
+| *id*            | Indicates the unique id of the discipline. *Example Value:* 1                   |
+|-----------------+---------------------------------------------------------------------------------|
+| *level*         | Specifies the integration level of Lab. *Example Value:* 1                      |
+|-----------------+---------------------------------------------------------------------------------|
+
+- *GET* 
+ + Example Request
+   #+BEGIN_SRC
+   /integration_levels
+   #+END_SRC
+
+ + Example Result
+   #+BEGIN_SRC
+[{"dnc_email": null, "discipline_id": "aero", "id": 1, "dnc": null, "name":
+"Aerospace Engineering"}, {"dnc_email": "bipin@amrita.edu", "discipline_id":
+"biotech", "id": 2, "dnc": "Prof. Bipin Nair", "name": "Biotechnology and
+Biomedical Engineering"}, ........ {"dnc_email": null, "discipline_id":
+"mat-sc", "id": 14, "dnc": null, "name": "Material Sciences"}]
+
+  #+END_SRC
+
+- *POST* 
+ + Example Request 
+  #+BEGIN_SRC
+json = {"discipline_id": "space", "name": "space Engineering"}
+  #+END_SRC
+
+ + Example Result
+  #+BEGIN_SRC
+{
+  "discipline_id": "space", 
+  "dnc": null, 
+  "dnc_email": null, 
+  "id": 16, 
+  "name": "space Engineering"
+}
+  #+END_SRC
+
+**** COMMENT /integration_levels/<int:id>
+
+- *GET* - 
+ + Example Request
+  #+BEGIN_EXAMPLE
+   /disciplines/16 
+   #+END_EXAMPLE
+
+ + Example Result
+  #+BEGIN_SRC
+{
+  "discipline_id": "space", 
+  "dnc": null, 
+  "dnc_email": null, 
+  "id": 16, 
+  "name": "space Engineering"
+}
+  #+END_SRC
+
+
+- *PUT*
+ + Example Request
+  #+BEGIN_SRC
+  {"name": "Space Engineering"}
+  #+END_SRC
+
+ + Example Result
+   #+BEGIN_SRC
+  {
+  "discipline_id": "space", 
+  "dnc": null, 
+  "dnc_email": null, 
+  "id": 16, 
+  "name": "Space Engineering"
+}
+   #+END_SRC
+
+- *DELETE*
+ + Example Result
+   #+BEGIN_SRC
+{
+  "id": "16", 
+  "status": "success"
+}
+    #+END_SRC
+
