@@ -6,29 +6,29 @@ about labs and related ecosystem, over HTTP for the Central Platform for Virtual
 
 * How to use the Data service
 1) create a database called =dataservice= in mysql.
-#+BEGIN_SRC 
-create database dataservice
-#+END_SRC
+   #+BEGIN_SRC 
+   create database dataservice
+   #+END_SRC
 2) populate the database using the dump file provided in the sources at
    =/dataservice/db/new_dataservice.sql=
-#+BEGIN_SRC 
-cd /dataservice/db
-mysql -u <userid> -p <password> dataservice < new_dataservice.sql  
-#+END_SRC
+   #+BEGIN_SRC 
+   cd /dataservice/db
+   mysql -u <userid> -p <password> dataservice < new_dataservice.sql  
+   #+END_SRC
 3) setup the virtual environment and install the dependencies.
-#+BEGIN_SRC 
-pip install virtualenv
-cd dataservice
-virtualenv venv
-source venv/bin/activate
-python setup.py install
-#+END_SRC
+   #+BEGIN_SRC 
+   pip install virtualenv
+   cd dataservice
+   virtualenv venv
+   source venv/bin/activate
+   python setup.py install
+   #+END_SRC
 4) Run the make file
-#+BEGIN_SRC 
-make
-#+END_SRC
+   #+BEGIN_SRC 
+   make
+   #+END_SRC
 5) Run the dataservice application.
-#+BEGIN_SRC 
-cd build/code/src/
-python app.py
-#+END_SRC
+   #+BEGIN_SRC 
+   cd build/code/src/
+   python app.py
+   #+END_SRC
