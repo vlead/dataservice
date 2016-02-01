@@ -46,18 +46,33 @@ Following is the list of current REST APIs provided by dataservice:
 - /institutes/<:id>/developers?query_param1=val1&query_param2=val2 [GET] 
 - /institutes?query_param1=val1&query_param2=val2&..query_paramn=valn [GET] 
 - /disciplines [GET, POST]
-- /disciplines/<int:id> [PUT]
+- /disciplines/<int:id> [GET, PUT, DELETE]
 - /disciplines/<disc_id>/labs [GET]
 - /disciplines/<:id>/labs?query_param1=val1&query_param2=val2 [GET]
 - /disciplines?query_param1=val1&query_param2=val2&..query_paramn=valn [GET]
 - /technologies [GET, POST]
-- /technologies/<int:id> [PUT]
+- /technologies/<int:id> [GET, PUT, DELETE]
 - /technologies/<tech_id>/labs [GET]
 - /technologies/<:id>/labs?query_param1=val1&query_param2=val2 [GET]
 - /technologies?query_param1=val1&query_param2=val2&..query_paramn=valn [GET]
 - /developers [GET, POST]
-- /developers/<int:id> [PUT]
+- /developers/<int:id> [GET, PUT, DELETE]
 - /developers?query_param1=val1&query_param2=val2&..query_paramn=valn [GET]
+- /experiments [GET, POST]
+- /experiments/<int:id> [GET, PUT, DELETE]
+- /experiments?query_param1=val1&query_param2=val2&..query_paramn=valn [GET]
+- /integration_levels [GET, POST]
+- /integration_levels/<int:id> [GET, PUT, DELETE]
+- /integration_levels?query_param1=val1&query_param2=val2&..query_paramn=valn [GET]
+- /hosting_platforms [GET, POST]
+- /hosting_platforms/<int:id> [GET, PUT, DELETE]
+- /hosting_platforms?query_param1=val1&query_param2=val2&..query_paramn=valn [GET]
+- /type_of_labs [GET, POST]
+- /type_of_labs/<int:id> [GET, PUT, DELETE]
+- /type_of_labs?query_param1=val1&query_param2=val2&..query_paramn=valn [GET]
+- /feedback [GET, POST]
+- /feedback/<int:id> [GET]
+- /feedback?query_param1=val1&query_param2=val2&..query_paramn=valn [GET]
 #+END_SRC
 
 **** /labs
@@ -157,7 +172,7 @@ known", "technologies": null, "developers": null, "integration_level": {"id":
 - *POST* 
  + Example Request
   #+BEGIN_SRC
- json =  {
+ {
     "name": "Computer Programming",
     "lab_id": "cse02"
   }
@@ -1084,7 +1099,7 @@ Hyderabad", "pic": "Prof. Venkatesh Choppella", "iic_email":
 "iiith"}, "id": 1, "name": "Abhijit Mitra", "email": "abi_chem@iiit.ac.in"}]
   #+END_SRC
 
-**** COMMENT /experiments
+**** /experiments
 - Parameters
 |------------------+-----------------------------------------------------------------------------------------------------------------------------------------|
 | Name             | Description                                                                                                                             |
@@ -1111,46 +1126,129 @@ Hyderabad", "pic": "Prof. Venkatesh Choppella", "iic_email":
    #+END_SRC
  + Example Result
   #+BEGIN_SRC
-
+[{"lab": {"lab_id": "phy-sc31", "id": 162, "name": "Low Temp Electrical
+Transport and Property Measurements"}, "name": "Colossal Magneto-Resistive
+(CMR) effect", "content_hosted_on": {"id": 4, "name": "ELSE"}, "technologies":
+[], "simulation_hosted_on": {"id": 4, "name": "ELSE"}, "id": 1, "content_url":
+"http://iitk.vlab.co.in/?sub=27&brch=82&sim=226&cnt=557", "simulation_url":
+null}, {"lab": {"lab_id": "phy-sc30", "id": 161, "name": "Optical Device
+Characterizations"},.....Interactive Lab"}, "name": "The Rare Periodicals
+Archive", "content_hosted_on": {"id": 4, "name": "ELSE"}, "technologies": [],
+"simulation_hosted_on": {"id": 4, "name": "ELSE"}, "id": 1515, "content_url":
+"http://iitg.vlab.co.in/?sub=72&brch=169&sim=832&cnt=1", "simulation_url":
+"http://iitg.vlab.co.in/?pg=topMenu&id=5"}]
   #+END_SRC
 
 - *POST*
  + Example Request
   #+BEGIN_SRC
+{
+"name":"testexpt",
+"lab":{"id":1}
+}
   #+END_SRC
 
  + Example Result
   #+BEGIN_SRC
+{
+  "content_hosted_on": null, 
+  "content_url": null, 
+  "id": 1516, 
+  "lab": {
+    "id": 1, 
+    "lab_id": "cse01", 
+    "name": "DS"
+  }, 
+  "name": "testexpt", 
+  "simulation_hosted_on": null, 
+  "simulation_url": null, 
+  "technologies": []
+}
   #+END_SRC
 
-**** COMMENT /experiments/<int:id>
+**** /experiments/<int:id>
 
 - *GET* - 
  + Example Request
   #+BEGIN_EXAMPLE
-   /developers/90 
+   /experiments/1516 
    #+END_EXAMPLE
 
  + Example Result
   #+BEGIN_SRC
+{
+  "content_hosted_on": null, 
+  "content_url": null, 
+  "id": 1516, 
+  "lab": {
+    "id": 1, 
+    "lab_id": "cse01", 
+    "name": "DS"
+  }, 
+  "name": "testexpt", 
+  "simulation_hosted_on": null, 
+  "simulation_url": null, 
+  "technologies": []
+}
   #+END_SRC
 
 - *PUT*
  + Example Request
-  #+BEGIN_SRC
-  {"name":"String Matching"}
-  #+END_SRC
+   #+BEGIN_SRC
+ {
+"name":"exptext"
+}
+   #+END_SRC
 
  + Example Result
   #+BEGIN_SRC
-
+{
+  "content_hosted_on": null, 
+  "content_url": null, 
+  "id": 1516, 
+  "lab": {
+    "id": 1, 
+    "lab_id": "cse01", 
+    "name": "DS"
+  }, 
+  "name": "exptext", 
+  "simulation_hosted_on": null, 
+  "simulation_url": null, 
+  "technologies": []
+}
   #+END_SRC
-**** COMMENT /integration_levels
+
+- *DELETE*
+ + Example Result
+   #+BEGIN_SRC
+{
+  "id": "1516", 
+  "status": "success"
+}
+  #+END_SRC
+**** /experiments?query_param1=val1&query_param2=val2&..query_paramn=valn
+- *GET* - 
+ + Example Request
+  #+BEGIN_EXAMPLE
+  /experiments?name=Colossal Magneto-Resistive (CMR) effect
+   #+END_EXAMPLE
+
+ + Example Result
+  #+BEGIN_SRC
+[{"lab": {"lab_id": "phy-sc31", "id": 162, "name": "Low Temp Electrical
+Transport and Property Measurements"}, "name": "Colossal Magneto-Resistive
+(CMR) effect", "content_hosted_on": {"id": 4, "name": "ELSE"}, "technologies":
+[], "simulation_hosted_on": {"id": 4, "name": "ELSE"}, "id": 1, "content_url":
+"http://iitk.vlab.co.in/?sub=27&brch=82&sim=226&cnt=557", "simulation_url":
+null}]
+  #+END_SRC
+
+**** /integration_levels
 - Parameters
 |-----------------+---------------------------------------------------------------------------------|
 | Name            | Description                                                                     |
 |-----------------+---------------------------------------------------------------------------------|
-| *id*            | Indicates the unique id of the discipline. *Example Value:* 1                   |
+| *id*            | Indicates the unique id of the Integration Level. *Example Value:* 1  |
 |-----------------+---------------------------------------------------------------------------------|
 | *level*         | Specifies the integration level of Lab. *Example Value:* 1                      |
 |-----------------+---------------------------------------------------------------------------------|
@@ -1163,47 +1261,40 @@ Hyderabad", "pic": "Prof. Venkatesh Choppella", "iic_email":
 
  + Example Result
    #+BEGIN_SRC
-[{"dnc_email": null, "discipline_id": "aero", "id": 1, "dnc": null, "name":
-"Aerospace Engineering"}, {"dnc_email": "bipin@amrita.edu", "discipline_id":
-"biotech", "id": 2, "dnc": "Prof. Bipin Nair", "name": "Biotechnology and
-Biomedical Engineering"}, ........ {"dnc_email": null, "discipline_id":
-"mat-sc", "id": 14, "dnc": null, "name": "Material Sciences"}]
-
+[{"id": 1, "level": 0}, {"id": 2, "level": 1}, {"id": 3, "level": 2}, {"id": 4,
+"level": 3}, {"id": 5, "level": 4}, {"id": 6, "level": 5}, {"id": 7, "level":
+6}]
   #+END_SRC
 
 - *POST* 
  + Example Request 
   #+BEGIN_SRC
-json = {"discipline_id": "space", "name": "space Engineering"}
+{
+"level":7
+}
   #+END_SRC
 
  + Example Result
   #+BEGIN_SRC
 {
-  "discipline_id": "space", 
-  "dnc": null, 
-  "dnc_email": null, 
-  "id": 16, 
-  "name": "space Engineering"
+  "id": 8, 
+  "level": 7
 }
   #+END_SRC
 
-**** COMMENT /integration_levels/<int:id>
+**** /integration_levels/<int:id>
 
 - *GET* - 
  + Example Request
   #+BEGIN_EXAMPLE
-   /disciplines/16 
+  /integration_levels/1
    #+END_EXAMPLE
 
  + Example Result
   #+BEGIN_SRC
 {
-  "discipline_id": "space", 
-  "dnc": null, 
-  "dnc_email": null, 
-  "id": 16, 
-  "name": "space Engineering"
+  "id": 1, 
+  "level": 0
 }
   #+END_SRC
 
@@ -1211,17 +1302,107 @@ json = {"discipline_id": "space", "name": "space Engineering"}
 - *PUT*
  + Example Request
   #+BEGIN_SRC
-  {"name": "Space Engineering"}
+{
+"level":9
+}
   #+END_SRC
 
  + Example Result
    #+BEGIN_SRC
-  {
-  "discipline_id": "space", 
-  "dnc": null, 
-  "dnc_email": null, 
-  "id": 16, 
-  "name": "Space Engineering"
+ {
+  "id": 1, 
+  "level": 9
+}  
+   #+END_SRC
+
+- *DELETE*
+ + Example Result
+   #+BEGIN_SRC
+   {
+  "id": "9", 
+  "status": "success"
+   }
+   #+END_SRC
+
+**** /integration_levels?query_param1=val1&query_param2=val2&..query_paramn=valn
+- *GET* - 
+ + Example Request
+  #+BEGIN_EXAMPLE
+  /integration_levels?level=2
+   #+END_EXAMPLE
+
+ + Example Result
+  #+BEGIN_SRC
+[{"id": 3, "level": 2}]
+  #+END_SRC
+**** /hosting_platforms
+- Parameters
+|--------+---------------------------------------------------------------------|
+| Name   | Description                                                         |
+|--------+---------------------------------------------------------------------|
+| *id*   | Indicates the unique id of the Hosting Platform. *Example Value:* 1 |
+|--------+---------------------------------------------------------------------|
+| *name* | Specifies the name of the Hosting Platform. *Example Value:* AWS  |
+|--------+---------------------------------------------------------------------|
+
+- *GET* 
+ + Example Request
+   #+BEGIN_SRC
+   /hosting_platforms
+   #+END_SRC
+
+ + Example Result
+   #+BEGIN_SRC
+[{"id": 3, "name": "AWS"}, {"id": 2, "name": "BADAL"}, {"id": 4, "name":
+"ELSE"}, {"id": 1, "name": "IIIT"}]
+   #+END_SRC
+
+- *POST* 
+ + Example Request 
+  #+BEGIN_SRC
+{
+"name":"Desktop"
+}
+  #+END_SRC
+
+ + Example Result
+  #+BEGIN_SRC
+{
+  "id": 5, 
+  "name": "Desktop"
+}
+  #+END_SRC
+
+**** /hosting_platforms/<int:id>
+
+- *GET* - 
+ + Example Request
+  #+BEGIN_EXAMPLE
+  /hosting_platforms/1
+   #+END_EXAMPLE
+
+ + Example Result
+  #+BEGIN_SRC
+{
+  "id": 1, 
+  "name": "IIIT"
+}
+  #+END_SRC
+
+
+- *PUT*
+ + Example Request
+  #+BEGIN_SRC
+{
+"name":"IIIT Infrastructure"
+}
+  #+END_SRC
+
+ + Example Result
+   #+BEGIN_SRC
+{
+  "id": 1, 
+  "name": "IIIT Infrastructure"
 }
    #+END_SRC
 
@@ -1229,8 +1410,240 @@ json = {"discipline_id": "space", "name": "space Engineering"}
  + Example Result
    #+BEGIN_SRC
 {
-  "id": "16", 
+  "id": "5", 
   "status": "success"
 }
-    #+END_SRC
+   #+END_SRC
 
+**** /hosting_platforms?query_param1=val1&query_param2=val2&..query_paramn=valn
+- *GET* - 
+ + Example Request
+  #+BEGIN_EXAMPLE
+  /hosting_platforms?name=AWS
+   #+END_EXAMPLE
+
+ + Example Result
+  #+BEGIN_SRC
+[{"id": 3, "name": "AWS"}]
+  #+END_SRC
+**** /type_of_labs
+- Parameters
+|--------+------------------------------------------------------------------|
+| Name   | Description                                                      |
+|--------+------------------------------------------------------------------|
+| *id*   | Indicates the unique id of the Type of Lab. *Example Value:* 1 |
+|--------+------------------------------------------------------------------|
+| *type* | Specifies the type of the Lab. *Example Value:* Remote Triggered |
+|--------+------------------------------------------------------------------|
+
+- *GET* 
+ + Example Request
+   #+BEGIN_SRC
+   /type_of_labs
+   #+END_SRC
+
+ + Example Result
+   #+BEGIN_SRC
+[{"type": "Pilot Phase", "id": 4}, {"type": "Remote Triggered", "id": 2},
+{"type": "Simulation and Remote Triggered", "id": 3}]
+   #+END_SRC
+
+- *POST* 
+ + Example Request 
+  #+BEGIN_SRC
+{
+"type":"Simulation"
+}
+
+  #+END_SRC
+
+ + Example Result
+  #+BEGIN_SRC
+{
+  "id": 9, 
+  "type": "Simulation"
+}
+  #+END_SRC
+
+**** /type_of_labs/<int:id>
+
+- *GET* - 
+ + Example Request
+  #+BEGIN_EXAMPLE
+  /type_of_labs/1
+   #+END_EXAMPLE
+
+ + Example Result
+  #+BEGIN_SRC
+{
+  "id": 2, 
+  "type": "Remote Triggered"
+}
+  #+END_SRC
+
+
+- *PUT*
+ + Example Request
+  #+BEGIN_SRC
+{"type":"simulation"}
+  #+END_SRC
+
+ + Example Result
+   #+BEGIN_SRC
+{
+  "id": 9, 
+  "type": "simulation"
+}
+   #+END_SRC
+
+- *DELETE*
+ + Example Result
+   #+BEGIN_SRC
+{
+  "id": "1", 
+  "status": "success"
+}
+   #+END_SRC
+
+**** /type_of_labs?query_param1=val1&query_param2=val2&..query_paramn=valn
+- *GET* - 
+ + Example Request
+  #+BEGIN_EXAMPLE
+  /type_of_labs?type=simulation
+   #+END_EXAMPLE
+
+ + Example Result
+  #+BEGIN_SRC
+[{"type": "simulation", "id": 9}]
+  #+END_SRC
+**** /feedback
+- Parameters
+|--------------------------------+------------------------------------------------------------------------------------|
+| Name                           | Description                                                                        |
+|--------------------------------+------------------------------------------------------------------------------------|
+| *id*                           | Indicates the unique id of the Feedback. *Example Value:* 1                        |
+|--------------------------------+------------------------------------------------------------------------------------|
+| *lab_id*                       | Specifies the id of the Lab. *Example Value:* 1                                    |
+|--------------------------------+------------------------------------------------------------------------------------|
+| *experiment_id*                | Specifies the id of the Experiment. *Example Value:* 1                             |
+|--------------------------------+------------------------------------------------------------------------------------|
+| *user_name*                    | Indicates the name of the user. *Example Value:* John                              |
+|--------------------------------+------------------------------------------------------------------------------------|
+| *user_email*                   | Indicates the email of the user. *Example Value:* john@gmail.com                   |
+|--------------------------------+------------------------------------------------------------------------------------|
+| *user_institute*               | Indicates the institute of the user. *Example Value:* IIIT-H                       |
+|--------------------------------+------------------------------------------------------------------------------------|
+| *time*                         | Indicates the time of creating this feedback. *Example Value:* 2015-10-14T11:13:50 |
+|--------------------------------+------------------------------------------------------------------------------------|
+| *ip*                           | Indicates the ip of the user machine. *Example Value:* 10.100.1.7                  |
+|--------------------------------+------------------------------------------------------------------------------------|
+| *type_of_user*                 | Indicates the role of the user. *Example Value:* Student                           |
+|--------------------------------+------------------------------------------------------------------------------------|
+| *how_useful_are_labs*          | Text data to be filled by the user.                                                |
+|--------------------------------+------------------------------------------------------------------------------------|
+| *suggestions_in_general*       | Text data to be filled by the user.                                                |
+|--------------------------------+------------------------------------------------------------------------------------|
+| *feedback_about_experiment*    | Text data to be filled by the user.                                                |
+|--------------------------------+------------------------------------------------------------------------------------|
+| *suggestions_about_experiment* | Text data to be filled by the user.                                                |
+|--------------------------------+------------------------------------------------------------------------------------|
+| *feedback_about_lab*           | Text data to be filled by the user.                                                |
+|--------------------------------+------------------------------------------------------------------------------------|
+| *suggestions_about_lab*        | Text data to be filled by the user.                                                                                   |
+|--------------------------------+------------------------------------------------------------------------------------|
+|                                |                                                                                    |
+- *GET* 
+ + Example Request
+   #+BEGIN_SRC
+   /feedback
+   #+END_SRC
+
+ + Example Result
+   #+BEGIN_SRC
+[{"suggestions_about_lab": null, "ip": "10.100.1.7", "lab": null, "id": 1,
+"suggestions_in_general": "test", "feedback_about_experiment": null,
+"how_useful_are_labs": "", "feedback_about_lab": null,
+"suggestions_about_experiment": null, "experiment": null, "time":
+"2015-10-14T11:13:50",........  "lab": null, "id": 8, "suggestions_in_general":
+"test", "feedback_about_experiment": null, "how_useful_are_labs": null,
+"feedback_about_lab": null, "suggestions_about_experiment": null, "experiment":
+null, "time": "2016-02-01T07:10:26", "type_of_user": null, "user_institute":
+null, "user_name": "Anon", "user_email": "anon@vlabs.ac.in"}]
+   #+END_SRC
+
+- *POST* 
+ + Example Request 
+  #+BEGIN_SRC
+{
+"user_name":"john",
+"user_email":"john@gmail.com",
+"ip":"1.0.0.1"
+}
+  #+END_SRC
+
+ + Example Result
+  #+BEGIN_SRC
+{
+  "experiment": null, 
+  "feedback_about_experiment": null, 
+  "feedback_about_lab": null, 
+  "how_useful_are_labs": null, 
+  "id": 9, 
+  "ip": "1.0.0.1", 
+  "lab": null, 
+  "suggestions_about_experiment": null, 
+  "suggestions_about_lab": null, 
+  "suggestions_in_general": null, 
+  "time": "2016-02-01T10:32:24", 
+  "type_of_user": null, 
+  "user_email": "john@gmail.com", 
+  "user_institute": null, 
+  "user_name": "john"
+}
+  #+END_SRC
+
+**** /feedback/<int:id>
+
+- *GET* - 
+ + Example Request
+  #+BEGIN_EXAMPLE
+  /feedback/1
+   #+END_EXAMPLE
+
+ + Example Result
+  #+BEGIN_SRC
+{
+  "experiment": null, 
+  "feedback_about_experiment": null, 
+  "feedback_about_lab": null, 
+  "how_useful_are_labs": "", 
+  "id": 1, 
+  "ip": "10.100.1.7", 
+  "lab": null, 
+  "suggestions_about_experiment": null, 
+  "suggestions_about_lab": null, 
+  "suggestions_in_general": "test", 
+  "time": "2015-10-14T11:13:50", 
+  "type_of_user": null, 
+  "user_email": "anon@vlabs.ac.in", 
+  "user_institute": null, 
+  "user_name": "Anon"
+}
+  #+END_SRC
+
+**** /feedback?query_param1=val1&query_param2=val2&..query_paramn=valn
+- *GET* - 
+ + Example Request
+  #+BEGIN_EXAMPLE
+  /feedback?user_name=john
+   #+END_EXAMPLE
+
+ + Example Result
+  #+BEGIN_SRC
+[{"suggestions_about_lab": null, "ip": "1.0.0.1", "lab": null, "id": 9,
+"suggestions_in_general": null, "feedback_about_experiment": null,
+"how_useful_are_labs": null, "feedback_about_lab": null,
+"suggestions_about_experiment": null, "experiment": null, "time":
+"2016-02-01T10:32:24", "type_of_user": null, "user_institute": null,
+"user_name": "john", "user_email": "john@gmail.com"}]
+  #+END_SRC
