@@ -171,7 +171,9 @@ class IntegrationLevel(Entity):
             'id': self.id,
             'level': self.level
         }
-
+    @typecheck(level=int)
+    def set_level(self, level):
+        self.level = level
 #+END_SRC
 *** HostingPlatform
 
@@ -203,6 +205,10 @@ class HostingPlatform(Entity):
             'id': self.id,
             'name': self.name
         }
+
+    @typecheck(name=str)
+    def set_name(self, name):
+        self.name = name
 
 #+END_SRC
 *** TypeOfLab
@@ -238,6 +244,10 @@ class TypeOfLab(Entity):
     @staticmethod
     def get_all():
         return TypeOfLab.query.all()
+
+    @typecheck(type=str)
+    def set_type(self, type):
+        self.type = type
 
 #+END_SRC
 
@@ -391,7 +401,6 @@ class Institute(Entity):
         return self.pic_email
 
 #+END_SRC
-
 
 ***** getIIC: Institute --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -3273,6 +3282,18 @@ entity_map_types = {
             'level': int
         }
     },
+    'type_of_labs': {
+        'entity': TypeOfLab,
+        'types': {
+            'type': str
+        }
+    },
+    'hosting_platforms': {
+        'entity': HostingPlatform,
+        'types': {
+            'name': str
+        }
+    },
     'experiments': {
         'entity': Experiment,
         'types': {
@@ -3497,7 +3518,6 @@ interpreter expects them to be.
 <<modify-entity>>
 #+END_SRC
 
-
 **** The API to create new entries
 ***** API route definition
 #+NAME: create-entity
@@ -3535,7 +3555,6 @@ def create_record(entity_name, entity):
 
     return jsonify(new_record.to_client())
 #+END_SRC
-
 
 ***** Code tangle
 #+BEGIN_SRC python :tangle src/api.py :eval no :noweb yes
