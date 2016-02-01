@@ -3979,8 +3979,6 @@ The following code will *not* work:
 # -*- coding: utf-8 -*-
 
 import os
-import logging
-from logging.handlers import RotatingFileHandler
 
 from flask import Flask, jsonify, make_response
 from flask.ext.cors import CORS
@@ -4022,51 +4020,94 @@ def configure_cors(app):
 
 
 # custom error handlers to return JSON errors with appropiate status codes
+
 def configure_errorhandlers(app):
-
-    @app.errorhandler(400)
-    def bad_request(err):
-        return make_response(jsonify(error=err.description), 400)
-
-    @app.errorhandler(404)
-    def not_found(err):
-        return make_response(jsonify(error=err.description), 404)
-
-    @app.errorhandler(405)
-    def method_not_allowed(err):
-        return make_response(jsonify(error=err.description), 405)
 
     @app.errorhandler(500)
     def server_error(err):
+        app.logger.error("error code = %s" % "500")
+        resp = None
         try:
-            return make_response(jsonify(error=err.description), 500)
+            app.logger.error("error desc = %s" % err.description)
+            resp = make_response(jsonify(error=err.description), 500)
         except Exception:
             try:
-                return make_response(jsonify(error=err.message), 500)
+                app.logger.error("error mesg = %s" % err.message)
+                resp = make_response(jsonify(error=err.message), 500)
             except Exception:
-                return make_response(jsonify(error=str(err)), 500)
+                resp = make_response(jsonify(error=str(err)), 500)
+                app.logger.error("error = %s" % str(err))
+        return resp
+
+    @app.errorhandler(405)
+    def method_not_allowed(err):
+        app.logger.error("error code = %s" % "405")
+        resp = None
+        try:
+            app.logger.error("error desc = %s" % err.description)
+            resp = make_response(jsonify(error=err.description), 405)
+        except Exception:
+            try:
+                app.logger.error("error mesg = %s" % err.message)
+                resp = make_response(jsonify(error=err.message), 405)
+            except Exception:
+                resp = make_response(jsonify(error=str(err)), 405)
+                app.logger.error("error = %s" % str(err))
+        return resp
+
+    @app.errorhandler(404)
+    def not_found(err):
+        app.logger.error("error code = %s" % "404")
+        resp = None
+        try:
+            app.logger.error("error desc = %s" % err.description)
+            resp = make_response(jsonify(error=err.description), 404)
+        except Exception:
+            try:
+                app.logger.error("error mesg = %s" % err.message)
+                resp = make_response(jsonify(error=err.message), 404)
+            except Exception:
+                resp = make_response(jsonify(error=str(err)), 404)
+                app.logger.error("error = %s" % str(err))
+        return resp
+
+    @app.errorhandler(400)
+    def bad_request(err):
+        app.logger.error("error code = %s" % "400")
+        resp = None
+        try:
+            app.logger.error("error desc = %s" % err.description)
+            resp = make_response(jsonify(error=err.description), 400)
+        except Exception:
+            try:
+                app.logger.error("error mesg = %s" % err.message)
+                resp = make_response(jsonify(error=err.message), 400)
+            except Exception:
+                resp = make_response(jsonify(error=str(err)), 400)
+                app.logger.error("error = %s" % str(err))
+        return resp
 
 
 def configure_logging(app):
+    import logging
+    import logging.handlers
     formatter = logging.Formatter('%(asctime)s: %(levelname)s: %(filename)s:'
                                   ' %(funcName)s():%(lineno)d: %(message)s')
 
-    if 'LOG_FILE' in app.config:
-        log_filename = app.config['LOG_FILE']
-    else:
-        log_filename = 'dataservice.log'
     # Also error can be sent out via email. So we can also have a SMTPHandler?
-    log_file = os.path.join(os.path.dirname(__file__), '..', log_filename)
+    log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                           '..',
+                           app.config['LOG_FILE_DIRECTORY'])
 
+    log_file = "%s/%s" % (log_dir, app.config['LOG_FILE'])
+    os.system("sudo touch %s" % log_file)
+    os.system("sudo chmod 777 %s" % log_file)
     max_size = 1024 * 1024 * 20  # Max Size for a log file: 20MB
-    log_handler = RotatingFileHandler(log_file, maxBytes=max_size,
-                                      backupCount=10)
+    log_handler = logging.handlers.RotatingFileHandler(log_file,
+                                                       maxBytes=max_size,
+                                                       backupCount=10)
 
-    if 'LOG_LEVEL' in app.config:
-        log_level = app.config['LOG_LEVEL'] or 'ERROR'
-    else:
-        log_level = 'ERROR'
-
+    log_level = app.config['LOG_LEVEL']
     log_handler.setLevel(log_level)
     log_handler.setFormatter(formatter)
 
@@ -4101,6 +4142,7 @@ ALLOWED_ORIGINS = ["*.vlabs.ac.in", "*.virtual-labs.ac.in"]
 WHITELIST_IPS = ["127.0.0.1"]
 
 # Configure your log paths
+LOG_FILE_DIRECTORY = 'logs'
 LOG_FILE = 'dataservice.log'
 
 # Log level for the application
