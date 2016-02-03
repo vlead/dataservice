@@ -587,28 +587,24 @@ class Discipline(Entity):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_id(self):
         return self.id
-
 #+END_SRC
 
 ***** getName: Discipline --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_name(self):
         return self.name
-
 #+END_SRC
 ***** getDiscipline: Id --> Discipline
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_by_id(id):
         return Discipline.query.get(id)
-
 #+END_SRC
 
 ***** getDisciplineId: Discipline --> DisciplineId
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_discipline_id(self):
         return self.discipline_id
-
 #+END_SRC
 
 ***** getDiscipline: DisciplineId --> Discipline
@@ -616,28 +612,24 @@ class Discipline(Entity):
     @staticmethod
     def get_by_discipline_id(discipline_id):
         return Discipline.query.filter_by(discipline_id=discipline_id).first()
-
 #+END_SRC
 
 ***** getLabs: Discipline --> set[Lab]
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_labs(self):
         return self.labs
-
 #+END_SRC
 
 ***** getDNC: Discipline --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_dnc(self):
         return self.dnc
-
 #+END_SRC
 
 ***** getDNCEmail: Discipline --> Email
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_dnc_email(self):
         return self.dnc_email
-
 #+END_SRC
 
 ***** setName: Discipline --> Void
@@ -671,7 +663,6 @@ class Discipline(Entity):
             'dnc': self.dnc,
             'dnc_email': self.dnc_email
         }
-
 #+END_SRC
 
 ***** to_csv
@@ -744,7 +735,6 @@ class Developer(Entity):
     @staticmethod
     def get_all():
         return Developer.query.all()
-
 #+END_SRC
 ***** getId: Developer --> Id
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -776,12 +766,11 @@ class Developer(Entity):
     def get_labs(self):
         return self.labs
 #+END_SRC
-
+      
 ***** getInstitute: Developer --> Institute
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_institute(self):
         return self.institute
-
 #+END_SRC
 
 ***** setName: Developer, Name --> Void
@@ -870,36 +859,31 @@ Technology(name=String
 
         if 'foss' in kwargs:
             self.set_foss(kwargs['foss'])
-
 #+END_SRC
 **** Functions that operate on the Technology domain
 ***** getId: Technology --> Id
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_id(self):
         return self.id
-
 #+END_SRC
 
 ***** getName: Technology --> String
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_name(self):
         return self.name
-
 #+END_SRC
-
+      
 ***** getAll: Nil --> set[Technology]
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_all():
         return Technology.query.all()
-
 #+END_SRC
 
 ***** getLabs: Technology --> set[Lab]
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_labs(self):
         return self.labs
-
 #+END_SRC
 
 ***** getTechnology: Id --> Technology
@@ -907,14 +891,12 @@ Technology(name=String
     @staticmethod
     def get_by_id(id):
         return Technology.query.get(id)
-
 #+END_SRC
 
 ***** getVersion: Technology --> Version
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_version(self):
         return self.version
-
 #+END_SRC
 
 ***** isFOSS: Technology --> Boolean
@@ -3733,7 +3715,7 @@ Make a =GET= request to =/feedback= with the =id=
 
 ** Custom Exceptions
 
-These are spme of the custom exceptions used in the application.
+These are some of the custom exceptions used in the application.
 *** AttributeRequired
 #+BEGIN_SRC python :tangle src/ds_exceptions.py :eval no
 class AttributeRequired(Exception):
@@ -4871,7 +4853,6 @@ class TestDeveloper(TestCase):
         self.assertEqual(inst_1, dev.institute)
 
 #+END_SRC
-
 
 *** Tests for Discipline
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no

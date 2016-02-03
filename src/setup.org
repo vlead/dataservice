@@ -237,7 +237,8 @@ echo "Installing MySQL database.."
 if [ ! -f $DB_PASS_FILE ]; then
   # generate a random password for the database and store it in the $DB_PASS_FILE
   # file
-  DBPASS=$(date +%s | sha256sum | head -c 32)
+#  DBPASS=$(date +%s | sha256sum | head -c 32)
+  DBPASS="root"
   echo $DBPASS > $DB_PASS_FILE
 fi
 
@@ -303,6 +304,7 @@ update_app_config () {
   CONFIG_FILE="src/config.py"
   DB_USER="root"
   DB_PASS=$(cat db_pass.txt)
+  DB_PASS="root"
   DB_NAME="dataservice"
   DB_SERVER="localhost"
 
@@ -362,11 +364,12 @@ setup_db() {
     echo "Failed to create database $DB_NAME"
     exit 1;
   fi
-  python $ABS_PATH_DS/dbsetup.py
-  if [[ $? -ne 0 ]]; then
-    echo "Failed to create tables in database $DB_NAME"
-    exit 1;
-  fi
+
+#  python $ABS_PATH_DS/dbsetup.py
+#  if [[ $? -ne 0 ]]; then
+#    echo "Failed to create tables in database $DB_NAME"
+#    exit 1;
+#  fi
 }
 
 update_app_config
