@@ -54,7 +54,6 @@
             "office_number": ""
           }
         },
-
         {
           "name": "Thirumal Ravula",
           "title": "",
@@ -115,7 +114,7 @@
         "installer": [
           "bash /var/www/setup.sh",
           "python /var/www/setup.py install",
-          "bash /var/www/configure.sh",
+          "bash /var/www/configure.sh"
         ],
         "lab_actions": {
           "init"    : [],
