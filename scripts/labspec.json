@@ -40,6 +40,22 @@
           }
         },
         {
+          "name": "Madhavi Puliraju",
+          "title": "",
+          "role": "Software Engineer",
+          "organization": "VLEAD",
+          "institute": "IIIT Hyderabad",
+          "web": "",
+          "department": "Software Engg Research Lab (SERL)",
+          "contact": {
+            "email": "madhavi@vlabs.ac.in",
+            "alternate_email": "",
+            "mobile_number": "",
+            "office_number": ""
+          }
+        },
+
+        {
           "name": "Thirumal Ravula",
           "title": "",
           "role": "Software Engineer",
@@ -74,7 +90,10 @@
           ],
           "post_build": [
             "cp -R ../build/code/* /var/www/",
-            "chmod -R a+r /var/www"
+            "chmod -R a+r /var/www",
+            "mkdir /var/www/logs",
+            "chmod -R 777 /var/www/logs",
+            
           ],
           "status": []
         }
@@ -96,8 +115,8 @@
         },
         "installer": [
           "bash /var/www/setup.sh",
+          "python /var/www/setup.py install",
           "bash /var/www/configure.sh",
-          "bash /var/www/migrate.sh"
         ],
         "lab_actions": {
           "init"    : [],

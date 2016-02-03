@@ -88,6 +88,8 @@ class Entity(db.Model):
 
 ** The Data Model
 *** ER Diagram
+    The model-diagram can be found below. This gives an overview of the
+    relationships between different entities.
     [[./diagrams/model-diagram.jpg][schema diagram]] 
 *** Name
 
@@ -2287,19 +2289,6 @@ class Feedback(Entity):
         }
 #+END_SRC
 
-*** COMMENT Functions operating on multiple domains
-
-***** NOTE: is it necessary? getAllLabs: Nil --> set[Lab]
-
-***** NOTE: is it necessary? getAllDevelopers: Nil --> set[Developer]
-
-***** NOTE: is it necessary? getAllExperiments: Nil --> set[Experiment]
-
-*** COMMENT Relationship between different entities
-  #+CAPTION: Entity Diagram
-  #+NAME:   entity
-  [[https://drive.google.com/open?id%3D0B6LLRcwXMzt8N3RzZGVkb0NpUDA][ER-Diagram]]
-
 ** COMMENT The Bulk Update interface
 *** Requirement
    One of the requirements in the application is the bulk update
@@ -3151,7 +3140,7 @@ entity_map_types = {
    the error. If the database save is successful, then the API returns
    HTTP 200 and sends the JSON representation of the new entry in the
    body of the response.
-
+   
 **** API to update entries
      The generic URL pattern to update existing entries is
      PUT =/<:entity>s/<:id>=
@@ -3161,8 +3150,8 @@ entity_map_types = {
 
      For example,
      #+BEGIN_EXAMPLE
-     1. PUT /labs/cse22
-     2. PUT /institutes/iith
+     1. PUT /labs/1
+     2. PUT /institutes/1
      #+END_EXAMPLE
      The request body of the PUT request contain the relevant data for
      the request.
@@ -3200,8 +3189,8 @@ entity_map_types = {
 
      For example,
       #+BEGIN_EXAMPLE
-      1. DELETE /labs/cse22
-      2. DELETE /institutes/iith
+      1. DELETE /labs/1
+      2. DELETE /institutes/1
       #+END_EXAMPLE
 
      The API deletes the existing entry based on the corresponding id
