@@ -92,8 +92,7 @@
             "cp -R ../build/code/* /var/www/",
             "chmod -R a+r /var/www",
             "mkdir /var/www/logs",
-            "chmod -R 777 /var/www/logs",
-            
+            "chmod -R 777 /var/www/logs"
           ],
           "status": []
         }
