@@ -3,34 +3,13 @@
 Data Service is a service which abstracts storing, retrieving and querying data
 about labs and related ecosystem, over HTTP for the Central Platform for Virtual Labs.
 
-* How to setup the Data Service
-1) create a database called =dataservice= in mysql.
-   #+BEGIN_SRC 
-   create database dataservice
-   #+END_SRC
-2) populate the database using the dump file provided in the sources at
-   =/dataservice/db/new_dataservice.sql=
-   #+BEGIN_SRC 
-   cd /dataservice/db
-   mysql -u <userid> -p <password> dataservice < new_dataservice.sql  
-   #+END_SRC
-3) setup the virtual environment and install the dependencies.
-   #+BEGIN_SRC 
-   pip install virtualenv
-   cd dataservice
-   virtualenv venv
-   source venv/bin/activate
-   python setup.py install
-   #+END_SRC
-4) Run the make file
-   #+BEGIN_SRC 
-   make
-   #+END_SRC
-5) Run the dataservice application.
-   #+BEGIN_SRC 
-   cd build/code/src/
-   python app.py
-   #+END_SRC
+* How to populate the old-data using database dump.
+  populate the database using the dump file provided in the sources at
+  =/dataservice/db/new_dataservice.sql=
+  #+BEGIN_SRC 
+  cd /dataservice/db
+  mysql -u <userid> -p<password> dataservice < new_dataservice.sql  
+  #+END_SRC
 * How to use the Data Service
   Open browser or HTTPRequester to access the end points listed at:
   [[./src/api_doc.org][API Documentation]]
