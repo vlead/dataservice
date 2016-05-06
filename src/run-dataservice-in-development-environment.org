@@ -1,0 +1,69 @@
+#+TITLE: Dataservice
+#+Author: VLEAD
+#+Date: [2016-05-05 Thu]
+#+PROPERTY: results output
+#+PROPERTY: exports code
+#+SETUPFILE: ./org-templates/level-0.org
+#+options: ^:nil
+
+* Creation of database
+  - Login to mysql
+    #+BEGIN_EXAMPLE
+    mysql -u <username> -p<password>
+    #+END_EXAMPLE
+  - Show all databases
+    #+BEGIN_EXAMPLE
+    show databases;
+    #+END_EXAMPLE
+  - If <dataservice> database is present, drop it and create it
+    #+BEGIN_EXAMPLE
+    drop database dataservice
+    create database dataservice
+    #+END_EXAMPLE
+  
+    Exit our of the mysql console
+
+  - Populate the database
+    Use the =sql= file =new_dataservice.sql= present in =db= directory right
+    below =dataservice= directory
+    #+BEGIN_EXAMPLE
+    mysql -u root -p dataservice < <pathto new_dataservice.sql>
+    #+END_EXAMPLE
+    
+* Creation of Virtual Environment
+
+  + Create Virtual Environemnt in the =dataservice= directory
+  #+BEGIN_EXAMPLE
+  virtualenv venv
+  #+END_EXAMPLE
+  + Activate the Virtual Environment
+  #+BEGIN_EXAMPLE
+  source venv/bin/activate
+  #+END_EXAMPLE
+
+
+* Setting up dependencies
+
+  Install all the dependencies for running the =dataservice= applciation.
+  The =setup.py= script is in the =build/code= directory
+  #+BEGIN_EXAMPLE
+  cd <path to build/code directory>
+  python setup.py install
+  #+END_EXAMPLE
+
+* Set SQLALCHEMY_DATABASE_URI
+  The variable =SQLALCHEMY_DATABASE_URI= has to be set to proper value in
+  =build/code/src/config.py= so that the application can use the database.
+
+* Run the application
+  
+  The application can now be run from the =build/code= directory
+  #+BEGIN_EXAMPLE
+  cd <path to build/code directory>
+  python src/app.py
+  #+END_EXAMPLE
+
+
+* Access the application
+  
+  The application is accessed at =http://localhost:5000=

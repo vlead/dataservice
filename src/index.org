@@ -3,7 +3,7 @@
 #+Date: [2015-08-13 Thu]
 #+PROPERTY: results output
 #+PROPERTY: exports code
-#+SETUPFILE: ../org-templates/level-0.org
+#+SETUPFILE: ./org-templates/level-0.org
 
 * Introduction
   Data Service or =dataservice= acts as a central repository of information in
@@ -2910,7 +2910,24 @@ resource_map = {'experiments': [{'labs': 'lab'},
                                  {'experiments': 'experiments'}]}
 
 #+END_SRC
+
 **** GET APIS
+     The sqlalchemy query looks like this when querying on a lab 
+     #+BEGIN_EXAMPLE
+     labs = Lab.query.filter(Lab.lab_id.in_(['CSE02', 'ECE05'])).\
+       filter(Lab.institute.has(Institute.name.in_(['IIIT Hyderabad', 'IIT Bombay']))).\
+       filter(Lab.discipline.has(Discipline.id.in_([1,2]))).\
+       filter(Lab.developers.any(Developer.id.in_([1,2]))).\
+       filter(Lab.hosted_on.has(HostingPlatform.id.in_([1,2,3,4]))).\
+       filter(Lab.is_phase_2_lab.in_([True, False])).\
+       filter(Lab.is_web_2_compliant_lab.in_([False, True])).\
+       filter(Lab.experiments.any(Experiment.technologies.any(Technology.name.in_(['Labview'])))
+     #+END_EXAMPLE
+
+     Internally, when a GET is made with query parameters, the result is
+     provided by constructing the query in the above format that is understood
+     by sqlalchemy.
+
 #+BEGIN_SRC python :tangle src/api.py :eval no
 # query an entity
 # =/<:entity>s?query_param1=val1&query_param2=val2&..query_paramn=valn=
@@ -3036,6 +3053,7 @@ def build_arg_list(arg_tuple_list, top_entity, id, lower_entity):
     return arg_tuple_list
 
 #+END_SRC
+
 
 ** REST API to create/update/delete data
 *** Design
