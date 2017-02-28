@@ -275,18 +275,18 @@ class TypeOfLab(Entity):
      |---------------------------------+-------------|
      | Name                            | InstituteId |
      |---------------------------------+-------------|
-     | IIIT Hyderabad                  | iiith       |
-     | IIT Bombay                      | iitb        |
-     | IIT Delhi                       | iitd        |
-     | IIT Roorkee                     | iitr        |
-     | IIT Guwahati                    | iitg        |
-     | IIT Kanpur                      | iitk        |
-     | IIT Kharagpur                   | iitkgp      |
-     | IIT Madras                      | iitm        |
-     | NIT Surathkal                   | nitk        |
      | Amrita University               | amrita      |
      | College of Engineering, Pune    | coep        |
      | Dayalbagh Educational Institute | dei         |
+     | IIT Bombay                      | iitb        |
+     | IIT Delhi                       | iitd        |
+     | IIT Guwahati                    | iitg        |
+     | IIIT Hyderabad                  | iiith       |
+     | IIT Kanpur                      | iitk        |
+     | IIT Kharagpur                   | iitkgp      |
+     | IIT Madras                      | iitm        |
+     | IIT Roorkee                     | iitr        |
+     | NIT Surathkal                   | nitk        |  
      |---------------------------------+-------------|
 
 **** Definition
